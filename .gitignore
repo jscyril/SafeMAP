@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.egg-info/
+
+# Virtual environments and local environment files
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+build/
+target/
+
+# SafeMAP generated artifacts
+.safemap/
+results/
+work/
+compile_db/
+
+# Local editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local agent/tooling state
+.agents/
+.codex/
+
+# Secrets and local databases
+*.pem
+*.key
+*.sqlite
+*.db

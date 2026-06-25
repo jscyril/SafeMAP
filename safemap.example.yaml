@@ -1,0 +1,56 @@
+project:
+  name: example
+  input: examples/output_parameter
+
+translation:
+  mode: safemap_full
+  use_c2rust: true
+  use_llm: true
+  use_static_guidance: true
+  forbid_unsafe: true
+  allow_c2rust_fallback_as_success: false
+  max_units: null
+  max_repair_attempts: 5
+  direct_llm_max_c_loc: 500
+  automatic_confidence_threshold: 0.75
+
+eligibility:
+  reject_unknown_pointers: true
+  reject_unresolved_aliasing: true
+  reject_unions: true
+  reject_function_pointers: true
+  reject_inline_asm: true
+
+llm:
+  provider: openai_compatible
+  model: configurable-model-name
+  base_url: https://api.openai.com/v1
+  temperature: 0.1
+  max_tokens: 4096
+  timeout_seconds: 120
+  api_key_env: OPENAI_API_KEY
+
+validation:
+  run_cargo_check: true
+  run_tests: true
+  run_clippy: true
+  run_miri: false
+  run_differential_tests: true
+  differential_test_inputs: 1000
+  seed: 0
+  timeout_seconds: 120
+
+repair:
+  enabled: true
+  max_iterations: 3
+  forbid_unsafe: true
+
+metrics:
+  count_unsafe: true
+  count_raw_pointers: true
+  count_clippy_warnings: true
+
+reporting:
+  write_markdown: true
+  write_json: true
+  write_csv: true
