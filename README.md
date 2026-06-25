@@ -298,3 +298,15 @@ SAFEMAP_RESEARCH_TODO.md
 ```
 
 Use the generated metrics and reports directly. Do not invent benchmark results.
+
+## Documentation Site
+
+A static book-style documentation site lives in:
+
+```text
+docs-site/
+```
+
+It can be opened locally with `docs-site/index.html` or deployed to GitHub Pages
+using the included `.github/workflows/pages.yml` workflow. In GitHub repository
+settings, set Pages source to **GitHub Actions**.
