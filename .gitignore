@@ -32,6 +32,7 @@ compile_db/
 local-audit-report/
 reports/final/
 reports/case-studies/
+reports/combined_evaluation.md
 reports/benchmark_results.csv
 reports/benchmark_results.md
 reports/paper_tables.md

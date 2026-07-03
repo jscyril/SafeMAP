@@ -12,7 +12,8 @@ except ImportError:  # pragma: no cover
 from .analysis.rust_analyzer import analyze_rust_path
 from .artifacts import ArtifactStore
 from .benchmarks.benchmark_runner import (
-    export_paper_tables, run_benchmarks, run_final_evaluation,
+    export_combined_evaluation, export_paper_tables, run_benchmarks,
+    run_final_evaluation,
 )
 from .config import load_config
 from .ingestion.project_loader import ingest_project
@@ -125,6 +126,25 @@ if typer:
         export_paper_tables(input, output)
         typer.echo(str(output))
 
+    @app.command("combined-eval")
+    def combined_eval(
+        output: Path = typer.Option(Path("reports/combined_evaluation.md")),
+        main_csv: Path = typer.Option(Path("reports/final/benchmark_results.csv")),
+        case_study_csv: Optional[Path] = typer.Option(
+            Path("reports/case-studies/benchmark_results.csv")
+        ),
+        c2rust_csv: Optional[Path] = typer.Option(None),
+        llm_smoke_csv: Optional[Path] = typer.Option(None),
+    ) -> None:
+        export_combined_evaluation(
+            output,
+            main_csv,
+            case_study_csv=case_study_csv,
+            c2rust_csv=c2rust_csv,
+            llm_smoke_csv=llm_smoke_csv,
+        )
+        typer.echo(str(output))
+
     @app.command("latest-run")
     def latest_run_command(
         output: Path = typer.Option(Path(".")),
@@ -187,6 +207,16 @@ def _argparse_main() -> None:  # pragma: no cover - used in minimal installation
     export_parser = subparsers.add_parser("export-tables")
     export_parser.add_argument("--input", required=True)
     export_parser.add_argument("--output", required=True)
+    combined_parser = subparsers.add_parser("combined-eval")
+    combined_parser.add_argument("--output", default="reports/combined_evaluation.md")
+    combined_parser.add_argument(
+        "--main-csv", default="reports/final/benchmark_results.csv"
+    )
+    combined_parser.add_argument(
+        "--case-study-csv", default="reports/case-studies/benchmark_results.csv"
+    )
+    combined_parser.add_argument("--c2rust-csv")
+    combined_parser.add_argument("--llm-smoke-csv")
     latest_parser = subparsers.add_parser("latest-run")
     latest_parser.add_argument("--output", default=".")
     summarize_parser = subparsers.add_parser("summarize-runs")
@@ -218,6 +248,16 @@ def _argparse_main() -> None:  # pragma: no cover - used in minimal installation
         ), indent=2))
     elif args.command == "export-tables":
         export_paper_tables(Path(args.input), Path(args.output))
+        print(args.output)
+    elif args.command == "combined-eval":
+        export_combined_evaluation(
+            Path(args.output),
+            Path(args.main_csv),
+            case_study_csv=Path(args.case_study_csv)
+            if args.case_study_csv else None,
+            c2rust_csv=Path(args.c2rust_csv) if args.c2rust_csv else None,
+            llm_smoke_csv=Path(args.llm_smoke_csv) if args.llm_smoke_csv else None,
+        )
         print(args.output)
     elif args.command == "latest-run":
         run = latest_run(Path(args.output))

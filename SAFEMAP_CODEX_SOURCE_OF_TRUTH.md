@@ -181,7 +181,7 @@ baseline/reference lane, and fully safe acceptance is reported separately from
 unsafe reduction. Current local validation passes:
 
 ```text
-83 passed
+84 passed
 ```
 
 The current SafeMAP-only final-evaluation snapshot over `examples/` is:

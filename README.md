@@ -86,7 +86,7 @@ As of the current local validation pass:
 
 | Area | Current status |
 |---|---|
-| Test suite | `83 passed` |
+| Test suite | `84 passed` |
 | MVP benchmark examples | `40` example projects under `examples/` |
 | SafeMAP-only final eval | `37 / 76` eligible units accepted |
 | Supported examples with differential pass | `36` |
@@ -94,7 +94,7 @@ As of the current local validation pass:
 | C2Rust-only baseline | `0 / 76` fully safe accepted units under SafeMAP's strict safe-acceptance policy |
 | LLM smoke test | Ollama `llm_only` on `simple_sum` compiled and differential-passed; full LLM baseline remains latency/model dependent |
 | Accepted final Rust policy | `#![forbid(unsafe_code)]`, no unsafe blocks/functions, no raw-pointer public API |
-| Benchmark table export | `benchmark_results.csv`, `benchmark_results.md`, `paper_tables.md`, `manifest.json`, including Miri reason/count/diagnostic fields |
+| Benchmark table export | `benchmark_results.csv`, `benchmark_results.md`, `paper_tables.md`, `manifest.json`, plus combined evaluation summary |
 
 The most recent SafeMAP-only final evaluation was verified locally with:
 
@@ -131,6 +131,18 @@ Observed case-study result:
 rows: 5
 safemap_full accepted units: 15 / 20
 all 5 case-study modules passed differential testing
+```
+
+After generating the benchmark, case-study, C2Rust baseline, and LLM smoke CSVs,
+combine paper-facing results with:
+
+```bash
+python -m safemap.cli combined-eval \
+  --output reports/combined_evaluation.md \
+  --main-csv reports/final/benchmark_results.csv \
+  --case-study-csv reports/case-studies/benchmark_results.csv \
+  --c2rust-csv /tmp/safemap-c2rust-only-40/benchmark_results.csv \
+  --llm-smoke-csv /tmp/safemap-llm-smoke.csv
 ```
 
 ## Repository Layout
@@ -374,7 +386,7 @@ python -m compileall -q safemap
 Current expected test result:
 
 ```text
-83 passed
+84 passed
 ```
 
 ## Git Hygiene

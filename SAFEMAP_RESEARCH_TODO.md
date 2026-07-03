@@ -143,7 +143,7 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 - Test suite currently passes:
 
   ```text
-  83 passed
+  84 passed
   ```
 
 - Added tests for:
@@ -266,6 +266,10 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   - compile passed
   - differential testing passed
   - one row required several minutes locally, so full LLM evaluation remains deferred
+- Added combined paper-facing evaluation summary:
+  - command: `python -m safemap.cli combined-eval`
+  - output: `reports/combined_evaluation.md`
+  - includes SafeMAP microbenchmarks, case studies, C2Rust baseline, and LLM smoke rows
 - Remaining final-paper evaluation work:
   - `llm_only`
   - `c2rust_llm_unguided`

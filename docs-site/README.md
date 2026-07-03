@@ -24,7 +24,7 @@ No build step is required.
 
 Current documentation snapshot:
 
-- test suite: `83 passed`
+- test suite: `84 passed`
 - benchmark examples: `40`
 - SafeMAP-only final eval: `37 / 76` accepted eligible units
 - case studies: `5` modules, `15 / 20` accepted eligible units
@@ -47,3 +47,13 @@ After pushing to GitHub:
 4. Push to `main` or manually run the **Deploy Docs Site** workflow.
 
 The workflow publishes the contents of `docs-site` as the Pages site.
+
+## Troubleshooting
+
+If deployment fails with `Multiple artifacts named "github-pages"`, rerun after
+this workflow change is pushed. The workflow uses an explicit artifact name,
+`safemap-docs-pages`, so `actions/deploy-pages` does not collide with another
+default Pages artifact created in the same run.
+
+Node deprecation warnings from GitHub-hosted actions are not the deployment
+failure in that case; the duplicate Pages artifact is.

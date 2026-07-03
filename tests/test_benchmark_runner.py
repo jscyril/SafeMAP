@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from safemap.benchmarks.benchmark_runner import (
+    export_combined_evaluation,
     export_paper_tables,
     run_final_evaluation,
     _failure_summary_rows,
@@ -163,6 +164,39 @@ def test_export_paper_tables_from_benchmark_csv(tmp_path: Path) -> None:
     assert "| safemap_full | 1 | `completed`: 1 | 1 | 2 | 0.500 |" in text
     assert "| safemap_full | output_parameter | 1 | 1 | 1.000 |" in text
     assert "| safemap_full | unsupported | 1 |" in text
+
+
+def test_export_combined_evaluation_summary(tmp_path: Path) -> None:
+    main_csv = tmp_path / "main.csv"
+    main_csv.write_text(
+        (
+            "project,mode,eligible_units,fully_safe_accepted_units,"
+            "safemap_differential_status\n"
+            "a,safemap_full,2,1,passed\n"
+            "b,safemap_full,3,2,failed\n"
+        ),
+        encoding="utf-8",
+    )
+    case_csv = tmp_path / "case.csv"
+    case_csv.write_text(
+        (
+            "project,mode,eligible_units,fully_safe_accepted_units,"
+            "safemap_differential_status\n"
+            "case,safemap_full,4,3,passed\n"
+        ),
+        encoding="utf-8",
+    )
+    output = tmp_path / "combined.md"
+
+    text = export_combined_evaluation(
+        output,
+        main_csv,
+        case_study_csv=case_csv,
+    )
+
+    assert output.read_text(encoding="utf-8") == text
+    assert "| Microbenchmarks | safemap_full | 2 | 3 | 5 | 0.600 | 1 |" in text
+    assert "| Case studies | safemap_full | 1 | 3 | 4 | 0.750 | 1 |" in text
 
 
 def test_run_final_evaluation_writes_durable_artifacts(tmp_path: Path) -> None:

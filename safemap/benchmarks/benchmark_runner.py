@@ -200,6 +200,43 @@ def export_paper_tables(input_csv: Path, output_md: Path) -> str:
     return text
 
 
+def export_combined_evaluation(
+    output_md: Path,
+    main_csv: Path,
+    case_study_csv: Path | None = None,
+    c2rust_csv: Path | None = None,
+    llm_smoke_csv: Path | None = None,
+) -> str:
+    sections = [
+        "# SafeMAP Combined Evaluation Summary",
+        "",
+        "## Evaluation Overview",
+        "",
+        "| Dataset | Mode | Rows | Accepted Units | Eligible Units | Acceptance Rate | Differential Passed | Notes |",
+        "|---|---|---:|---:|---:|---:|---:|---|",
+    ]
+    sections.extend(_combined_summary_rows([
+        ("Microbenchmarks", main_csv, "SafeMAP fully safe output"),
+        ("Case studies", case_study_csv, "Authored module-shaped case studies"),
+        ("C2Rust baseline", c2rust_csv, "Strict SafeMAP acceptance applied to raw C2Rust baseline"),
+        ("LLM smoke", llm_smoke_csv, "Bounded local Ollama smoke test"),
+    ]))
+    sections.extend([
+        "",
+        "## Interpretation",
+        "",
+        "- Accepted units are counted only when the final Rust output satisfies SafeMAP's fully safe policy.",
+        "- C2Rust baseline rows are not treated as SafeMAP success unless they satisfy the same no-unsafe/no-raw-pointer policy.",
+        "- LLM smoke results are latency/model dependent and should not be generalized to the full benchmark suite.",
+        "- Unsupported C constructs are reported as explicit outcomes rather than crashes.",
+        "",
+    ])
+    text = "\n".join(sections)
+    output_md.parent.mkdir(parents=True, exist_ok=True)
+    output_md.write_text(text, encoding="utf-8")
+    return text
+
+
 def run_final_evaluation(
     benchmarks: Path,
     output_dir: Path,
@@ -231,6 +268,47 @@ def run_final_evaluation(
         encoding="utf-8",
     )
     return manifest
+
+
+def _combined_summary_rows(
+    inputs: list[tuple[str, Path | None, str]],
+) -> list[str]:
+    rows: list[str] = []
+    for dataset, path, note in inputs:
+        if path is None:
+            continue
+        csv_rows = _read_csv_if_exists(path)
+        if not csv_rows:
+            rows.append(f"| {dataset} | unavailable | 0 | 0 | 0 | 0.000 | 0 | {note} |")
+            continue
+        for mode in sorted({row.get("mode", "") for row in csv_rows}):
+            mode_rows = [row for row in csv_rows if row.get("mode", "") == mode]
+            accepted = sum(_int(row.get("fully_safe_accepted_units")) for row in mode_rows)
+            eligible = sum(_int(row.get("eligible_units")) for row in mode_rows)
+            differential = sum(
+                1 for row in mode_rows
+                if row.get("safemap_differential_status") == "passed"
+            )
+            rate = accepted / eligible if eligible else 0.0
+            rows.append(
+                f"| {dataset} | {mode} | {len(mode_rows)} | {accepted} | "
+                f"{eligible} | {rate:.3f} | {differential} | {note} |"
+            )
+    return rows
+
+
+def _read_csv_if_exists(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as handle:
+        return list(csv.DictReader(handle))
+
+
+def _int(value: object) -> int:
+    try:
+        return int(float(str(value or 0)))
+    except ValueError:
+        return 0
 
 
 def _rust_loc(root: Path) -> int:
