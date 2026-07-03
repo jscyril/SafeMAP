@@ -1,0 +1,7 @@
+{
+  "primary_function": "read_or_zero",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["nullable_pointer"],
+  "expected_safe_rust_behavior": "read_or_zero(Some(&11)) returns 11 and read_or_zero(None) returns 0"
+}

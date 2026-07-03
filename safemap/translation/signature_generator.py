@@ -15,6 +15,7 @@ C_TO_RUST = {
     "unsigned char": "u8",
     "float": "f32",
     "double": "f64",
+    "size_t": "usize",
     "void": "()",
 }
 
@@ -64,7 +65,9 @@ def generate_signature(function: FunctionInfo) -> str:
         "int", "unsigned int", "long", "short",
     }:
         return_type = "bool"
-    if "*" in function.return_type and any(
+    if "*" in function.return_type and _is_vec_allocation(function):
+        return_type = f"Vec<{rust_type(function.return_type)}>"
+    elif "*" in function.return_type and any(
         item.idiom_type == "manual_allocation" for item in function.idioms
     ):
         return_type = f"Box<{rust_type(function.return_type)}>"
@@ -89,4 +92,15 @@ def _is_direct_output(name: str, function: FunctionInfo) -> bool:
     return (
         re.search(rf"\*\s*{escaped}\s*=", function.body) is not None
         and re.search(rf"\*\s*{escaped}\s*(?:[+\-*/]=|\+\+|--)", function.body) is None
+    )
+
+
+def _is_vec_allocation(function: FunctionInfo) -> bool:
+    return (
+        "*" in function.return_type
+        and any(item.idiom_type == "manual_allocation" for item in function.idioms)
+        and re.search(r"\b(?:malloc|calloc)\s*\([^;]*(?:len|length|size|count|n)\b", function.body)
+        is not None
+        and re.search(r"\b[A-Za-z_]\w*\s*\[\s*[A-Za-z_]\w*\s*\]\s*=", function.body)
+        is not None
     )

@@ -1,0 +1,7 @@
+{
+  "primary_function": "double_in_place",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["output_parameter"],
+  "expected_safe_rust_behavior": "double_in_place(&mut 7) mutates the value to 14"
+}

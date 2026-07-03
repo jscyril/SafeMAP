@@ -1,0 +1,7 @@
+{
+  "primary_function": "remainder_value",
+  "expected_eligibility": "safe_translatable",
+  "expected_plan_status": "planned",
+  "expected_patterns": [],
+  "expected_safe_rust_behavior": "remainder_value(20, 6) returns 2"
+}

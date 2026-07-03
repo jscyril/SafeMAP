@@ -1,0 +1,7 @@
+{
+  "primary_function": "double_value",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["output_parameter"],
+  "expected_safe_rust_behavior": "double_value(7) returns 14"
+}

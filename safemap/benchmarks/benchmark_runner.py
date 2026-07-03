@@ -43,6 +43,8 @@ def run_benchmarks(
                 validation = _read_json_if_exists(store.path("validation/results.json"))
                 differential = validation.get("differential", {}) if validation else {}
                 miri = validation.get("miri", {}) if validation else {}
+                miri_passed = miri.get("passed")
+                miri_failed = miri.get("failed")
                 row_status, row_reason = _row_status(mode.name, metrics, store)
                 idiom_success_counts = _idiom_success_counts(store, metrics)
                 rows.append({
@@ -82,6 +84,10 @@ def run_benchmarks(
                     "safemap_raw_pointers": final.get("raw_pointer_types"),
                     "clippy_warnings": "",
                     "miri_status": miri.get("status"),
+                    "miri_reason": miri.get("reason"),
+                    "miri_passed": miri_passed if miri_passed is not None else "",
+                    "miri_failed": miri_failed if miri_failed is not None else "",
+                    "miri_diagnostics": _diagnostic_summary(miri.get("errors", [])),
                     "differential_pass_rate": metrics.get("differential_pass_rate"),
                     "repair_attempts": metrics.get("repair_attempts", 0),
                     "llm_calls": metrics.get("llm_calls", 0),
@@ -103,7 +109,8 @@ def run_benchmarks(
         "loc_rust_safemap", "c2rust_compile", "safemap_compile", "c2rust_tests",
         "safemap_tests", "safemap_differential_status", "c2rust_unsafe_blocks",
         "safemap_unsafe_blocks", "c2rust_raw_pointers", "safemap_raw_pointers",
-        "clippy_warnings", "miri_status", "differential_pass_rate",
+        "clippy_warnings", "miri_status", "miri_reason", "miri_passed",
+        "miri_failed", "miri_diagnostics", "differential_pass_rate",
         "repair_attempts", "llm_calls", "llm_input_tokens", "llm_output_tokens",
     ]
     with output_csv.open("w", newline="", encoding="utf-8") as handle:
@@ -127,17 +134,18 @@ def run_benchmarks(
         "",
         "## Project Results",
         "",
-        "| Project | Mode | Status | Accepted | Acceptance Rate | Differential |",
-        "|---|---|---|---:|---:|---|",
+        "| Project | Mode | Status | Accepted | Acceptance Rate | Differential | Miri |",
+        "|---|---|---|---:|---:|---|---|",
     ]
     summary.extend(
-        "| {project} | {mode} | {status} | {accepted} | {rate} | {diff} |".format(
+        "| {project} | {mode} | {status} | {accepted} | {rate} | {diff} | {miri} |".format(
             project=row.get("project", ""),
             mode=row.get("mode", ""),
             status=row.get("status", ""),
             accepted=row.get("fully_safe_accepted_units", ""),
             rate=row.get("fully_safe_translation_unit_acceptance_rate", ""),
             diff=row.get("safemap_differential_status", ""),
+            miri=row.get("miri_status", ""),
         )
         for row in rows
     )
@@ -171,17 +179,18 @@ def export_paper_tables(input_csv: Path, output_md: Path) -> str:
         "",
         "## Project Results",
         "",
-        "| Project | Mode | Status | Accepted | Acceptance Rate | Differential |",
-        "|---|---|---|---:|---:|---|",
+        "| Project | Mode | Status | Accepted | Acceptance Rate | Differential | Miri |",
+        "|---|---|---|---:|---:|---|---|",
     ]
     summary.extend(
-        "| {project} | {mode} | {status} | {accepted} | {rate} | {diff} |".format(
+        "| {project} | {mode} | {status} | {accepted} | {rate} | {diff} | {miri} |".format(
             project=row.get("project", ""),
             mode=row.get("mode", ""),
             status=row.get("status", ""),
             accepted=row.get("fully_safe_accepted_units", ""),
             rate=row.get("fully_safe_translation_unit_acceptance_rate", ""),
             diff=row.get("safemap_differential_status", ""),
+            miri=row.get("miri_status", ""),
         )
         for row in rows
     )
@@ -234,6 +243,20 @@ def _rust_loc(root: Path) -> int:
         if root.exists()
         else 0
     )
+
+
+def _diagnostic_summary(errors: list[dict[str, object]]) -> str:
+    parts = []
+    for error in errors[:3]:
+        location = ""
+        if error.get("file"):
+            location = str(error["file"])
+            if error.get("line"):
+                location += f":{error['line']}"
+        message = str(error.get("message") or "").strip()
+        level = str(error.get("level") or "diagnostic")
+        parts.append(f"{level}: {message}" + (f" ({location})" if location else ""))
+    return " | ".join(parts)
 
 
 def _read_json_if_exists(path: Path) -> dict:

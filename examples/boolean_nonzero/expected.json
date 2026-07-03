@@ -1,0 +1,7 @@
+{
+  "primary_function": "is_nonzero",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["boolean_int"],
+  "expected_safe_rust_behavior": "is_nonzero(8) returns true and is_nonzero(0) returns false"
+}

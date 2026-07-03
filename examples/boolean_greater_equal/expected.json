@@ -1,0 +1,7 @@
+{
+  "primary_function": "is_at_least",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["boolean_int"],
+  "expected_safe_rust_behavior": "is_at_least(8, 4) returns true and is_at_least(3, 7) returns false"
+}

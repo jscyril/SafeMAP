@@ -50,6 +50,8 @@ def _synthesize_function(function: FunctionInfo, plan: MigrationPlan) -> str | N
         return _boolean_int_function(body, signature)
     if _is_simple_return(function):
         return _simple_return_function(body, signature)
+    if _is_simple_vec_allocation(function):
+        return _simple_vec_allocation_function(function, signature)
     if _is_simple_box_allocation(function):
         return _simple_box_allocation_function(function, signature)
     if _is_mutable_scalar_update(function):
@@ -67,6 +69,8 @@ def _synthesize_function(function: FunctionInfo, plan: MigrationPlan) -> str | N
     if _is_slice_sum(function):
         return f"{signature} {{\n    arr.iter().copied().sum()\n}}"
     if _is_slice_max(function):
+        if "Result<" not in signature:
+            return f"{signature} {{\n    arr.iter().copied().max().unwrap()\n}}"
         return (
             f"{signature} {{\n"
             "    if arr.is_empty() {\n"
@@ -94,7 +98,7 @@ def _simple_return_function(body: str, signature: str) -> str | None:
         return None
     expr = _c_expr_to_rust(returned.group(1))
     if not re.fullmatch(
-        r"[A-Za-z_]\w*(?:\s*[-+*/]\s*(?:[A-Za-z_]\w*|-?\d+))*|-?\d+",
+        r"[A-Za-z_]\w*(?:\s*[-+*/%]\s*(?:[A-Za-z_]\w*|-?\d+))*|-?\d+",
         expr,
     ):
         return None
@@ -136,6 +140,44 @@ def _simple_box_allocation_function(function: FunctionInfo, signature: str) -> s
         return None
     value = assignment.group(2)
     return f"{signature} {{\n    Box::new({value})\n}}"
+
+
+def _is_simple_vec_allocation(function: FunctionInfo) -> bool:
+    return (
+        "*" in function.return_type
+        and any(item.idiom_type == "manual_allocation" for item in function.idioms)
+        and re.search(r"\b(?:malloc|calloc)\s*\([^;]*(?:len|length|size|count|n)\b", function.body)
+        is not None
+        and re.search(
+            r"\b([A-Za-z_]\w*)\s*\[\s*([A-Za-z_]\w*)\s*\]\s*=\s*\2\s*;",
+            function.body,
+        )
+        and re.search(r"\breturn\s+[A-Za-z_]\w*\s*;", function.body)
+    )
+
+
+def _simple_vec_allocation_function(function: FunctionInfo, signature: str) -> str | None:
+    if "Vec<" not in signature:
+        return None
+    length = _length_parameter(function)
+    if length is None:
+        return None
+    return (
+        f"{signature} {{\n"
+        f"    let len = {length}.max(0) as usize;\n"
+        "    (0..len).map(|value| value as i32).collect()\n"
+        "}"
+    )
+
+
+def _length_parameter(function: FunctionInfo) -> str | None:
+    for parameter in function.parameters:
+        if (
+            not parameter.is_pointer
+            and re.search(r"(?:len|length|size|count|n)$", parameter.name, re.I)
+        ):
+            return parameter.name
+    return None
 
 
 def _is_mutable_scalar_update(function: FunctionInfo) -> bool:
@@ -348,17 +390,36 @@ def _c_string_length_function(function: FunctionInfo, signature: str) -> str | N
     if match is None:
         return None
     parameter = match.group(1)
-    cast = " as i32" if signature.endswith("-> i32") else ""
+    cast = ""
+    if signature.endswith("-> i32"):
+        cast = " as i32"
+    elif signature.endswith("-> i64"):
+        cast = " as i64"
     return f"{signature} {{\n    {parameter}.len(){cast}\n}}"
 
 
 def _c_expr_to_rust(expression: str) -> str:
-    return re.sub(r"\s+", " ", expression.strip())
+    compact = re.sub(r"\s+", " ", expression.strip())
+    ternary = re.fullmatch(
+        r"([A-Za-z_]\w*)\s*([<>])\s*([A-Za-z_]\w*)\s*\?\s*([A-Za-z_]\w*)\s*:\s*([A-Za-z_]\w*)",
+        compact,
+    )
+    if ternary:
+        left, operator, right, when_true, when_false = ternary.groups()
+        if operator == "<" and when_true == left and when_false == right:
+            return f"{left}.min({right})"
+        if operator == "<" and when_true == right and when_false == left:
+            return f"{left}.max({right})"
+        if operator == ">" and when_true == left and when_false == right:
+            return f"{left}.max({right})"
+        if operator == ">" and when_true == right and when_false == left:
+            return f"{left}.min({right})"
+    return compact
 
 
 def _is_supported_expr(expression: str) -> bool:
     return re.fullmatch(
-        r"[A-Za-z_]\w*(?:\s*[-+*/%]\s*(?:[A-Za-z_]\w*|-?\d+))*|-?\d+",
+        r"[A-Za-z_]\w*(?:\s*[-+*/%]\s*(?:[A-Za-z_]\w*|-?\d+))*|-?\d+|[A-Za-z_]\w*\.(?:min|max)\([A-Za-z_]\w*\)",
         expression,
     ) is not None
 

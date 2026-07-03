@@ -64,8 +64,9 @@ Supported MVP idioms include:
 - nullable pointers to `Option<&T>` or `Option<&mut T>`
 - mutable scalar pointer updates to `&mut T`
 - simple C string input to `&str`
+- simple local allocation buffers to `Vec<T>`
 - single owned allocation to `Box<T>`
-- simple allocation idioms in analysis/planning and reporting
+- broader allocation idioms in analysis/planning and reporting
 
 Unsupported or manual-review constructs include:
 
@@ -85,27 +86,27 @@ As of the current local validation pass:
 
 | Area | Current status |
 |---|---|
-| Test suite | `65 passed` |
-| MVP benchmark examples | `15` example projects under `examples/` |
-| SafeMAP-only final eval | `12 / 26` eligible units accepted |
-| Supported examples with differential pass | `11` |
+| Test suite | `82 passed` |
+| MVP benchmark examples | `40` example projects under `examples/` |
+| SafeMAP-only final eval | `37 / 76` eligible units accepted |
+| Supported examples with differential pass | `36` |
 | Accepted final Rust policy | `#![forbid(unsafe_code)]`, no unsafe blocks/functions, no raw-pointer public API |
-| Benchmark table export | `benchmark_results.csv`, `benchmark_results.md`, `paper_tables.md`, `manifest.json` |
+| Benchmark table export | `benchmark_results.csv`, `benchmark_results.md`, `paper_tables.md`, `manifest.json`, including Miri reason/count/diagnostic fields |
 
 The most recent SafeMAP-only final evaluation was verified locally with:
 
 ```bash
 python -m safemap.cli final-eval \
   --benchmarks examples \
-  --output /tmp/safemap-final-eval-diagnostics \
+  --output /tmp/safemap-final-eval-40-benchmarks \
   --mode safemap_full
 ```
 
 Observed result:
 
 ```text
-rows: 15
-safemap_full accepted units: 12 / 26
+rows: 40
+safemap_full accepted units: 37 / 76
 ```
 
 The intentionally unsupported benchmark examples are still reported separately
@@ -353,7 +354,7 @@ python -m compileall -q safemap
 Current expected test result:
 
 ```text
-65 passed
+82 passed
 ```
 
 ## Git Hygiene

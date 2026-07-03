@@ -1,0 +1,7 @@
+{
+  "primary_function": "multiply",
+  "expected_eligibility": "safe_translatable",
+  "expected_plan_status": "planned",
+  "expected_patterns": [],
+  "expected_safe_rust_behavior": "multiply(6, 7) returns 42"
+}

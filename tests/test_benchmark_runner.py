@@ -180,7 +180,11 @@ def test_run_final_evaluation_writes_durable_artifacts(tmp_path: Path) -> None:
     )
 
     assert manifest["rows"] == 1
-    assert (tmp_path / "final" / "benchmark_results.csv").exists()
+    csv_text = (tmp_path / "final" / "benchmark_results.csv").read_text(
+        encoding="utf-8"
+    )
+    assert "miri_reason" in csv_text.splitlines()[0]
+    assert "miri_diagnostics" in csv_text.splitlines()[0]
     assert (tmp_path / "final" / "benchmark_results.md").exists()
     assert (tmp_path / "final" / "paper_tables.md").exists()
     assert (tmp_path / "final" / "manifest.json").exists()

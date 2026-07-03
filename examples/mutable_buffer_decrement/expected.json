@@ -1,0 +1,7 @@
+{
+  "primary_function": "decrement_all",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["pointer_length_array"],
+  "expected_safe_rust_behavior": "decrement_all(&mut [4, 5, 6]) mutates the slice to [3, 4, 5]"
+}

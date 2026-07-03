@@ -76,15 +76,15 @@
 
           <div class="hero-panel" aria-label="SafeMAP quick facts">
             <div>
-              <span class="metric-value">65</span>
+              <span class="metric-value">82</span>
               <span class="metric-label">passing tests</span>
             </div>
             <div>
-              <span class="metric-value">12/26</span>
+              <span class="metric-value">37/76</span>
               <span class="metric-label">SafeMAP-only accepted eligible units</span>
             </div>
             <div>
-              <span class="metric-value">15</span>
+              <span class="metric-value">40</span>
               <span class="metric-label">MVP benchmark examples</span>
             </div>
           </div>
@@ -324,7 +324,7 @@
             </article>
             <article>
               <h3>Manual allocation</h3>
-              <p>Single owned allocations can synthesize <code>Box&lt;T&gt;</code>; broader allocation cases are reported.</p>
+              <p>Simple owned allocations synthesize <code>Box&lt;T&gt;</code>; simple allocation buffers synthesize <code>Vec&lt;T&gt;</code>.</p>
             </article>
             <article>
               <h3>C strings</h3>
@@ -580,6 +580,90 @@ python -m safemap.cli report --workdir work</code></pre>
                 <td>Translates a simple owned allocation to <code>Box&lt;i32&gt;</code>.</td>
               </tr>
               <tr>
+                <td><code>malloc_vec</code></td>
+                <td>Translates a simple allocated sequence buffer to <code>Vec&lt;i32&gt;</code>.</td>
+              </tr>
+              <tr>
+                <td><code>simple_subtract</code></td>
+                <td>Adds a second scalar arithmetic shape.</td>
+              </tr>
+              <tr>
+                <td><code>simple_multiply</code></td>
+                <td>Adds a third scalar arithmetic shape.</td>
+              </tr>
+              <tr>
+                <td><code>simple_divide</code>, <code>simple_modulo</code></td>
+                <td>Add division and remainder scalar arithmetic shapes over defined nonzero divisors.</td>
+              </tr>
+              <tr>
+                <td><code>boolean_negative</code></td>
+                <td>Adds a second integer-to-<code>bool</code> comparison shape.</td>
+              </tr>
+              <tr>
+                <td><code>boolean_nonzero</code></td>
+                <td>Adds nonzero integer testing as a <code>bool</code> migration shape.</td>
+              </tr>
+              <tr>
+                <td><code>boolean_greater_equal</code>, <code>boolean_less_equal</code></td>
+                <td>Add threshold comparisons to the integer-to-<code>bool</code> benchmark family.</td>
+              </tr>
+              <tr>
+                <td><code>array_max</code></td>
+                <td>Translates a read-only pointer-length max scan to slice iteration.</td>
+              </tr>
+              <tr>
+                <td><code>array_total</code></td>
+                <td>Adds a second pointer-length sum accumulator shape.</td>
+              </tr>
+              <tr>
+                <td><code>mutable_buffer_decrement</code></td>
+                <td>Translates a mutable pointer-length decrement to mutable slice iteration.</td>
+              </tr>
+              <tr>
+                <td><code>mutable_buffer_add_two</code>, <code>mutable_buffer_subtract_two</code></td>
+                <td>Add constant-offset mutable buffer updates.</td>
+              </tr>
+              <tr>
+                <td><code>min_max_outputs</code></td>
+                <td>Translates paired output parameters and C ternary min/max expressions to a tuple return.</td>
+              </tr>
+              <tr>
+                <td><code>sum_diff_outputs</code></td>
+                <td>Translates arithmetic output parameters to a tuple return.</td>
+              </tr>
+              <tr>
+                <td><code>output_square</code>, <code>output_double</code></td>
+                <td>Add direct output-parameter returns for scalar arithmetic expressions.</td>
+              </tr>
+              <tr>
+                <td><code>simple_pointer_decrement</code></td>
+                <td>Translates scalar pointer decrement to a mutable reference update.</td>
+              </tr>
+              <tr>
+                <td><code>simple_pointer_double</code></td>
+                <td>Adds scalar pointer multiplication assignment.</td>
+              </tr>
+              <tr>
+                <td><code>nullable_pointer_zero</code></td>
+                <td>Translates a nullable input pointer with zero fallback to <code>Option</code>.</td>
+              </tr>
+              <tr>
+                <td><code>string_length_size_t</code></td>
+                <td>Translates a <code>size_t</code> C string length return to <code>usize</code>.</td>
+              </tr>
+              <tr>
+                <td><code>string_length_long</code></td>
+                <td>Translates a C string length returned as <code>long</code> to <code>i64</code>.</td>
+              </tr>
+              <tr>
+                <td><code>error_code_product</code></td>
+                <td>Adds an error-code plus output-parameter multiplication case.</td>
+              </tr>
+              <tr>
+                <td><code>malloc_free_constant</code></td>
+                <td>Adds a constant owned-allocation case to the <code>Box&lt;T&gt;</code> family.</td>
+              </tr>
+              <tr>
                 <td><code>simple_pointer</code></td>
                 <td>Translates a scalar mutable pointer update to <code>&amp;mut i32</code>.</td>
               </tr>
@@ -608,9 +692,9 @@ python -m safemap.cli report --workdir work</code></pre>
 
           <h3>Current SafeMAP-only snapshot</h3>
           <ul>
-            <li><code>15</code> benchmark rows.</li>
-            <li><code>12 / 26</code> eligible units accepted.</li>
-            <li><code>11</code> supported examples pass differential testing.</li>
+            <li><code>40</code> benchmark rows.</li>
+            <li><code>37 / 76</code> eligible units accepted.</li>
+            <li><code>36</code> supported examples pass differential testing.</li>
             <li>Accepted units contain no unsafe blocks/functions and expose no raw-pointer public API.</li>
           </ul>
 
@@ -684,7 +768,9 @@ python -m safemap.cli report --workdir work</code></pre>
           <p>
             Missing <code>cargo miri</code> is reported as unsupported with guidance
             to run <code>rustup component add miri</code> or disable
-            <code>validation.run_miri</code>.
+            <code>validation.run_miri</code>. When Miri runs, SafeMAP records
+            pass/fail counts and concise diagnostics in <code>validation/results.json</code>
+            and benchmark exports.
           </p>
 
           <h3>Inspecting final evaluation runs</h3>

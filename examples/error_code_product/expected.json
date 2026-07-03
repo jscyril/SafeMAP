@@ -1,0 +1,7 @@
+{
+  "primary_function": "multiply_checked",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["error_code_return", "output_parameter"],
+  "expected_safe_rust_behavior": "multiply_checked(6, 7) returns Ok(42) and multiply_checked(6, 0) returns Err(-2)"
+}

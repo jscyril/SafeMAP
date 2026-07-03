@@ -143,7 +143,7 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 - Test suite currently passes:
 
   ```text
-  65 passed
+  82 passed
   ```
 
 - Added tests for:
@@ -159,6 +159,7 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   - benchmark status, mode filtering, paper-table export, and aggregate table generation
   - final evaluation artifact generation and run summaries
   - LLM, C2Rust, and Miri diagnostic classification
+  - Miri pass/fail count parsing and benchmark export fields
 
 ## Current Known Limitations
 
@@ -184,16 +185,41 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 - Status: completed for the MVP paper dataset.
 - Benchmark examples under `examples/` now include:
   - `simple_sum`
+  - `simple_subtract`
+  - `simple_multiply`
+  - `simple_divide`
+  - `simple_modulo`
   - `boolean_int`
+  - `boolean_negative`
+  - `boolean_nonzero`
+  - `boolean_greater_equal`
+  - `boolean_less_equal`
   - `pointer_length_array`
+  - `array_max`
+  - `array_total`
   - `mutable_buffer`
+  - `mutable_buffer_decrement`
+  - `mutable_buffer_add_two`
+  - `mutable_buffer_subtract_two`
   - `multiple_outputs`
+  - `min_max_outputs`
+  - `sum_diff_outputs`
+  - `output_square`
+  - `output_double`
   - `simple_pointer`
+  - `simple_pointer_decrement`
+  - `simple_pointer_double`
   - `string_length`
+  - `string_length_size_t`
+  - `string_length_long`
   - `output_parameter`
   - `nullable_pointer`
+  - `nullable_pointer_zero`
   - `error_code`
+  - `error_code_product`
   - `malloc_free`
+  - `malloc_free_constant`
+  - `malloc_vec`
   - `unsupported_union`
   - `unsupported_function_pointer`
   - `unsupported_volatile`
@@ -217,9 +243,9 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   ```
 
 - Observed SafeMAP-only summary:
-  - 15 benchmark rows
-  - `safemap_full`: 12 accepted units out of 26 eligible units
-  - 11 supported MVP examples pass differential testing
+  - 40 benchmark rows
+  - `safemap_full`: 37 accepted units out of 76 eligible units
+  - 36 supported MVP examples pass differential testing
   - unsupported examples are rejected or reported separately
 - Remaining final-paper evaluation work:
   - `c2rust_only`
@@ -242,6 +268,7 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   - multiple output parameters returned as tuples
   - simple C string inputs translated to `&str`
   - simple allocation/`Box<T>` examples
+  - simple allocation-buffer/`Vec<T>` examples
 - Remaining:
   - multi-function/project-level harnesses beyond the MVP examples
 
@@ -320,8 +347,7 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 
 - Add more deterministic translation patterns:
   - mutable buffer normalization
-  - simple `malloc/free` local buffer to `Vec<T>`
-  - single owned allocation to `Box<T>`
+  - additional allocation and initialization shapes beyond the current `Vec<T>` and `Box<T>` cases
   - simple string parsing to `Result`
 
 ### Stronger Analysis
@@ -335,7 +361,7 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 ### Validation Improvements
 
 - Generate Rust unit tests from C examples.
-- Add richer Miri result details when Miri is installed and enabled.
+- Add project-specific validation failure summaries in reports and CLI output.
 
 ### C2Rust Baseline Cleanup
 

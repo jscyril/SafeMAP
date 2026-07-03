@@ -1,0 +1,7 @@
+{
+  "primary_function": "string_length_long",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["c_string"],
+  "expected_safe_rust_behavior": "string_length_long(\"hello\") returns 5"
+}

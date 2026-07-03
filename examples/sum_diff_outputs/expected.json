@@ -1,0 +1,7 @@
+{
+  "primary_function": "sum_diff_pair",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["output_parameter", "output_parameter"],
+  "expected_safe_rust_behavior": "sum_diff_pair(9, 4) returns (13, 5)"
+}

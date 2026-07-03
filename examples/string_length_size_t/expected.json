@@ -1,0 +1,7 @@
+{
+  "primary_function": "byte_len",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["c_string"],
+  "expected_safe_rust_behavior": "byte_len(\"hello\") returns 5"
+}

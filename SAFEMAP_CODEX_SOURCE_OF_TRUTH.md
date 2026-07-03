@@ -181,15 +181,15 @@ baseline/reference lane, and fully safe acceptance is reported separately from
 unsafe reduction. Current local validation passes:
 
 ```text
-65 passed
+82 passed
 ```
 
 The current SafeMAP-only final-evaluation snapshot over `examples/` is:
 
 ```text
-15 benchmark rows
-12 accepted eligible units out of 26
-11 supported MVP examples passing differential testing
+40 benchmark rows
+37 accepted eligible units out of 76
+36 supported MVP examples passing differential testing
 ```
 
 The strict rules in this document remain binding: if final Rust still contains
@@ -709,10 +709,13 @@ If Miri is not installed, mark it as:
 
 ```json
 "miri": {
-  "status": "skipped",
-  "reason": "miri_not_installed"
+  "status": "unsupported",
+  "reason": "Miri is not installed for the active Rust toolchain. Install it with `rustup component add miri` or disable validation.run_miri."
 }
 ```
+
+When Miri runs, record pass/fail counts and concise diagnostics, including file
+and line when the output includes a source span.
 
 Do not fail the whole run merely because Miri is missing unless the config explicitly requires it.
 

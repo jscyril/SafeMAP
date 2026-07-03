@@ -1,0 +1,7 @@
+{
+  "primary_function": "total_array",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["pointer_length_array"],
+  "expected_safe_rust_behavior": "total_array(&[2, 4, 6]) returns 12"
+}

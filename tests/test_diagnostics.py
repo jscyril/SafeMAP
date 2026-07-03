@@ -5,7 +5,11 @@ from safemap.translation.c2rust_runner import (
     _diagnose_c2rust_compile_failure,
     _diagnose_c2rust_failure,
 )
-from safemap.validation.miri_runner import _miri_unsupported_reason
+from safemap.validation.miri_runner import (
+    _miri_diagnostics,
+    _miri_test_counts,
+    _miri_unsupported_reason,
+)
 
 
 def test_llm_missing_key_message_names_provider_and_env() -> None:
@@ -63,3 +67,28 @@ def test_miri_missing_component_is_unsupported() -> None:
 
     assert reason is not None
     assert "rustup component add miri" in reason
+
+
+def test_miri_test_counts_are_parsed() -> None:
+    passed, failed = _miri_test_counts(
+        "test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured\n"
+    )
+
+    assert passed == 2
+    assert failed == 1
+
+
+def test_miri_diagnostics_include_location() -> None:
+    diagnostics = _miri_diagnostics(
+        "error: Undefined Behavior: out-of-bounds pointer arithmetic\n"
+        "  --> src/lib.rs:12:9\n"
+        "   |\n"
+        "12 |     *ptr.add(1)\n"
+        "   |     ^^^^^^^^^^^ out-of-bounds pointer arithmetic\n"
+    )
+
+    assert diagnostics[0].level == "error"
+    assert diagnostics[0].message.startswith("Undefined Behavior")
+    assert diagnostics[0].file == "src/lib.rs"
+    assert diagnostics[0].line == 12
+    assert diagnostics[0].column == 9

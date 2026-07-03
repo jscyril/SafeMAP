@@ -153,6 +153,6 @@ def _is_simple_safe_scalar(function) -> bool:
         return False
     return bool(re.search(
         r"\breturn\s+[A-Za-z_]\w*"
-        r"(?:\s*[-+*/]\s*[A-Za-z_]\w*|\s*[-+*/]\s*-?\d+)*\s*;",
+        r"(?:\s*[-+*/%]\s*[A-Za-z_]\w*|\s*[-+*/%]\s*-?\d+)*\s*;",
         function.body,
     ))

@@ -1,0 +1,7 @@
+{
+  "primary_function": "subtract",
+  "expected_eligibility": "safe_translatable",
+  "expected_plan_status": "planned",
+  "expected_patterns": [],
+  "expected_safe_rust_behavior": "subtract(10, 4) returns 6"
+}

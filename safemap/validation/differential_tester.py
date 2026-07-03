@@ -192,10 +192,64 @@ def _c_library_harness_source(
             "        printf(\"%d\\n\", simple_sum(a, b));\n"
             "    }\n"
         ),
+        "simple_subtract": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int a = next_case(&state);\n"
+            "        int b = next_case(&state);\n"
+            "        printf(\"%d\\n\", subtract(a, b));\n"
+            "    }\n"
+        ),
+        "simple_multiply": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int a = next_case(&state);\n"
+            "        int b = next_case(&state);\n"
+            "        printf(\"%d\\n\", multiply(a, b));\n"
+            "    }\n"
+        ),
+        "simple_divide": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int a = next_case(&state);\n"
+            "        int b = ((next_case(&state) + 100) % 19) + 1;\n"
+            "        printf(\"%d\\n\", divide_floor(a, b));\n"
+            "    }\n"
+        ),
+        "simple_modulo": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int a = next_case(&state);\n"
+            "        int b = ((next_case(&state) + 100) % 19) + 1;\n"
+            "        printf(\"%d\\n\", remainder_value(a, b));\n"
+            "    }\n"
+        ),
         "boolean_int": (
             f"    for (int i = 0; i < {cases}; i++) {{\n"
             "        int value = next_case(&state);\n"
             "        printf(\"%d\\n\", is_even(value));\n"
+            "    }\n"
+        ),
+        "boolean_negative": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int value = next_case(&state);\n"
+            "        printf(\"%d\\n\", is_negative(value));\n"
+            "    }\n"
+        ),
+        "boolean_nonzero": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int value = next_case(&state);\n"
+            "        printf(\"%d\\n\", is_nonzero(value));\n"
+            "    }\n"
+        ),
+        "boolean_greater_equal": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int value = next_case(&state);\n"
+            "        int threshold = next_case(&state);\n"
+            "        printf(\"%d\\n\", is_at_least(value, threshold));\n"
+            "    }\n"
+        ),
+        "boolean_less_equal": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int value = next_case(&state);\n"
+            "        int threshold = next_case(&state);\n"
+            "        printf(\"%d\\n\", is_at_most(value, threshold));\n"
             "    }\n"
         ),
         "pointer_length_array": (
@@ -206,12 +260,55 @@ def _c_library_harness_source(
             "        printf(\"%d\\n\", sum_array(arr, len));\n"
             "    }\n"
         ),
+        "array_max": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int arr[8];\n"
+            "        int len = ((next_case(&state) + 100) % 8) + 1;\n"
+            "        for (int j = 0; j < len; j++) arr[j] = next_case(&state);\n"
+            "        printf(\"%d\\n\", array_max(arr, len));\n"
+            "    }\n"
+        ),
+        "array_total": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int arr[8];\n"
+            "        int len = ((next_case(&state) + 100) % 8) + 1;\n"
+            "        for (int j = 0; j < len; j++) arr[j] = next_case(&state);\n"
+            "        printf(\"%d\\n\", total_array(arr, len));\n"
+            "    }\n"
+        ),
         "mutable_buffer": (
             f"    for (int i = 0; i < {cases}; i++) {{\n"
             "        int arr[8];\n"
             "        int len = ((next_case(&state) + 100) % 8) + 1;\n"
             "        for (int j = 0; j < len; j++) arr[j] = next_case(&state);\n"
             "        increment_all(arr, len);\n"
+            "        for (int j = 0; j < len; j++) printf(j + 1 == len ? \"%d\\n\" : \"%d \", arr[j]);\n"
+            "    }\n"
+        ),
+        "mutable_buffer_decrement": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int arr[8];\n"
+            "        int len = ((next_case(&state) + 100) % 8) + 1;\n"
+            "        for (int j = 0; j < len; j++) arr[j] = next_case(&state);\n"
+            "        decrement_all(arr, len);\n"
+            "        for (int j = 0; j < len; j++) printf(j + 1 == len ? \"%d\\n\" : \"%d \", arr[j]);\n"
+            "    }\n"
+        ),
+        "mutable_buffer_add_two": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int arr[8];\n"
+            "        int len = ((next_case(&state) + 100) % 8) + 1;\n"
+            "        for (int j = 0; j < len; j++) arr[j] = next_case(&state);\n"
+            "        add_two_all(arr, len);\n"
+            "        for (int j = 0; j < len; j++) printf(j + 1 == len ? \"%d\\n\" : \"%d \", arr[j]);\n"
+            "    }\n"
+        ),
+        "mutable_buffer_subtract_two": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int arr[8];\n"
+            "        int len = ((next_case(&state) + 100) % 8) + 1;\n"
+            "        for (int j = 0; j < len; j++) arr[j] = next_case(&state);\n"
+            "        subtract_two_all(arr, len);\n"
             "        for (int j = 0; j < len; j++) printf(j + 1 == len ? \"%d\\n\" : \"%d \", arr[j]);\n"
             "    }\n"
         ),
@@ -225,10 +322,60 @@ def _c_library_harness_source(
             "        printf(\"%d %d\\n\", quotient, remainder);\n"
             "    }\n"
         ),
+        "min_max_outputs": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int a = next_case(&state);\n"
+            "        int b = next_case(&state);\n"
+            "        int min_value = 0;\n"
+            "        int max_value = 0;\n"
+            "        min_max_pair(a, b, &min_value, &max_value);\n"
+            "        printf(\"%d %d\\n\", min_value, max_value);\n"
+            "    }\n"
+        ),
+        "sum_diff_outputs": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int a = next_case(&state);\n"
+            "        int b = next_case(&state);\n"
+            "        int sum = 0;\n"
+            "        int diff = 0;\n"
+            "        sum_diff_pair(a, b, &sum, &diff);\n"
+            "        printf(\"%d %d\\n\", sum, diff);\n"
+            "    }\n"
+        ),
+        "output_square": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int value = next_case(&state);\n"
+            "        int out = 0;\n"
+            "        square_value(value, &out);\n"
+            "        printf(\"%d\\n\", out);\n"
+            "    }\n"
+        ),
+        "output_double": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int value = next_case(&state);\n"
+            "        int out = 0;\n"
+            "        double_value(value, &out);\n"
+            "        printf(\"%d\\n\", out);\n"
+            "    }\n"
+        ),
         "simple_pointer": (
             f"    for (int i = 0; i < {cases}; i++) {{\n"
             "        int value = next_case(&state);\n"
             "        increment(&value);\n"
+            "        printf(\"%d\\n\", value);\n"
+            "    }\n"
+        ),
+        "simple_pointer_decrement": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int value = next_case(&state);\n"
+            "        decrement(&value);\n"
+            "        printf(\"%d\\n\", value);\n"
+            "    }\n"
+        ),
+        "simple_pointer_double": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int value = next_case(&state);\n"
+            "        double_in_place(&value);\n"
             "        printf(\"%d\\n\", value);\n"
             "    }\n"
         ),
@@ -237,6 +384,20 @@ def _c_library_harness_source(
             f"    for (int i = 0; i < {cases}; i++) {{\n"
             "        const char *text = values[(next_case(&state) + 100) % 6];\n"
             "        printf(\"%d\\n\", string_length(text));\n"
+            "    }\n"
+        ),
+        "string_length_size_t": (
+            "    const char *values[] = {\"\", \"a\", \"hello\", \"migration\", \"safe rust\", \"abcdefghi\"};\n"
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        const char *text = values[(next_case(&state) + 100) % 6];\n"
+            "        printf(\"%zu\\n\", byte_len(text));\n"
+            "    }\n"
+        ),
+        "string_length_long": (
+            "    const char *values[] = {\"\", \"a\", \"hello\", \"migration\", \"safe rust\", \"abcdefghi\"};\n"
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        const char *text = values[(next_case(&state) + 100) % 6];\n"
+            "        printf(\"%ld\\n\", string_length_long(text));\n"
             "    }\n"
         ),
         "output_parameter": (
@@ -256,6 +417,13 @@ def _c_library_harness_source(
             "        printf(\"%d\\n\", read_value(use_null ? NULL : &value));\n"
             "    }\n"
         ),
+        "nullable_pointer_zero": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int value = next_case(&state);\n"
+            "        int use_null = (next_case(&state) + 100) % 2;\n"
+            "        printf(\"%d\\n\", read_or_zero(use_null ? NULL : &value));\n"
+            "    }\n"
+        ),
         "error_code": (
             f"    for (int i = 0; i < {cases}; i++) {{\n"
             "        int a = next_case(&state);\n"
@@ -265,12 +433,36 @@ def _c_library_harness_source(
             "        printf(\"%d %d\\n\", status, out);\n"
             "    }\n"
         ),
+        "error_code_product": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int a = next_case(&state);\n"
+            "        int b = next_case(&state) % 11;\n"
+            "        int out = 0;\n"
+            "        int status = multiply_checked(a, b, &out);\n"
+            "        printf(\"%d %d\\n\", status, out);\n"
+            "    }\n"
+        ),
         "malloc_free": (
             f"    for (int i = 0; i < {cases}; i++) {{\n"
             "        int value = next_case(&state);\n"
             "        int *out = make_value(value);\n"
             "        printf(\"%d\\n\", *out);\n"
             "        free(out);\n"
+            "    }\n"
+        ),
+        "malloc_free_constant": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int *out = make_answer();\n"
+            "        printf(\"%d\\n\", *out);\n"
+            "        free(out);\n"
+            "    }\n"
+        ),
+        "malloc_vec": (
+            f"    for (int i = 0; i < {cases}; i++) {{\n"
+            "        int len = ((next_case(&state) + 100) % 8) + 1;\n"
+            "        int *values = make_sequence(len);\n"
+            "        for (int j = 0; j < len; j++) printf(j + 1 == len ? \"%d\\n\" : \"%d \", values[j]);\n"
+            "        free(values);\n"
             "    }\n"
         ),
     }
@@ -304,12 +496,90 @@ def _rust_library_harness_source(
             "    }\n"
             f"{suffix}"
         ),
+        "simple_subtract": (
+            f"use {package}::subtract;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let a = next_case(&mut state);\n"
+            "        let b = next_case(&mut state);\n"
+            "        println!(\"{}\", subtract(a, b));\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "simple_multiply": (
+            f"use {package}::multiply;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let a = next_case(&mut state);\n"
+            "        let b = next_case(&mut state);\n"
+            "        println!(\"{}\", multiply(a, b));\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "simple_divide": (
+            f"use {package}::divide_floor;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let a = next_case(&mut state);\n"
+            "        let b = (next_case(&mut state) + 100) % 19 + 1;\n"
+            "        println!(\"{}\", divide_floor(a, b));\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "simple_modulo": (
+            f"use {package}::remainder_value;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let a = next_case(&mut state);\n"
+            "        let b = (next_case(&mut state) + 100) % 19 + 1;\n"
+            "        println!(\"{}\", remainder_value(a, b));\n"
+            "    }\n"
+            f"{suffix}"
+        ),
         "boolean_int": (
             f"use {package}::is_even;\n\n"
             f"{prefix}"
             f"    for _ in 0..{case_count} {{\n"
             "        let value = next_case(&mut state);\n"
             "        println!(\"{}\", if is_even(value) { 1 } else { 0 });\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "boolean_negative": (
+            f"use {package}::is_negative;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let value = next_case(&mut state);\n"
+            "        println!(\"{}\", if is_negative(value) { 1 } else { 0 });\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "boolean_nonzero": (
+            f"use {package}::is_nonzero;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let value = next_case(&mut state);\n"
+            "        println!(\"{}\", if is_nonzero(value) { 1 } else { 0 });\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "boolean_greater_equal": (
+            f"use {package}::is_at_least;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let value = next_case(&mut state);\n"
+            "        let threshold = next_case(&mut state);\n"
+            "        println!(\"{}\", if is_at_least(value, threshold) { 1 } else { 0 });\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "boolean_less_equal": (
+            f"use {package}::is_at_most;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let value = next_case(&mut state);\n"
+            "        let threshold = next_case(&mut state);\n"
+            "        println!(\"{}\", if is_at_most(value, threshold) { 1 } else { 0 });\n"
             "    }\n"
             f"{suffix}"
         ),
@@ -321,6 +591,28 @@ def _rust_library_harness_source(
             "        let len = ((next_case(&mut state) + 100) % 8 + 1) as usize;\n"
             "        for value in values.iter_mut().take(len) { *value = next_case(&mut state); }\n"
             "        println!(\"{}\", sum_array(&values[..len]));\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "array_max": (
+            f"use {package}::array_max;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let mut values = [0; 8];\n"
+            "        let len = ((next_case(&mut state) + 100) % 8 + 1) as usize;\n"
+            "        for value in values.iter_mut().take(len) { *value = next_case(&mut state); }\n"
+            "        println!(\"{}\", array_max(&values[..len]));\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "array_total": (
+            f"use {package}::total_array;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let mut values = [0; 8];\n"
+            "        let len = ((next_case(&mut state) + 100) % 8 + 1) as usize;\n"
+            "        for value in values.iter_mut().take(len) { *value = next_case(&mut state); }\n"
+            "        println!(\"{}\", total_array(&values[..len]));\n"
             "    }\n"
             f"{suffix}"
         ),
@@ -338,6 +630,48 @@ def _rust_library_harness_source(
             "    }\n"
             f"{suffix}"
         ),
+        "mutable_buffer_decrement": (
+            f"use {package}::decrement_all;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let mut values = [0; 8];\n"
+            "        let len = ((next_case(&mut state) + 100) % 8 + 1) as usize;\n"
+            "        for value in values.iter_mut().take(len) { *value = next_case(&mut state); }\n"
+            "        decrement_all(&mut values[..len]);\n"
+            "        for (index, value) in values[..len].iter().enumerate() {\n"
+            "            print!(\"{}{}\", value, if index + 1 == len { \"\\n\" } else { \" \" });\n"
+            "        }\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "mutable_buffer_add_two": (
+            f"use {package}::add_two_all;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let mut values = [0; 8];\n"
+            "        let len = ((next_case(&mut state) + 100) % 8 + 1) as usize;\n"
+            "        for value in values.iter_mut().take(len) { *value = next_case(&mut state); }\n"
+            "        add_two_all(&mut values[..len]);\n"
+            "        for (index, value) in values[..len].iter().enumerate() {\n"
+            "            print!(\"{}{}\", value, if index + 1 == len { \"\\n\" } else { \" \" });\n"
+            "        }\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "mutable_buffer_subtract_two": (
+            f"use {package}::subtract_two_all;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let mut values = [0; 8];\n"
+            "        let len = ((next_case(&mut state) + 100) % 8 + 1) as usize;\n"
+            "        for value in values.iter_mut().take(len) { *value = next_case(&mut state); }\n"
+            "        subtract_two_all(&mut values[..len]);\n"
+            "        for (index, value) in values[..len].iter().enumerate() {\n"
+            "            print!(\"{}{}\", value, if index + 1 == len { \"\\n\" } else { \" \" });\n"
+            "        }\n"
+            "    }\n"
+            f"{suffix}"
+        ),
         "multiple_outputs": (
             f"use {package}::divmod_pair;\n\n"
             f"{prefix}"
@@ -346,6 +680,46 @@ def _rust_library_harness_source(
             "        let divisor = (next_case(&mut state) + 100) % 19 + 1;\n"
             "        let (quotient, remainder) = divmod_pair(value, divisor);\n"
             "        println!(\"{} {}\", quotient, remainder);\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "min_max_outputs": (
+            f"use {package}::min_max_pair;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let a = next_case(&mut state);\n"
+            "        let b = next_case(&mut state);\n"
+            "        let (min_value, max_value) = min_max_pair(a, b);\n"
+            "        println!(\"{} {}\", min_value, max_value);\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "sum_diff_outputs": (
+            f"use {package}::sum_diff_pair;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let a = next_case(&mut state);\n"
+            "        let b = next_case(&mut state);\n"
+            "        let (sum, diff) = sum_diff_pair(a, b);\n"
+            "        println!(\"{} {}\", sum, diff);\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "output_square": (
+            f"use {package}::square_value;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let value = next_case(&mut state);\n"
+            "        println!(\"{}\", square_value(value));\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "output_double": (
+            f"use {package}::double_value;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let value = next_case(&mut state);\n"
+            "        println!(\"{}\", double_value(value));\n"
             "    }\n"
             f"{suffix}"
         ),
@@ -359,6 +733,26 @@ def _rust_library_harness_source(
             "    }\n"
             f"{suffix}"
         ),
+        "simple_pointer_decrement": (
+            f"use {package}::decrement;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let mut value = next_case(&mut state);\n"
+            "        decrement(&mut value);\n"
+            "        println!(\"{}\", value);\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "simple_pointer_double": (
+            f"use {package}::double_in_place;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let mut value = next_case(&mut state);\n"
+            "        double_in_place(&mut value);\n"
+            "        println!(\"{}\", value);\n"
+            "    }\n"
+            f"{suffix}"
+        ),
         "string_length": (
             f"use {package}::string_length;\n\n"
             f"{prefix}"
@@ -366,6 +760,26 @@ def _rust_library_harness_source(
             f"    for _ in 0..{case_count} {{\n"
             "        let text = values[((next_case(&mut state) + 100) % 6) as usize];\n"
             "        println!(\"{}\", string_length(text));\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "string_length_size_t": (
+            f"use {package}::byte_len;\n\n"
+            f"{prefix}"
+            "    let values = [\"\", \"a\", \"hello\", \"migration\", \"safe rust\", \"abcdefghi\"];\n"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let text = values[((next_case(&mut state) + 100) % 6) as usize];\n"
+            "        println!(\"{}\", byte_len(text));\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "string_length_long": (
+            f"use {package}::string_length_long;\n\n"
+            f"{prefix}"
+            "    let values = [\"\", \"a\", \"hello\", \"migration\", \"safe rust\", \"abcdefghi\"];\n"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let text = values[((next_case(&mut state) + 100) % 6) as usize];\n"
+            "        println!(\"{}\", string_length_long(text));\n"
             "    }\n"
             f"{suffix}"
         ),
@@ -394,6 +808,17 @@ def _rust_library_harness_source(
             "    }\n"
             f"{suffix}"
         ),
+        "nullable_pointer_zero": (
+            f"use {package}::read_or_zero;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let value = next_case(&mut state);\n"
+            "        let use_none = (next_case(&mut state) + 100) % 2 == 1;\n"
+            "        let result = if use_none { read_or_zero(None) } else { read_or_zero(Some(&value)) };\n"
+            "        println!(\"{}\", result);\n"
+            "    }\n"
+            f"{suffix}"
+        ),
         "error_code": (
             f"use {package}::divide;\n\n"
             f"{prefix}"
@@ -407,6 +832,19 @@ def _rust_library_harness_source(
             "    }\n"
             f"{suffix}"
         ),
+        "error_code_product": (
+            f"use {package}::multiply_checked;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let a = next_case(&mut state);\n"
+            "        let b = next_case(&mut state) % 11;\n"
+            "        match multiply_checked(a, b) {\n"
+            "        Ok(value) => println!(\"0 {}\", value),\n"
+            "        Err(status) => println!(\"{} 0\", status),\n"
+            "    }\n"
+            "    }\n"
+            f"{suffix}"
+        ),
         "malloc_free": (
             f"use {package}::make_value;\n\n"
             f"{prefix}"
@@ -414,6 +852,27 @@ def _rust_library_harness_source(
             "        let input = next_case(&mut state);\n"
             "        let value = make_value(input);\n"
             "        println!(\"{}\", *value);\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "malloc_free_constant": (
+            f"use {package}::make_answer;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let value = make_answer();\n"
+            "        println!(\"{}\", *value);\n"
+            "    }\n"
+            f"{suffix}"
+        ),
+        "malloc_vec": (
+            f"use {package}::make_sequence;\n\n"
+            f"{prefix}"
+            f"    for _ in 0..{case_count} {{\n"
+            "        let len = (next_case(&mut state) + 100) % 8 + 1;\n"
+            "        let values = make_sequence(len);\n"
+            "        for (index, value) in values.iter().enumerate() {\n"
+            "            print!(\"{}{}\", value, if index + 1 == values.len() { \"\\n\" } else { \" \" });\n"
+            "        }\n"
             "    }\n"
             f"{suffix}"
         ),

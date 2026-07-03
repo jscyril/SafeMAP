@@ -1,0 +1,7 @@
+{
+  "primary_function": "array_max",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["pointer_length_array"],
+  "expected_safe_rust_behavior": "array_max(&[3, 9, 2, 5]) returns 9"
+}

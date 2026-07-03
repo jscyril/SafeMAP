@@ -1,0 +1,7 @@
+{
+  "primary_function": "divide_floor",
+  "expected_eligibility": "safe_translatable",
+  "expected_plan_status": "planned",
+  "expected_patterns": [],
+  "expected_safe_rust_behavior": "divide_floor(20, 5) returns 4"
+}
