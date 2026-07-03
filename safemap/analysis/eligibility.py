@@ -47,6 +47,7 @@ API_CHANGE_IDIOMS = {
     "manual_allocation",
     "error_code_return",
     "c_string",
+    "boolean_int",
 }
 
 
@@ -121,11 +122,29 @@ def _has_complex_aliasing(function: FunctionInfo) -> bool:
         parameter.name for parameter in function.parameters
         if parameter.is_pointer and not parameter.is_const
     ]
-    writes = sum(
-        1 for name in mutable_pointers
+    written = [
+        name for name in mutable_pointers
         if re.search(rf"(?:\*\s*{re.escape(name)}|{re.escape(name)}\s*\[)", function.body)
+    ]
+    if len(written) <= 1:
+        return False
+    output_parameters = {
+        fact.variable for fact in function.pointer_facts
+        if fact.usage_kind == "output_parameter"
+    }
+    return not all(
+        name in output_parameters and _has_only_direct_output_assignment(function, name)
+        for name in written
     )
-    return writes > 1
+
+
+def _has_only_direct_output_assignment(function: FunctionInfo, name: str) -> bool:
+    escaped = re.escape(name)
+    return (
+        re.search(rf"\*\s*{escaped}\s*=", function.body) is not None
+        and re.search(rf"\*\s*{escaped}\s*(?:[+\-*/]=|\+\+|--)", function.body) is None
+        and re.search(rf"\b{escaped}\s*\[", function.body) is None
+    )
 
 
 def _pointer_roles(function: FunctionInfo) -> dict[str, list[str]]:

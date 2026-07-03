@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from ..models import (
     CAnalysis, EligibilityResult, MigrationPlan, PatternMigration, TranslationUnit,
 )
@@ -13,6 +15,8 @@ SAFE_PATTERNS = {
     "manual_allocation",
     "error_code_return",
     "lock_unlock",
+    "c_string",
+    "boolean_int",
 }
 
 
@@ -45,7 +49,11 @@ def create_migration_plans(
             if idiom.idiom_type in SAFE_PATTERNS and idiom.confidence >= threshold
         ]
         safe_candidate = eligibility.eligible_for_safe_translation
-        status = "planned" if safe_candidate and patterns else "rejected"
+        status = (
+            "planned"
+            if safe_candidate and (patterns or _is_simple_safe_scalar(function))
+            else "rejected"
+        )
         reason = None if status == "planned" else "; ".join(eligibility.reasons)
         plans.append(MigrationPlan(
             unit_id=unit.unit_id,
@@ -120,10 +128,31 @@ def _type_migrations(function) -> list[dict[str, str]]:
                 "rust": idiom.suggested_rust_pattern,
                 "reason": idiom.evidence,
             })
-        elif idiom.idiom_type in {"output_parameter", "nullable_pointer", "error_code_return", "manual_allocation"}:
+        elif idiom.idiom_type in {
+            "output_parameter",
+            "nullable_pointer",
+            "error_code_return",
+            "manual_allocation",
+            "c_string",
+            "boolean_int",
+        }:
             migrations.append({
                 "c": ", ".join(idiom.variables) or idiom.idiom_type,
                 "rust": idiom.suggested_rust_pattern,
                 "reason": idiom.evidence,
             })
     return migrations
+
+
+def _is_simple_safe_scalar(function) -> bool:
+    if function.name == "main" or function.return_type.strip() == "void":
+        return False
+    if function.parameters and any(parameter.is_pointer for parameter in function.parameters):
+        return False
+    if function.calls:
+        return False
+    return bool(re.search(
+        r"\breturn\s+[A-Za-z_]\w*"
+        r"(?:\s*[-+*/]\s*[A-Za-z_]\w*|\s*[-+*/]\s*-?\d+)*\s*;",
+        function.body,
+    ))

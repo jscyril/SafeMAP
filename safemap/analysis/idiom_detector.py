@@ -13,6 +13,7 @@ PATTERN_RUST = {
     "lock_unlock": "Use Mutex/RwLock guard RAII",
     "c_string": "Use CStr/CString at FFI boundaries or str/String internally",
     "struct_pointer": "Use a reference or owned struct",
+    "boolean_int": "Use bool",
 }
 
 
@@ -50,7 +51,10 @@ def detect_idioms(function: FunctionInfo) -> list[DetectedIdiom]:
             "A negative sentinel is returned when a nullable pointer is absent",
         ))
     body = function.body
-    if re.search(r"\b(?:malloc|calloc|realloc|free)\s*\(", body):
+    if (
+        re.search(r"\b(?:malloc|calloc|realloc|free)\s*\(", body)
+        and not any(item.idiom_type == "manual_allocation" for item in idioms)
+    ):
         idioms.append(_idiom(
             function, "manual_allocation", [],
             PATTERN_RUST["manual_allocation"], 0.98,
@@ -65,11 +69,24 @@ def detect_idioms(function: FunctionInfo) -> list[DetectedIdiom]:
             PATTERN_RUST["lock_unlock"], 0.95,
             "Matched lock and unlock calls",
         ))
-    if re.search(r"\b(?:strlen|strcmp|strcpy|strncpy)\s*\(", body):
+    string_calls = re.findall(
+        r"\b(?:strlen|strcmp|strcpy|strncpy)\s*\(\s*([A-Za-z_]\w*)",
+        body,
+    )
+    if string_calls:
         idioms.append(_idiom(
-            function, "c_string", [],
+            function, "c_string", sorted(set(string_calls)),
             PATTERN_RUST["c_string"], 0.8,
             "C string API is called",
+        ))
+    if (
+        function.return_type.strip() in {"int", "unsigned int", "long", "short"}
+        and re.search(r"\breturn\s+[^;]*(?:==|!=|<=|>=|<|>)[^;]*;", body)
+    ):
+        idioms.append(_idiom(
+            function, "boolean_int", [],
+            PATTERN_RUST["boolean_int"], 0.86,
+            "Integer return value is produced from a boolean comparison",
         ))
     unique: dict[tuple[str, tuple[str, ...]], DetectedIdiom] = {}
     for item in idioms:

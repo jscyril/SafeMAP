@@ -26,20 +26,29 @@ def rust_type(c_type: str) -> str:
 
 def generate_signature(function: FunctionInfo) -> str:
     fact_by_name = {fact.variable: fact for fact in function.pointer_facts}
+    c_string_parameters = {
+        variable
+        for idiom in function.idioms
+        if idiom.idiom_type == "c_string"
+        for variable in idiom.variables
+    }
     output = []
     output_types = []
     has_error_code = any(item.idiom_type == "error_code_return" for item in function.idioms)
+    has_boolean_int = any(item.idiom_type == "boolean_int" for item in function.idioms)
     for parameter in function.parameters:
         fact = fact_by_name.get(parameter.name)
         base = rust_type(parameter.c_type)
-        if fact and fact.usage_kind == "pointer_length_array":
+        if parameter.name in c_string_parameters and parameter.is_const:
+            output.append(f"{parameter.name}: &str")
+        elif fact and fact.usage_kind == "pointer_length_array":
             mutable = "&mut " if not parameter.is_const else "&"
             output.append(f"{parameter.name}: {mutable}[{base}]")
         elif fact and fact.usage_kind == "output_parameter":
-            if function.return_type.strip() == "void":
-                output.append(f"{parameter.name}: &mut {base}")
-            else:
+            if function.return_type.strip() != "void" or _is_direct_output(parameter.name, function):
                 output_types.append(base)
+            else:
+                output.append(f"{parameter.name}: &mut {base}")
         elif fact and fact.usage_kind == "nullable_pointer":
             mutable = "&mut " if not parameter.is_const else "&"
             output.append(f"{parameter.name}: Option<{mutable}{base}>")
@@ -51,6 +60,10 @@ def generate_signature(function: FunctionInfo) -> str:
         else:
             output.append(f"{parameter.name}: {base}")
     return_type = rust_type(function.return_type)
+    if has_boolean_int and function.return_type.strip() in {
+        "int", "unsigned int", "long", "short",
+    }:
+        return_type = "bool"
     if "*" in function.return_type and any(
         item.idiom_type == "manual_allocation" for item in function.idioms
     ):
@@ -68,4 +81,12 @@ def _is_consumed_length(name: str, function: FunctionInfo) -> bool:
         return False
     return any(
         fact.usage_kind == "pointer_length_array" for fact in function.pointer_facts
+    )
+
+
+def _is_direct_output(name: str, function: FunctionInfo) -> bool:
+    escaped = re.escape(name)
+    return (
+        re.search(rf"\*\s*{escaped}\s*=", function.body) is not None
+        and re.search(rf"\*\s*{escaped}\s*(?:[+\-*/]=|\+\+|--)", function.body) is None
     )

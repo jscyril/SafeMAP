@@ -55,11 +55,17 @@ C input
 
 Supported MVP idioms include:
 
+- simple scalar integer functions
+- integer boolean idioms to `bool`
 - pointer-length arrays to `&[T]` or `&mut [T]`
 - output parameters to return values
+- multiple output parameters to tuple returns
 - return-code plus output-parameter to `Result<T, i32>`
 - nullable pointers to `Option<&T>` or `Option<&mut T>`
-- simple allocation idioms in analysis/planning
+- mutable scalar pointer updates to `&mut T`
+- simple C string input to `&str`
+- single owned allocation to `Box<T>`
+- simple allocation idioms in analysis/planning and reporting
 
 Unsupported or manual-review constructs include:
 
@@ -72,6 +78,39 @@ Unsupported or manual-review constructs include:
 - unresolved aliasing
 - custom allocators
 - large multi-file build-system migration
+
+## Current Artifact Status
+
+As of the current local validation pass:
+
+| Area | Current status |
+|---|---|
+| Test suite | `65 passed` |
+| MVP benchmark examples | `15` example projects under `examples/` |
+| SafeMAP-only final eval | `12 / 26` eligible units accepted |
+| Supported examples with differential pass | `11` |
+| Accepted final Rust policy | `#![forbid(unsafe_code)]`, no unsafe blocks/functions, no raw-pointer public API |
+| Benchmark table export | `benchmark_results.csv`, `benchmark_results.md`, `paper_tables.md`, `manifest.json` |
+
+The most recent SafeMAP-only final evaluation was verified locally with:
+
+```bash
+python -m safemap.cli final-eval \
+  --benchmarks examples \
+  --output /tmp/safemap-final-eval-diagnostics \
+  --mode safemap_full
+```
+
+Observed result:
+
+```text
+rows: 15
+safemap_full accepted units: 12 / 26
+```
+
+The intentionally unsupported benchmark examples are still reported separately
+and should not be interpreted as SafeMAP translation failures for supported
+idioms.
 
 ## Repository Layout
 
@@ -87,8 +126,12 @@ examples/                        small C migration examples
 tests/                           pytest suite
 reports/sample_report.md         illustrative report sample
 safemap.example.yaml             example configuration
+safemap.gemini.yaml              Google AI Studio / Gemini API config
+safemap.ollama.yaml              local Ollama OpenAI-compatible config
 SAFEMAP_CODEX_SOURCE_OF_TRUTH.md project design source of truth
 SAFEMAP_RESEARCH_TODO.md         research status and next steps
+CONTRIBUTING.md                  validation and contribution checklist
+docs-site/                       static GitHub Pages documentation
 ```
 
 ## Installation
@@ -159,7 +202,16 @@ For Gemini through the Gemini OpenAI-compatible API:
 export GEMINI_API_KEY="your_key"
 ```
 
-and configure:
+and use the included Google AI Studio/Gemini config:
+
+```bash
+python -m safemap.cli benchmark \
+  --benchmarks examples \
+  --output reports/gemini_benchmark_results.csv \
+  --config safemap.gemini.yaml
+```
+
+The relevant configuration is:
 
 ```yaml
 llm:
@@ -173,6 +225,22 @@ llm:
 ```
 
 `SAFEMAP_MODEL` and `SAFEMAP_BASE_URL` can override the model and base URL.
+Do not commit real API keys; keep them in your shell environment or local
+secret manager.
+
+For local Ollama models such as Gemma:
+
+```bash
+export OLLAMA_API_KEY=dummy
+python -m safemap.cli benchmark \
+  --benchmarks examples \
+  --output reports/ollama_gemma4_12b_benchmark_results.csv \
+  --config safemap.ollama.yaml \
+  --mode llm_only
+```
+
+The included Ollama config expects the model tag `gemma4:12b` and base URL
+`http://localhost:11434/v1`.
 
 ## Usage
 
@@ -214,6 +282,30 @@ python -m safemap.cli benchmark \
   --benchmarks examples \
   --output reports/benchmark_results.csv \
   --config safemap.example.yaml
+```
+
+Export paper-ready Markdown tables from a benchmark CSV:
+
+```bash
+python -m safemap.cli export-tables \
+  --input reports/benchmark_results.csv \
+  --output reports/paper_tables.md
+```
+
+Run a durable final evaluation bundle:
+
+```bash
+python -m safemap.cli final-eval \
+  --benchmarks examples \
+  --output reports/final \
+  --mode safemap_full
+```
+
+Inspect saved runs:
+
+```bash
+python -m safemap.cli latest-run --output reports/final
+python -m safemap.cli summarize-runs --output reports/final
 ```
 
 Benchmark modes:
@@ -261,7 +353,7 @@ python -m compileall -q safemap
 Current expected test result:
 
 ```text
-31 passed
+65 passed
 ```
 
 ## Git Hygiene
@@ -277,6 +369,34 @@ Do not commit:
 - local editor or agent state
 
 Use `.env.example` for placeholder environment variables only.
+
+## GitHub Readiness Checklist
+
+Before pushing:
+
+- Run `pytest -q`.
+- Run `python -m compileall -q safemap tests`.
+- Ensure `.env` is not staged.
+- Keep generated run directories out of Git.
+- Commit benchmark source examples and expected metadata.
+- Commit documentation updates in `README.md`, `SAFEMAP_RESEARCH_TODO.md`, and
+  `docs-site/`.
+- Review `CONTRIBUTING.md` for validation and artifact policy.
+- Commit config templates such as `safemap.gemini.yaml`, `safemap.ollama.yaml`,
+  and `.env.example`, but never real keys.
+
+Optional release artifact generation:
+
+```bash
+python -m safemap.cli final-eval \
+  --benchmarks examples \
+  --output reports/final \
+  --mode safemap_full
+```
+
+Generated `reports/final/` artifacts are useful for local review. Decide
+explicitly whether final report snapshots should be committed; do not hand-edit
+reported metrics.
 
 ## Known Limitations
 

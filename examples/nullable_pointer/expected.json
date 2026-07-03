@@ -1,0 +1,7 @@
+{
+  "primary_function": "read_value",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["error_code_return", "nullable_pointer"],
+  "expected_safe_rust_behavior": "read_value(Some(&7)) returns Ok(7), read_value(None) returns Err(-1)"
+}

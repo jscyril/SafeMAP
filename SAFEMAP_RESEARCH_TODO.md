@@ -53,10 +53,16 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 ### C Idiom Support
 
 - Supports MVP analysis/planning for:
+  - simple scalar functions
   - pointer-length arrays to Rust slices
+  - mutable pointer-length buffers to mutable Rust slices
   - output parameters to return values
+  - multiple output parameters to tuple returns
+  - mutable scalar pointers to `&mut T`
   - return-code plus output-parameter to `Result<T, i32>`
   - nullable pointers to `Option<&T>`
+  - simple C string inputs to Rust `&str`
+  - integer boolean idioms to Rust `bool`
   - simple allocation idioms in analysis/planning
 
 ### Safe Rust Generation
@@ -69,15 +75,24 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   ```
 
 - Current safe synthesis covers examples such as:
+  - `simple_sum`
+  - `boolean_int`
   - `pointer_length_array`
+  - `mutable_buffer`
+  - `multiple_outputs`
+  - `simple_pointer`
+  - `string_length`
   - `output_parameter`
   - `nullable_pointer`
   - `error_code`
+  - `malloc_free`
 
 ### LLM Integration
 
 - Existing LLM abstraction is preserved.
 - OpenAI-compatible client supports providers such as OpenAI and Gemini OpenAI-compatible API.
+- LLM errors now include provider/model/base URL context and actionable
+  diagnostics for missing keys, authentication failures, and quota/rate limits.
 - Prompts now explicitly forbid:
   - `unsafe`
   - `unsafe fn`
@@ -107,7 +122,12 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   - `cargo clippy`
   - optional Miri
   - differential testing when applicable
-- Differential testing now records `not_applicable` for library-only translations.
+- Differential testing now compares executable-compatible examples and known MVP
+  library translations through generated Rust harness binaries.
+- Function-level differential harnesses generate deterministic randomized test
+  cases for supported signatures using `validation.differential_test_inputs`.
+- Differential testing still records `not_applicable` when no comparable harness
+  is available.
 - Reports:
   - eligible units
   - fully safe accepted units
@@ -116,13 +136,14 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   - raw-pointer public API counts
   - idiom migration counts
   - failure categories
+- Fully safe accepted units are counted only when the planned function is present in the final Rust output.
 
 ### Tests
 
 - Test suite currently passes:
 
   ```text
-  31 passed
+  65 passed
   ```
 
 - Added tests for:
@@ -131,6 +152,13 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   - single-source directory compile DB generation
   - safe synthesis
   - C2Rust compile DB/resource behavior
+  - benchmark dataset completeness and expected eligibility/planning metadata
+  - final-output presence before fully safe acceptance credit
+  - function-level differential harnesses for library-style SafeMAP outputs
+  - randomized differential harness generation
+  - benchmark status, mode filtering, paper-table export, and aggregate table generation
+  - final evaluation artifact generation and run summaries
+  - LLM, C2Rust, and Miri diagnostic classification
 
 ## Current Known Limitations
 
@@ -153,20 +181,24 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 
 ### P0: Benchmark Dataset
 
-- Add or finalize benchmark examples under `examples/`.
-- Minimum recommended examples:
+- Status: completed for the MVP paper dataset.
+- Benchmark examples under `examples/` now include:
   - `simple_sum`
+  - `boolean_int`
   - `pointer_length_array`
   - `mutable_buffer`
+  - `multiple_outputs`
+  - `simple_pointer`
+  - `string_length`
   - `output_parameter`
   - `nullable_pointer`
-  - `error_code_result`
+  - `error_code`
   - `malloc_free`
   - `unsupported_union`
   - `unsupported_function_pointer`
   - `unsupported_volatile`
   - `unsupported_inline_asm`
-- Each benchmark should include:
+- Each benchmark includes:
   - C source
   - expected eligibility category
   - expected migration plan
@@ -174,29 +206,73 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 
 ### P1: Evaluation Runs
 
-- Run all benchmark modes:
+- Status: partially complete.
+- Current SafeMAP-only evaluation run covered all benchmark examples and wrote:
+
+  ```text
+  /tmp/safemap-full-expanded.csv
+  /tmp/safemap-full-expanded.md
+  /tmp/safemap-paper-tables.md
+  /tmp/safemap-final-eval/
+  ```
+
+- Observed SafeMAP-only summary:
+  - 15 benchmark rows
+  - `safemap_full`: 12 accepted units out of 26 eligible units
+  - 11 supported MVP examples pass differential testing
+  - unsupported examples are rejected or reported separately
+- Remaining final-paper evaluation work:
   - `c2rust_only`
   - `llm_only`
   - `c2rust_llm_unguided`
-  - `safemap_full`
-- Save all run directories.
-- Export summary tables for the paper.
+- Re-run LLM-dependent modes with a configured model/API key.
 - Do not hand-edit reported metrics.
 
 ### P2: Differential Testing
 
-- Add differential harnesses for supported function-level examples.
-- Prioritize:
+- Status: completed for current MVP supported examples.
+- Added differential harnesses for:
   - integer functions
+  - boolean integer returns
   - integer arrays/slices
   - output parameters
   - nullable pointers
-  - simple strings
-- Record `not_applicable` only when a comparable harness is not available.
+  - mutable integer buffers
+  - mutable scalar pointer updates
+  - multiple output parameters returned as tuples
+  - simple C string inputs translated to `&str`
+  - simple allocation/`Box<T>` examples
+- Remaining:
+  - multi-function/project-level harnesses beyond the MVP examples
 
 ### P3: LLM Evaluation
 
-- Configure Gemini or another OpenAI-compatible model.
+- Status: ready for API-backed run.
+- Added `safemap.gemini.yaml` for Google AI Studio / Gemini OpenAI-compatible
+  API usage with:
+  - `api_key_env: GEMINI_API_KEY`
+  - `base_url: https://generativelanguage.googleapis.com/v1beta/openai/`
+  - `model: gemini-3.5-flash`
+- Direct LLM translation now records:
+  - LLM call count
+  - input tokens
+  - output tokens
+- Direct LLM translation now rejects forbidden unsafe/raw-pointer/placeholder
+  constructs before writing a final crate.
+- Offline static-client LLM benchmark smoke passed for `simple_sum`:
+  - `llm_only`: compile passed, differential passed
+  - `c2rust_llm_unguided`: compile passed, differential passed
+- Remaining:
+  - export `GEMINI_API_KEY`
+  - run Google AI Studio-backed benchmark:
+
+    ```bash
+    python -m safemap.cli benchmark \
+      --benchmarks examples \
+      --output reports/gemini_benchmark_results.csv \
+      --config safemap.gemini.yaml
+    ```
+
 - Run LLM rewrite/repair on examples that deterministic synthesis does not cover.
 - Record:
   - prompt artifacts
@@ -208,10 +284,14 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 
 ### P4: Report Tables
 
-- Produce paper-ready tables:
+- Status: partially complete.
+- Benchmark runner now produces a richer CSV and Markdown summary containing:
   - benchmark summary
   - eligibility classification counts
-  - safe translation success by idiom
+  - success-by-idiom aggregate table
+  - paper-ready table export from saved benchmark CSVs
+  - accepted/eligible unit counts
+  - fully safe acceptance rate
   - C2Rust baseline comparison
   - LLM-only comparison
   - C2Rust plus LLM unguided comparison
@@ -219,6 +299,9 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   - unsafe/raw-pointer reduction
   - failure category distribution
   - validation results
+  - durable final-evaluation manifest under `reports/final/`
+- Remaining:
+  - include real LLM mode results after API-backed evaluation
 
 ### P5: Threats to Validity
 
@@ -237,10 +320,8 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 
 - Add more deterministic translation patterns:
   - mutable buffer normalization
-  - multiple output parameters to tuples
   - simple `malloc/free` local buffer to `Vec<T>`
   - single owned allocation to `Box<T>`
-  - boolean integer idioms to `bool`
   - simple string parsing to `Result`
 
 ### Stronger Analysis
@@ -254,9 +335,7 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 ### Validation Improvements
 
 - Generate Rust unit tests from C examples.
-- Generate C and Rust harnesses for function-level differential tests.
-- Add randomized input generation for supported signatures.
-- Add optional Miri reporting when installed.
+- Add richer Miri result details when Miri is installed and enabled.
 
 ### C2Rust Baseline Cleanup
 
@@ -266,10 +345,7 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 
 ### CLI and UX
 
-- Add a command to print the latest run directory.
-- Add a command to summarize all runs.
-- Add a command to export paper tables directly.
-- Add clearer diagnostics for missing LLM keys, C2Rust runtime libraries, and LLVM mismatches.
+- Add clearer diagnostics for project-specific validation failures.
 
 ## Suggested Immediate Next Steps
 
@@ -289,26 +365,24 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
      api_key_env: GEMINI_API_KEY
    ```
 
-2. Run the current examples:
+2. Run a durable SafeMAP-only final-evaluation bundle:
 
    ```bash
-   python -m safemap.cli run --input examples/output_parameter --output results --config safemap.example.yaml
-   python -m safemap.cli run --input examples/pointer_length_array --output results --config safemap.example.yaml
-   python -m safemap.cli run --input examples/nullable_pointer --output results --config safemap.example.yaml
-   python -m safemap.cli run --input examples/error_code --output results --config safemap.example.yaml
+   python -m safemap.cli final-eval \
+     --benchmarks examples \
+     --output reports/final \
+     --mode safemap_full
    ```
 
-3. Inspect generated reports:
+3. Inspect generated reports and runs:
 
    ```bash
-   find results/.safemap/runs -maxdepth 1 -type d | sort
-   cat results/.safemap/runs/<run-id>/reports/report.md
-   cat results/.safemap/runs/<run-id>/reports/metrics.json
+   cat reports/final/paper_tables.md
+   python -m safemap.cli latest-run --output reports/final
+   python -m safemap.cli summarize-runs --output reports/final
    ```
 
-4. Add unsupported benchmark examples.
-
-5. Run benchmark mode and collect paper tables.
+4. Re-run LLM-dependent modes after quota/API access is available.
 
 ## Paper Claim Supported by Current MVP
 

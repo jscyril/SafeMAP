@@ -42,10 +42,12 @@ def run_c2rust(project: ProjectInfo, store: ArtifactStore) -> CommandResult:
         timeout=600,
         env=_c2rust_environment(store),
     )
+    result.reason = result.reason or _diagnose_c2rust_failure(result)
     store.write_json("logs/c2rust.json", result)
     if result.status == "passed":
         ensure_cargo_project(output, project.project_name)
         check = run_command(["cargo", "check", "--message-format=json"], output, timeout=600)
+        check.reason = check.reason or _diagnose_c2rust_compile_failure(check)
         store.write_json("baseline/compile.json", check)
     return result
 
@@ -146,3 +148,49 @@ def ensure_cargo_project(output: Path, project_name: str) -> None:
 def load_baseline_status(store: ArtifactStore) -> dict:
     path = store.path("baseline/compile.json")
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def _diagnose_c2rust_failure(result: CommandResult) -> str | None:
+    if result.status == "passed":
+        return None
+    output = (result.stdout + "\n" + result.stderr).lower()
+    if "libclang" in output and ("not found" in output or "cannot open" in output):
+        return (
+            "C2Rust could not load libclang. Set SAFEMAP_C2RUST_LIB_DIR or "
+            "LIBCLANG_PATH to the LLVM 14 library directory used by c2rust."
+        )
+    if "llvm" in output and ("version" in output or "mismatch" in output):
+        return (
+            "C2Rust reported an LLVM version mismatch. Use an LLVM/libclang version "
+            "compatible with the installed c2rust binary, or set "
+            "SAFEMAP_C2RUST_RESOURCE_DIR and SAFEMAP_C2RUST_LIB_DIR explicitly."
+        )
+    if "stddef.h" in output or "stdio.h" in output or "stdlib.h" in output:
+        return (
+            "C2Rust could not resolve standard C headers. Check the Clang resource "
+            "directory and C_INCLUDE_PATH; SAFEMAP_C2RUST_RESOURCE_DIR can override "
+            "the builtin include path."
+        )
+    if "compile_commands" in output:
+        return (
+            "C2Rust failed while reading compile_commands.json. Regenerate the "
+            "compile database and verify that each source path exists."
+        )
+    return None
+
+
+def _diagnose_c2rust_compile_failure(result: CommandResult) -> str | None:
+    if result.status == "passed":
+        return None
+    output = (result.stdout + "\n" + result.stderr).lower()
+    if "#![feature" in output or "may not be used on the stable release channel" in output:
+        return (
+            "Raw C2Rust output requires nightly Rust feature gates. This is counted "
+            "as a baseline compile failure, not a SafeMAP failure."
+        )
+    if "unresolved import `libc`" in output or "use of unresolved module or unlinked crate `libc`" in output:
+        return (
+            "Raw C2Rust output references libc but the generated crate could not "
+            "resolve it. Check baseline Cargo.toml dependency generation."
+        )
+    return None

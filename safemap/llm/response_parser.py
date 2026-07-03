@@ -27,11 +27,11 @@ def parse_function_response(response: str, expected_name: str) -> str:
     if before or after:
         raise ValueError("Response must contain exactly one function and no prose")
     function = text[start:closing + 1]
-    _reject_unsafe(function)
+    reject_forbidden_constructs(function)
     return function
 
 
-def _reject_unsafe(source: str) -> None:
+def reject_forbidden_constructs(source: str) -> None:
     checks = {
         "unsafe Rust": r"\bunsafe\b",
         "extern C": r"\bextern\s+\"C\"",

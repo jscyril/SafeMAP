@@ -1,0 +1,7 @@
+{
+  "primary_function": "simple_sum",
+  "expected_eligibility": "safe_translatable",
+  "expected_plan_status": "planned",
+  "expected_patterns": [],
+  "expected_safe_rust_behavior": "simple_sum(5, 7) returns 12"
+}

@@ -1,4 +1,3 @@
-pub fn make_value(value: i32) -> Box<i32> {
-    Box::new(value)
+pub fn make_value(x: i32) -> Box<i32> {
+    Box::new(x)
 }
-

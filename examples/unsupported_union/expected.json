@@ -1,0 +1,6 @@
+{
+  "primary_function": "read_union_as_int",
+  "expected_eligibility": "unsupported",
+  "expected_plan_status": "rejected",
+  "expected_unsupported_features": ["union_usage"]
+}

@@ -1,0 +1,7 @@
+{
+  "primary_function": "get_max",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["error_code_return", "output_parameter", "pointer_length_array"],
+  "expected_safe_rust_behavior": "get_max(&[3, 8, 2]) returns Ok(8)"
+}

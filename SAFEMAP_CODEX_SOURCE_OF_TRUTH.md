@@ -160,7 +160,7 @@ The C2Rust output must not be treated as the final successful SafeMAP output unl
 
 ## 5. Current Implementation Context
 
-The existing implementation already appears to include:
+The current implementation includes:
 
 ```text
 C project
@@ -176,17 +176,25 @@ C project
  -> generate reports
 ```
 
-This is close, but it needs to be aligned with the updated source-of-truth framing:
+The safe-first lane is now the main result path. C2Rust is recorded as a
+baseline/reference lane, and fully safe acceptance is reported separately from
+unsafe reduction. Current local validation passes:
 
-### Required Alignment Changes
+```text
+65 passed
+```
 
-1. Make the **safe-first lane** the main result path.
-2. Treat C2Rust as a **baseline/reference**, not the final target.
-3. Add or strengthen **safety eligibility classification** before rewriting.
-4. Add strict safe acceptance using `#![forbid(unsafe_code)]`.
-5. Report “fully safe accepted units” separately from “unsafe reduced units.”
-6. If LLM rewriting is disabled or fails, do not mark the unit as fully safe.
-7. If the final code still contains `unsafe`, raw pointer APIs, or unvalidated behavior, classify it as partial/failure, not success.
+The current SafeMAP-only final-evaluation snapshot over `examples/` is:
+
+```text
+15 benchmark rows
+12 accepted eligible units out of 26
+11 supported MVP examples passing differential testing
+```
+
+The strict rules in this document remain binding: if final Rust still contains
+unsafe constructs, raw-pointer public APIs, or unvalidated behavior, it must be
+classified as partial/failure rather than fully safe accepted.
 
 ---
 

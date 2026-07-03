@@ -22,6 +22,13 @@ http://localhost:8000
 
 No build step is required.
 
+Current documentation snapshot:
+
+- test suite: `65 passed`
+- benchmark examples: `15`
+- SafeMAP-only final eval: `12 / 26` accepted eligible units
+- paper-table workflow: `python -m safemap.cli final-eval --benchmarks examples --output reports/final --mode safemap_full`
+
 ## GitHub Pages
 
 This directory is ready for GitHub Pages. The repository includes:

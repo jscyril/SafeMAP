@@ -28,6 +28,7 @@ from .repair.compiler_repair import repair_function
 from .validation.validator import validate_project
 from .validation.differential_tester import build_and_compare_projects
 from .analysis.complexity_metrics import cyclomatic_complexity
+from .llm.response_parser import reject_forbidden_constructs
 
 
 def run_pipeline(
@@ -62,6 +63,7 @@ def run_pipeline(
     baseline_root = store.path("baseline/rust")
     final_root = store.path("final/rust")
     used_direct_translation = False
+    direct_llm_usage: dict[str, int | str] | None = None
     baseline_metrics = analyze_rust_path(baseline_root) if list(baseline_root.rglob("*.rs")) else None
     if baseline_metrics:
         store.write_json("analysis/baseline_rust.json", baseline_metrics)
@@ -82,7 +84,7 @@ def run_pipeline(
     ):
         llm = client or OpenAICompatibleClient(config.llm)
         try:
-            _direct_llm_translation(project, final_root, llm, store)
+            direct_llm_usage = _direct_llm_translation(project, final_root, llm, store)
             used_direct_translation = True
         except Exception as error:
             store.write_json("logs/direct_llm_error.json", {
@@ -96,6 +98,10 @@ def run_pipeline(
     )
     _apply_eligibility_metrics(metrics, eligibility)
     _record_synthesized_idioms(metrics, plans, synthesized_units)
+    if direct_llm_usage:
+        metrics.llm_calls += 1
+        metrics.llm_input_tokens += int(direct_llm_usage.get("input_tokens", 0))
+        metrics.llm_output_tokens += int(direct_llm_usage.get("output_tokens", 0))
     if (
         config.translation.use_llm
         and final_root.exists()
@@ -115,7 +121,9 @@ def run_pipeline(
             and len(project.c_files) == 1
         ):
             validation.differential = build_and_compare_projects(
-                Path(project.c_files[0]), final_root, seed=config.validation.seed
+                Path(project.c_files[0]), final_root,
+                seed=config.validation.seed,
+                random_inputs=config.validation.differential_test_inputs,
             )
         store.write_json("validation/results.json", validation)
         metrics.safemap_compile = validation.compile.status == "passed"
@@ -131,7 +139,7 @@ def run_pipeline(
             )
         metrics.maintainability = _maintainability(final_root)
         store.write_json("analysis/final_rust.json", metrics.safemap)
-        _apply_safe_acceptance(metrics, plans, validation)
+        _apply_safe_acceptance(metrics, plans, validation, final_root)
     _apply_research_metric_maps(metrics)
     metrics.translation_seconds = time.monotonic() - started
     _write_reports(store, metrics)
@@ -313,6 +321,8 @@ def _find_function_file(root: Path, name: str) -> Path | None:
     import re
     pattern = re.compile(rf"\bfn\s+{re.escape(name)}\s*(?:<|\()")
     for file in sorted(root.rglob("*.rs")):
+        if "target" in file.relative_to(root).parts:
+            continue
         if pattern.search(file.read_text(encoding="utf-8", errors="replace")):
             return file
     return None
@@ -345,7 +355,12 @@ def _apply_eligibility_metrics(metrics: RunMetrics, eligibility) -> None:
             )
 
 
-def _apply_safe_acceptance(metrics: RunMetrics, plans: list[MigrationPlan], validation) -> None:
+def _apply_safe_acceptance(
+    metrics: RunMetrics,
+    plans: list[MigrationPlan],
+    validation,
+    final_root: Path,
+) -> None:
     final = metrics.safemap
     compile_ok = validation.compile.status == "passed"
     tests_ok = validation.tests.status in {"passed", "skipped"}
@@ -366,6 +381,7 @@ def _apply_safe_acceptance(metrics: RunMetrics, plans: list[MigrationPlan], vali
         plan.unit_id for plan in plans
         if plan.eligibility in {"safe_translatable", "safe_translatable_with_api_change"}
         and plan.status == "planned"
+        and _find_function_file(final_root, plan.function) is not None
     ]
     if compile_ok:
         metrics.compile_success_units = len(planned_eligible)
@@ -422,6 +438,8 @@ def _apply_research_metric_maps(metrics: RunMetrics) -> None:
         "nullable_pointer_to_option": metrics.migrated_idioms.get("nullable_pointer", 0),
         "error_code_to_result": metrics.migrated_idioms.get("error_code_return", 0),
         "malloc_free_to_vec_or_box": metrics.migrated_idioms.get("manual_allocation", 0),
+        "c_string_to_str": metrics.migrated_idioms.get("c_string", 0),
+        "boolean_int_to_bool": metrics.migrated_idioms.get("boolean_int", 0),
     }
 
 
@@ -471,7 +489,7 @@ def _direct_llm_translation(
     final_root: Path,
     client: LLMClient,
     store: ArtifactStore,
-) -> None:
+) -> dict[str, int | str]:
     sources = "\n\n".join(
         f"// FILE: {Path(file).name}\n"
         + Path(file).read_text(encoding="utf-8", errors="replace")
@@ -491,6 +509,7 @@ def _direct_llm_translation(
     if rust.startswith("```"):
         lines = rust.splitlines()
         rust = "\n".join(lines[1:-1])
+    reject_forbidden_constructs(rust)
     if "fn " not in rust or "{" not in rust:
         raise ValueError("Direct LLM translation did not return Rust source")
     if "#![forbid(unsafe_code)]" not in rust:
@@ -507,6 +526,11 @@ def _direct_llm_translation(
         "[dependencies]\n",
         encoding="utf-8",
     )
+    return {
+        "input_tokens": response.input_tokens,
+        "output_tokens": response.output_tokens,
+        "model": response.model,
+    }
 
 
 def _unguided_plans(units: list[TranslationUnit]) -> list[MigrationPlan]:
@@ -535,6 +559,7 @@ def _maintainability(root: Path) -> dict:
     sources = [
         file.read_text(encoding="utf-8", errors="replace")
         for file in sorted(root.rglob("*.rs"))
+        if "target" not in file.relative_to(root).parts
     ]
     source = "\n".join(sources)
     function_count = len(re.findall(r"\bfn\s+[A-Za-z_]\w*\s*(?:<|\()", source))

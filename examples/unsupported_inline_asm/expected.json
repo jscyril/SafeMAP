@@ -1,0 +1,6 @@
+{
+  "primary_function": "has_inline_asm",
+  "expected_eligibility": "unsupported",
+  "expected_plan_status": "rejected",
+  "expected_unsupported_features": ["inline_assembly", "volatile_access"]
+}

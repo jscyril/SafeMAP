@@ -11,13 +11,16 @@ except ImportError:  # pragma: no cover
 
 from .analysis.rust_analyzer import analyze_rust_path
 from .artifacts import ArtifactStore
-from .benchmarks.benchmark_runner import run_benchmarks
+from .benchmarks.benchmark_runner import (
+    export_paper_tables, run_benchmarks, run_final_evaluation,
+)
 from .config import load_config
 from .ingestion.project_loader import ingest_project
 from .pipeline import (
     analyze_c_stage, plan_stage, repair_stage, report_stage, rewrite_stage,
     run_pipeline,
 )
+from .runs import latest_run, summarize_runs
 from .translation.c2rust_runner import run_c2rust
 from .validation.validator import validate_project
 
@@ -109,9 +112,45 @@ if typer:
         benchmarks: Path = typer.Option(..., exists=True),
         output: Path = typer.Option(...),
         config: Optional[Path] = typer.Option(None, exists=True),
+        mode: list[str] = typer.Option(None),
     ) -> None:
-        rows = run_benchmarks(benchmarks, output, load_config(config))
+        rows = run_benchmarks(benchmarks, output, load_config(config), modes=mode)
         typer.echo(json.dumps(rows, indent=2))
+
+    @app.command("export-tables")
+    def export_tables(
+        input: Path = typer.Option(..., exists=True),
+        output: Path = typer.Option(...),
+    ) -> None:
+        export_paper_tables(input, output)
+        typer.echo(str(output))
+
+    @app.command("latest-run")
+    def latest_run_command(
+        output: Path = typer.Option(Path(".")),
+    ) -> None:
+        run = latest_run(output)
+        if run is None:
+            raise typer.BadParameter(f"No SafeMAP runs found under {output}")
+        typer.echo(str(run))
+
+    @app.command("summarize-runs")
+    def summarize_runs_command(
+        output: Path = typer.Option(Path(".")),
+    ) -> None:
+        typer.echo(json.dumps(summarize_runs(output), indent=2))
+
+    @app.command("final-eval")
+    def final_eval(
+        benchmarks: Path = typer.Option(Path("examples"), exists=True),
+        output: Path = typer.Option(Path("reports/final")),
+        config: Optional[Path] = typer.Option(None, exists=True),
+        mode: list[str] = typer.Option(None),
+    ) -> None:
+        manifest = run_final_evaluation(
+            benchmarks, output, load_config(config), modes=mode
+        )
+        typer.echo(json.dumps(manifest, indent=2))
 
 
 def _project(store: ArtifactStore):
@@ -144,6 +183,19 @@ def _argparse_main() -> None:  # pragma: no cover - used in minimal installation
     benchmark_parser.add_argument("--benchmarks", required=True)
     benchmark_parser.add_argument("--output", required=True)
     benchmark_parser.add_argument("--config")
+    benchmark_parser.add_argument("--mode", action="append")
+    export_parser = subparsers.add_parser("export-tables")
+    export_parser.add_argument("--input", required=True)
+    export_parser.add_argument("--output", required=True)
+    latest_parser = subparsers.add_parser("latest-run")
+    latest_parser.add_argument("--output", default=".")
+    summarize_parser = subparsers.add_parser("summarize-runs")
+    summarize_parser.add_argument("--output", default=".")
+    final_parser = subparsers.add_parser("final-eval")
+    final_parser.add_argument("--benchmarks", default="examples")
+    final_parser.add_argument("--output", default="reports/final")
+    final_parser.add_argument("--config")
+    final_parser.add_argument("--mode", action="append")
     for command in ("analyze-c", "translate-baseline", "analyze-rust", "plan", "rewrite", "repair", "validate", "report"):
         command_parser = subparsers.add_parser(command)
         command_parser.add_argument("--workdir", required=True)
@@ -161,7 +213,23 @@ def _argparse_main() -> None:  # pragma: no cover - used in minimal installation
         print(run_pipeline(selected, args.output, settings).root)
     elif args.command == "benchmark":
         print(json.dumps(run_benchmarks(
-            Path(args.benchmarks), Path(args.output), load_config(args.config)
+            Path(args.benchmarks), Path(args.output), load_config(args.config),
+            modes=args.mode,
+        ), indent=2))
+    elif args.command == "export-tables":
+        export_paper_tables(Path(args.input), Path(args.output))
+        print(args.output)
+    elif args.command == "latest-run":
+        run = latest_run(Path(args.output))
+        if run is None:
+            parser.error(f"No SafeMAP runs found under {args.output}")
+        print(run)
+    elif args.command == "summarize-runs":
+        print(json.dumps(summarize_runs(Path(args.output)), indent=2))
+    elif args.command == "final-eval":
+        print(json.dumps(run_final_evaluation(
+            Path(args.benchmarks), Path(args.output), load_config(args.config),
+            modes=args.mode,
         ), indent=2))
     else:
         store = ArtifactStore(Path(args.workdir))

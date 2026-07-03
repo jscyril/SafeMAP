@@ -29,6 +29,13 @@ target/
 results/
 work/
 compile_db/
+local-audit-report/
+reports/final/
+reports/benchmark_results.csv
+reports/benchmark_results.md
+reports/paper_tables.md
+reports/*_benchmark_results.csv
+reports/*_benchmark_results.md
 
 # Local editor and OS files
 .DS_Store

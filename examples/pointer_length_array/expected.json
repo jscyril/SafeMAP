@@ -1,0 +1,7 @@
+{
+  "primary_function": "sum_array",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["pointer_length_array"],
+  "expected_safe_rust_behavior": "sum_array(&[1, 2, 3, 4]) returns 10"
+}

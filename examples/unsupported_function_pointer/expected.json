@@ -1,0 +1,6 @@
+{
+  "primary_function": "apply",
+  "expected_eligibility": "unsupported",
+  "expected_plan_status": "rejected",
+  "expected_unsupported_features": ["function_pointer"]
+}

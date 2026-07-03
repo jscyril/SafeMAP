@@ -1,0 +1,6 @@
+{
+  "primary_function": "read_volatile",
+  "expected_eligibility": "unsupported",
+  "expected_plan_status": "rejected",
+  "expected_unsupported_features": ["volatile_access"]
+}

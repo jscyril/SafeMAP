@@ -1,0 +1,7 @@
+{
+  "primary_function": "divide",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["error_code_return", "output_parameter"],
+  "expected_safe_rust_behavior": "divide(12, 3) returns Ok(4), divide(12, 0) returns Err(-1)"
+}

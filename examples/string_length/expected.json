@@ -1,0 +1,7 @@
+{
+  "primary_function": "string_length",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["c_string"],
+  "expected_safe_rust_behavior": "string_length(\"hello\") returns 5 using a Rust &str"
+}

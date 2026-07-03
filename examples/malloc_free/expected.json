@@ -1,0 +1,7 @@
+{
+  "primary_function": "make_value",
+  "expected_eligibility": "safe_translatable_with_api_change",
+  "expected_plan_status": "planned",
+  "expected_patterns": ["manual_allocation"],
+  "expected_safe_rust_behavior": "make_value(9) returns Box::new(9)"
+}

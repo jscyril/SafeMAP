@@ -12,7 +12,10 @@ FUNCTION_RE = re.compile(
 
 def analyze_rust_path(path: str | Path) -> RustMetrics:
     root = Path(path)
-    files = [root] if root.is_file() else sorted(root.rglob("*.rs"))
+    files = [root] if root.is_file() else [
+        file for file in sorted(root.rglob("*.rs"))
+        if "target" not in file.relative_to(root).parts
+    ]
     aggregate = RustMetrics()
     candidates: set[str] = set()
     for file in files:

@@ -76,16 +76,16 @@
 
           <div class="hero-panel" aria-label="SafeMAP quick facts">
             <div>
-              <span class="metric-value">31</span>
+              <span class="metric-value">65</span>
               <span class="metric-label">passing tests</span>
             </div>
             <div>
-              <span class="metric-value">0</span>
-              <span class="metric-label">unsafe allowed in accepted final Rust</span>
+              <span class="metric-value">12/26</span>
+              <span class="metric-label">SafeMAP-only accepted eligible units</span>
             </div>
             <div>
-              <span class="metric-value">2</span>
-              <span class="metric-label">lanes: SafeMAP and C2Rust baseline</span>
+              <span class="metric-value">15</span>
+              <span class="metric-label">MVP benchmark examples</span>
             </div>
           </div>
         </section>
@@ -311,6 +311,10 @@
               <p><code>void get(int *out)</code> becomes a returned value or tuple.</p>
             </article>
             <article>
+              <h3>Multiple outputs</h3>
+              <p>Multiple direct output pointers can become Rust tuple returns.</p>
+            </article>
+            <article>
               <h3>Error code plus output</h3>
               <p><code>int parse(..., int *out)</code> becomes <code>Result&lt;i32, i32&gt;</code>.</p>
             </article>
@@ -320,11 +324,15 @@
             </article>
             <article>
               <h3>Manual allocation</h3>
-              <p>Simple ownership patterns are planned toward <code>Vec&lt;T&gt;</code> or <code>Box&lt;T&gt;</code>.</p>
+              <p>Single owned allocations can synthesize <code>Box&lt;T&gt;</code>; broader allocation cases are reported.</p>
             </article>
             <article>
-              <h3>Booleans and constants</h3>
-              <p>Simple integer idioms can be represented using Rust-native types.</p>
+              <h3>C strings</h3>
+              <p>Simple <code>const char *</code> inputs used with <code>strlen</code> become <code>&amp;str</code>.</p>
+            </article>
+            <article>
+              <h3>Boolean integers</h3>
+              <p>Integer returns from comparisons can become Rust <code>bool</code>.</p>
             </article>
           </div>
         </section>
@@ -536,8 +544,24 @@ python -m safemap.cli report --workdir work</code></pre>
             </thead>
             <tbody>
               <tr>
+                <td><code>boolean_int</code></td>
+                <td>Translates integer comparison returns to Rust <code>bool</code>.</td>
+              </tr>
+              <tr>
+                <td><code>simple_sum</code></td>
+                <td>Translates a scalar arithmetic function to safe Rust.</td>
+              </tr>
+              <tr>
                 <td><code>pointer_length_array</code></td>
                 <td>Translates indexed array plus length to a slice.</td>
+              </tr>
+              <tr>
+                <td><code>mutable_buffer</code></td>
+                <td>Translates mutable pointer-length buffers to mutable slices.</td>
+              </tr>
+              <tr>
+                <td><code>multiple_outputs</code></td>
+                <td>Translates multiple output parameters to a tuple return.</td>
               </tr>
               <tr>
                 <td><code>output_parameter</code></td>
@@ -553,11 +577,19 @@ python -m safemap.cli report --workdir work</code></pre>
               </tr>
               <tr>
                 <td><code>malloc_free</code></td>
-                <td>Documents allocation-related planning behavior.</td>
+                <td>Translates a simple owned allocation to <code>Box&lt;i32&gt;</code>.</td>
               </tr>
               <tr>
                 <td><code>simple_pointer</code></td>
-                <td>Basic pointer analysis example.</td>
+                <td>Translates a scalar mutable pointer update to <code>&amp;mut i32</code>.</td>
+              </tr>
+              <tr>
+                <td><code>string_length</code></td>
+                <td>Translates simple C string input to <code>&amp;str</code>.</td>
+              </tr>
+              <tr>
+                <td><code>unsupported_*</code></td>
+                <td>Documents rejection/reporting for unions, function pointers, volatile access, and inline assembly.</td>
               </tr>
             </tbody>
           </table>
@@ -567,12 +599,20 @@ python -m safemap.cli report --workdir work</code></pre>
           <h2>Research Paper Workflow</h2>
           <ol>
             <li>Freeze the benchmark set.</li>
-            <li>Run all benchmark modes and keep the run artifacts.</li>
-            <li>Use <code>reports/metrics.json</code> and <code>reports/comparison.csv</code> for tables.</li>
+            <li>Run <code>python -m safemap.cli final-eval --benchmarks examples --output reports/final --mode safemap_full</code>.</li>
+            <li>Use <code>benchmark_results.csv</code>, <code>benchmark_results.md</code>, <code>paper_tables.md</code>, and <code>manifest.json</code>.</li>
             <li>Describe unsupported cases as results, not as tool crashes.</li>
             <li>Report C2Rust baseline separately from SafeMAP final output.</li>
             <li>Include threats to validity around benchmark size, LLM nondeterminism, and partial C support.</li>
           </ol>
+
+          <h3>Current SafeMAP-only snapshot</h3>
+          <ul>
+            <li><code>15</code> benchmark rows.</li>
+            <li><code>12 / 26</code> eligible units accepted.</li>
+            <li><code>11</code> supported examples pass differential testing.</li>
+            <li>Accepted units contain no unsafe blocks/functions and expose no raw-pointer public API.</li>
+          </ul>
 
           <h3>Do not claim</h3>
           <ul>
@@ -613,16 +653,43 @@ python -m safemap.cli report --workdir work</code></pre>
   --config safemap.example.yaml</code></pre>
 
           <h3>Missing LLM API key</h3>
-          <p>Set the environment variable named by <code>llm.api_key_env</code>.</p>
+          <p>
+            Set the environment variable named by <code>llm.api_key_env</code>.
+            For local OpenAI-compatible servers such as Ollama, use a placeholder
+            value such as <code>OLLAMA_API_KEY=dummy</code> if the server does not
+            enforce authentication.
+          </p>
+
+          <h3>LLM quota or authentication failures</h3>
+          <p>
+            SafeMAP reports provider, model, base URL, and the HTTP failure class.
+            For quota failures, reduce benchmark modes, wait for the provider quota
+            window, or switch to a local model.
+          </p>
 
           <h3>C2Rust cannot find <code>libclang-cpp.so.14</code></h3>
-          <p>Set <code>SAFEMAP_C2RUST_LIB_DIR</code> or install the LLVM 14 runtime libraries.</p>
+          <p>
+            Set <code>SAFEMAP_C2RUST_LIB_DIR</code> or <code>LIBCLANG_PATH</code>
+            to the LLVM library directory used by C2Rust. If headers fail to
+            resolve, also set <code>SAFEMAP_C2RUST_RESOURCE_DIR</code>.
+          </p>
 
           <h3>C2Rust baseline fails to compile on stable Rust</h3>
           <p>
             This can happen when C2Rust emits obsolete nightly feature gates. SafeMAP
             records that as a baseline failure and still evaluates the safe-first final output.
           </p>
+
+          <h3>Miri unavailable</h3>
+          <p>
+            Missing <code>cargo miri</code> is reported as unsupported with guidance
+            to run <code>rustup component add miri</code> or disable
+            <code>validation.run_miri</code>.
+          </p>
+
+          <h3>Inspecting final evaluation runs</h3>
+          <pre><code>python -m safemap.cli latest-run --output reports/final
+python -m safemap.cli summarize-runs --output reports/final</code></pre>
         </section>
 
         <section id="glossary" class="chapter" data-title="glossary">
