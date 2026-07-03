@@ -1,0 +1,20 @@
+{
+  "description": "Configuration option readers using nullable pointers and boolean integer values.",
+  "expected_functions": {
+    "read_required": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["error_code_return", "nullable_pointer"]
+    },
+    "read_or_zero": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["nullable_pointer"]
+    },
+    "is_enabled": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["boolean_int"]
+    }
+  }
+}

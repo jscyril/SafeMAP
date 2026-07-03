@@ -24,9 +24,10 @@ No build step is required.
 
 Current documentation snapshot:
 
-- test suite: `82 passed`
+- test suite: `83 passed`
 - benchmark examples: `40`
 - SafeMAP-only final eval: `37 / 76` accepted eligible units
+- case studies: `5` modules, `15 / 20` accepted eligible units
 - paper-table workflow: `python -m safemap.cli final-eval --benchmarks examples --output reports/final --mode safemap_full`
 
 ## GitHub Pages

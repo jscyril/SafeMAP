@@ -1,0 +1,20 @@
+{
+  "description": "Owned allocation factory helpers for Box and Vec migration.",
+  "expected_functions": {
+    "make_owned": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["manual_allocation"]
+    },
+    "make_constant": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["manual_allocation"]
+    },
+    "make_sequence": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["manual_allocation"]
+    }
+  }
+}

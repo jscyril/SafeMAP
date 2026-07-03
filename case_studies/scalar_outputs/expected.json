@@ -1,0 +1,20 @@
+{
+  "description": "Scalar output-parameter helpers and checked arithmetic.",
+  "expected_functions": {
+    "square_and_double": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["output_parameter", "output_parameter"]
+    },
+    "divide_checked": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["error_code_return", "output_parameter"]
+    },
+    "decrement_in_place": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["output_parameter"]
+    }
+  }
+}

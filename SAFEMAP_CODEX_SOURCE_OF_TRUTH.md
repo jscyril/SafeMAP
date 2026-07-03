@@ -181,7 +181,7 @@ baseline/reference lane, and fully safe acceptance is reported separately from
 unsafe reduction. Current local validation passes:
 
 ```text
-82 passed
+83 passed
 ```
 
 The current SafeMAP-only final-evaluation snapshot over `examples/` is:
@@ -190,6 +190,30 @@ The current SafeMAP-only final-evaluation snapshot over `examples/` is:
 40 benchmark rows
 37 accepted eligible units out of 76
 36 supported MVP examples passing differential testing
+```
+
+The current SafeMAP-only case-study snapshot over `case_studies/` is:
+
+```text
+5 authored module-shaped case studies
+15 accepted eligible units out of 20
+5 case-study modules passing differential testing
+```
+
+The current C2Rust-only baseline snapshot over the 40-example benchmark suite is:
+
+```text
+40 benchmark rows
+0 fully safe accepted units out of 76 under SafeMAP's strict final-output policy
+```
+
+The current LLM smoke snapshot is:
+
+```text
+llm_only over examples/simple_sum with local Ollama gemma4:12b
+compiled successfully
+differential testing passed
+full LLM benchmark remains deferred because single-row latency was several minutes
 ```
 
 The strict rules in this document remain binding: if final Rust still contains

@@ -76,7 +76,7 @@
 
           <div class="hero-panel" aria-label="SafeMAP quick facts">
             <div>
-              <span class="metric-value">82</span>
+              <span class="metric-value">83</span>
               <span class="metric-label">passing tests</span>
             </div>
             <div>
@@ -86,6 +86,10 @@
             <div>
               <span class="metric-value">40</span>
               <span class="metric-label">MVP benchmark examples</span>
+            </div>
+            <div>
+              <span class="metric-value">5</span>
+              <span class="metric-label">module case studies</span>
             </div>
           </div>
         </section>
@@ -695,6 +699,9 @@ python -m safemap.cli report --workdir work</code></pre>
             <li><code>40</code> benchmark rows.</li>
             <li><code>37 / 76</code> eligible units accepted.</li>
             <li><code>36</code> supported examples pass differential testing.</li>
+            <li><code>5</code> authored case-study modules with <code>15 / 20</code> accepted units; all pass differential testing.</li>
+            <li><code>c2rust_only</code> baseline: <code>0 / 76</code> fully safe accepted units under the strict final-output policy.</li>
+            <li><code>llm_only</code> Ollama smoke test on <code>simple_sum</code>: compile passed and differential testing passed; full LLM baseline remains latency dependent.</li>
             <li>Accepted units contain no unsafe blocks/functions and expose no raw-pointer public API.</li>
           </ul>
 

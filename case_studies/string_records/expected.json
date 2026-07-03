@@ -1,0 +1,20 @@
+{
+  "description": "String record length helpers with int, size_t, and long return types.",
+  "expected_functions": {
+    "short_name_len": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["c_string"]
+    },
+    "title_len": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["c_string"]
+    },
+    "label_len": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["c_string"]
+    }
+  }
+}

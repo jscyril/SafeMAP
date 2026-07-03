@@ -86,10 +86,13 @@ As of the current local validation pass:
 
 | Area | Current status |
 |---|---|
-| Test suite | `82 passed` |
+| Test suite | `83 passed` |
 | MVP benchmark examples | `40` example projects under `examples/` |
 | SafeMAP-only final eval | `37 / 76` eligible units accepted |
 | Supported examples with differential pass | `36` |
+| Case-study modules | `5` authored modules, `15 / 20` eligible units accepted |
+| C2Rust-only baseline | `0 / 76` fully safe accepted units under SafeMAP's strict safe-acceptance policy |
+| LLM smoke test | Ollama `llm_only` on `simple_sum` compiled and differential-passed; full LLM baseline remains latency/model dependent |
 | Accepted final Rust policy | `#![forbid(unsafe_code)]`, no unsafe blocks/functions, no raw-pointer public API |
 | Benchmark table export | `benchmark_results.csv`, `benchmark_results.md`, `paper_tables.md`, `manifest.json`, including Miri reason/count/diagnostic fields |
 
@@ -112,6 +115,23 @@ safemap_full accepted units: 37 / 76
 The intentionally unsupported benchmark examples are still reported separately
 and should not be interpreted as SafeMAP translation failures for supported
 idioms.
+
+Case-study modules are evaluated separately with:
+
+```bash
+python -m safemap.cli final-eval \
+  --benchmarks case_studies \
+  --output /tmp/safemap-case-studies \
+  --mode safemap_full
+```
+
+Observed case-study result:
+
+```text
+rows: 5
+safemap_full accepted units: 15 / 20
+all 5 case-study modules passed differential testing
+```
 
 ## Repository Layout
 
@@ -354,7 +374,7 @@ python -m compileall -q safemap
 Current expected test result:
 
 ```text
-82 passed
+83 passed
 ```
 
 ## Git Hygiene

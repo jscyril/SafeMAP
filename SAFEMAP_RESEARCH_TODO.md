@@ -143,7 +143,7 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
 - Test suite currently passes:
 
   ```text
-  82 passed
+  83 passed
   ```
 
 - Added tests for:
@@ -247,8 +247,26 @@ This file summarizes the current SafeMAP prototype state for research-paper plan
   - `safemap_full`: 37 accepted units out of 76 eligible units
   - 36 supported MVP examples pass differential testing
   - unsupported examples are rejected or reported separately
+- Added authored case-study modules under `case_studies/`:
+  - `buffer_metrics`
+  - `config_options`
+  - `string_records`
+  - `scalar_outputs`
+  - `allocation_factory`
+- Observed SafeMAP-only case-study summary:
+  - 5 case-study rows
+  - `safemap_full`: 15 accepted units out of 20 eligible units
+  - all 5 case-study modules pass differential testing
+- Observed C2Rust-only baseline summary over the 40-example benchmark suite:
+  - 40 benchmark rows
+  - `c2rust_only`: 0 fully safe accepted units out of 76 eligible units
+  - this is expected under SafeMAP's strict no-unsafe/no-raw-pointer final-output policy
+- Observed LLM smoke result:
+  - `llm_only` with Ollama `gemma4:12b` on `examples/simple_sum`
+  - compile passed
+  - differential testing passed
+  - one row required several minutes locally, so full LLM evaluation remains deferred
 - Remaining final-paper evaluation work:
-  - `c2rust_only`
   - `llm_only`
   - `c2rust_llm_unguided`
 - Re-run LLM-dependent modes with a configured model/API key.

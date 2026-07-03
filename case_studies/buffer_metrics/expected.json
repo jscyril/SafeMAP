@@ -1,0 +1,20 @@
+{
+  "description": "Buffer metrics and mutation helpers using pointer-length arrays.",
+  "expected_functions": {
+    "sum_values": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["pointer_length_array"]
+    },
+    "max_value": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["pointer_length_array"]
+    },
+    "add_offset": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["pointer_length_array"]
+    }
+  }
+}
