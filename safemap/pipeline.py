@@ -549,6 +549,7 @@ def _unguided_plans(units: list[TranslationUnit]) -> list[MigrationPlan]:
                 "Avoid unsafe where possible",
             ],
             validation_requirements=["cargo check", "cargo test"],
+            function=unit.c_function,
         )
         for unit in units
     ]

@@ -47,10 +47,12 @@ def run_benchmarks(
                 miri_failed = miri.get("failed")
                 row_status, row_reason = _row_status(mode.name, metrics, store)
                 idiom_success_counts = _idiom_success_counts(store, metrics)
+                primary = _primary_target_result(project, store, metrics)
                 rows.append({
                     "project": project.name,
                     "mode": mode.name,
                     "run_dir": str(store.root),
+                    **primary,
                     "loc_c": sum(
                         len(f.read_text().splitlines()) for f in project.rglob("*.c")
                     ),
@@ -99,10 +101,17 @@ def run_benchmarks(
             except Exception as error:
                 rows.append({
                     "project": project.name, "mode": mode.name,
+                    **_failed_target_result(project),
                     "status": "failed", "reason": str(error),
                 })
     columns = [
         "project", "mode", "status", "reason", "run_dir", "loc_c",
+        "primary_function", "primary_expected_eligibility",
+        "primary_plan_status", "primary_eligible",
+        "primary_fully_safe_accepted", "primary_outcome",
+        "target_functions", "target_count",
+        "target_fully_safe_accepted_units", "target_acceptance_rate",
+        "target_outcomes",
         "total_units", "eligible_units", "fully_safe_accepted_units",
         "fully_safe_translation_unit_acceptance_rate", "eligibility_counts",
         "idiom_success_counts", "failure_categories", "loc_rust_baseline",
@@ -125,6 +134,12 @@ def run_benchmarks(
         "| Mode | Rows | Status Counts | Accepted Units | Eligible Units | Acceptance Rate |",
         "|---|---:|---|---:|---:|---:|",
         *_mode_summary_rows(rows),
+        "",
+        "## Declared Target Summary",
+        "",
+        "| Mode | Target Functions | Accepted Target Functions | Acceptance Rate | Outcomes |",
+        "|---|---:|---:|---:|---|",
+        *_primary_summary_rows(rows),
         "",
         "## Idiom Success",
         "",
@@ -164,6 +179,12 @@ def export_paper_tables(input_csv: Path, output_md: Path) -> str:
         "| Mode | Rows | Status Counts | Accepted Units | Eligible Units | Acceptance Rate |",
         "|---|---:|---|---:|---:|---:|",
         *_mode_summary_rows(rows),
+        "",
+        "## Declared Target Summary",
+        "",
+        "| Mode | Target Functions | Accepted Target Functions | Acceptance Rate | Outcomes |",
+        "|---|---:|---:|---:|---|",
+        *_primary_summary_rows(rows),
         "",
         "## Idiom Success",
         "",
@@ -212,8 +233,8 @@ def export_combined_evaluation(
         "",
         "## Evaluation Overview",
         "",
-        "| Dataset | Mode | Rows | Accepted Units | Eligible Units | Acceptance Rate | Differential Passed | Notes |",
-        "|---|---|---:|---:|---:|---:|---:|---|",
+        "| Dataset | Mode | Rows | Accepted Units | Eligible Units | Acceptance Rate | Differential Passed | Accepted Target Functions | Target Functions | Target Function Rate | Notes |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|",
     ]
     sections.extend(_combined_summary_rows([
         ("Microbenchmarks", main_csv, "SafeMAP fully safe output"),
@@ -289,10 +310,21 @@ def _combined_summary_rows(
                 1 for row in mode_rows
                 if row.get("safemap_differential_status") == "passed"
             )
+            target_total = sum(
+                _target_count(row) for row in mode_rows
+            )
+            target_accepted = sum(
+                _target_accepted_count(row) for row in mode_rows
+            )
             rate = accepted / eligible if eligible else 0.0
+            target_rate = (
+                target_accepted / target_total if target_total else 0.0
+            )
             rows.append(
                 f"| {dataset} | {mode} | {len(mode_rows)} | {accepted} | "
-                f"{eligible} | {rate:.3f} | {differential} | {note} |"
+                f"{eligible} | {rate:.3f} | {differential} | "
+                f"{target_accepted} | {target_total} | {target_rate:.3f} | "
+                f"{note} |"
             )
     return rows
 
@@ -362,6 +394,126 @@ def _idiom_success_counts(store, metrics: dict) -> dict[str, dict[str, int]]:
     return counts
 
 
+def _primary_target_result(project: Path, store, metrics: dict) -> dict[str, object]:
+    metadata = _read_json_if_exists(project / "expected.json")
+    primary = metadata.get("primary_function")
+    targets = _declared_targets(metadata)
+    target_results = [
+        _target_function_result(store, metrics, function)
+        for function in targets
+    ]
+    target_accepted = sum(1 for result in target_results if result["accepted"])
+    target_outcomes: dict[str, int] = {}
+    for result in target_results:
+        outcome = str(result["outcome"])
+        target_outcomes[outcome] = target_outcomes.get(outcome, 0) + 1
+    target_fields = {
+        "target_functions": ",".join(targets),
+        "target_count": len(targets),
+        "target_fully_safe_accepted_units": target_accepted,
+        "target_acceptance_rate": target_accepted / len(targets) if targets else "",
+        "target_outcomes": json.dumps(target_outcomes, sort_keys=True),
+    }
+    if not primary:
+        return {
+            "primary_function": "",
+            "primary_expected_eligibility": "",
+            "primary_plan_status": "",
+            "primary_eligible": "",
+            "primary_fully_safe_accepted": "",
+            "primary_outcome": "not_declared",
+            **target_fields,
+        }
+    result = _target_function_result(store, metrics, primary)
+    if not result["plan"]:
+        return {
+            "primary_function": primary,
+            "primary_expected_eligibility": metadata.get("expected_eligibility", ""),
+            "primary_plan_status": "missing",
+            "primary_eligible": False,
+            "primary_fully_safe_accepted": False,
+            "primary_outcome": "missing_plan",
+            **target_fields,
+        }
+    plan = result["plan"]
+    return {
+        "primary_function": primary,
+        "primary_expected_eligibility": metadata.get("expected_eligibility", ""),
+        "primary_plan_status": plan.get("status", ""),
+        "primary_eligible": result["eligible"],
+        "primary_fully_safe_accepted": result["accepted"],
+        "primary_outcome": result["outcome"],
+        **target_fields,
+    }
+
+
+def _failed_target_result(project: Path) -> dict[str, object]:
+    metadata = _read_json_if_exists(project / "expected.json")
+    primary = metadata.get("primary_function")
+    targets = _declared_targets(metadata)
+    target_outcomes = {"failed": len(targets)} if targets else {}
+    return {
+        "primary_function": primary or "",
+        "primary_expected_eligibility": metadata.get("expected_eligibility", "")
+        if primary else "",
+        "primary_plan_status": "",
+        "primary_eligible": "",
+        "primary_fully_safe_accepted": False if primary else "",
+        "primary_outcome": "failed" if primary else "not_declared",
+        "target_functions": ",".join(targets),
+        "target_count": len(targets),
+        "target_fully_safe_accepted_units": 0,
+        "target_acceptance_rate": 0.0 if targets else "",
+        "target_outcomes": json.dumps(target_outcomes, sort_keys=True),
+    }
+
+
+def _declared_targets(metadata: dict) -> list[str]:
+    primary = metadata.get("primary_function")
+    if primary:
+        return [str(primary)]
+    expected_functions = metadata.get("expected_functions")
+    if isinstance(expected_functions, dict):
+        return sorted(str(name) for name in expected_functions)
+    return []
+
+
+def _target_function_result(store, metrics: dict, function: str) -> dict[str, object]:
+    plan = _plan_for_function(store, function)
+    if not plan:
+        return {
+            "plan": None,
+            "accepted": False,
+            "eligible": False,
+            "outcome": "missing_plan",
+        }
+    accepted = plan.get("unit_id") in set(metrics.get("fully_safe_accepted_unit_ids", []))
+    eligible = plan.get("eligibility") in {
+        "safe_translatable",
+        "safe_translatable_with_api_change",
+    }
+    if accepted:
+        outcome = "accepted"
+    elif plan.get("status") != "planned":
+        outcome = str(plan.get("eligibility") or "rejected")
+    else:
+        outcome = "not_accepted"
+    return {
+        "plan": plan,
+        "accepted": accepted,
+        "eligible": eligible,
+        "outcome": outcome,
+    }
+
+
+def _plan_for_function(store, function: str) -> dict | None:
+    for plan_path in store.path("plans").glob("*.json"):
+        plan = _read_json_if_exists(plan_path)
+        if plan.get("function") == function:
+            return plan
+    return None
+
+
 def _selected_modes(names: list[str] | None):
     if not names:
         return BASELINES
@@ -400,6 +552,31 @@ def _mode_summary_rows(rows: list[dict]) -> list[str]:
         output.append(
             f"| {mode} | {len(items)} | {status_text} | {accepted} | "
             f"{eligible} | {rate:.3f} |"
+        )
+    return output
+
+
+def _primary_summary_rows(rows: list[dict]) -> list[str]:
+    by_mode: dict[str, list[dict]] = {}
+    for row in rows:
+        if _target_count(row):
+            by_mode.setdefault(row.get("mode", ""), []).append(row)
+    output = []
+    for mode, items in sorted(by_mode.items()):
+        targets = sum(_target_count(item) for item in items)
+        accepted = sum(
+            _target_accepted_count(item) for item in items
+        )
+        outcomes: dict[str, int] = {}
+        for item in items:
+            for outcome, count in _target_outcomes(item).items():
+                outcomes[outcome] = outcomes.get(outcome, 0) + count
+        outcome_text = ", ".join(
+            f"`{name}`: {count}" for name, count in sorted(outcomes.items())
+        )
+        rate = accepted / targets if targets else 0.0
+        output.append(
+            f"| {mode} | {targets} | {accepted} | {rate:.3f} | {outcome_text} |"
         )
     return output
 
@@ -460,3 +637,33 @@ def _as_int(value) -> int:
         except ValueError:
             return 0
     return 0
+
+
+def _target_count(row: dict) -> int:
+    count = _as_int(row.get("target_count"))
+    if count:
+        return count
+    return 1 if row.get("primary_function") else 0
+
+
+def _target_accepted_count(row: dict) -> int:
+    count = _as_int(row.get("target_fully_safe_accepted_units"))
+    if count:
+        return count
+    return 1 if _as_bool(row.get("primary_fully_safe_accepted")) else 0
+
+
+def _target_outcomes(row: dict) -> dict[str, int]:
+    outcomes = _as_json_dict(row.get("target_outcomes"))
+    if outcomes:
+        return {str(name): _as_int(count) for name, count in outcomes.items()}
+    outcome = row.get("primary_outcome")
+    return {str(outcome): 1} if outcome else {}
+
+
+def _as_bool(value) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes"}
+    return bool(value)

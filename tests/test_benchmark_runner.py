@@ -7,9 +7,12 @@ from safemap.benchmarks.benchmark_runner import (
     export_paper_tables,
     run_final_evaluation,
     _failure_summary_rows,
+    _failed_target_result,
     _idiom_success_counts,
     _idiom_summary_rows,
     _mode_summary_rows,
+    _primary_summary_rows,
+    _primary_target_result,
     _row_status,
     _selected_modes,
 )
@@ -132,6 +135,138 @@ def test_idiom_success_counts_reads_plans_and_accepted_units(tmp_path: Path) -> 
     assert counts == {"output_parameter": {"planned": 1, "accepted": 1}}
 
 
+def test_primary_target_result_uses_declared_benchmark_target(tmp_path: Path) -> None:
+    project = tmp_path / "project"
+    project.mkdir()
+    (project / "expected.json").write_text(
+        (
+            '{"primary_function": "apply", '
+            '"expected_eligibility": "unsupported"}'
+        ),
+        encoding="utf-8",
+    )
+    plans = tmp_path / "run" / "plans"
+    plans.mkdir(parents=True)
+    (plans / "unit_0.json").write_text(
+        (
+            '{"unit_id": "unit_0", "function": "helper", '
+            '"status": "planned", "eligibility": "safe_translatable"}'
+        ),
+        encoding="utf-8",
+    )
+    (plans / "unit_1.json").write_text(
+        (
+            '{"unit_id": "unit_1", "function": "apply", '
+            '"status": "rejected", "eligibility": "unsupported"}'
+        ),
+        encoding="utf-8",
+    )
+
+    result = _primary_target_result(
+        project,
+        DummyStore(tmp_path / "run"),
+        {"fully_safe_accepted_unit_ids": ["unit_0"]},
+    )
+
+    assert result["primary_function"] == "apply"
+    assert result["primary_expected_eligibility"] == "unsupported"
+    assert result["primary_plan_status"] == "rejected"
+    assert result["primary_eligible"] is False
+    assert result["primary_fully_safe_accepted"] is False
+    assert result["primary_outcome"] == "unsupported"
+    assert result["target_functions"] == "apply"
+    assert result["target_count"] == 1
+    assert result["target_fully_safe_accepted_units"] == 0
+    assert result["target_acceptance_rate"] == 0.0
+    assert result["target_outcomes"] == '{"unsupported": 1}'
+
+
+def test_primary_target_result_handles_multi_function_case_study(
+    tmp_path: Path,
+) -> None:
+    project = tmp_path / "case"
+    project.mkdir()
+    (project / "expected.json").write_text(
+        (
+            '{"expected_functions": {'
+            '"first": {"expected_eligibility": "safe_translatable"}, '
+            '"second": {"expected_eligibility": "safe_translatable"}}}'
+        ),
+        encoding="utf-8",
+    )
+    plans = tmp_path / "run" / "plans"
+    plans.mkdir(parents=True)
+    (plans / "unit_0.json").write_text(
+        (
+            '{"unit_id": "unit_0", "function": "first", '
+            '"status": "planned", "eligibility": "safe_translatable"}'
+        ),
+        encoding="utf-8",
+    )
+    (plans / "unit_1.json").write_text(
+        (
+            '{"unit_id": "unit_1", "function": "second", '
+            '"status": "planned", "eligibility": "safe_translatable"}'
+        ),
+        encoding="utf-8",
+    )
+
+    result = _primary_target_result(
+        project,
+        DummyStore(tmp_path / "run"),
+        {"fully_safe_accepted_unit_ids": ["unit_0"]},
+    )
+
+    assert result["primary_function"] == ""
+    assert result["target_functions"] == "first,second"
+    assert result["target_count"] == 2
+    assert result["target_fully_safe_accepted_units"] == 1
+    assert result["target_acceptance_rate"] == 0.5
+    assert result["target_outcomes"] == '{"accepted": 1, "not_accepted": 1}'
+
+
+def test_failed_target_result_counts_declared_target_as_failed(tmp_path: Path) -> None:
+    project = tmp_path / "project"
+    project.mkdir()
+    (project / "expected.json").write_text(
+        (
+            '{"primary_function": "read_value", '
+            '"expected_eligibility": "safe_translatable_with_api_change"}'
+        ),
+        encoding="utf-8",
+    )
+
+    result = _failed_target_result(project)
+
+    assert result["primary_function"] == "read_value"
+    assert result["primary_fully_safe_accepted"] is False
+    assert result["primary_outcome"] == "failed"
+    assert result["target_count"] == 1
+    assert result["target_fully_safe_accepted_units"] == 0
+    assert result["target_outcomes"] == '{"failed": 1}'
+
+
+def test_primary_summary_rows_aggregate_target_acceptance() -> None:
+    rows = [
+        {
+            "mode": "safemap_full",
+            "primary_function": "ok",
+            "primary_fully_safe_accepted": True,
+            "primary_outcome": "accepted",
+        },
+        {
+            "mode": "safemap_full",
+            "primary_function": "bad",
+            "primary_fully_safe_accepted": "False",
+            "primary_outcome": "unsupported",
+        },
+    ]
+
+    assert _primary_summary_rows(rows) == [
+        "| safemap_full | 2 | 1 | 0.500 | `accepted`: 1, `unsupported`: 1 |"
+    ]
+
+
 def test_selected_modes_filters_known_modes() -> None:
     selected = _selected_modes(["llm_only"])
 
@@ -171,9 +306,10 @@ def test_export_combined_evaluation_summary(tmp_path: Path) -> None:
     main_csv.write_text(
         (
             "project,mode,eligible_units,fully_safe_accepted_units,"
-            "safemap_differential_status\n"
-            "a,safemap_full,2,1,passed\n"
-            "b,safemap_full,3,2,failed\n"
+            "safemap_differential_status,primary_function,"
+            "primary_fully_safe_accepted\n"
+            "a,safemap_full,2,1,passed,foo,True\n"
+            "b,safemap_full,3,2,failed,bar,False\n"
         ),
         encoding="utf-8",
     )
@@ -196,6 +332,7 @@ def test_export_combined_evaluation_summary(tmp_path: Path) -> None:
 
     assert output.read_text(encoding="utf-8") == text
     assert "| Microbenchmarks | safemap_full | 2 | 3 | 5 | 0.600 | 1 |" in text
+    assert "| Microbenchmarks | safemap_full | 2 | 3 | 5 | 0.600 | 1 | 1 | 2 | 0.500 |" in text
     assert "| Case studies | safemap_full | 1 | 3 | 4 | 0.750 | 1 |" in text
 
 
@@ -217,6 +354,9 @@ def test_run_final_evaluation_writes_durable_artifacts(tmp_path: Path) -> None:
     csv_text = (tmp_path / "final" / "benchmark_results.csv").read_text(
         encoding="utf-8"
     )
+    assert "primary_function" in csv_text.splitlines()[0]
+    assert "primary_fully_safe_accepted" in csv_text.splitlines()[0]
+    assert "target_fully_safe_accepted_units" in csv_text.splitlines()[0]
     assert "miri_reason" in csv_text.splitlines()[0]
     assert "miri_diagnostics" in csv_text.splitlines()[0]
     assert (tmp_path / "final" / "benchmark_results.md").exists()
