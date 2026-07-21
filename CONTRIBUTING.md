@@ -19,6 +19,12 @@ For benchmark/reporting changes, also run:
 python -m safemap.cli final-eval \
   --benchmarks examples \
   --output reports/final \
+  --mode safemap_full \
+  --dry-run
+
+python -m safemap.cli final-eval \
+  --benchmarks examples \
+  --output reports/final \
   --mode safemap_full
 ```
 

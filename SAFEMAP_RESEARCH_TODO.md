@@ -1,447 +1,361 @@
 # SafeMAP Research TODO and Status
 
-This file summarizes the current SafeMAP prototype state for research-paper planning.
+Last audited: 2026-07-21
 
-## Completed
+This file is the working research TODO for SafeMAP. It summarizes what the
+current repository supports, what evidence exists for a paper, and what should
+be done before making publication claims.
 
-### Source-of-Truth Alignment
+## Current Verdict
 
-- Reframed SafeMAP as a safe-first C-to-Rust migration prototype.
-- Treats C2Rust as a baseline/reference lane, not as the final SafeMAP success path.
-- Distinguishes fully safe accepted Rust from unsafe-reduced, partial, failed, or unsupported output.
-- Reports `fully_safe_translation_unit_acceptance_rate` as the main success metric.
+SafeMAP is good enough to start writing the paper. It is not yet good enough for
+a strong publication submission without more evaluation cleanup and claim
+tightening.
 
-### Pipeline and Artifacts
+The current artifact supports a conservative workshop/short-paper style claim:
 
-- Keeps timestamped run directories under:
+> SafeMAP is a safe-first C-to-Rust migration prototype that generates fully
+> safe Rust for a restricted, statically identifiable subset of C functions and
+> module-shaped examples. It rejects unsupported constructs explicitly and
+> evaluates accepted output under `#![forbid(unsafe_code)]`, raw-pointer API
+> checks, compilation, and available behavioral validation.
 
-  ```text
-  results/.safemap/runs/<timestamp>-<project>-<id>/
-  ```
-
-- Writes key artifacts:
-  - `project.json`
-  - `analysis/c_analysis.json`
-  - `analysis/translation_units.json`
-  - `analysis/eligibility.json`
-  - `plans/*.json`
-  - `baseline/rust/`
-  - `final/rust/`
-  - `validation/results.json`
-  - `reports/report.md`
-  - `reports/metrics.json`
-  - `reports/comparison.csv`
-
-### Eligibility Classification
-
-- Added conservative safety eligibility classification.
-- Uses required categories:
-  - `safe_translatable`
-  - `safe_translatable_with_api_change`
-  - `requires_safe_wrapper`
-  - `requires_manual_refactor`
-  - `unsafe_required`
-  - `unsupported`
-- Detects and rejects unsupported or risky constructs such as:
-  - unions
-  - function pointers
-  - inline assembly
-  - volatile access
-  - unresolved pointer ownership
-  - unresolved aliasing risk
-
-### C Idiom Support
-
-- Supports MVP analysis/planning for:
-  - simple scalar functions
-  - pointer-length arrays to Rust slices
-  - mutable pointer-length buffers to mutable Rust slices
-  - output parameters to return values
-  - multiple output parameters to tuple returns
-  - mutable scalar pointers to `&mut T`
-  - return-code plus output-parameter to `Result<T, i32>`
-  - nullable pointers to `Option<&T>`
-  - simple C string inputs to Rust `&str`
-  - integer boolean idioms to Rust `bool`
-  - simple allocation idioms in analysis/planning
-
-### Safe Rust Generation
-
-- Added deterministic safe synthesis for clear MVP examples.
-- Generated final Rust includes:
-
-  ```rust
-  #![forbid(unsafe_code)]
-  ```
-
-- Current safe synthesis covers examples such as:
-  - `simple_sum`
-  - `boolean_int`
-  - `pointer_length_array`
-  - `mutable_buffer`
-  - `multiple_outputs`
-  - `simple_pointer`
-  - `string_length`
-  - `output_parameter`
-  - `nullable_pointer`
-  - `error_code`
-  - `malloc_free`
-
-### LLM Integration
-
-- Existing LLM abstraction is preserved.
-- OpenAI-compatible client supports providers such as OpenAI and Gemini OpenAI-compatible API.
-- LLM errors now include provider/model/base URL context and actionable
-  diagnostics for missing keys, authentication failures, and quota/rate limits.
-- Prompts now explicitly forbid:
-  - `unsafe`
-  - `unsafe fn`
-  - `unsafe impl`
-  - `extern "C"`
-  - `*const`
-  - `*mut`
-  - placeholder code such as `todo!()` and `unimplemented!()`
-- LLM responses are rejected if they introduce forbidden unsafe constructs.
-
-### C2Rust Baseline
-
-- C2Rust installation verified with `c2rust 0.22.1`.
-- SafeMAP now generates compile databases for single-file example directories.
-- SafeMAP can pass LLVM 14 library/include paths to C2Rust subprocesses.
-- Added minimal C2Rust-only header shims for common headers:
-  - `stdio.h`
-  - `stdlib.h`
-  - `string.h`
-- C2Rust baseline artifacts are generated separately from SafeMAP final output.
-
-### Validation and Metrics
-
-- Runs validation with:
-  - `cargo check`
-  - `cargo test`
-  - `cargo clippy`
-  - optional Miri
-  - differential testing when applicable
-- Differential testing now compares executable-compatible examples and known MVP
-  library translations through generated Rust harness binaries.
-- Function-level differential harnesses generate deterministic randomized test
-  cases for supported signatures using `validation.differential_test_inputs`.
-- Differential testing still records `not_applicable` when no comparable harness
-  is available.
-- Reports:
-  - eligible units
-  - fully safe accepted units
-  - unsafe blocks/functions
-  - raw pointer counts
-  - raw-pointer public API counts
-  - idiom migration counts
-  - failure categories
-- Fully safe accepted units are counted only when the planned function is present in the final Rust output.
-
-### Tests
-
-- Test suite currently passes:
-
-  ```text
-  84 passed
-  ```
-
-- Added tests for:
-  - eligibility classification
-  - migration plan schema fields
-  - single-source directory compile DB generation
-  - safe synthesis
-  - C2Rust compile DB/resource behavior
-  - benchmark dataset completeness and expected eligibility/planning metadata
-  - final-output presence before fully safe acceptance credit
-  - function-level differential harnesses for library-style SafeMAP outputs
-  - randomized differential harness generation
-  - benchmark status, mode filtering, paper-table export, and aggregate table generation
-  - final evaluation artifact generation and run summaries
-  - LLM, C2Rust, and Miri diagnostic classification
-  - Miri pass/fail count parsing and benchmark export fields
-
-## Current Known Limitations
-
-- SafeMAP is still an MVP research prototype, not a production compiler.
-- It does not translate arbitrary C projects.
-- Safe synthesis is intentionally narrow and pattern-based.
-- C2Rust output may fail to compile on stable Rust because C2Rust emits old nightly feature gates such as:
-
-  ```rust
-  #![feature(raw_ref_op)]
-  ```
-
-- C2Rust can be sensitive to host LLVM/glibc versions.
-- Differential testing is limited and mostly works for executable-compatible examples.
-- Multi-file project migration is not yet robust.
-- Complex macros, unions, function pointers, custom allocators, volatile memory, inline assembly, and pointer-integer casts are rejected or reported.
-- LLM rewrite/repair requires an API key and has not yet been evaluated over a large benchmark set.
-
-## Paper-Critical Work Left
-
-### P0: Benchmark Dataset
-
-- Status: completed for the MVP paper dataset.
-- Benchmark examples under `examples/` now include:
-  - `simple_sum`
-  - `simple_subtract`
-  - `simple_multiply`
-  - `simple_divide`
-  - `simple_modulo`
-  - `boolean_int`
-  - `boolean_negative`
-  - `boolean_nonzero`
-  - `boolean_greater_equal`
-  - `boolean_less_equal`
-  - `pointer_length_array`
-  - `array_max`
-  - `array_total`
-  - `mutable_buffer`
-  - `mutable_buffer_decrement`
-  - `mutable_buffer_add_two`
-  - `mutable_buffer_subtract_two`
-  - `multiple_outputs`
-  - `min_max_outputs`
-  - `sum_diff_outputs`
-  - `output_square`
-  - `output_double`
-  - `simple_pointer`
-  - `simple_pointer_decrement`
-  - `simple_pointer_double`
-  - `string_length`
-  - `string_length_size_t`
-  - `string_length_long`
-  - `output_parameter`
-  - `nullable_pointer`
-  - `nullable_pointer_zero`
-  - `error_code`
-  - `error_code_product`
-  - `malloc_free`
-  - `malloc_free_constant`
-  - `malloc_vec`
-  - `unsupported_union`
-  - `unsupported_function_pointer`
-  - `unsupported_volatile`
-  - `unsupported_inline_asm`
-- Each benchmark includes:
-  - C source
-  - expected eligibility category
-  - expected migration plan
-  - expected safe Rust behavior where applicable
-
-### P1: Evaluation Runs
-
-- Status: partially complete.
-- Current SafeMAP-only evaluation run covered all benchmark examples and wrote:
-
-  ```text
-  /tmp/safemap-full-expanded.csv
-  /tmp/safemap-full-expanded.md
-  /tmp/safemap-paper-tables.md
-  /tmp/safemap-final-eval/
-  ```
-
-- Observed SafeMAP-only summary:
-  - 40 benchmark rows
-  - `safemap_full`: 37 accepted units out of 76 eligible units
-  - 36 supported MVP examples pass differential testing
-  - unsupported examples are rejected or reported separately
-- Added authored case-study modules under `case_studies/`:
-  - `buffer_metrics`
-  - `config_options`
-  - `string_records`
-  - `scalar_outputs`
-  - `allocation_factory`
-- Observed SafeMAP-only case-study summary:
-  - 5 case-study rows
-  - `safemap_full`: 15 accepted units out of 20 eligible units
-  - all 5 case-study modules pass differential testing
-- Observed C2Rust-only baseline summary over the 40-example benchmark suite:
-  - 40 benchmark rows
-  - `c2rust_only`: 0 fully safe accepted units out of 76 eligible units
-  - this is expected under SafeMAP's strict no-unsafe/no-raw-pointer final-output policy
-- Observed LLM smoke result:
-  - `llm_only` with Ollama `gemma4:12b` on `examples/simple_sum`
-  - compile passed
-  - differential testing passed
-  - one row required several minutes locally, so full LLM evaluation remains deferred
-- Added combined paper-facing evaluation summary:
-  - command: `python -m safemap.cli combined-eval`
-  - output: `reports/combined_evaluation.md`
-  - includes SafeMAP microbenchmarks, case studies, C2Rust baseline, and LLM smoke rows
-- Remaining final-paper evaluation work:
-  - `llm_only`
-  - `c2rust_llm_unguided`
-- Re-run LLM-dependent modes with a configured model/API key.
-- Do not hand-edit reported metrics.
-
-### P2: Differential Testing
-
-- Status: completed for current MVP supported examples.
-- Added differential harnesses for:
-  - integer functions
-  - boolean integer returns
-  - integer arrays/slices
-  - output parameters
-  - nullable pointers
-  - mutable integer buffers
-  - mutable scalar pointer updates
-  - multiple output parameters returned as tuples
-  - simple C string inputs translated to `&str`
-  - simple allocation/`Box<T>` examples
-  - simple allocation-buffer/`Vec<T>` examples
-- Remaining:
-  - multi-function/project-level harnesses beyond the MVP examples
-
-### P3: LLM Evaluation
-
-- Status: ready for API-backed run.
-- Added `safemap.gemini.yaml` for Google AI Studio / Gemini OpenAI-compatible
-  API usage with:
-  - `api_key_env: GEMINI_API_KEY`
-  - `base_url: https://generativelanguage.googleapis.com/v1beta/openai/`
-  - `model: gemini-3.5-flash`
-- Direct LLM translation now records:
-  - LLM call count
-  - input tokens
-  - output tokens
-- Direct LLM translation now rejects forbidden unsafe/raw-pointer/placeholder
-  constructs before writing a final crate.
-- Offline static-client LLM benchmark smoke passed for `simple_sum`:
-  - `llm_only`: compile passed, differential passed
-  - `c2rust_llm_unguided`: compile passed, differential passed
-- Remaining:
-  - export `GEMINI_API_KEY`
-  - run Google AI Studio-backed benchmark:
-
-    ```bash
-    python -m safemap.cli benchmark \
-      --benchmarks examples \
-      --output reports/gemini_benchmark_results.csv \
-      --config safemap.gemini.yaml
-    ```
-
-- Run LLM rewrite/repair on examples that deterministic synthesis does not cover.
-- Record:
-  - prompt artifacts
-  - response artifacts
-  - rewrite success/failure
-  - repair attempts
-  - unsafe rejection events
-  - compile/test/differential status
-
-### P4: Report Tables
-
-- Status: partially complete.
-- Benchmark runner now produces a richer CSV and Markdown summary containing:
-  - benchmark summary
-  - eligibility classification counts
-  - success-by-idiom aggregate table
-  - paper-ready table export from saved benchmark CSVs
-  - accepted/eligible unit counts
-  - fully safe acceptance rate
-  - C2Rust baseline comparison
-  - LLM-only comparison
-  - C2Rust plus LLM unguided comparison
-  - SafeMAP full comparison
-  - unsafe/raw-pointer reduction
-  - failure category distribution
-  - validation results
-  - durable final-evaluation manifest under `reports/final/`
-- Remaining:
-  - include real LLM mode results after API-backed evaluation
-
-### P5: Threats to Validity
-
-- Document limitations clearly:
-  - benchmark size
-  - hand-curated examples
-  - dependence on LLVM/C2Rust versions
-  - LLM nondeterminism
-  - limited differential testing
-  - incomplete C language coverage
-  - pattern-based deterministic synthesis
-
-## Useful Additions
-
-### Better Safe Synthesis
-
-- Add more deterministic translation patterns:
-  - mutable buffer normalization
-  - additional allocation and initialization shapes beyond the current `Vec<T>` and `Box<T>` cases
-  - simple string parsing to `Result`
-
-### Stronger Analysis
-
-- Improve pointer role classification.
-- Add more aliasing evidence.
-- Add macro and preprocessor reporting.
-- Improve call graph and dependency graph summaries.
-- Track external calls more precisely.
-
-### Validation Improvements
-
-- Generate Rust unit tests from C examples.
-- Add project-specific validation failure summaries in reports and CLI output.
-
-### C2Rust Baseline Cleanup
-
-- Optionally patch C2Rust baseline artifacts only for compile measurement.
-- Record both raw C2Rust output and minimally compile-fixed baseline output separately.
-- Do not count compile-fixed C2Rust as SafeMAP success unless it satisfies fully safe acceptance.
-
-### CLI and UX
-
-- Add clearer diagnostics for project-specific validation failures.
-
-## Suggested Immediate Next Steps
-
-1. Configure Gemini with:
-
-   ```bash
-   export GEMINI_API_KEY="your_key"
-   ```
-
-   and in config:
-
-   ```yaml
-   llm:
-     provider: openai_compatible
-     model: gemini-3.5-flash
-     base_url: https://generativelanguage.googleapis.com/v1beta/openai/
-     api_key_env: GEMINI_API_KEY
-   ```
-
-2. Run a durable SafeMAP-only final-evaluation bundle:
-
-   ```bash
-   python -m safemap.cli final-eval \
-     --benchmarks examples \
-     --output reports/final \
-     --mode safemap_full
-   ```
-
-3. Inspect generated reports and runs:
-
-   ```bash
-   cat reports/final/paper_tables.md
-   python -m safemap.cli latest-run --output reports/final
-   python -m safemap.cli summarize-runs --output reports/final
-   ```
-
-4. Re-run LLM-dependent modes after quota/API access is available.
-
-## Paper Claim Supported by Current MVP
-
-The current prototype supports a conservative claim:
-
-> SafeMAP is a safe-first C-to-Rust migration prototype that generates fully safe Rust for a restricted set of statically eligible C functions. It rejects or reports unsupported units, evaluates generated Rust under `#![forbid(unsafe_code)]`, and compares results against a C2Rust baseline using explicit safety and validation metrics.
-
-Avoid claiming:
+Do not claim:
 
 - full automatic C-to-Rust migration;
+- production readiness;
 - support for arbitrary C projects;
-- formal behavioral equivalence;
-- production compiler completeness;
+- formal semantic equivalence;
+- broad LLM superiority or broad LLM evaluation;
 - success based only on unsafe-code reduction.
+
+## Verified Local Evidence
+
+- Test suite: `95 passed` with `pytest`.
+- Microbenchmarks: `40` example projects under `examples/`.
+- Case studies: `5` authored module-shaped projects under `case_studies/`.
+- Checked-in report artifacts:
+  - `reports/final/benchmark_results.csv`
+  - `reports/final/paper_tables.md`
+  - `reports/case-studies/benchmark_results.csv`
+  - `reports/case-studies/paper_tables.md`
+  - `reports/c2rust-only/benchmark_results.csv`
+  - `reports/c2rust-only/paper_tables.md`
+  - `reports/gemini_benchmark_results.csv`
+  - `reports/gemini_benchmark_results.md`
+  - `reports/combined_evaluation.md`
+- SafeMAP-only microbenchmark result:
+  - rows: `40`
+  - accepted units: `37 / 76`
+  - fully safe unit acceptance rate: `0.487`
+  - declared target functions accepted: `36 / 40`
+  - target-function acceptance rate: `0.900`
+- SafeMAP-only case-study result:
+  - rows: `5`
+  - accepted units: `15 / 20`
+  - fully safe unit acceptance rate: `0.750`
+  - declared target functions accepted: `15 / 15`
+  - each case-study row passed differential validation
+- C2Rust-only baseline result:
+  - rows: `40`
+  - accepted units: `0`
+  - checked-in CSV reports `72` eligible units because two C2Rust baseline rows
+    failed before producing complete metrics
+  - the paper draft currently says `0 / 76`; reconcile this before submission
+    by rerunning or explaining the denominator consistently
+- Gemini / OpenAI-compatible LLM subset result:
+  - parsed CSV rows: `48`
+  - projects: `12`
+  - modes: `c2rust_only`, `llm_only`, `c2rust_llm_unguided`, `safemap_full`
+  - `llm_only`: `3` completed rows, `9` rows with no final output, `0 / 20`
+    accepted units under strict SafeMAP unit matching
+  - `c2rust_llm_unguided`: `12` completed rows, `0 / 20` accepted units
+  - `safemap_full` on the same 12-project subset: `8 / 20` accepted units
+  - this is useful diagnostic evidence, but not a full LLM baseline
+- Paper draft directory inspected:
+  - `/mnt/data/college/research/my_paper/main.tex`
+  - `/mnt/data/college/research/my_paper/tables/*.tex`
+  - `/mnt/data/college/research/my_paper/references.bib`
+  - `/mnt/data/college/research/my_paper/reference_inventory.md`
+
+## Implemented Capabilities
+
+### Project Pipeline and Artifacts
+
+- Ingests C projects and records project metadata.
+- Runs C static analysis through libclang when available, with a regex fallback.
+- Builds translation units and eligibility records.
+- Creates structured migration plans.
+- Runs C2Rust as a baseline/reference lane when configured.
+- Runs deterministic safe synthesis for supported idioms.
+- Runs optional LLM translation/rewrite paths through an OpenAI-compatible
+  client.
+- Writes timestamped run directories and durable report artifacts.
+- Exports benchmark CSV, Markdown summaries, paper tables, and combined
+  evaluation summaries.
+
+### Safe Acceptance Policy
+
+SafeMAP counts a unit as fully safe accepted only when the final Rust:
+
+- compiles under `#![forbid(unsafe_code)]`;
+- has no unsafe blocks, unsafe functions, unsafe impls, or `extern "C"` blocks
+  in the final analyzed Rust;
+- exposes no raw-pointer public API;
+- contains the planned function in final output;
+- passes cargo validation and available behavioral validation.
+
+### Supported MVP Idioms
+
+The current deterministic synthesizer handles these families in the benchmark
+set:
+
+- simple scalar integer returns;
+- integer boolean idioms to `bool`;
+- pointer-length arrays to Rust slices;
+- mutable pointer-length buffers to mutable Rust slices;
+- output parameters to return values;
+- multiple output parameters to tuple returns;
+- mutable scalar pointer updates to `&mut T`;
+- return-code plus output-parameter to `Result<T, i32>`;
+- nullable pointer reads to `Option<&T>` or `Result`;
+- simple C string length inputs to `&str`;
+- simple allocation idioms to `Box<T>` and selected `Vec<T>` patterns.
+
+### Unsupported or Manual-Review Constructs
+
+The analyzer rejects or reports:
+
+- unions;
+- function pointers;
+- inline assembly;
+- volatile access;
+- setjmp/longjmp;
+- pointer-integer casts;
+- unresolved pointer ownership;
+- unresolved aliasing risk;
+- custom allocator behavior;
+- complex macros and broad preprocessor behavior;
+- larger multi-file build-system migration.
+
+## Paper-Blocking TODOs
+
+These should be done before treating the draft as submission-ready.
+
+### P0: Reconcile Evaluation Numbers
+
+- Regenerate or reconcile all paper-facing tables from the checked-in CSVs.
+- Resolve the C2Rust denominator mismatch:
+  - `reports/combined_evaluation.md` reports C2Rust as `0 / 72`.
+  - `/mnt/data/college/research/my_paper/main.tex` and tables report `0 / 76`.
+- Decide whether failed C2Rust baseline rows are excluded from the denominator,
+  rerun to recover complete metrics, or document the failed rows explicitly.
+- [x] Update all stale `84 passed` references to the current `95 passed`.
+- [x] Add exact command lines and tool versions used for the final reported run
+  through `scripts/reproduce_paper_artifacts.py`,
+  `reports/reproduction_manifest.json`, and `reports/artifact_metadata.json`.
+- Do not hand-edit final metrics; regenerate tables from CSV artifacts.
+
+### P0: Make the Paper Claim Match the Evidence
+
+- Keep the main claim limited to a restricted safe-first subset.
+- Make target-function acceptance and unit acceptance separate everywhere.
+- Explain why accepted units can be `37 / 76` while declared target functions
+  are `36 / 40`.
+- Explain intentionally unsupported examples as rejection outcomes, not
+  ordinary translation failures.
+- Avoid positioning the current artifact as project-scale migration.
+- Avoid using the Gemini subset as a full LLM baseline.
+
+### P0: Refresh the Paper Draft
+
+- Update `/mnt/data/college/research/my_paper/main.tex`:
+  - test count from `84` to `88`;
+  - C2Rust denominator after reconciliation;
+  - execution snapshot to mention checked-in report paths;
+  - limitations around authored datasets, skipped Miri, and partial LLM results.
+- Update `/mnt/data/college/research/my_paper/tables/*.tex` from regenerated
+  report outputs.
+- Replace placeholder author, affiliation, and email metadata.
+- Build the LaTeX PDF at least once with `pdflatex`/`bibtex` or a venue
+  template and fix any citation/table issues.
+
+### P0: Artifact Reproducibility
+
+- [x] Add one documented script or Make target that regenerates:
+  - SafeMAP final microbenchmark CSV/tables;
+  - case-study CSV/tables;
+  - C2Rust baseline CSV/tables;
+  - combined paper summary;
+  - LaTeX table fragments for the paper.
+- [x] Record tool versions for Python, clang/libclang, Rust, Cargo, Clippy,
+  C2Rust, and optional Miri in `reports/artifact_metadata.json`.
+- [x] Add an artifact README explaining expected runtime, optional tools, and
+  which failures are expected.
+- Ensure generated benchmark outputs do not accidentally include stale runs or
+  temporary harness artifacts.
+
+## High-Priority Research TODOs
+
+### P1: Evaluation Breadth
+
+- Add a larger curated benchmark suite beyond authored toy examples.
+- Include at least a small real-world or semi-realistic C corpus with clear
+  selection criteria.
+- Report LOC, number of functions, pointer density, unsupported-construct
+  counts, and per-project complexity alongside unit acceptance.
+- Add ablation rows if possible:
+  - analysis-guided deterministic SafeMAP;
+  - SafeMAP without static guidance;
+  - LLM-only;
+  - C2Rust plus unguided LLM;
+  - C2Rust-only strict policy.
+- For a stronger paper, include confidence intervals or repeated LLM trials
+  where LLMs are evaluated.
+
+### P1: LLM Baseline
+
+- Decide whether the paper will include LLM results as a main baseline or only
+  as preliminary engineering evidence.
+- If included, run a bounded, reproducible LLM evaluation:
+  - fixed model and provider;
+  - fixed prompts;
+  - fixed temperature;
+  - exact benchmark subset;
+  - saved prompts and responses;
+  - token counts and failure reasons;
+  - strict acceptance under the same SafeMAP policy.
+- Investigate why current `llm_only` rows often produce no final output.
+- Investigate why completed `llm_only` rows pass differential testing but still
+  accept `0` units under strict unit matching.
+- Update combined evaluation to include the LLM subset only if its scope is
+  clearly labeled.
+
+### P1: Differential and Behavioral Validation
+
+- Expand differential harness support beyond known benchmark names.
+- Generate harnesses from function signatures and expected metadata instead of
+  hard-coded project-name cases where feasible.
+- Add multi-function and module-level differential tests beyond the current
+  single-file/single-project path.
+- Add fuzzing or randomized corpus generation with saved seeds and inputs.
+- Record generated differential inputs and outputs as artifacts for auditing.
+- Run Miri on at least a representative subset, or explain why it is skipped.
+
+### P1: Analysis Soundness and Rejection Quality
+
+- Strengthen pointer role classification beyond regex evidence.
+- Add clearer aliasing evidence and reasons for manual-refactor decisions.
+- Improve macro/preprocessor reporting.
+- Track external calls and library dependencies more precisely.
+- Separate "unsupported by Rust safe subset" from "unsupported by current
+  prototype implementation" in reports.
+- Add tests for false positives and false negatives in eligibility
+  classification.
+
+### P1: Safe Synthesis Coverage
+
+- Expand deterministic synthesis for manual allocation patterns.
+- Add additional allocation initialization shapes beyond the current simple
+  `Box<T>` and `Vec<T>` cases.
+- Add support for simple struct-return and struct-field access idioms.
+- Add safe translations for more string-processing cases.
+- Add selected loop reductions beyond sum/max.
+- Improve generated Rust naming, formatting, and API consistency.
+
+## Medium-Priority Engineering TODOs
+
+### P2: Reporting and Metrics
+
+- [x] Add a single canonical result schema version to each CSV/JSON artifact.
+- [x] Include report-generation timestamp and git commit hash when available.
+- [x] Make combined evaluation reject mismatched denominators unless explicitly
+  configured.
+- [x] Add markdown and LaTeX export parity tests.
+- [x] Track skipped, unsupported, failed, and not-applicable validation
+  separately.
+- [x] Add a command that prints a publication-ready metric summary from
+  canonical CSV inputs.
+
+### P2: CLI and Configuration
+
+- [x] Make benchmark modes explicit in the README and CLI help.
+- [x] Add examples for running only `safemap_full`, only `c2rust_only`, and the
+  LLM subset.
+- [x] Warn when an LLM config has no usable API key before starting a long run.
+- [x] Add a dry-run mode that validates external tool availability.
+- [x] Clarify output directory behavior so reruns do not mix fresh and stale
+  artifacts.
+
+### P2: Test Coverage
+
+- Keep the unit suite green as the primary regression gate.
+- Add integration tests for:
+  - full final-eval artifact generation;
+  - combined-eval denominator consistency;
+  - expected unsupported examples;
+  - LLM failure classification with a static fake client;
+  - generated LaTeX table fragment consistency.
+- Add tests for multi-file project ingestion and compile database recovery.
+
+### P2: Documentation
+
+- [x] Update `README.md` after paper-number reconciliation.
+- [x] Update `SAFEMAP_CODEX_SOURCE_OF_TRUTH.md` after paper-number
+  reconciliation.
+- [x] Add a concise "How to reproduce paper tables" section.
+- Add a "Known limitations" section that mirrors the paper's threats to
+  validity.
+- Link the paper draft path and artifact-generation commands from the research
+  TODO or README.
+
+## Longer-Term TODOs
+
+### P3: Project-Scale Migration
+
+- Improve multi-file dependency graphs and translation-unit grouping.
+- Add support for internal helper functions and call graphs in synthesis.
+- Handle headers and shared structs more robustly.
+- Add partial migration output that clearly separates accepted safe units from
+  manual-refactor units.
+
+### P3: Stronger Semantics
+
+- Use AST/CFG information more deeply instead of regex-heavy synthesis.
+- Add loop invariant and bounds evidence for more pointer-to-slice rewrites.
+- Add ownership/lifetime evidence for borrow choices.
+- Explore translation validation or formal methods for small supported subsets.
+
+### P3: Artifact Packaging
+
+- Package raw inputs, generated outputs, reports, and scripts for archival.
+- Add Docker or devcontainer support if external tools can be pinned reliably.
+- Add CI jobs for unit tests and lightweight benchmark smoke tests.
+- Add optional long-running evaluation jobs outside normal CI.
+
+## Current Publication Readiness
+
+### Ready Now
+
+- Start writing the paper.
+- Present the safe-first architecture.
+- Present strict acceptance as the central contribution.
+- Present deterministic SafeMAP results on the existing microbenchmarks and
+  case studies.
+- Present C2Rust as a strict-policy baseline after denominator reconciliation.
+- Present unsupported constructs as explicit rejection behavior.
+
+### Not Ready Yet
+
+- Submit to a strong systems/software-engineering venue without more evaluation.
+- Claim broad C coverage or real-world project migration.
+- Claim LLM effectiveness from the current Gemini/Ollama subset.
+- Claim formal equivalence from current differential tests.
+- Claim Miri-backed validation if evaluated rows skipped Miri.
+
+### Best Near-Term Submission Target
+
+The project is closest to a workshop paper, short paper, artifact paper, or
+prototype/tool-demo submission. A stronger conference/journal submission needs
+a larger and less hand-curated benchmark set, a cleaner reproducibility story,
+and reconciled paper tables.
