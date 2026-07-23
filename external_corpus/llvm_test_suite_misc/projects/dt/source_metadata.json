@@ -1,0 +1,8 @@
+{
+  "license": "NCSA",
+  "project": "dt",
+  "reference_output": "dt.reference_output",
+  "source": "dt.c",
+  "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+  "upstream_path": "SingleSource/Benchmarks/Misc/dt.c"
+}

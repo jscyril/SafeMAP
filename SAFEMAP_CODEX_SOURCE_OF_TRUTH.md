@@ -181,7 +181,7 @@ baseline/reference lane, and fully safe acceptance is reported separately from
 unsafe reduction. Current local validation passes:
 
 ```text
-102 passed
+111 passed
 ```
 
 The current SafeMAP-only final-evaluation snapshot over `examples/` is:
@@ -199,6 +199,20 @@ The current SafeMAP-only case-study snapshot over `case_studies/` is:
 15 accepted eligible units out of 20
 5 case-study modules passing differential testing
 ```
+
+The outcome-blind deterministic external-corpus snapshot is:
+
+```text
+10 pinned LLVM test-suite SingleSource/Misc programs
+589 C LOC and 32 analyzed functions
+1 fully safe accepted unit out of 22 eligible units
+the accepted project has differential validation marked not applicable
+```
+
+This result is evidence of limited external generalization and a gap between
+eligibility classification and implemented deterministic synthesis coverage.
+It must not be combined with the authored benchmark results without labeling
+the dataset and mode separately.
 
 The current C2Rust-only baseline snapshot over the 40-example benchmark suite is:
 

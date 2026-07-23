@@ -1,4 +1,4 @@
-.PHONY: test paper-artifacts paper-artifacts-strict
+.PHONY: test paper-artifacts paper-artifacts-strict external-corpus-artifacts
 
 test:
 	pytest -q
@@ -9,3 +9,6 @@ paper-artifacts:
 
 paper-artifacts-strict:
 	python scripts/reproduce_paper_artifacts.py --strict-denominators
+
+external-corpus-artifacts:
+	python scripts/reproduce_external_corpus.py

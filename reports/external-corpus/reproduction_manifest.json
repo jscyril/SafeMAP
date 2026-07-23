@@ -1,0 +1,29 @@
+{
+  "command_line": "/usr/bin/python -m safemap.cli final-eval --benchmarks external_corpus/llvm_test_suite_misc/projects --output reports/.reproduction/external-20260723T161504Z --mode safemap_deterministic",
+  "corpus_manifest": "external_corpus/llvm_test_suite_misc/manifest.json",
+  "corpus_manifest_sha256": "381eff59d8a0baace33a35d9771575dd23a6b96e992110a9b2bb231096fc7de7",
+  "published_artifacts": [
+    {
+      "path": "reports/external-corpus/benchmark_results.csv",
+      "sha256": "5c5cdaa9f6ee76bb03ffa89eda837077a71d625c12e14d16be66cd92bf619bb3"
+    },
+    {
+      "path": "reports/external-corpus/benchmark_results.md",
+      "sha256": "124285f789b10b72826233d963baab12855a22c3507ffe381268415236a8a71b"
+    },
+    {
+      "path": "reports/external-corpus/paper_tables.md",
+      "sha256": "88c369e4ee900558ae50ca908d9e2ff3ec8b4dcc956fc5a7000ebbde1253a392"
+    },
+    {
+      "path": "reports/external-corpus/paper_tables.tex",
+      "sha256": "24c57d5c98bf9a1508ad276b54575b9e5b6973d1eaace210fbe6312726e7e899"
+    },
+    {
+      "path": "reports/external-corpus/manifest.json",
+      "sha256": "c269257c97bd40e572428d212b26a9ec2cf9303085e8b88c70d71466981bcb4f"
+    }
+  ],
+  "snapshot_dir": "reports/external-corpus",
+  "working_reports_dir": "reports/.reproduction/external-20260723T161504Z"
+}

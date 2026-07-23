@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "benchmark_csv": "reports/.reproduction/external-20260723T161504Z/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/external-20260723T161504Z/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/external-20260723T161504Z/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/external-20260723T161504Z/paper_tables.md"
+  },
+  "benchmarks": "external_corpus/llvm_test_suite_misc/projects",
+  "generated_at_utc": "2026-07-23T16:15:06Z",
+  "git_commit": "d42fcb3c0ef387433dfca6f34b166134a3a1a320",
+  "git_dirty": true,
+  "modes": [
+    "safemap_deterministic"
+  ],
+  "output_dir": "reports/.reproduction/external-20260723T161504Z",
+  "result_schema_version": "safemap.benchmark_results.v2",
+  "rows": 10
+}

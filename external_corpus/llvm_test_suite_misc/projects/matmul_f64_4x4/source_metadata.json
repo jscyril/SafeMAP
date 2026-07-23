@@ -1,0 +1,8 @@
+{
+  "license": "NCSA",
+  "project": "matmul_f64_4x4",
+  "reference_output": "matmul_f64_4x4.reference_output",
+  "source": "matmul_f64_4x4.c",
+  "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+  "upstream_path": "SingleSource/Benchmarks/Misc/matmul_f64_4x4.c"
+}

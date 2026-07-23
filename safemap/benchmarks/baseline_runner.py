@@ -15,6 +15,6 @@ BASELINES = (
     BaselineMode("c2rust_only", True, False, False),
     BaselineMode("llm_only", False, True, False),
     BaselineMode("c2rust_llm_unguided", True, True, False),
+    BaselineMode("safemap_deterministic", False, False, True),
     BaselineMode("safemap_full", True, True, True),
 )
-

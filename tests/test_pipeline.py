@@ -89,6 +89,30 @@ def test_pipeline_runs_library_differential_harness(tmp_path: Path) -> None:
     assert metrics["differential_pass_rate"] == 1.0
 
 
+def test_not_applicable_differential_is_not_counted_as_passed(
+    tmp_path: Path,
+) -> None:
+    project = tmp_path / "external_shape"
+    project.mkdir()
+    (project / "main.c").write_text(
+        "double sqr(double value) { return value * value; }\n"
+        "int main(void) { return (int)sqr(2.0); }\n",
+        encoding="utf-8",
+    )
+    config = SafeMapConfig()
+    config.translation.use_c2rust = False
+    config.translation.use_llm = False
+    config.validation.run_clippy = False
+
+    store = run_pipeline(project, tmp_path / "results", config)
+    validation = store.read_json("validation/results.json")
+    metrics = store.read_json("reports/metrics.json")
+
+    assert validation["differential"]["status"] == "not_applicable"
+    assert metrics["fully_safe_accepted_units"] == 1
+    assert metrics["differential_pass_units"] == 0
+
+
 def test_pipeline_uses_randomized_library_differential_cases(tmp_path: Path) -> None:
     config = SafeMapConfig()
     config.translation.use_c2rust = False

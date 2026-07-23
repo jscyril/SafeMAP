@@ -1,0 +1,223 @@
+{
+  "corpus_schema_version": "safemap.external_corpus.v1",
+  "excluded_sources": [
+    {
+      "lines": 447,
+      "reason": "over_line_limit",
+      "source": "ReedSolomon.c"
+    },
+    {
+      "lines": 35,
+      "reason": "architecture_gated",
+      "source": "aarch64-init-cpu-features.c"
+    },
+    {
+      "lines": 121,
+      "reason": "over_line_limit",
+      "source": "evalloop.c"
+    },
+    {
+      "lines": 829,
+      "reason": "over_line_limit",
+      "source": "fbench.c"
+    },
+    {
+      "lines": 361,
+      "reason": "over_line_limit",
+      "source": "ffbench.c"
+    },
+    {
+      "lines": 269,
+      "reason": "over_line_limit",
+      "source": "flops-1.c"
+    },
+    {
+      "lines": 275,
+      "reason": "over_line_limit",
+      "source": "flops-2.c"
+    },
+    {
+      "lines": 269,
+      "reason": "over_line_limit",
+      "source": "flops-3.c"
+    },
+    {
+      "lines": 271,
+      "reason": "over_line_limit",
+      "source": "flops-4.c"
+    },
+    {
+      "lines": 268,
+      "reason": "over_line_limit",
+      "source": "flops-5.c"
+    },
+    {
+      "lines": 271,
+      "reason": "over_line_limit",
+      "source": "flops-6.c"
+    },
+    {
+      "lines": 277,
+      "reason": "over_line_limit",
+      "source": "flops-7.c"
+    },
+    {
+      "lines": 273,
+      "reason": "over_line_limit",
+      "source": "flops-8.c"
+    },
+    {
+      "lines": 1180,
+      "reason": "over_line_limit",
+      "source": "flops.c"
+    },
+    {
+      "lines": 317,
+      "reason": "over_line_limit",
+      "source": "himenobmtxpa.c"
+    },
+    {
+      "lines": 763,
+      "reason": "over_line_limit",
+      "source": "oourafft.c"
+    },
+    {
+      "lines": 408,
+      "reason": "over_line_limit",
+      "source": "richards_benchmark.c"
+    },
+    {
+      "lines": 439,
+      "reason": "over_line_limit",
+      "source": "whetstone.c"
+    }
+  ],
+  "license": "NCSA",
+  "license_files": [
+    "LICENSES/LLVM-test-suite-LICENSE.txt",
+    "LICENSES/Misc-LICENSE.txt"
+  ],
+  "projects": [
+    {
+      "license": "NCSA",
+      "lines": 51,
+      "project": "dt",
+      "reference_output": "dt.reference_output",
+      "reference_output_sha256": "2eae51c0cbf0492b65ba56c7d3e39e8e2b439e662946231901bdd6318a1eca41",
+      "source": "dt.c",
+      "source_sha256": "7f94e935eea565a3dfcb9a4d76f7731bc111b5d42becad159111cea2a0f1c614",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/dt.c"
+    },
+    {
+      "license": "NCSA",
+      "lines": 45,
+      "project": "fp_convert",
+      "reference_output": "fp-convert.reference_output",
+      "reference_output_sha256": "23e5f2ceb48fbac071da922b2b379da3ecdb1563dcc5004d5bb694b8ea357cd0",
+      "source": "fp-convert.c",
+      "source_sha256": "7f679bf3f70e455b9143fce99a584a611e248acbc59dfd26bad13145bb59629c",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/fp-convert.c"
+    },
+    {
+      "license": "NCSA",
+      "lines": 58,
+      "project": "lowercase",
+      "reference_output": "lowercase.reference_output",
+      "reference_output_sha256": "57840cf8cbac2020c3c61e1ef5aa06a44ae2bb1fd914ebf49bed9fae13d273ab",
+      "source": "lowercase.c",
+      "source_sha256": "b14d1e48b81edad66c6906969e3add6afb0f8d41324255550b5c98a7bac1786e",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/lowercase.c"
+    },
+    {
+      "license": "NCSA",
+      "lines": 28,
+      "project": "mandel_2",
+      "reference_output": "mandel-2.reference_output",
+      "reference_output_sha256": "cade6d8e12735989b1d330261427f3b471a172d53743ce522ca47ac7e6a672d0",
+      "source": "mandel-2.c",
+      "source_sha256": "78f100b72c4f1f22d8cd85e41731b206dc19699e6fc12371425f1ea160eb0078",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/mandel-2.c"
+    },
+    {
+      "license": "NCSA",
+      "lines": 48,
+      "project": "mandel",
+      "reference_output": "mandel.reference_output",
+      "reference_output_sha256": "588b7779065b59f5393718ae13f0d2d4081edf1694d6b515786a775a5ea490c7",
+      "source": "mandel.c",
+      "source_sha256": "f95775f23915e8106d13d9ddb51133709189552ee1ae343dfeb83136db75b90e",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/mandel.c"
+    },
+    {
+      "license": "NCSA",
+      "lines": 72,
+      "project": "matmul_f64_4x4",
+      "reference_output": "matmul_f64_4x4.reference_output",
+      "reference_output_sha256": "49ce71c3325d519e12259923c98f6a90ba1aec6d566845452d44f836770f9559",
+      "source": "matmul_f64_4x4.c",
+      "source_sha256": "2c756e5374d5ff2a5762400d7fac4011ba607722bde2d89bff40aa73b438388b",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/matmul_f64_4x4.c"
+    },
+    {
+      "license": "NCSA",
+      "lines": 81,
+      "project": "perlin",
+      "reference_output": "perlin.reference_output",
+      "reference_output_sha256": "e11e554464e70f46349bc27997794f19da1720070a79fdeda5bd489055003472",
+      "source": "perlin.c",
+      "source_sha256": "62e67b2e8683bd6ebca34697cbcc7f2b549f86e82f610abd017648fe1e711dca",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/perlin.c"
+    },
+    {
+      "license": "NCSA",
+      "lines": 64,
+      "project": "pi",
+      "reference_output": "pi.reference_output",
+      "reference_output_sha256": "a631949474d3fb09b23add89fb107477d3b200eab490e9170ece6d3a0084b962",
+      "source": "pi.c",
+      "source_sha256": "975fdc97f90539192c823642d43e7f73890552ee363b09005e1df119ea04cfc5",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/pi.c"
+    },
+    {
+      "license": "NCSA",
+      "lines": 67,
+      "project": "revertBits",
+      "reference_output": "revertBits.reference_output",
+      "reference_output_sha256": "3b5f6821ed4c5674bdb24c2906e199e07e5ceaa04a43fef57eb8525ff117cdcf",
+      "source": "revertBits.c",
+      "source_sha256": "21e4b5de4306d2c66a39058502cb930072d82dca4321cf8d2dd98182774fcffe",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/revertBits.c"
+    },
+    {
+      "license": "NCSA",
+      "lines": 75,
+      "project": "salsa20",
+      "reference_output": "salsa20.reference_output",
+      "reference_output_sha256": "9e384b13076b13a4e8ec78ac5cf995f0e64bd6ffc16969c61fad9b0376fc7a6d",
+      "source": "salsa20.c",
+      "source_sha256": "d8e0994fa485e825dd90c3a6a0c56e1442c7ba61b3a4d9379bb8a62c378376cf",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+      "upstream_path": "SingleSource/Benchmarks/Misc/salsa20.c"
+    }
+  ],
+  "selection": {
+    "architecture_gated_sources_excluded": [
+      "aarch64-init-cpu-features.c"
+    ],
+    "has_matching_default_reference_output": true,
+    "maximum_physical_source_lines": 100,
+    "outcome_blind": true,
+    "upstream_scope": "SingleSource/Benchmarks/Misc"
+  },
+  "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+  "upstream_repository": "https://github.com/llvm/llvm-test-suite.git"
+}

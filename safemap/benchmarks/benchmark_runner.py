@@ -1034,6 +1034,12 @@ def _row_status(mode: str, metrics: dict, store) -> tuple[str, str]:
     if mode == "c2rust_only":
         return "completed", ""
     if metrics.get("safemap") is None and metrics.get("safemap_compile") is None:
+        if mode == "safemap_deterministic":
+            return (
+                "no_supported_synthesis",
+                "No eligible unit matched the deterministic synthesizer's "
+                "implemented source patterns.",
+            )
         direct_error = _read_json_if_exists(store.path("logs/direct_llm_error.json"))
         return "no_final_output", direct_error.get("reason", "")
     return "completed", ""

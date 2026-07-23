@@ -1,6 +1,6 @@
 # SafeMAP Research TODO and Status
 
-Last audited: 2026-07-22
+Last audited: 2026-07-23
 
 This file is the working research TODO for SafeMAP. It summarizes what the
 current repository supports, what evidence exists for a paper, and what should
@@ -31,9 +31,12 @@ Do not claim:
 
 ## Verified Local Evidence
 
-- Test suite: `102 passed` with `pytest`.
+- Test suite: `111 passed` with `pytest`.
 - Microbenchmarks: `40` example projects under `examples/`.
 - Case studies: `5` authored module-shaped projects under `case_studies/`.
+- External corpus: `10` outcome-blind programs from LLVM test-suite
+  `SingleSource/Benchmarks/Misc`, pinned to commit
+  `6cdc54e005552e3444fa7402cd18a6e4b6db195d`.
 - Canonical, trackable publication artifacts:
   - `reports/publication/final/`
   - `reports/publication/case-studies/`
@@ -56,6 +59,16 @@ Do not claim:
   - fully safe unit acceptance rate: `0.750`
   - declared target functions accepted: `15 / 15`
   - each case-study row passed differential validation
+- Deterministic external-corpus result:
+  - rows: `10`
+  - C LOC: `589`
+  - analyzed functions: `32`
+  - accepted units: `1 / 22`
+  - fully safe unit acceptance rate: `0.045`
+  - `9` rows produced no supported deterministic synthesis
+  - the generated project passed Cargo check, Cargo test, and Clippy, but
+    differential validation was not applicable because the generic harness
+    does not yet consume LLVM reference outputs
 - C2Rust-only baseline result:
   - rows: `40`
   - accepted units: `0`
@@ -150,7 +163,7 @@ These should be done before treating the draft as submission-ready.
     `0 / 72`.
 - [x] Document the failed C2Rust baseline rows explicitly as denominator
   reduction in the paper draft.
-- [x] Update repository test-count references to the current `102 passed`.
+- [x] Update repository test-count references to the current `111 passed`.
 - [x] Add exact command lines and tool versions used for the final reported run
   through `scripts/reproduce_paper_artifacts.py`,
   `reports/publication/reproduction_manifest.json`, and
@@ -174,11 +187,12 @@ These should be done before treating the draft as submission-ready.
 ### P0: Refresh the Paper Draft
 
 - [x] Update `/mnt/data/college/research/my_paper/main.tex`:
-  - test count from `84` to `95`;
+  - test count to the current `111`;
   - C2Rust denominator after reconciliation;
   - execution snapshot to mention generated report paths;
-  - limitations around authored datasets, skipped Miri, and partial LLM results.
-- [x] Keep the paper's test count synchronized with the current `102 passed`
+  - limitations around authored datasets, external synthesis coverage, skipped
+    Miri, and unpublished LLM results.
+- [x] Keep the paper's test count synchronized with the current `111 passed`
   after adding publication and characterization tests.
 - [x] Update `/mnt/data/college/research/my_paper/tables/*.tex` from generated
   report outputs.
@@ -190,8 +204,12 @@ These should be done before treating the draft as submission-ready.
     installing the needed Arch TeX packages.
   - 2026-07-22: rebuilt the five-page PDF after updating the test count and
     canonical publication-snapshot paths; the build completed without errors.
-  - Citation coverage is clean: all 17 BibTeX entries, including the 16 local
-    paper PDFs plus C2Rust, are cited from `main.tex`.
+  - 2026-07-23: rebuilt the five-page PDF after adding the external-corpus
+    result and revising the claims and methodology; the final log has no
+    errors, undefined citations/references, or overfull boxes.
+  - Citation coverage is clean: all 18 BibTeX entries, including the 16 local
+    paper PDFs, C2Rust, and the LLVM test-suite source, are cited from
+    `main.tex`.
 
 ### P0: Artifact Reproducibility
 
@@ -214,14 +232,16 @@ These should be done before treating the draft as submission-ready.
 
 ### P1: Evaluation Breadth
 
-- Add a larger curated benchmark suite beyond authored toy examples.
-- Include at least a small real-world or semi-realistic C corpus with clear
-  selection criteria.
+- [x] Add a larger curated benchmark suite beyond authored toy examples.
+  The pinned ten-program LLVM subset is stored under `external_corpus/`.
+- [x] Include at least a small real-world or semi-realistic C corpus with clear
+  selection criteria. The selection is outcome-blind, source-size bounded,
+  architecture-neutral, hash-verified, and license-preserving.
 - [x] Report LOC, number of functions, pointer density, unsupported-construct
   counts, and per-project complexity alongside unit acceptance. These fields
   are part of benchmark result schema v2 and its Markdown/LaTeX summaries.
 - Add ablation rows if possible:
-  - analysis-guided deterministic SafeMAP;
+  - [x] analysis-guided deterministic SafeMAP;
   - SafeMAP without static guidance;
   - LLM-only;
   - C2Rust plus unguided LLM;
@@ -368,6 +388,8 @@ These should be done before treating the draft as submission-ready.
 
 - Submit to a strong systems/software-engineering venue without more evaluation.
 - Claim broad C coverage or real-world project migration.
+- Claim strong external generalization: deterministic synthesis accepted only
+  `1 / 22` eligible units in the pinned LLVM external corpus.
 - Claim LLM effectiveness from the current Gemini/Ollama subset.
 - Claim formal equivalence from current differential tests.
 - Claim Miri-backed validation if evaluated rows skipped Miri.

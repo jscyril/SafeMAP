@@ -387,7 +387,7 @@ def _apply_safe_acceptance(
         metrics.compile_success_units = len(planned_eligible)
     if tests_ok:
         metrics.test_pass_units = len(planned_eligible)
-    if differential_ok:
+    if validation.differential.status == "passed":
         metrics.differential_pass_units = len(planned_eligible)
     if fully_safe_project:
         metrics.fully_safe_accepted_unit_ids = planned_eligible

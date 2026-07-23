@@ -24,12 +24,14 @@ No build step is required.
 
 Current documentation snapshot:
 
-- test suite: `102 passed`
+- test suite: `111 passed`
 - benchmark examples: `40`
 - SafeMAP-only final eval: `37 / 76` accepted eligible units
 - case studies: `5` modules, `15 / 20` accepted eligible units
+- external corpus: `10` pinned LLVM programs, `1 / 22` deterministic acceptance
 - C2Rust baseline: `0 / 72` accepted eligible units in the canonical snapshot
 - paper-table workflow: `make paper-artifacts`
+- external-corpus workflow: `make external-corpus-artifacts`
 - preflight workflow: `python -m safemap.cli final-eval --benchmarks examples --output reports/final --mode safemap_full --dry-run`
 
 ## GitHub Pages

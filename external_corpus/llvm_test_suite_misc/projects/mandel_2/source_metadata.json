@@ -1,0 +1,8 @@
+{
+  "license": "NCSA",
+  "project": "mandel_2",
+  "reference_output": "mandel-2.reference_output",
+  "source": "mandel-2.c",
+  "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d",
+  "upstream_path": "SingleSource/Benchmarks/Misc/mandel-2.c"
+}

@@ -50,6 +50,25 @@ def test_row_status_reports_missing_llm_final_output(tmp_path: Path) -> None:
     assert reason == "Missing API key"
 
 
+def test_deterministic_mode_has_no_external_generation_dependencies() -> None:
+    mode = _selected_modes(["safemap_deterministic"])[0]
+
+    assert mode.guided is True
+    assert mode.use_c2rust is False
+    assert mode.use_llm is False
+
+
+def test_row_status_explains_missing_deterministic_output(tmp_path: Path) -> None:
+    status, reason = _row_status(
+        "safemap_deterministic",
+        {"safemap": None, "safemap_compile": None},
+        DummyStore(tmp_path),
+    )
+
+    assert status == "no_supported_synthesis"
+    assert "deterministic synthesizer" in reason
+
+
 def test_mode_summary_rows_aggregate_acceptance() -> None:
     rows = [
         {

@@ -29,7 +29,7 @@ from .validation.validator import validate_project
 
 BENCHMARK_MODE_HELP = (
     "Repeat to select modes: c2rust_only, llm_only, "
-    "c2rust_llm_unguided, safemap_full."
+    "c2rust_llm_unguided, safemap_deterministic, safemap_full."
 )
 
 if typer:

@@ -86,11 +86,12 @@ As of the current local validation pass:
 
 | Area | Current status |
 |---|---|
-| Test suite | `102 passed` |
+| Test suite | `111 passed` |
 | MVP benchmark examples | `40` example projects under `examples/` |
 | SafeMAP-only final eval | `37 / 76` eligible units accepted |
 | Supported examples with differential pass | `36` |
 | Case-study modules | `5` authored modules, `15 / 20` eligible units accepted |
+| External corpus | `10` pinned LLVM test-suite programs, `1 / 22` eligible units accepted by deterministic synthesis |
 | C2Rust-only baseline | `0 / 72` fully safe accepted units in the canonical publication snapshot because two baseline rows did not produce complete metrics |
 | LLM smoke test | Ollama `llm_only` on `simple_sum` compiled and differential-passed; full LLM baseline remains latency/model dependent |
 | Accepted final Rust policy | `#![forbid(unsafe_code)]`, no unsafe blocks/functions, no raw-pointer public API |
@@ -133,6 +134,27 @@ safemap_full accepted units: 15 / 20
 all 5 case-study modules passed differential testing
 ```
 
+The independently authored external corpus is pinned and selected without using
+SafeMAP outcomes. It is evaluated separately so authored and external-validity
+evidence are not mixed:
+
+```bash
+make external-corpus-artifacts
+```
+
+Observed deterministic result:
+
+```text
+rows: 10
+accepted units: 1 / 22
+C LOC: 589
+analyzed functions: 32
+```
+
+The low external acceptance rate is retained as a result, not filtered out.
+See `external_corpus/README.md` for the upstream commit, licensing, exact
+selection rule, checksums, exclusions, and current validation limitations.
+
 After generating the benchmark, case-study, C2Rust baseline, and LLM subset CSVs,
 combine paper-facing results with:
 
@@ -159,6 +181,7 @@ safemap/                         Python package
   repair/                        compiler-guided repair support
   validation/                    cargo, clippy, miri, differential validation
   metrics/                       unsafe/raw-pointer metrics and reports
+external_corpus/                 pinned independently authored evaluation inputs
 examples/                        small C migration examples
 tests/                           pytest suite
 reports/sample_report.md         illustrative report sample
@@ -393,6 +416,8 @@ Benchmark modes:
   output without C2Rust or static guidance.
 - `c2rust_llm_unguided`: run C2Rust, then ask the LLM to rewrite without
   SafeMAP static guidance.
+- `safemap_deterministic`: use static guidance and deterministic synthesis
+  without C2Rust or an LLM; this is the reproducible external-corpus lane.
 - `safemap_full`: run the full analysis-guided SafeMAP pipeline.
 
 For publication snapshots, use `make paper-artifacts`. It evaluates in a fresh
@@ -445,7 +470,7 @@ python -m compileall -q safemap
 Current expected test result:
 
 ```text
-102 passed
+111 passed
 ```
 
 ## Reproducing Paper Artifacts

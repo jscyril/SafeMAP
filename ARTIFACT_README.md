@@ -42,6 +42,21 @@ The script runs:
   records whether the Git worktree was dirty and includes a SHA-256 checksum
   for every published file.
 
+The independently authored LLVM external corpus is currently reproduced
+separately:
+
+```bash
+make external-corpus-artifacts
+```
+
+That command uses a fresh timestamped work directory, evaluates the ten pinned
+programs under
+`external_corpus/llvm_test_suite_misc/projects` in
+`safemap_deterministic` mode and writes CSV, Markdown, LaTeX, and manifest
+artifacts under `reports/external-corpus/`. It does not require C2Rust or an LLM
+provider. Corpus inputs, upstream reference outputs, source hashes, the
+selection rule, and licenses are tracked in the repository.
+
 To choose explicit locations, use:
 
 ```bash
