@@ -6,15 +6,20 @@ import json
 import os
 import platform
 import subprocess
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
+from ..analysis.c_analyzer import analyze_c_project
 from ..config import SafeMapConfig
+from ..analysis.complexity_metrics import cyclomatic_complexity
+from ..analysis.eligibility import classify_analysis
 from ..llm.client import LLMClient
+from ..models import ProjectInfo
 from ..pipeline import run_pipeline
 from .baseline_runner import BASELINES
 
-RESULT_SCHEMA_VERSION = "safemap.benchmark_results.v1"
+RESULT_SCHEMA_VERSION = "safemap.benchmark_results.v2"
 
 
 def run_benchmarks(
@@ -58,15 +63,15 @@ def run_benchmarks(
                 row_status, row_reason = _row_status(mode.name, metrics, store)
                 idiom_success_counts = _idiom_success_counts(store, metrics)
                 primary = _primary_target_result(project, store, metrics)
+                c_metrics = _c_project_metrics(store)
                 rows.append({
                     **metadata,
                     "project": project.name,
                     "mode": mode.name,
                     "run_dir": str(store.root),
                     **primary,
-                    "loc_c": sum(
-                        len(f.read_text().splitlines()) for f in project.rglob("*.c")
-                    ),
+                    **c_metrics,
+                    "loc_c": _project_c_loc(project),
                     "total_units": metrics.get("total_units"),
                     "eligible_units": metrics.get("eligible_units"),
                     "fully_safe_accepted_units": metrics.get(
@@ -123,12 +128,18 @@ def run_benchmarks(
                 rows.append({
                     **metadata,
                     "project": project.name, "mode": mode.name,
+                    "loc_c": _project_c_loc(project),
+                    **_source_c_project_metrics(project),
                     **_failed_target_result(project),
                     "status": "failed", "reason": str(error),
                 })
     columns = [
-        "result_schema_version", "generated_at_utc", "git_commit",
+        "result_schema_version", "generated_at_utc", "git_commit", "git_dirty",
         "project", "mode", "status", "reason", "run_dir", "loc_c",
+        "c_function_count", "c_parameter_count", "c_pointer_parameter_count",
+        "c_pointer_parameter_density", "c_cyclomatic_complexity_total",
+        "c_cyclomatic_complexity_average", "unsupported_function_count",
+        "unsupported_construct_count", "unsupported_constructs",
         "primary_function", "primary_expected_eligibility",
         "primary_plan_status", "primary_eligible",
         "primary_fully_safe_accepted", "primary_outcome",
@@ -181,16 +192,26 @@ def run_benchmarks(
         "|---|---|---|---:|",
         *_validation_status_summary_rows(rows),
         "",
+        "## Dataset Characterization",
+        "",
+        "| Mode | C LOC | Functions | Pointer Parameters | Parameters | Pointer Density | Complexity | Unsupported Constructs |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
+        *_characterization_summary_rows(rows),
+        "",
         "## Project Results",
         "",
-        "| Project | Mode | Status | Accepted | Acceptance Rate | Differential | Miri |",
-        "|---|---|---|---:|---:|---|---|",
+        "| Project | Mode | C LOC | Functions | Pointer Density | Complexity | Unsupported | Accepted | Acceptance Rate | Differential | Miri |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---|---|",
     ]
     summary.extend(
-        "| {project} | {mode} | {status} | {accepted} | {rate} | {diff} | {miri} |".format(
+        "| {project} | {mode} | {loc} | {functions} | {density} | {complexity} | {unsupported} | {accepted} | {rate} | {diff} | {miri} |".format(
             project=row.get("project", ""),
             mode=row.get("mode", ""),
-            status=row.get("status", ""),
+            loc=row.get("loc_c", ""),
+            functions=row.get("c_function_count", ""),
+            density=row.get("c_pointer_parameter_density", ""),
+            complexity=row.get("c_cyclomatic_complexity_total", ""),
+            unsupported=row.get("unsupported_construct_count", ""),
             accepted=row.get("fully_safe_accepted_units", ""),
             rate=row.get("fully_safe_translation_unit_acceptance_rate", ""),
             diff=row.get("safemap_differential_status", ""),
@@ -262,16 +283,26 @@ def export_paper_tables(input_csv: Path, output_md: Path) -> str:
         "|---|---|---|---:|",
         *_validation_status_summary_rows(rows),
         "",
+        "## Dataset Characterization",
+        "",
+        "| Mode | C LOC | Functions | Pointer Parameters | Parameters | Pointer Density | Complexity | Unsupported Constructs |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
+        *_characterization_summary_rows(rows),
+        "",
         "## Project Results",
         "",
-        "| Project | Mode | Status | Accepted | Acceptance Rate | Differential | Miri |",
-        "|---|---|---|---:|---:|---|---|",
+        "| Project | Mode | C LOC | Functions | Pointer Density | Complexity | Unsupported | Accepted | Acceptance Rate | Differential | Miri |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---|---|",
     ]
     summary.extend(
-        "| {project} | {mode} | {status} | {accepted} | {rate} | {diff} | {miri} |".format(
+        "| {project} | {mode} | {loc} | {functions} | {density} | {complexity} | {unsupported} | {accepted} | {rate} | {diff} | {miri} |".format(
             project=row.get("project", ""),
             mode=row.get("mode", ""),
-            status=row.get("status", ""),
+            loc=row.get("loc_c", ""),
+            functions=row.get("c_function_count", ""),
+            density=row.get("c_pointer_parameter_density", ""),
+            complexity=row.get("c_cyclomatic_complexity_total", ""),
+            unsupported=row.get("unsupported_construct_count", ""),
             accepted=row.get("fully_safe_accepted_units", ""),
             rate=row.get("fully_safe_translation_unit_acceptance_rate", ""),
             diff=row.get("safemap_differential_status", ""),
@@ -291,6 +322,7 @@ def export_latex_tables(input_csv: Path, output_tex: Path) -> str:
     text = "\n\n".join([
         _latex_mode_summary(rows),
         _latex_target_summary(rows),
+        _latex_characterization_summary(rows),
         _latex_failure_summary(rows),
         _latex_validation_status_summary(rows),
     ]) + "\n"
@@ -309,6 +341,12 @@ def export_combined_evaluation(
 ) -> str:
     if c2rust_csv is not None and not allow_denominator_mismatch:
         _validate_baseline_denominator(main_csv, c2rust_csv)
+    datasets = [
+        ("Microbenchmarks", main_csv, "SafeMAP fully safe output"),
+        ("Case studies", case_study_csv, "Authored module-shaped case studies"),
+        ("C2Rust baseline", c2rust_csv, "Strict SafeMAP acceptance applied to raw C2Rust baseline"),
+        ("LLM subset", llm_smoke_csv, "Optional bounded LLM subset"),
+    ]
     sections = [
         "# SafeMAP Combined Evaluation Summary",
         "",
@@ -317,12 +355,15 @@ def export_combined_evaluation(
         "| Dataset | Mode | Rows | Accepted Units | Eligible Units | Acceptance Rate | Differential Passed | Accepted Target Functions | Target Functions | Target Function Rate | Notes |",
         "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|",
     ]
-    sections.extend(_combined_summary_rows([
-        ("Microbenchmarks", main_csv, "SafeMAP fully safe output"),
-        ("Case studies", case_study_csv, "Authored module-shaped case studies"),
-        ("C2Rust baseline", c2rust_csv, "Strict SafeMAP acceptance applied to raw C2Rust baseline"),
-        ("LLM subset", llm_smoke_csv, "Optional bounded LLM subset"),
-    ]))
+    sections.extend(_combined_summary_rows(datasets))
+    sections.extend([
+        "",
+        "## Dataset Characterization",
+        "",
+        "| Dataset | Mode | C LOC | Functions | Pointer Parameters | Parameters | Pointer Density | Complexity | Unsupported Constructs |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|",
+    ])
+    sections.extend(_combined_characterization_rows(datasets))
     sections.extend([
         "",
         "## Interpretation",
@@ -472,13 +513,14 @@ def _publication_llm_sentences(csv_path: Path) -> list[str]:
     return output
 
 
-def _artifact_metadata() -> dict[str, str]:
+def _artifact_metadata() -> dict[str, object]:
     return {
         "result_schema_version": RESULT_SCHEMA_VERSION,
         "generated_at_utc": datetime.now(timezone.utc).replace(
             microsecond=0
         ).isoformat().replace("+00:00", "Z"),
         "git_commit": _git_commit(),
+        "git_dirty": _git_dirty(),
     }
 
 
@@ -494,6 +536,20 @@ def _git_commit() -> str:
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
         return "unknown"
     return result.stdout.strip() or "unknown"
+
+
+def _git_dirty() -> bool | None:
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        return None
+    return bool(result.stdout.strip())
 
 
 def _tool_versions() -> dict[str, str]:
@@ -656,6 +712,24 @@ def _combined_summary_rows(
     return rows
 
 
+def _combined_characterization_rows(
+    inputs: list[tuple[str, Path | None, str]],
+) -> list[str]:
+    output: list[str] = []
+    for dataset, path, _note in inputs:
+        if path is None:
+            continue
+        rows = _read_csv_if_exists(path)
+        for mode, values in _characterization_summary(rows).items():
+            output.append(
+                f"| {dataset} | {mode} | {values['loc']} | "
+                f"{values['functions']} | {values['pointer_parameters']} | "
+                f"{values['parameters']} | {values['pointer_density']:.3f} | "
+                f"{values['complexity']} | {values['unsupported']} |"
+            )
+    return output
+
+
 def _read_csv_if_exists(path: Path) -> list[dict[str, str]]:
     if not path.exists():
         return []
@@ -728,6 +802,81 @@ def _validation_status_counts(validation: dict) -> dict[str, int]:
 
 def _read_json_if_exists(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def _c_project_metrics(store) -> dict[str, object]:
+    analysis = _read_json_if_exists(store.path("analysis/c_analysis.json"))
+    eligibility = _read_json_if_exists(store.path("analysis/eligibility.json"))
+    return _c_metrics_from_payload(analysis, eligibility)
+
+
+def _c_metrics_from_payload(analysis, eligibility) -> dict[str, object]:
+    functions = analysis.get("functions", []) if isinstance(analysis, dict) else []
+    if not isinstance(functions, list):
+        functions = []
+    eligibility_rows = eligibility if isinstance(eligibility, list) else []
+
+    parameters = [
+        parameter
+        for function in functions
+        if isinstance(function, dict)
+        for parameter in function.get("parameters", [])
+        if isinstance(parameter, dict)
+    ]
+    pointer_parameters = sum(bool(item.get("is_pointer")) for item in parameters)
+    complexity = [
+        cyclomatic_complexity(str(function.get("body", "")))
+        for function in functions
+        if isinstance(function, dict)
+    ]
+    unsupported = Counter(
+        str(feature)
+        for item in eligibility_rows
+        if isinstance(item, dict)
+        for feature in item.get("unsupported_features", [])
+        if feature
+    )
+    return {
+        "c_function_count": len(functions),
+        "c_parameter_count": len(parameters),
+        "c_pointer_parameter_count": pointer_parameters,
+        "c_pointer_parameter_density": round(
+            pointer_parameters / len(parameters), 3
+        ) if parameters else 0.0,
+        "c_cyclomatic_complexity_total": sum(complexity),
+        "c_cyclomatic_complexity_average": round(
+            sum(complexity) / len(complexity), 3
+        ) if complexity else 0.0,
+        "unsupported_function_count": sum(
+            item.get("category") == "unsupported"
+            for item in eligibility_rows
+            if isinstance(item, dict)
+        ),
+        "unsupported_construct_count": sum(unsupported.values()),
+        "unsupported_constructs": json.dumps(dict(sorted(unsupported.items()))),
+    }
+
+
+def _source_c_project_metrics(project: Path) -> dict[str, object]:
+    c_files = sorted(project.rglob("*.c"))
+    analysis = analyze_c_project(ProjectInfo(
+        project_name=project.name,
+        root=str(project.resolve()),
+        input_path=str(project.resolve()),
+        c_files=[str(path.resolve()) for path in c_files],
+    ))
+    eligibility = classify_analysis(analysis)
+    return _c_metrics_from_payload(
+        analysis.to_dict(),
+        [item.to_dict() for item in eligibility],
+    )
+
+
+def _project_c_loc(project: Path) -> int:
+    return sum(
+        len(path.read_text(encoding="utf-8", errors="replace").splitlines())
+        for path in project.rglob("*.c")
+    )
 
 
 def _idiom_success_counts(store, metrics: dict) -> dict[str, dict[str, int]]:
@@ -913,6 +1062,49 @@ def _mode_summary_rows(rows: list[dict]) -> list[str]:
     return output
 
 
+def _characterization_summary_rows(rows: list[dict]) -> list[str]:
+    output = []
+    for mode, values in _characterization_summary(rows).items():
+        output.append(
+            f"| {mode} | {values['loc']} | {values['functions']} | "
+            f"{values['pointer_parameters']} | {values['parameters']} | "
+            f"{values['pointer_density']:.3f} | {values['complexity']} | "
+            f"{values['unsupported']} |"
+        )
+    return output
+
+
+def _characterization_summary(rows: list[dict]) -> dict[str, dict[str, float | int]]:
+    by_mode: dict[str, list[dict]] = {}
+    for row in rows:
+        by_mode.setdefault(str(row.get("mode", "")), []).append(row)
+    output: dict[str, dict[str, float | int]] = {}
+    for mode, items in sorted(by_mode.items()):
+        parameters = sum(_as_int(item.get("c_parameter_count")) for item in items)
+        pointer_parameters = sum(
+            _as_int(item.get("c_pointer_parameter_count")) for item in items
+        )
+        output[mode] = {
+            "loc": sum(_as_int(item.get("loc_c")) for item in items),
+            "functions": sum(
+                _as_int(item.get("c_function_count")) for item in items
+            ),
+            "pointer_parameters": pointer_parameters,
+            "parameters": parameters,
+            "pointer_density": (
+                pointer_parameters / parameters if parameters else 0.0
+            ),
+            "complexity": sum(
+                _as_int(item.get("c_cyclomatic_complexity_total"))
+                for item in items
+            ),
+            "unsupported": sum(
+                _as_int(item.get("unsupported_construct_count")) for item in items
+            ),
+        }
+    return output
+
+
 def _primary_summary_rows(rows: list[dict]) -> list[str]:
     by_mode: dict[str, list[dict]] = {}
     for row in rows:
@@ -1063,6 +1255,28 @@ def _latex_target_summary(rows: list[dict]) -> str:
             f"{_latex_escape(mode)} & {targets} & {accepted} & {rate:.3f} \\\\"
         )
     lines.extend(["\\hline", "\\end{tabular}", "\\end{table}"])
+    return "\n".join(lines)
+
+
+def _latex_characterization_summary(rows: list[dict]) -> str:
+    lines = [
+        "\\begin{table*}[t]",
+        "\\centering",
+        "\\caption{C dataset characterization by evaluation mode. Pointer density is the fraction of function parameters that are pointers.}",
+        "\\label{tab:safemap-dataset-characterization}",
+        "\\begin{tabular}{lrrrrrrr}",
+        "\\hline",
+        "Mode & C LOC & Functions & Pointer Params & Params & Pointer Density & Complexity & Unsupported \\\\",
+        "\\hline",
+    ]
+    for mode, values in _characterization_summary(rows).items():
+        lines.append(
+            f"{_latex_escape(mode)} & {values['loc']} & {values['functions']} & "
+            f"{values['pointer_parameters']} & {values['parameters']} & "
+            f"{values['pointer_density']:.3f} & {values['complexity']} & "
+            f"{values['unsupported']} \\\\"
+        )
+    lines.extend(["\\hline", "\\end{tabular}", "\\end{table*}"])
     return "\n".join(lines)
 
 

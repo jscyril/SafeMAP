@@ -30,6 +30,7 @@ results/
 work/
 compile_db/
 local-audit-report/
+reports/.reproduction/
 reports/final/
 reports/case-studies/
 reports/c2rust-only/
@@ -39,6 +40,9 @@ reports/benchmark_results.md
 reports/paper_tables.md
 reports/*_benchmark_results.csv
 reports/*_benchmark_results.md
+
+# Clean paper-facing snapshots under reports/publication/ are intentionally
+# trackable. Long-running work directories and harnesses stay ignored above.
 
 # Local editor and OS files
 .DS_Store

@@ -690,7 +690,7 @@ python -m safemap.cli report --workdir work</code></pre>
             <li>Run <code>python -m safemap.cli final-eval --benchmarks examples --output reports/final --mode safemap_full --dry-run</code> to check tools, LLM key status, and output reuse.</li>
             <li>Run <code>make paper-artifacts</code>.</li>
             <li>Use <code>benchmark_results.csv</code>, <code>benchmark_results.md</code>, <code>paper_tables.md</code>, and <code>manifest.json</code>.</li>
-            <li>Use <code>reports/reproduction_manifest.json</code> and <code>reports/artifact_metadata.json</code> for command lines and tool versions.</li>
+            <li>Use <code>reports/publication/reproduction_manifest.json</code> and <code>reports/publication/artifact_metadata.json</code> for command lines, tool versions, worktree provenance, and checksums.</li>
             <li>Run <code>python -m safemap.cli metric-summary</code> for concise paper-facing metric sentences.</li>
             <li>Report validation statuses separately for Cargo check, Cargo test, Clippy, Miri, and differential testing.</li>
             <li>Describe unsupported cases as results, not as tool crashes.</li>
@@ -704,7 +704,7 @@ python -m safemap.cli report --workdir work</code></pre>
             <li><code>37 / 76</code> eligible units accepted.</li>
             <li><code>36</code> supported examples pass differential testing.</li>
             <li><code>5</code> authored case-study modules with <code>15 / 20</code> accepted units; all pass differential testing.</li>
-            <li><code>c2rust_only</code> baseline: <code>0 / 72</code> fully safe accepted units in the checked-in CSV because two baseline rows did not produce complete metrics.</li>
+            <li><code>c2rust_only</code> baseline: <code>0 / 72</code> fully safe accepted units in the canonical snapshot because two baseline rows did not produce complete metrics.</li>
             <li><code>llm_only</code> Ollama smoke test on <code>simple_sum</code>: compile passed and differential testing passed; full LLM baseline remains latency dependent.</li>
             <li>Accepted units contain no unsafe blocks/functions and expose no raw-pointer public API.</li>
           </ul>

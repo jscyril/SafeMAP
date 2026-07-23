@@ -24,11 +24,11 @@ No build step is required.
 
 Current documentation snapshot:
 
-- test suite: `95 passed`
+- test suite: `102 passed`
 - benchmark examples: `40`
 - SafeMAP-only final eval: `37 / 76` accepted eligible units
 - case studies: `5` modules, `15 / 20` accepted eligible units
-- C2Rust baseline: `0 / 72` accepted eligible units in the checked-in CSV
+- C2Rust baseline: `0 / 72` accepted eligible units in the canonical snapshot
 - paper-table workflow: `make paper-artifacts`
 - preflight workflow: `python -m safemap.cli final-eval --benchmarks examples --output reports/final --mode safemap_full --dry-run`
 

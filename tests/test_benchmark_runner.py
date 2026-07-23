@@ -12,6 +12,8 @@ from safemap.benchmarks.benchmark_runner import (
     run_final_evaluation,
     _failure_summary_rows,
     _failed_target_result,
+    _c_project_metrics,
+    _characterization_summary_rows,
     _idiom_success_counts,
     _idiom_summary_rows,
     _mode_summary_rows,
@@ -19,6 +21,7 @@ from safemap.benchmarks.benchmark_runner import (
     _primary_target_result,
     _row_status,
     _selected_modes,
+    _source_c_project_metrics,
     _validation_status_summary_rows,
 )
 from safemap.config import SafeMapConfig
@@ -65,6 +68,33 @@ def test_mode_summary_rows_aggregate_acceptance() -> None:
 
     assert _mode_summary_rows(rows) == [
         "| safemap_full | 2 | `completed`: 2 | 3 | 5 | 0.600 |"
+    ]
+
+
+def test_characterization_summary_rows_aggregate_pointer_density() -> None:
+    rows = [
+        {
+            "mode": "safemap_full",
+            "loc_c": 20,
+            "c_function_count": 2,
+            "c_parameter_count": 4,
+            "c_pointer_parameter_count": 1,
+            "c_cyclomatic_complexity_total": 5,
+            "unsupported_construct_count": 0,
+        },
+        {
+            "mode": "safemap_full",
+            "loc_c": 30,
+            "c_function_count": 3,
+            "c_parameter_count": 2,
+            "c_pointer_parameter_count": 2,
+            "c_cyclomatic_complexity_total": 7,
+            "unsupported_construct_count": 1,
+        },
+    ]
+
+    assert _characterization_summary_rows(rows) == [
+        "| safemap_full | 50 | 5 | 3 | 6 | 0.500 | 12 | 1 |"
     ]
 
 
@@ -165,6 +195,54 @@ def test_idiom_success_counts_reads_plans_and_accepted_units(tmp_path: Path) -> 
     )
 
     assert counts == {"output_parameter": {"planned": 1, "accepted": 1}}
+
+
+def test_c_project_metrics_uses_saved_analysis_and_eligibility(tmp_path: Path) -> None:
+    analysis = tmp_path / "analysis"
+    analysis.mkdir()
+    (analysis / "c_analysis.json").write_text(
+        (
+            '{"functions": ['
+            '{"body": "int first(int *p, int n) { if (n) return *p; return 0; }", '
+            '"parameters": [{"is_pointer": true}, {"is_pointer": false}]},'
+            '{"body": "int second(void) { return 2; }", "parameters": []}'
+            "]}"
+        ),
+        encoding="utf-8",
+    )
+    (analysis / "eligibility.json").write_text(
+        (
+            '[{"category": "unsupported", '
+            '"unsupported_features": ["union_usage", "volatile_access"]}, '
+            '{"category": "safe_translatable", "unsupported_features": []}]'
+        ),
+        encoding="utf-8",
+    )
+
+    result = _c_project_metrics(DummyStore(tmp_path))
+
+    assert result == {
+        "c_function_count": 2,
+        "c_parameter_count": 2,
+        "c_pointer_parameter_count": 1,
+        "c_pointer_parameter_density": 0.5,
+        "c_cyclomatic_complexity_total": 3,
+        "c_cyclomatic_complexity_average": 1.5,
+        "unsupported_function_count": 1,
+        "unsupported_construct_count": 2,
+        "unsupported_constructs": (
+            '{"union_usage": 1, "volatile_access": 1}'
+        ),
+    }
+
+
+def test_source_c_project_metrics_survives_pipeline_failure() -> None:
+    result = _source_c_project_metrics(Path("examples/nullable_pointer"))
+
+    assert result["c_function_count"] == 2
+    assert result["c_parameter_count"] == 1
+    assert result["c_pointer_parameter_count"] == 1
+    assert result["c_pointer_parameter_density"] == 1.0
 
 
 def test_primary_target_result_uses_declared_benchmark_target(tmp_path: Path) -> None:
@@ -404,6 +482,7 @@ def test_markdown_and_latex_table_exports_have_summary_parity(tmp_path: Path) ->
         "safemap\\_full & differential & not\\_applicable & 1 \\\\" in latex
     )
     assert "\\label{tab:safemap-validation-statuses}" in latex
+    assert "\\label{tab:safemap-dataset-characterization}" in latex
 
 
 def test_export_combined_evaluation_summary(tmp_path: Path) -> None:
@@ -553,6 +632,7 @@ def test_run_final_evaluation_writes_durable_artifacts(tmp_path: Path) -> None:
     assert manifest["result_schema_version"] == RESULT_SCHEMA_VERSION
     assert manifest["generated_at_utc"]
     assert manifest["git_commit"]
+    assert isinstance(manifest["git_dirty"], bool)
     csv_text = (tmp_path / "final" / "benchmark_results.csv").read_text(
         encoding="utf-8"
     )
@@ -565,6 +645,10 @@ def test_run_final_evaluation_writes_durable_artifacts(tmp_path: Path) -> None:
     assert "safemap_cargo_check_status" in csv_text.splitlines()[0]
     assert "miri_reason" in csv_text.splitlines()[0]
     assert "miri_diagnostics" in csv_text.splitlines()[0]
+    assert "c_function_count" in csv_text.splitlines()[0]
+    assert "c_pointer_parameter_density" in csv_text.splitlines()[0]
+    assert "c_cyclomatic_complexity_total" in csv_text.splitlines()[0]
+    assert "unsupported_construct_count" in csv_text.splitlines()[0]
     assert (tmp_path / "final" / "benchmark_results.md").exists()
     assert (tmp_path / "final" / "paper_tables.md").exists()
     assert (tmp_path / "final" / "paper_tables.tex").exists()

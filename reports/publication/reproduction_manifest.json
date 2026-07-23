@@ -1,0 +1,105 @@
+{
+  "artifacts": {
+    "artifact_metadata": "reports/.reproduction/20260722T051948Z/artifact_metadata.json",
+    "c2rust_baseline": "reports/.reproduction/20260722T051948Z/c2rust-only/benchmark_results.csv",
+    "case_studies": "reports/.reproduction/20260722T051948Z/case-studies/benchmark_results.csv",
+    "combined_evaluation": "reports/.reproduction/20260722T051948Z/combined_evaluation.md",
+    "safemap_microbenchmarks": "reports/.reproduction/20260722T051948Z/final/benchmark_results.csv"
+  },
+  "command_lines": [
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/20260722T051948Z/final --mode safemap_full",
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks case_studies --output reports/.reproduction/20260722T051948Z/case-studies --mode safemap_full",
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/20260722T051948Z/c2rust-only --mode c2rust_only",
+    "/usr/bin/python -m safemap.cli combined-eval --output reports/.reproduction/20260722T051948Z/combined_evaluation.md --main-csv reports/.reproduction/20260722T051948Z/final/benchmark_results.csv --case-study-csv reports/.reproduction/20260722T051948Z/case-studies/benchmark_results.csv --c2rust-csv reports/.reproduction/20260722T051948Z/c2rust-only/benchmark_results.csv --allow-denominator-mismatch"
+  ],
+  "llm_csv_included": false,
+  "llm_csv_source": null,
+  "metadata": {
+    "generated_at_utc": "2026-07-22T05:21:13Z",
+    "git_commit": "28a161e0c732796b04f2f9fcaadea03c545c4988",
+    "git_dirty": true,
+    "result_schema_version": "safemap.benchmark_results.v2",
+    "tool_versions": {
+      "c2rust": "C2Rust 0.22.1",
+      "cargo": "cargo 1.94.0 (85eff7c80 2026-01-15)",
+      "clang": "clang version 22.1.8",
+      "clippy": "clippy 0.1.94 (4a4ef493e3 2026-03-02)",
+      "miri": "error: the 'miri' component which provides the command 'cargo-miri' is not available for the 'stable-x86_64-unknown-linux-gnu' toolchain",
+      "python": "3.14.6",
+      "rustc": "rustc 1.94.0 (4a4ef493e 2026-03-02)"
+    }
+  },
+  "published_artifacts": [
+    {
+      "path": "reports/publication/final/benchmark_results.csv",
+      "sha256": "89861d4bc06ee47795f861e52b9dcccc0bb6b41691569137817dea62e6e3749a"
+    },
+    {
+      "path": "reports/publication/final/benchmark_results.md",
+      "sha256": "d232be22ed8f12b10b53a2254dfdf6ed74643b15a248158dbb56ea6412e4557c"
+    },
+    {
+      "path": "reports/publication/final/paper_tables.md",
+      "sha256": "ac44a094110068b50f80c524fb0734ac7f02044b795c970bf31fb93438a75d4c"
+    },
+    {
+      "path": "reports/publication/final/paper_tables.tex",
+      "sha256": "96fa42267ec42cfcef22e203b922fcc68c38c5598e96d963bc696a418a1dea49"
+    },
+    {
+      "path": "reports/publication/final/manifest.json",
+      "sha256": "d9bc98f73337f5aede1f7614da70f7fcce1e5dbe1c1168717c48ba389d90e3cf"
+    },
+    {
+      "path": "reports/publication/case-studies/benchmark_results.csv",
+      "sha256": "210ea74a944ea05dfc3bcb03458fb8faf9aacd447ce2f15ee50b75a88dcb96a2"
+    },
+    {
+      "path": "reports/publication/case-studies/benchmark_results.md",
+      "sha256": "0de13aa474b526ffdd2289d2e152b59a1e4512f05f0f67490ab8342249546c33"
+    },
+    {
+      "path": "reports/publication/case-studies/paper_tables.md",
+      "sha256": "bc35b4d1bb2d6503e42b71510001f9a0590d7fcf43897e27d4b86327ea70cee8"
+    },
+    {
+      "path": "reports/publication/case-studies/paper_tables.tex",
+      "sha256": "ffab12e4a7cf34d0e8716592d3e1624f0fb13da49a5be6671c6c00cf57f5ba74"
+    },
+    {
+      "path": "reports/publication/case-studies/manifest.json",
+      "sha256": "48d928e17a5eac493d385c165c3753c7758f97f20f9408e9ebd9f5b39f8aa835"
+    },
+    {
+      "path": "reports/publication/c2rust-only/benchmark_results.csv",
+      "sha256": "d45dc31a1a0aed75200253070d3c52f2a87d2e17117fc1ecd591d2bfa3acb952"
+    },
+    {
+      "path": "reports/publication/c2rust-only/benchmark_results.md",
+      "sha256": "aa52d24f53fbfbfc879afbca206843cb66af6599779026d52c616cec9f008c5e"
+    },
+    {
+      "path": "reports/publication/c2rust-only/paper_tables.md",
+      "sha256": "cc6e5b619a9f79e454bd4846d1739a8150e6b578c86b030e55f9233443ec12ea"
+    },
+    {
+      "path": "reports/publication/c2rust-only/paper_tables.tex",
+      "sha256": "6c78a0c94ebe8f7b3c67ffdcecaff77797b70ed2d45af09e4959b38b9251a659"
+    },
+    {
+      "path": "reports/publication/c2rust-only/manifest.json",
+      "sha256": "b1f8e2b37bc9f55efbc8d58c1fad09b64d85626e9ad7d70138a993f4721cc40e"
+    },
+    {
+      "path": "reports/publication/combined_evaluation.md",
+      "sha256": "368dd3db34c8c321784d66f62a5ccd1638227273720b4dd113e72fd559df0a84"
+    },
+    {
+      "path": "reports/publication/artifact_metadata.json",
+      "sha256": "495b4e8943222549bf3b831d52a67c97b9ca0635b4fa055bc47d8afa61d802fc"
+    }
+  ],
+  "snapshot_dir": "reports/publication",
+  "strict_denominators": false,
+  "working_reports_dir": "reports/.reproduction/20260722T051948Z"
+}

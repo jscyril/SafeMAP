@@ -1,6 +1,6 @@
 # SafeMAP Research TODO and Status
 
-Last audited: 2026-07-21
+Last audited: 2026-07-22
 
 This file is the working research TODO for SafeMAP. It summarizes what the
 current repository supports, what evidence exists for a paper, and what should
@@ -31,19 +31,19 @@ Do not claim:
 
 ## Verified Local Evidence
 
-- Test suite: `95 passed` with `pytest`.
+- Test suite: `102 passed` with `pytest`.
 - Microbenchmarks: `40` example projects under `examples/`.
 - Case studies: `5` authored module-shaped projects under `case_studies/`.
-- Checked-in report artifacts:
-  - `reports/final/benchmark_results.csv`
-  - `reports/final/paper_tables.md`
-  - `reports/case-studies/benchmark_results.csv`
-  - `reports/case-studies/paper_tables.md`
-  - `reports/c2rust-only/benchmark_results.csv`
-  - `reports/c2rust-only/paper_tables.md`
+- Canonical, trackable publication artifacts:
+  - `reports/publication/final/`
+  - `reports/publication/case-studies/`
+  - `reports/publication/c2rust-only/`
+  - `reports/publication/combined_evaluation.md`
+  - `reports/publication/artifact_metadata.json`
+  - `reports/publication/reproduction_manifest.json`
+- Locally generated LLM diagnostic artifacts (ignored by Git):
   - `reports/gemini_benchmark_results.csv`
   - `reports/gemini_benchmark_results.md`
-  - `reports/combined_evaluation.md`
 - SafeMAP-only microbenchmark result:
   - rows: `40`
   - accepted units: `37 / 76`
@@ -59,10 +59,9 @@ Do not claim:
 - C2Rust-only baseline result:
   - rows: `40`
   - accepted units: `0`
-  - checked-in CSV reports `72` eligible units because two C2Rust baseline rows
-    failed before producing complete metrics
-  - the paper draft currently says `0 / 76`; reconcile this before submission
-    by rerunning or explaining the denominator consistently
+  - the canonical CSV reports `72` eligible units because two C2Rust baseline
+    rows failed before producing complete metrics
+  - the paper draft now says `0 / 72` and explains the denominator reduction
 - Gemini / OpenAI-compatible LLM subset result:
   - parsed CSV rows: `48`
   - projects: `12`
@@ -144,16 +143,21 @@ These should be done before treating the draft as submission-ready.
 
 ### P0: Reconcile Evaluation Numbers
 
-- Regenerate or reconcile all paper-facing tables from the checked-in CSVs.
-- Resolve the C2Rust denominator mismatch:
-  - `reports/combined_evaluation.md` reports C2Rust as `0 / 72`.
-  - `/mnt/data/college/research/my_paper/main.tex` and tables report `0 / 76`.
-- Decide whether failed C2Rust baseline rows are excluded from the denominator,
-  rerun to recover complete metrics, or document the failed rows explicitly.
-- [x] Update all stale `84 passed` references to the current `95 passed`.
+- [x] Reconcile all paper-facing tables from the locally generated CSVs.
+- [x] Resolve the C2Rust denominator mismatch:
+  - `reports/publication/combined_evaluation.md` reports C2Rust as `0 / 72`.
+  - `/mnt/data/college/research/my_paper/main.tex` and tables now report
+    `0 / 72`.
+- [x] Document the failed C2Rust baseline rows explicitly as denominator
+  reduction in the paper draft.
+- [x] Update repository test-count references to the current `102 passed`.
 - [x] Add exact command lines and tool versions used for the final reported run
   through `scripts/reproduce_paper_artifacts.py`,
-  `reports/reproduction_manifest.json`, and `reports/artifact_metadata.json`.
+  `reports/publication/reproduction_manifest.json`, and
+  `reports/publication/artifact_metadata.json`.
+- [x] Run the updated reproduction script to create the clean
+  `reports/publication/` snapshot in a fresh timestamped workspace.
+- Commit the reviewed publication snapshot alongside the implementation.
 - Do not hand-edit final metrics; regenerate tables from CSV artifacts.
 
 ### P0: Make the Paper Claim Match the Evidence
@@ -169,16 +173,25 @@ These should be done before treating the draft as submission-ready.
 
 ### P0: Refresh the Paper Draft
 
-- Update `/mnt/data/college/research/my_paper/main.tex`:
-  - test count from `84` to `88`;
+- [x] Update `/mnt/data/college/research/my_paper/main.tex`:
+  - test count from `84` to `95`;
   - C2Rust denominator after reconciliation;
-  - execution snapshot to mention checked-in report paths;
+  - execution snapshot to mention generated report paths;
   - limitations around authored datasets, skipped Miri, and partial LLM results.
-- Update `/mnt/data/college/research/my_paper/tables/*.tex` from regenerated
+- [x] Keep the paper's test count synchronized with the current `102 passed`
+  after adding publication and characterization tests.
+- [x] Update `/mnt/data/college/research/my_paper/tables/*.tex` from generated
   report outputs.
 - Replace placeholder author, affiliation, and email metadata.
-- Build the LaTeX PDF at least once with `pdflatex`/`bibtex` or a venue
+- [x] Build the LaTeX PDF at least once with `pdflatex`/`bibtex` or a venue
   template and fix any citation/table issues.
+  - 2026-07-21: built `/mnt/data/college/research/my_paper/main.pdf` with
+    `latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex` after
+    installing the needed Arch TeX packages.
+  - 2026-07-22: rebuilt the five-page PDF after updating the test count and
+    canonical publication-snapshot paths; the build completed without errors.
+  - Citation coverage is clean: all 17 BibTeX entries, including the 16 local
+    paper PDFs plus C2Rust, are cited from `main.tex`.
 
 ### P0: Artifact Reproducibility
 
@@ -189,11 +202,13 @@ These should be done before treating the draft as submission-ready.
   - combined paper summary;
   - LaTeX table fragments for the paper.
 - [x] Record tool versions for Python, clang/libclang, Rust, Cargo, Clippy,
-  C2Rust, and optional Miri in `reports/artifact_metadata.json`.
+  C2Rust, and optional Miri in the generated `artifact_metadata.json`.
 - [x] Add an artifact README explaining expected runtime, optional tools, and
   which failures are expected.
-- Ensure generated benchmark outputs do not accidentally include stale runs or
-  temporary harness artifacts.
+- [x] Ensure generated benchmark outputs do not accidentally include stale runs
+  or temporary harness artifacts. Publication reproduction now uses a fresh
+  timestamped work directory and copies an allowlisted artifact set into
+  `reports/publication/`.
 
 ## High-Priority Research TODOs
 
@@ -202,8 +217,9 @@ These should be done before treating the draft as submission-ready.
 - Add a larger curated benchmark suite beyond authored toy examples.
 - Include at least a small real-world or semi-realistic C corpus with clear
   selection criteria.
-- Report LOC, number of functions, pointer density, unsupported-construct
-  counts, and per-project complexity alongside unit acceptance.
+- [x] Report LOC, number of functions, pointer density, unsupported-construct
+  counts, and per-project complexity alongside unit acceptance. These fields
+  are part of benchmark result schema v2 and its Markdown/LaTeX summaries.
 - Add ablation rows if possible:
   - analysis-guided deterministic SafeMAP;
   - SafeMAP without static guidance;
@@ -290,12 +306,14 @@ These should be done before treating the draft as submission-ready.
 ### P2: Test Coverage
 
 - Keep the unit suite green as the primary regression gate.
-- Add integration tests for:
-  - full final-eval artifact generation;
-  - combined-eval denominator consistency;
-  - expected unsupported examples;
-  - LLM failure classification with a static fake client;
-  - generated LaTeX table fragment consistency.
+- [x] Add integration tests for full final-eval artifact generation.
+- [x] Add integration tests for combined-eval denominator consistency.
+- [x] Add integration tests for expected unsupported examples.
+- [x] Add integration tests for LLM failure classification with a static fake
+  client.
+- [x] Add integration tests for generated LaTeX table fragment consistency.
+- [x] Add tests that publication snapshots reject incomplete or unexpected
+  artifact sets.
 - Add tests for multi-file project ingestion and compile database recovery.
 
 ### P2: Documentation
@@ -330,7 +348,8 @@ These should be done before treating the draft as submission-ready.
 
 - Package raw inputs, generated outputs, reports, and scripts for archival.
 - Add Docker or devcontainer support if external tools can be pinned reliably.
-- Add CI jobs for unit tests and lightweight benchmark smoke tests.
+- [x] Add a CI job for unit tests and Python compilation.
+- Add a lightweight benchmark smoke test to CI.
 - Add optional long-running evaluation jobs outside normal CI.
 
 ## Current Publication Readiness

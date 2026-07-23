@@ -1,0 +1,73 @@
+\begin{table}[t]
+\centering
+\caption{Fully safe acceptance by evaluation mode.}
+\label{tab:safemap-mode-summary}
+\begin{tabular}{lrrrr}
+\hline
+Mode & Rows & Accepted Units & Eligible Units & Acceptance Rate \\
+\hline
+safemap\_full & 40 & 37 & 76 & 0.487 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Declared target-function acceptance by evaluation mode.}
+\label{tab:safemap-target-summary}
+\begin{tabular}{lrrr}
+\hline
+Mode & Target Functions & Accepted Targets & Acceptance Rate \\
+\hline
+safemap\_full & 40 & 36 & 0.900 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table*}[t]
+\centering
+\caption{C dataset characterization by evaluation mode. Pointer density is the fraction of function parameters that are pointers.}
+\label{tab:safemap-dataset-characterization}
+\begin{tabular}{lrrrrrrr}
+\hline
+Mode & C LOC & Functions & Pointer Params & Params & Pointer Density & Complexity & Unsupported \\
+\hline
+safemap\_full & 513 & 81 & 29 & 74 & 0.392 & 103 & 6 \\
+\hline
+\end{tabular}
+\end{table*}
+
+\begin{table}[t]
+\centering
+\caption{SafeMAP failure categories by evaluation mode.}
+\label{tab:safemap-failure-summary}
+\begin{tabular}{llr}
+\hline
+Mode & Category & Count \\
+\hline
+safemap\_full & unsupported & 5 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Validation outcomes by evaluation mode and check.}
+\label{tab:safemap-validation-statuses}
+\begin{tabular}{lllr}
+\hline
+Mode & Check & Status & Count \\
+\hline
+safemap\_full & cargo\_check & failed & 2 \\
+safemap\_full & cargo\_check & passed & 38 \\
+safemap\_full & cargo\_test & failed & 2 \\
+safemap\_full & cargo\_test & passed & 38 \\
+safemap\_full & clippy & failed & 2 \\
+safemap\_full & clippy & passed & 38 \\
+safemap\_full & differential & failed & 2 \\
+safemap\_full & differential & not\_applicable & 1 \\
+safemap\_full & differential & passed & 37 \\
+safemap\_full & miri & skipped & 40 \\
+\hline
+\end{tabular}
+\end{table}

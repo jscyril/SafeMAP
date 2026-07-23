@@ -181,7 +181,7 @@ baseline/reference lane, and fully safe acceptance is reported separately from
 unsafe reduction. Current local validation passes:
 
 ```text
-95 passed
+102 passed
 ```
 
 The current SafeMAP-only final-evaluation snapshot over `examples/` is:
@@ -204,8 +204,8 @@ The current C2Rust-only baseline snapshot over the 40-example benchmark suite is
 
 ```text
 40 benchmark rows
-0 fully safe accepted units out of 72 in the checked-in CSV because two baseline
-rows did not produce complete metrics
+0 fully safe accepted units out of 72 in the canonical publication snapshot
+because two baseline rows did not produce complete metrics
 ```
 
 The current LLM smoke snapshot is:

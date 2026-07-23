@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "benchmark_csv": "reports/.reproduction/20260722T051948Z/c2rust-only/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/20260722T051948Z/c2rust-only/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/20260722T051948Z/c2rust-only/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/20260722T051948Z/c2rust-only/paper_tables.md"
+  },
+  "benchmarks": "examples",
+  "generated_at_utc": "2026-07-22T05:21:13Z",
+  "git_commit": "28a161e0c732796b04f2f9fcaadea03c545c4988",
+  "git_dirty": true,
+  "modes": [
+    "c2rust_only"
+  ],
+  "output_dir": "reports/.reproduction/20260722T051948Z/c2rust-only",
+  "result_schema_version": "safemap.benchmark_results.v2",
+  "rows": 40
+}

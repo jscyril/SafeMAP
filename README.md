@@ -86,12 +86,12 @@ As of the current local validation pass:
 
 | Area | Current status |
 |---|---|
-| Test suite | `95 passed` |
+| Test suite | `102 passed` |
 | MVP benchmark examples | `40` example projects under `examples/` |
 | SafeMAP-only final eval | `37 / 76` eligible units accepted |
 | Supported examples with differential pass | `36` |
 | Case-study modules | `5` authored modules, `15 / 20` eligible units accepted |
-| C2Rust-only baseline | `0 / 72` fully safe accepted units in the checked-in CSV because two baseline rows did not produce complete metrics |
+| C2Rust-only baseline | `0 / 72` fully safe accepted units in the canonical publication snapshot because two baseline rows did not produce complete metrics |
 | LLM smoke test | Ollama `llm_only` on `simple_sum` compiled and differential-passed; full LLM baseline remains latency/model dependent |
 | Accepted final Rust policy | `#![forbid(unsafe_code)]`, no unsafe blocks/functions, no raw-pointer public API |
 | Benchmark table export | `benchmark_results.csv`, `benchmark_results.md`, `paper_tables.md`, `paper_tables.tex`, `manifest.json`, plus combined evaluation summary |
@@ -138,16 +138,15 @@ combine paper-facing results with:
 
 ```bash
 python -m safemap.cli combined-eval \
-  --output reports/combined_evaluation.md \
-  --main-csv reports/final/benchmark_results.csv \
-  --case-study-csv reports/case-studies/benchmark_results.csv \
-  --c2rust-csv reports/c2rust-only/benchmark_results.csv \
-  --llm-smoke-csv reports/gemini_benchmark_results.csv \
+  --output reports/publication/combined_evaluation.md \
+  --main-csv reports/publication/final/benchmark_results.csv \
+  --case-study-csv reports/publication/case-studies/benchmark_results.csv \
+  --c2rust-csv reports/publication/c2rust-only/benchmark_results.csv \
   --allow-denominator-mismatch
 ```
 
-The explicit denominator override is required for the current checked-in C2Rust
-baseline because it reports `0 / 72` accepted units while the SafeMAP
+The explicit denominator override is required for the current canonical C2Rust
+snapshot because it reports `0 / 72` accepted units while the SafeMAP
 microbenchmark CSV reports `37 / 76`.
 
 ## Repository Layout
@@ -381,10 +380,9 @@ Print a publication-ready metric summary from canonical CSV inputs:
 
 ```bash
 python -m safemap.cli metric-summary \
-  --main-csv reports/final/benchmark_results.csv \
-  --case-study-csv reports/case-studies/benchmark_results.csv \
-  --c2rust-csv reports/c2rust-only/benchmark_results.csv \
-  --llm-subset-csv reports/gemini_benchmark_results.csv
+  --main-csv reports/publication/final/benchmark_results.csv \
+  --case-study-csv reports/publication/case-studies/benchmark_results.csv \
+  --c2rust-csv reports/publication/c2rust-only/benchmark_results.csv
 ```
 
 Benchmark modes:
@@ -397,10 +395,8 @@ Benchmark modes:
   SafeMAP static guidance.
 - `safemap_full`: run the full analysis-guided SafeMAP pipeline.
 
-For publication snapshots, prefer a fresh output directory or run
-`--dry-run` first. Existing `.safemap/runs/` directories are preserved for audit
-history, so reusing an output root can mix old run directories with new summary
-files.
+For publication snapshots, use `make paper-artifacts`. It evaluates in a fresh
+timestamped work directory and publishes only the canonical allowlisted files.
 
 ## Output Artifacts
 
@@ -429,7 +425,11 @@ Important artifacts:
 Benchmark CSVs include per-check validation status fields for Cargo check,
 Cargo test, Clippy, Miri, and differential testing, plus
 `validation_status_counts` so skipped, unsupported, failed, and not-applicable
-outcomes can be reported separately.
+outcomes can be reported separately. Result schema
+`safemap.benchmark_results.v2` also records per-project C LOC, analyzed function
+and parameter counts, pointer-parameter density, total and average approximate
+cyclomatic complexity, and unsupported-construct counts. Pointer density is
+defined as pointer parameters divided by all analyzed function parameters.
 
 Generated run outputs are ignored by Git.
 
@@ -445,7 +445,7 @@ python -m compileall -q safemap
 Current expected test result:
 
 ```text
-95 passed
+102 passed
 ```
 
 ## Reproducing Paper Artifacts
@@ -457,23 +457,17 @@ make paper-artifacts
 ```
 
 This runs the SafeMAP microbenchmarks, case studies, C2Rust baseline, combined
-summary, and tool-version capture. It writes:
+summary, and tool-version capture in a fresh ignored workspace. It publishes:
 
-- `reports/final/benchmark_results.csv`
-- `reports/final/paper_tables.md`
-- `reports/final/paper_tables.tex`
-- `reports/case-studies/benchmark_results.csv`
-- `reports/case-studies/paper_tables.md`
-- `reports/case-studies/paper_tables.tex`
-- `reports/c2rust-only/benchmark_results.csv`
-- `reports/c2rust-only/paper_tables.md`
-- `reports/c2rust-only/paper_tables.tex`
-- `reports/combined_evaluation.md`
-- `reports/artifact_metadata.json`
-- `reports/reproduction_manifest.json`
+- `reports/publication/final/`
+- `reports/publication/case-studies/`
+- `reports/publication/c2rust-only/`
+- `reports/publication/combined_evaluation.md`
+- `reports/publication/artifact_metadata.json`
+- `reports/publication/reproduction_manifest.json`
 
-Use `python -m safemap.cli metric-summary` after regeneration to print concise
-paper-facing metric sentences from those CSVs.
+The reproduction manifest records exact commands, tool versions, dirty-tree
+state, and SHA-256 checksums for every published file.
 
 Use `make paper-artifacts-strict` to fail when the C2Rust denominator differs
 from the SafeMAP microbenchmark denominator. See `ARTIFACT_README.md` for the
@@ -517,9 +511,8 @@ python -m safemap.cli final-eval \
   --mode safemap_full
 ```
 
-Generated `reports/final/` artifacts are useful for local review. Decide
-explicitly whether final report snapshots should be committed; do not hand-edit
-reported metrics.
+Generated `reports/final/` artifacts are useful for local review. Commit only
+the clean `reports/publication/` snapshot; do not hand-edit reported metrics.
 
 ## Known Limitations
 

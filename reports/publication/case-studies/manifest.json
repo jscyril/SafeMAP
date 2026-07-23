@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "benchmark_csv": "reports/.reproduction/20260722T051948Z/case-studies/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/20260722T051948Z/case-studies/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/20260722T051948Z/case-studies/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/20260722T051948Z/case-studies/paper_tables.md"
+  },
+  "benchmarks": "case_studies",
+  "generated_at_utc": "2026-07-22T05:20:42Z",
+  "git_commit": "28a161e0c732796b04f2f9fcaadea03c545c4988",
+  "git_dirty": true,
+  "modes": [
+    "safemap_full"
+  ],
+  "output_dir": "reports/.reproduction/20260722T051948Z/case-studies",
+  "result_schema_version": "safemap.benchmark_results.v2",
+  "rows": 5
+}
