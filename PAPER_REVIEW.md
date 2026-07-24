@@ -31,9 +31,10 @@ The revision resolves the paper-content issues identified below:
 
 The rebuilt five-page PDF has no LaTeX errors, undefined citations/references,
 or overfull boxes. Four underfull-box spacing warnings remain. Submission still
-requires real author metadata, a clean-commit regeneration of the publication
-snapshot, and the planned publisher/DOI metadata audit. Behavioral integration
-with LLVM reference outputs remains future evaluation work.
+requires real author metadata and the planned publisher/DOI metadata audit.
+The publication and external snapshots were regenerated from clean commit
+`ac1d92c` on 2026-07-23. Behavioral integration with LLVM reference outputs
+remains future evaluation work.
 
 ## Verdict
 

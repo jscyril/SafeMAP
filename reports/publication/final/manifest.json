@@ -1,18 +1,18 @@
 {
   "artifacts": {
-    "benchmark_csv": "reports/.reproduction/20260722T051948Z/final/benchmark_results.csv",
-    "benchmark_summary": "reports/.reproduction/20260722T051948Z/final/benchmark_results.md",
-    "latex_tables": "reports/.reproduction/20260722T051948Z/final/paper_tables.tex",
-    "paper_tables": "reports/.reproduction/20260722T051948Z/final/paper_tables.md"
+    "benchmark_csv": "reports/.reproduction/20260723T165912Z/final/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/20260723T165912Z/final/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/20260723T165912Z/final/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/20260723T165912Z/final/paper_tables.md"
   },
   "benchmarks": "examples",
-  "generated_at_utc": "2026-07-22T05:20:36Z",
-  "git_commit": "28a161e0c732796b04f2f9fcaadea03c545c4988",
-  "git_dirty": true,
+  "generated_at_utc": "2026-07-23T17:00:00Z",
+  "git_commit": "ac1d92c4842fb75ceee96aec62121a921cfe5e99",
+  "git_dirty": false,
   "modes": [
     "safemap_full"
   ],
-  "output_dir": "reports/.reproduction/20260722T051948Z/final",
+  "output_dir": "reports/.reproduction/20260723T165912Z/final",
   "result_schema_version": "safemap.benchmark_results.v2",
   "rows": 40
 }

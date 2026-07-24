@@ -1,23 +1,23 @@
 {
   "artifacts": {
-    "artifact_metadata": "reports/.reproduction/20260722T051948Z/artifact_metadata.json",
-    "c2rust_baseline": "reports/.reproduction/20260722T051948Z/c2rust-only/benchmark_results.csv",
-    "case_studies": "reports/.reproduction/20260722T051948Z/case-studies/benchmark_results.csv",
-    "combined_evaluation": "reports/.reproduction/20260722T051948Z/combined_evaluation.md",
-    "safemap_microbenchmarks": "reports/.reproduction/20260722T051948Z/final/benchmark_results.csv"
+    "artifact_metadata": "reports/.reproduction/20260723T165912Z/artifact_metadata.json",
+    "c2rust_baseline": "reports/.reproduction/20260723T165912Z/c2rust-only/benchmark_results.csv",
+    "case_studies": "reports/.reproduction/20260723T165912Z/case-studies/benchmark_results.csv",
+    "combined_evaluation": "reports/.reproduction/20260723T165912Z/combined_evaluation.md",
+    "safemap_microbenchmarks": "reports/.reproduction/20260723T165912Z/final/benchmark_results.csv"
   },
   "command_lines": [
-    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/20260722T051948Z/final --mode safemap_full",
-    "/usr/bin/python -m safemap.cli final-eval --benchmarks case_studies --output reports/.reproduction/20260722T051948Z/case-studies --mode safemap_full",
-    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/20260722T051948Z/c2rust-only --mode c2rust_only",
-    "/usr/bin/python -m safemap.cli combined-eval --output reports/.reproduction/20260722T051948Z/combined_evaluation.md --main-csv reports/.reproduction/20260722T051948Z/final/benchmark_results.csv --case-study-csv reports/.reproduction/20260722T051948Z/case-studies/benchmark_results.csv --c2rust-csv reports/.reproduction/20260722T051948Z/c2rust-only/benchmark_results.csv --allow-denominator-mismatch"
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/20260723T165912Z/final --mode safemap_full",
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks case_studies --output reports/.reproduction/20260723T165912Z/case-studies --mode safemap_full",
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/20260723T165912Z/c2rust-only --mode c2rust_only",
+    "/usr/bin/python -m safemap.cli combined-eval --output reports/.reproduction/20260723T165912Z/combined_evaluation.md --main-csv reports/.reproduction/20260723T165912Z/final/benchmark_results.csv --case-study-csv reports/.reproduction/20260723T165912Z/case-studies/benchmark_results.csv --c2rust-csv reports/.reproduction/20260723T165912Z/c2rust-only/benchmark_results.csv --allow-denominator-mismatch"
   ],
   "llm_csv_included": false,
   "llm_csv_source": null,
   "metadata": {
-    "generated_at_utc": "2026-07-22T05:21:13Z",
-    "git_commit": "28a161e0c732796b04f2f9fcaadea03c545c4988",
-    "git_dirty": true,
+    "generated_at_utc": "2026-07-23T17:00:37Z",
+    "git_commit": "ac1d92c4842fb75ceee96aec62121a921cfe5e99",
+    "git_dirty": false,
     "result_schema_version": "safemap.benchmark_results.v2",
     "tool_versions": {
       "c2rust": "C2Rust 0.22.1",
@@ -32,7 +32,7 @@
   "published_artifacts": [
     {
       "path": "reports/publication/final/benchmark_results.csv",
-      "sha256": "89861d4bc06ee47795f861e52b9dcccc0bb6b41691569137817dea62e6e3749a"
+      "sha256": "a16f671a42ba28e337a7dcfaa2e46055d6bfb4f726033c271518799e45ac5ec7"
     },
     {
       "path": "reports/publication/final/benchmark_results.md",
@@ -48,11 +48,11 @@
     },
     {
       "path": "reports/publication/final/manifest.json",
-      "sha256": "d9bc98f73337f5aede1f7614da70f7fcce1e5dbe1c1168717c48ba389d90e3cf"
+      "sha256": "e0456f7d7da70e70be6fbb1758d6849b74f95daeab00083a8b5dd62ad5b499e4"
     },
     {
       "path": "reports/publication/case-studies/benchmark_results.csv",
-      "sha256": "210ea74a944ea05dfc3bcb03458fb8faf9aacd447ce2f15ee50b75a88dcb96a2"
+      "sha256": "2d29735e21c74076f208fe3198902278e5692228fa341f1b1790561583bf3d24"
     },
     {
       "path": "reports/publication/case-studies/benchmark_results.md",
@@ -68,11 +68,11 @@
     },
     {
       "path": "reports/publication/case-studies/manifest.json",
-      "sha256": "48d928e17a5eac493d385c165c3753c7758f97f20f9408e9ebd9f5b39f8aa835"
+      "sha256": "3aa5f6d6b15bc7a8f574dc8cd69c742911514115aff93c1dc0482f736cf88f02"
     },
     {
       "path": "reports/publication/c2rust-only/benchmark_results.csv",
-      "sha256": "d45dc31a1a0aed75200253070d3c52f2a87d2e17117fc1ecd591d2bfa3acb952"
+      "sha256": "1629e73ee19f257ad1c309c8b1da7a075f1e74a91d2821b3a2304c45be990a47"
     },
     {
       "path": "reports/publication/c2rust-only/benchmark_results.md",
@@ -88,7 +88,7 @@
     },
     {
       "path": "reports/publication/c2rust-only/manifest.json",
-      "sha256": "b1f8e2b37bc9f55efbc8d58c1fad09b64d85626e9ad7d70138a993f4721cc40e"
+      "sha256": "4d2cb77df012bbde8cd1fb6a4beb1efe8894fb9ba35081c0cd8e73c0fd7547c1"
     },
     {
       "path": "reports/publication/combined_evaluation.md",
@@ -96,10 +96,10 @@
     },
     {
       "path": "reports/publication/artifact_metadata.json",
-      "sha256": "495b4e8943222549bf3b831d52a67c97b9ca0635b4fa055bc47d8afa61d802fc"
+      "sha256": "de04ab23cc8cf0628b47667de54cc45f445cb32e3466b941cfb0e4f58cac4e86"
     }
   ],
   "snapshot_dir": "reports/publication",
   "strict_denominators": false,
-  "working_reports_dir": "reports/.reproduction/20260722T051948Z"
+  "working_reports_dir": "reports/.reproduction/20260723T165912Z"
 }

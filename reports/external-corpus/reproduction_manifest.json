@@ -1,11 +1,11 @@
 {
-  "command_line": "/usr/bin/python -m safemap.cli final-eval --benchmarks external_corpus/llvm_test_suite_misc/projects --output reports/.reproduction/external-20260723T161504Z --mode safemap_deterministic",
+  "command_line": "/usr/bin/python -m safemap.cli final-eval --benchmarks external_corpus/llvm_test_suite_misc/projects --output reports/.reproduction/external-20260723T170042Z --mode safemap_deterministic",
   "corpus_manifest": "external_corpus/llvm_test_suite_misc/manifest.json",
   "corpus_manifest_sha256": "381eff59d8a0baace33a35d9771575dd23a6b96e992110a9b2bb231096fc7de7",
   "published_artifacts": [
     {
       "path": "reports/external-corpus/benchmark_results.csv",
-      "sha256": "5c5cdaa9f6ee76bb03ffa89eda837077a71d625c12e14d16be66cd92bf619bb3"
+      "sha256": "c6a327d5221469301d096d620cfcab26915e4c03251f0ced4618b617e5d81fd0"
     },
     {
       "path": "reports/external-corpus/benchmark_results.md",
@@ -21,9 +21,9 @@
     },
     {
       "path": "reports/external-corpus/manifest.json",
-      "sha256": "c269257c97bd40e572428d212b26a9ec2cf9303085e8b88c70d71466981bcb4f"
+      "sha256": "693239018e0ef85f9d6c93586ed39b65169bfd2d8770fddb201b38457180d38d"
     }
   ],
   "snapshot_dir": "reports/external-corpus",
-  "working_reports_dir": "reports/.reproduction/external-20260723T161504Z"
+  "working_reports_dir": "reports/.reproduction/external-20260723T170042Z"
 }
