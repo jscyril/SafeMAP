@@ -29,7 +29,8 @@ from .validation.validator import validate_project
 
 BENCHMARK_MODE_HELP = (
     "Repeat to select modes: c2rust_only, llm_only, "
-    "c2rust_llm_unguided, safemap_deterministic, safemap_full."
+    "c2rust_llm_unguided, safemap_no_static_guidance, "
+    "safemap_deterministic, safemap_full."
 )
 
 if typer:
@@ -160,7 +161,9 @@ if typer:
         case_study_csv: Optional[Path] = typer.Option(
             Path("reports/case-studies/benchmark_results.csv")
         ),
+        external_csv: Optional[Path] = typer.Option(None),
         c2rust_csv: Optional[Path] = typer.Option(None),
+        ablation_csv: Optional[Path] = typer.Option(None),
         llm_smoke_csv: Optional[Path] = typer.Option(None),
         allow_denominator_mismatch: bool = typer.Option(False),
     ) -> None:
@@ -168,7 +171,9 @@ if typer:
             output,
             main_csv,
             case_study_csv=case_study_csv,
+            external_csv=external_csv,
             c2rust_csv=c2rust_csv,
+            ablation_csv=ablation_csv,
             llm_smoke_csv=llm_smoke_csv,
             allow_denominator_mismatch=allow_denominator_mismatch,
         )
@@ -188,17 +193,23 @@ if typer:
         case_study_csv: Optional[Path] = typer.Option(
             Path("reports/case-studies/benchmark_results.csv")
         ),
+        external_csv: Optional[Path] = typer.Option(
+            Path("reports/external-corpus/benchmark_results.csv")
+        ),
         c2rust_csv: Optional[Path] = typer.Option(
             Path("reports/c2rust-only/benchmark_results.csv")
         ),
-        llm_subset_csv: Optional[Path] = typer.Option(
-            Path("reports/gemini_benchmark_results.csv")
+        ablation_csv: Optional[Path] = typer.Option(
+            Path("reports/ablation/benchmark_results.csv")
         ),
+        llm_subset_csv: Optional[Path] = typer.Option(None),
     ) -> None:
         typer.echo(publication_metric_summary(
             main_csv,
             case_study_csv=case_study_csv,
+            external_csv=external_csv,
             c2rust_csv=c2rust_csv,
+            ablation_csv=ablation_csv,
             llm_subset_csv=llm_subset_csv,
         ))
 
@@ -302,7 +313,9 @@ def _argparse_main() -> None:  # pragma: no cover - used in minimal installation
     combined_parser.add_argument(
         "--case-study-csv", default="reports/case-studies/benchmark_results.csv"
     )
+    combined_parser.add_argument("--external-csv")
     combined_parser.add_argument("--c2rust-csv")
+    combined_parser.add_argument("--ablation-csv")
     combined_parser.add_argument("--llm-smoke-csv")
     combined_parser.add_argument("--allow-denominator-mismatch", action="store_true")
     metadata_parser = subparsers.add_parser("artifact-metadata")
@@ -312,12 +325,12 @@ def _argparse_main() -> None:  # pragma: no cover - used in minimal installation
     metric_parser.add_argument(
         "--case-study-csv", default="reports/case-studies/benchmark_results.csv"
     )
+    metric_parser.add_argument("--external-csv")
     metric_parser.add_argument(
         "--c2rust-csv", default="reports/c2rust-only/benchmark_results.csv"
     )
-    metric_parser.add_argument(
-        "--llm-subset-csv", default="reports/gemini_benchmark_results.csv"
-    )
+    metric_parser.add_argument("--ablation-csv")
+    metric_parser.add_argument("--llm-subset-csv")
     latest_parser = subparsers.add_parser("latest-run")
     latest_parser.add_argument("--output", default=".")
     summarize_parser = subparsers.add_parser("summarize-runs")
@@ -375,7 +388,11 @@ def _argparse_main() -> None:  # pragma: no cover - used in minimal installation
             Path(args.main_csv),
             case_study_csv=Path(args.case_study_csv)
             if args.case_study_csv else None,
+            external_csv=Path(args.external_csv)
+            if args.external_csv else None,
             c2rust_csv=Path(args.c2rust_csv) if args.c2rust_csv else None,
+            ablation_csv=Path(args.ablation_csv)
+            if args.ablation_csv else None,
             llm_smoke_csv=Path(args.llm_smoke_csv) if args.llm_smoke_csv else None,
             allow_denominator_mismatch=args.allow_denominator_mismatch,
         )
@@ -387,7 +404,11 @@ def _argparse_main() -> None:  # pragma: no cover - used in minimal installation
             Path(args.main_csv),
             case_study_csv=Path(args.case_study_csv)
             if args.case_study_csv else None,
+            external_csv=Path(args.external_csv)
+            if args.external_csv else None,
             c2rust_csv=Path(args.c2rust_csv) if args.c2rust_csv else None,
+            ablation_csv=Path(args.ablation_csv)
+            if args.ablation_csv else None,
             llm_subset_csv=Path(args.llm_subset_csv)
             if args.llm_subset_csv else None,
         ), end="")

@@ -86,14 +86,14 @@ As of the current local validation pass:
 
 | Area | Current status |
 |---|---|
-| Test suite | `111 passed` |
+| Test suite | `116 passed` |
 | MVP benchmark examples | `40` example projects under `examples/` |
 | SafeMAP-only final eval | `37 / 76` eligible units accepted |
 | Supported examples with differential pass | `36` |
 | Case-study modules | `5` authored modules, `15 / 20` eligible units accepted |
-| External corpus | `10` pinned LLVM test-suite programs, `1 / 22` eligible units accepted by deterministic synthesis |
-| C2Rust-only baseline | `0 / 72` fully safe accepted units in the canonical publication snapshot because two baseline rows did not produce complete metrics |
-| LLM smoke test | Ollama `llm_only` on `simple_sum` compiled and differential-passed; full LLM baseline remains latency/model dependent |
+| External corpus | `10` pinned LLVM test-suite programs, `1 / 22` eligible units accepted; the accepted unit passes its LLVM reference-output harness |
+| C2Rust-only baseline | `0 / 76` fully safe accepted units under the same denominator as deterministic SafeMAP |
+| Static-guidance ablation | Same analyzer denominator with classifications, safe signatures, and migration plans withheld from synthesis |
 | Accepted final Rust policy | `#![forbid(unsafe_code)]`, no unsafe blocks/functions, no raw-pointer public API |
 | Benchmark table export | `benchmark_results.csv`, `benchmark_results.md`, `paper_tables.md`, `paper_tables.tex`, `manifest.json`, plus combined evaluation summary |
 
@@ -103,14 +103,14 @@ The most recent SafeMAP-only final evaluation was verified locally with:
 python -m safemap.cli final-eval \
   --benchmarks examples \
   --output /tmp/safemap-final-eval-40-benchmarks \
-  --mode safemap_full
+  --mode safemap_deterministic
 ```
 
 Observed result:
 
 ```text
 rows: 40
-safemap_full accepted units: 37 / 76
+safemap_deterministic accepted units: 37 / 76
 ```
 
 The intentionally unsupported benchmark examples are still reported separately
@@ -123,14 +123,14 @@ Case-study modules are evaluated separately with:
 python -m safemap.cli final-eval \
   --benchmarks case_studies \
   --output /tmp/safemap-case-studies \
-  --mode safemap_full
+  --mode safemap_deterministic
 ```
 
 Observed case-study result:
 
 ```text
 rows: 5
-safemap_full accepted units: 15 / 20
+safemap_deterministic accepted units: 15 / 20
 all 5 case-study modules passed differential testing
 ```
 
@@ -155,7 +155,8 @@ The low external acceptance rate is retained as a result, not filtered out.
 See `external_corpus/README.md` for the upstream commit, licensing, exact
 selection rule, checksums, exclusions, and current validation limitations.
 
-After generating the benchmark, case-study, C2Rust baseline, and LLM subset CSVs,
+After generating the benchmark, case-study, external-corpus, C2Rust baseline,
+and static-guidance-ablation CSVs,
 combine paper-facing results with:
 
 ```bash
@@ -163,13 +164,13 @@ python -m safemap.cli combined-eval \
   --output reports/publication/combined_evaluation.md \
   --main-csv reports/publication/final/benchmark_results.csv \
   --case-study-csv reports/publication/case-studies/benchmark_results.csv \
+  --external-csv reports/publication/external-corpus/benchmark_results.csv \
   --c2rust-csv reports/publication/c2rust-only/benchmark_results.csv \
-  --allow-denominator-mismatch
+  --ablation-csv reports/publication/ablation/benchmark_results.csv
 ```
 
-The explicit denominator override is required for the current canonical C2Rust
-snapshot because it reports `0 / 72` accepted units while the SafeMAP
-microbenchmark CSV reports `37 / 76`.
+The canonical C2Rust and deterministic SafeMAP runs now share the same
+76-eligible-unit denominator.
 
 ## Repository Layout
 
@@ -344,7 +345,7 @@ python -m safemap.cli benchmark \
   --config safemap.example.yaml
 ```
 
-Check benchmark inputs, selected modes, external tools, LLM key status, and
+Check benchmark inputs, selected modes, and external tools, and
 whether an output directory already contains prior run artifacts without running
 the benchmark:
 
@@ -352,7 +353,7 @@ the benchmark:
 python -m safemap.cli benchmark \
   --benchmarks examples \
   --output reports/benchmark_results.csv \
-  --mode safemap_full \
+  --mode safemap_deterministic \
   --dry-run
 ```
 
@@ -370,7 +371,7 @@ Run a durable final evaluation bundle:
 python -m safemap.cli final-eval \
   --benchmarks examples \
   --output reports/final \
-  --mode safemap_full
+  --mode safemap_deterministic
 ```
 
 Run only the C2Rust strict-policy baseline:
@@ -382,14 +383,13 @@ python -m safemap.cli final-eval \
   --mode c2rust_only
 ```
 
-Run only the bounded LLM subset with an OpenAI-compatible config:
+Run the static-guidance ablation:
 
 ```bash
-python -m safemap.cli benchmark \
+python -m safemap.cli final-eval \
   --benchmarks examples \
-  --output reports/gemini_benchmark_results.csv \
-  --config safemap.gemini.yaml \
-  --mode llm_only
+  --output reports/ablation \
+  --mode safemap_no_static_guidance
 ```
 
 Inspect saved runs:
@@ -405,7 +405,9 @@ Print a publication-ready metric summary from canonical CSV inputs:
 python -m safemap.cli metric-summary \
   --main-csv reports/publication/final/benchmark_results.csv \
   --case-study-csv reports/publication/case-studies/benchmark_results.csv \
-  --c2rust-csv reports/publication/c2rust-only/benchmark_results.csv
+  --external-csv reports/publication/external-corpus/benchmark_results.csv \
+  --c2rust-csv reports/publication/c2rust-only/benchmark_results.csv \
+  --ablation-csv reports/publication/ablation/benchmark_results.csv
 ```
 
 Benchmark modes:
@@ -416,8 +418,11 @@ Benchmark modes:
   output without C2Rust or static guidance.
 - `c2rust_llm_unguided`: run C2Rust, then ask the LLM to rewrite without
   SafeMAP static guidance.
+- `safemap_no_static_guidance`: preserve analyzer-derived evaluation
+  denominators but withhold classifications, safe signatures, and migration
+  plans from deterministic synthesis.
 - `safemap_deterministic`: use static guidance and deterministic synthesis
-  without C2Rust or an LLM; this is the reproducible external-corpus lane.
+  without C2Rust or an LLM; this is the reproducible publication lane.
 - `safemap_full`: run the full analysis-guided SafeMAP pipeline.
 
 For publication snapshots, use `make paper-artifacts`. It evaluates in a fresh
@@ -470,7 +475,7 @@ python -m compileall -q safemap
 Current expected test result:
 
 ```text
-111 passed
+116 passed
 ```
 
 ## Reproducing Paper Artifacts
@@ -481,12 +486,15 @@ Regenerate the paper-facing report bundle with:
 make paper-artifacts
 ```
 
-This runs the SafeMAP microbenchmarks, case studies, C2Rust baseline, combined
-summary, and tool-version capture in a fresh ignored workspace. It publishes:
+This runs the SafeMAP microbenchmarks, case studies, external corpus, C2Rust
+baseline, static-guidance ablation, combined summary, and tool-version capture
+in a fresh ignored workspace. It publishes:
 
 - `reports/publication/final/`
 - `reports/publication/case-studies/`
+- `reports/publication/external-corpus/`
 - `reports/publication/c2rust-only/`
+- `reports/publication/ablation/`
 - `reports/publication/combined_evaluation.md`
 - `reports/publication/artifact_metadata.json`
 - `reports/publication/reproduction_manifest.json`
@@ -494,9 +502,9 @@ summary, and tool-version capture in a fresh ignored workspace. It publishes:
 The reproduction manifest records exact commands, tool versions, dirty-tree
 state, and SHA-256 checksums for every published file.
 
-Use `make paper-artifacts-strict` to fail when the C2Rust denominator differs
-from the SafeMAP microbenchmark denominator. See `ARTIFACT_README.md` for the
-artifact policy and expected external tools.
+The reproduction fails if the C2Rust denominator differs from the SafeMAP
+microbenchmark denominator. See `ARTIFACT_README.md` for the artifact policy
+and expected external tools.
 
 ## Git Hygiene
 
@@ -533,7 +541,7 @@ Optional release artifact generation:
 python -m safemap.cli final-eval \
   --benchmarks examples \
   --output reports/final \
-  --mode safemap_full
+  --mode safemap_deterministic
 ```
 
 Generated `reports/final/` artifacts are useful for local review. Commit only
@@ -543,10 +551,13 @@ the clean `reports/publication/` snapshot; do not hand-edit reported metrics.
 
 - SafeMAP is not a full C compiler or production migration tool.
 - Deterministic safe synthesis is intentionally narrow.
-- LLM rewrite/repair depends on configured external model access.
 - C2Rust may require old LLVM runtime libraries and may emit Rust that fails on
   stable Rust due to obsolete feature gates.
-- Differential testing is limited and not a formal equivalence proof.
+- Differential testing is not a formal equivalence proof. The external result
+  currently validates the sole accepted helper through one reviewed contextual
+  harness against the retained LLVM whole-program oracle.
+- Miri is integrated but unavailable on the recorded stable toolchain and is
+  reported as skipped.
 - Unsupported units are rejected or reported instead of forced through unsafe
   migration.
 
@@ -556,6 +567,13 @@ For paper planning, see:
 
 ```text
 SAFEMAP_RESEARCH_TODO.md
+```
+
+In the current research workspace, the LaTeX draft is
+`../my_paper/main.tex`. Rebuild it from that directory with:
+
+```bash
+latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
 ```
 
 Use the generated metrics and reports directly. Do not invent benchmark results.

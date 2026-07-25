@@ -1,6 +1,6 @@
 # SafeMAP Paper Review
 
-Reviewed: 2026-07-23
+Reviewed: 2026-07-24
 
 Scope: `/mnt/data/college/research/my_paper/main.tex`, its four generated table
 fragments, bibliography, reference inventory, the canonical publication
@@ -19,13 +19,14 @@ The revision resolves the paper-content issues identified below:
 - reports the outcome-blind LLVM corpus separately, with its pinned source,
   selection rule, hashes, license records, corpus statistics, and `1 / 22`
   acceptance result;
-- states that the external accepted helper has no behavioral test or applicable
-  differential check;
-- reports the current `111`-test repository validation pass and zero LLM calls
-  in the canonical deterministic runs;
-- corrects the C2Rust denominator explanation and the distinction between
-  target and unit counts;
-- removes the unpublished LLM row from the primary result table;
+- validates the accepted external helper with a reviewed, hashed contextual
+  harness against LLVM's retained stdout and exit-code oracle;
+- reports the current `116`-test repository validation pass;
+- reports C2Rust as `0 / 76` under the same denominator as deterministic
+  SafeMAP;
+- adds the no-static-guidance ablation (`0 / 76`) and explains exactly what is
+  withheld;
+- removes empirical LLM results and SafeMAP LLM claims from the paper;
 - narrows the claims, updates the methodology and threats to validity, and adds
   the LLVM test-suite citation.
 
@@ -33,8 +34,8 @@ The rebuilt five-page PDF has no LaTeX errors, undefined citations/references,
 or overfull boxes. Four underfull-box spacing warnings remain. Submission still
 requires real author metadata and the planned publisher/DOI metadata audit.
 The publication and external snapshots were regenerated from clean commit
-`ac1d92c` on 2026-07-23. Behavioral integration with LLVM reference outputs
-remains future evaluation work.
+`60487aa` on 2026-07-24 with the implementation worktree recorded as dirty.
+Submission still requires a clean committed regeneration.
 
 ## Verdict
 

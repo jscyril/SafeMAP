@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import random
+import re
 import tempfile
 from pathlib import Path
 
-from ..models import ValidationCheck
+from ..models import CommandResult, ValidationCheck
 from ..process import run_command
 
 
@@ -56,7 +57,7 @@ def build_and_compare_projects(
         temporary_path = Path(temporary)
         c_binary = Path(temporary) / "original"
         compile_c = run_command(
-            ["clang", str(c_source), "-o", str(c_binary)],
+            ["clang", str(c_source), "-o", str(c_binary), "-lm"],
             c_source.parent,
         )
         if compile_c.status != "passed":
@@ -70,26 +71,223 @@ def build_and_compare_projects(
                 status=build_rust.status, command=build_rust,
                 reason="Could not build translated Rust program",
             )
+        reference_output = c_source.with_suffix(".reference_output")
+        reference = (
+            _load_llvm_reference_output(reference_output)
+            if reference_output.is_file()
+            else None
+        )
+        if reference is not None:
+            original = _run_exact([str(c_binary)], c_source.parent)
+            mismatch = _reference_mismatch(reference, original)
+            if mismatch is not None:
+                return ValidationCheck(
+                    status="failed",
+                    command=original,
+                    passed=0,
+                    failed=1,
+                    reason=(
+                        "Original C executable did not match its LLVM reference "
+                        f"output: {mismatch}"
+                    ),
+                )
         package = _package_name(rust_root / "Cargo.toml")
         rust_binary = rust_root / "target" / "debug" / package
         if not rust_binary.exists():
+            if reference is not None:
+                reference_harness = _build_reference_output_harness(
+                    c_source, rust_root, package
+                )
+                if reference_harness is not None:
+                    translated = _run_exact(
+                        [str(reference_harness)], rust_root, timeout=120
+                    )
+                    mismatch = _reference_mismatch(reference, translated)
+                    return ValidationCheck(
+                        status="passed" if mismatch is None else "failed",
+                        command=translated,
+                        passed=1 if mismatch is None else 0,
+                        failed=0 if mismatch is None else 1,
+                        reason=(
+                            f"Matched LLVM reference output "
+                            f"{reference_output.name}"
+                            if mismatch is None
+                            else (
+                                "Translated Rust reference harness did not match "
+                                f"{reference_output.name}: {mismatch}"
+                            )
+                        ),
+                    )
             harness = _build_library_harness(
                 c_source, rust_root, package, temporary_path,
                 random_inputs=random_inputs, seed=seed,
             )
             if harness is None:
                 return ValidationCheck(
-                    status="not_applicable",
-                    reason="Translated project does not produce a comparable executable",
+                    status="failed" if reference is not None else "not_applicable",
+                    passed=0 if reference is not None else None,
+                    failed=1 if reference is not None else None,
+                    reason=(
+                        "LLVM reference output is available, but the translated "
+                        "library has no reviewed reference-output harness"
+                        if reference is not None
+                        else (
+                            "Translated project does not produce a comparable "
+                            "executable"
+                        )
+                    ),
                 )
             return compare_executables(
                 harness.c_command, harness.rust_command, rust_root,
                 inputs=inputs, seed=seed,
             )
+        if reference is not None:
+            translated = _run_exact([str(rust_binary)], rust_root, timeout=120)
+            mismatch = _reference_mismatch(reference, translated)
+            return ValidationCheck(
+                status="passed" if mismatch is None else "failed",
+                command=translated,
+                passed=1 if mismatch is None else 0,
+                failed=0 if mismatch is None else 1,
+                reason=(
+                    f"Matched LLVM reference output {reference_output.name}"
+                    if mismatch is None
+                    else (
+                        "Translated Rust executable did not match "
+                        f"{reference_output.name}: {mismatch}"
+                    )
+                ),
+            )
         return compare_executables(
             [str(c_binary)], [str(rust_binary)], rust_root, inputs=inputs,
             random_inputs=random_inputs, seed=seed,
         )
+
+
+class _ReferenceOutput:
+    def __init__(self, stdout: str, exit_code: int) -> None:
+        self.stdout = stdout
+        self.exit_code = exit_code
+
+
+def _load_llvm_reference_output(path: Path) -> _ReferenceOutput:
+    text = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+    match = re.search(r"(?m)^exit\s+(-?\d+)\s*$", text)
+    if match is None:
+        raise ValueError(f"LLVM reference output has no exit status: {path}")
+    stdout = text[:match.start()]
+    return _ReferenceOutput(stdout=stdout, exit_code=int(match.group(1)))
+
+
+def _run_exact(
+    command: list[str],
+    cwd: Path,
+    stdin: str = "",
+    timeout: float = 30,
+) -> CommandResult:
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            command,
+            cwd=cwd,
+            input=stdin,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=False,
+        )
+        return CommandResult(
+            command=command,
+            cwd=str(cwd),
+            exit_code=result.returncode,
+            stdout=result.stdout.replace("\r\n", "\n"),
+            stderr=result.stderr.replace("\r\n", "\n"),
+            status="passed" if result.returncode == 0 else "failed",
+        )
+    except (subprocess.TimeoutExpired, OSError) as error:
+        return CommandResult(
+            command=command,
+            cwd=str(cwd),
+            exit_code=None,
+            status="failed",
+            reason=str(error),
+        )
+
+
+def _reference_mismatch(
+    reference: _ReferenceOutput,
+    actual: CommandResult,
+) -> str | None:
+    if actual.exit_code != reference.exit_code:
+        return f"exit code {actual.exit_code!r} != {reference.exit_code}"
+    if actual.stdout != reference.stdout:
+        expected_lines = reference.stdout.splitlines()
+        actual_lines = actual.stdout.splitlines()
+        first = next(
+            (
+                index
+                for index, (expected, observed) in enumerate(
+                    zip(expected_lines, actual_lines), start=1
+                )
+                if expected != observed
+            ),
+            min(len(expected_lines), len(actual_lines)) + 1,
+        )
+        return (
+            f"stdout differs at line {first}; "
+            f"expected {len(reference.stdout)} bytes, got {len(actual.stdout)}"
+        )
+    return None
+
+
+def _build_reference_output_harness(
+    c_source: Path,
+    rust_root: Path,
+    package: str,
+) -> Path | None:
+    harness_source = _find_reference_output_harness(c_source)
+    if harness_source is None:
+        return None
+    harness_root = rust_root / "target" / "safemap-reference-output-harness"
+    source_dir = harness_root / "src"
+    source_dir.mkdir(parents=True, exist_ok=True)
+    (source_dir / "main.rs").write_text(
+        harness_source.read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+    (harness_root / "Cargo.toml").write_text(
+        "[package]\n"
+        'name = "safemap_reference_output_harness"\n'
+        'version = "0.1.0"\n'
+        'edition = "2021"\n\n'
+        "[dependencies]\n"
+        f'safemap_generated = {{ package = "{package}", '
+        f'path = "{rust_root.as_posix()}" }}\n',
+        encoding="utf-8",
+    )
+    build = run_command(["cargo", "build", "--quiet"], harness_root, timeout=600)
+    if build.status != "passed":
+        return None
+    binary = (
+        harness_root
+        / "target"
+        / "debug"
+        / "safemap_reference_output_harness"
+    )
+    return binary if binary.is_file() else None
+
+
+def _find_reference_output_harness(c_source: Path) -> Path | None:
+    local = c_source.with_suffix(".safemap_harness.rs")
+    if local.is_file():
+        return local
+    project = c_source.parent.name
+    for ancestor in c_source.parents:
+        candidate = ancestor / "validation_harnesses" / f"{project}.rs"
+        if candidate.is_file():
+            return candidate
+    return None
 
 
 def _run_with_input(

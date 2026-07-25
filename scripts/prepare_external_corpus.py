@@ -26,6 +26,9 @@ EXPECTED_SELECTION = {
     "revertBits.c",
     "salsa20.c",
 }
+VALIDATION_HARNESS_ROOT = (
+    Path(__file__).resolve().parents[1] / "external_corpus" / "validation_harnesses"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -118,6 +121,7 @@ def prepare_corpus(source_tree: Path, output: Path) -> dict[str, object]:
         stage = Path(temporary) / output.name
         projects = stage / "projects"
         licenses = stage / "LICENSES"
+        validation_harnesses = stage / "validation_harnesses"
         projects.mkdir(parents=True)
         licenses.mkdir(parents=True)
 
@@ -144,6 +148,17 @@ def prepare_corpus(source_tree: Path, output: Path) -> dict[str, object]:
                 "upstream_commit": UPSTREAM_COMMIT,
                 "upstream_path": str(UPSTREAM_SUBDIR / source.name),
             }
+            harness = VALIDATION_HARNESS_ROOT / f"{project_name}.rs"
+            if harness.is_file():
+                validation_harnesses.mkdir(exist_ok=True)
+                destination_harness = validation_harnesses / harness.name
+                shutil.copyfile(harness, destination_harness)
+                metadata.update({
+                    "validation_harness": (
+                        f"validation_harnesses/{harness.name}"
+                    ),
+                    "validation_harness_sha256": _sha256(harness),
+                })
             (project / "source_metadata.json").write_text(
                 json.dumps(metadata, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
@@ -156,7 +171,7 @@ def prepare_corpus(source_tree: Path, output: Path) -> dict[str, object]:
             })
 
         manifest = {
-            "corpus_schema_version": "safemap.external_corpus.v1",
+            "corpus_schema_version": "safemap.external_corpus.v2",
             "license": "NCSA",
             "license_files": [
                 "LICENSES/LLVM-test-suite-LICENSE.txt",

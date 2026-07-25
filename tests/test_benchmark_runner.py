@@ -1,3 +1,4 @@
+import csv
 from pathlib import Path
 
 import pytest
@@ -54,6 +55,14 @@ def test_deterministic_mode_has_no_external_generation_dependencies() -> None:
     mode = _selected_modes(["safemap_deterministic"])[0]
 
     assert mode.guided is True
+    assert mode.use_c2rust is False
+    assert mode.use_llm is False
+
+
+def test_no_static_guidance_ablation_withholds_generation_dependencies() -> None:
+    mode = _selected_modes(["safemap_no_static_guidance"])[0]
+
+    assert mode.guided is False
     assert mode.use_c2rust is False
     assert mode.use_llm is False
 
@@ -655,6 +664,7 @@ def test_run_final_evaluation_writes_durable_artifacts(tmp_path: Path) -> None:
     csv_text = (tmp_path / "final" / "benchmark_results.csv").read_text(
         encoding="utf-8"
     )
+    assert "\r" not in csv_text
     assert "result_schema_version" in csv_text.splitlines()[0]
     assert RESULT_SCHEMA_VERSION in csv_text
     assert "primary_function" in csv_text.splitlines()[0]
@@ -672,3 +682,29 @@ def test_run_final_evaluation_writes_durable_artifacts(tmp_path: Path) -> None:
     assert (tmp_path / "final" / "paper_tables.md").exists()
     assert (tmp_path / "final" / "paper_tables.tex").exists()
     assert (tmp_path / "final" / "manifest.json").exists()
+
+
+def test_no_static_guidance_ablation_reports_zero_synthesis(
+    tmp_path: Path,
+) -> None:
+    config = SafeMapConfig()
+    config.validation.run_clippy = False
+    config.validation.run_differential_tests = False
+
+    manifest = run_final_evaluation(
+        Path("examples/simple_sum"),
+        tmp_path / "ablation",
+        config,
+        modes=["safemap_no_static_guidance"],
+    )
+    row = next(csv.DictReader(
+        (tmp_path / "ablation" / "benchmark_results.csv").open(
+            encoding="utf-8"
+        )
+    ))
+
+    assert manifest["modes"] == ["safemap_no_static_guidance"]
+    assert row["eligible_units"] == "2"
+    assert row["fully_safe_accepted_units"] == "0"
+    assert row["status"] == "no_guided_synthesis"
+    assert row["llm_calls"] == "0"

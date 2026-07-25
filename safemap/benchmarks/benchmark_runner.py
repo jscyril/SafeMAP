@@ -162,7 +162,12 @@ def run_benchmarks(
         "repair_attempts", "llm_calls", "llm_input_tokens", "llm_output_tokens",
     ]
     with output_csv.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=columns, extrasaction="ignore")
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=columns,
+            extrasaction="ignore",
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(rows)
     summary = [
@@ -335,7 +340,9 @@ def export_combined_evaluation(
     output_md: Path,
     main_csv: Path,
     case_study_csv: Path | None = None,
+    external_csv: Path | None = None,
     c2rust_csv: Path | None = None,
+    ablation_csv: Path | None = None,
     llm_smoke_csv: Path | None = None,
     allow_denominator_mismatch: bool = False,
 ) -> str:
@@ -344,7 +351,17 @@ def export_combined_evaluation(
     datasets = [
         ("Microbenchmarks", main_csv, "SafeMAP fully safe output"),
         ("Case studies", case_study_csv, "Authored module-shaped case studies"),
+        (
+            "LLVM external corpus",
+            external_csv,
+            "Outcome-blind pinned LLVM subset with reference-output validation",
+        ),
         ("C2Rust baseline", c2rust_csv, "Strict SafeMAP acceptance applied to raw C2Rust baseline"),
+        (
+            "Static-guidance ablation",
+            ablation_csv,
+            "Structured analysis and migration plans withheld from synthesis",
+        ),
         ("LLM subset", llm_smoke_csv, "Optional bounded LLM subset"),
     ]
     sections = [
@@ -364,16 +381,22 @@ def export_combined_evaluation(
         "|---|---|---:|---:|---:|---:|---:|---:|---:|",
     ])
     sections.extend(_combined_characterization_rows(datasets))
-    sections.extend([
+    interpretation = [
         "",
         "## Interpretation",
         "",
         "- Accepted units are counted only when the final Rust output satisfies SafeMAP's fully safe policy.",
         "- C2Rust baseline rows are not treated as SafeMAP success unless they satisfy the same no-unsafe/no-raw-pointer policy.",
-        "- LLM subset results are latency/model dependent and should not be generalized to the full benchmark suite.",
+        "- The no-static-guidance ablation still runs analysis to preserve the evaluation denominator, but withholds its classifications, signatures, and migration plans from synthesis.",
         "- Unsupported C constructs are reported as explicit outcomes rather than crashes.",
-        "",
-    ])
+    ]
+    if llm_smoke_csv is not None:
+        interpretation.append(
+            "- LLM subset results are latency/model dependent and should not "
+            "be generalized to the full benchmark suite."
+        )
+    interpretation.append("")
+    sections.extend(interpretation)
     text = "\n".join(sections)
     output_md.parent.mkdir(parents=True, exist_ok=True)
     output_md.write_text(text, encoding="utf-8")
@@ -383,24 +406,28 @@ def export_combined_evaluation(
 def publication_metric_summary(
     main_csv: Path,
     case_study_csv: Path | None = None,
+    external_csv: Path | None = None,
     c2rust_csv: Path | None = None,
+    ablation_csv: Path | None = None,
     llm_subset_csv: Path | None = None,
 ) -> str:
+    main_mode = _preferred_safemap_mode(main_csv)
     sections = [
         "# SafeMAP Publication Metric Summary",
         "",
         _publication_dataset_sentence(
             "Microbenchmarks",
             main_csv,
-            "safemap_full",
+            main_mode,
             include_targets=True,
         ),
     ]
     if case_study_csv is not None:
+        case_study_mode = _preferred_safemap_mode(case_study_csv)
         sections.append(_publication_dataset_sentence(
             "Case studies",
             case_study_csv,
-            "safemap_full",
+            case_study_mode,
             include_targets=True,
         ))
     if c2rust_csv is not None:
@@ -410,15 +437,35 @@ def publication_metric_summary(
             "c2rust_only",
             include_targets=True,
         ))
+    if external_csv is not None:
+        sections.append(_publication_dataset_sentence(
+            "LLVM external corpus",
+            external_csv,
+            "safemap_deterministic",
+        ))
+    if ablation_csv is not None:
+        sections.append(_publication_dataset_sentence(
+            "Static-guidance ablation",
+            ablation_csv,
+            "safemap_no_static_guidance",
+            include_targets=True,
+        ))
     if llm_subset_csv is not None:
         sections.extend(_publication_llm_sentences(llm_subset_csv))
-    sections.extend([
-        "",
-        "Use these numbers with the restricted-subset SafeMAP claim. Do not "
-        "treat LLM subset rows as a full LLM baseline unless the evaluated "
-        "scope is explicitly described.",
-    ])
+    sections.extend(["", "Use these numbers with the restricted-subset SafeMAP claim."])
+    if llm_subset_csv is not None:
+        sections.append(
+            "Do not treat LLM subset rows as a full LLM baseline unless the "
+            "evaluated scope is explicitly described."
+        )
     return "\n".join(item for item in sections if item) + "\n"
+
+
+def _preferred_safemap_mode(csv_path: Path) -> str:
+    modes = {row.get("mode", "") for row in _read_csv_if_exists(csv_path)}
+    if "safemap_deterministic" in modes:
+        return "safemap_deterministic"
+    return "safemap_full"
 
 
 def run_final_evaluation(
@@ -1034,7 +1081,16 @@ def _row_status(mode: str, metrics: dict, store) -> tuple[str, str]:
     if mode == "c2rust_only":
         return "completed", ""
     if metrics.get("safemap") is None and metrics.get("safemap_compile") is None:
-        if mode == "safemap_deterministic":
+        if mode in {
+            "safemap_deterministic",
+            "safemap_no_static_guidance",
+        }:
+            if mode == "safemap_no_static_guidance":
+                return (
+                    "no_guided_synthesis",
+                    "Static classifications, safe signatures, and migration "
+                    "plans were withheld from deterministic synthesis.",
+                )
             return (
                 "no_supported_synthesis",
                 "No eligible unit matched the deterministic synthesizer's "

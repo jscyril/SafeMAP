@@ -27,11 +27,21 @@ PUBLICATION_ARTIFACTS = (
     "case-studies/paper_tables.md",
     "case-studies/paper_tables.tex",
     "case-studies/manifest.json",
+    "external-corpus/benchmark_results.csv",
+    "external-corpus/benchmark_results.md",
+    "external-corpus/paper_tables.md",
+    "external-corpus/paper_tables.tex",
+    "external-corpus/manifest.json",
     "c2rust-only/benchmark_results.csv",
     "c2rust-only/benchmark_results.md",
     "c2rust-only/paper_tables.md",
     "c2rust-only/paper_tables.tex",
     "c2rust-only/manifest.json",
+    "ablation/benchmark_results.csv",
+    "ablation/benchmark_results.md",
+    "ablation/paper_tables.md",
+    "ablation/paper_tables.tex",
+    "ablation/manifest.json",
     "combined_evaluation.md",
     "artifact_metadata.json",
 )
@@ -102,16 +112,12 @@ def main() -> None:
         help="Destination for the clean, paper-facing artifact snapshot.",
     )
     parser.add_argument(
-        "--llm-csv",
-        help=(
-            "Optional LLM subset CSV to include and copy into the publication "
-            "snapshot. Omitted by default."
-        ),
-    )
-    parser.add_argument(
-        "--strict-denominators",
+        "--allow-denominator-mismatch",
         action="store_true",
-        help="Fail combined evaluation when C2Rust and SafeMAP denominators differ.",
+        help=(
+            "Publish unequal C2Rust and SafeMAP denominators. This is disabled "
+            "by default and should be used only with an explicit explanation."
+        ),
     )
     parser.add_argument(
         "--dry-run",
@@ -122,15 +128,24 @@ def main() -> None:
 
     reports_dir = Path(args.reports_dir) if args.reports_dir else _default_work_dir()
     snapshot_dir = Path(args.snapshot_dir)
-    llm_csv = Path(args.llm_csv) if args.llm_csv else None
     if reports_dir.exists() and any(reports_dir.iterdir()):
         parser.error(
             f"working directory is not empty: {reports_dir}; choose a fresh "
             "--reports-dir to prevent stale artifacts"
         )
-    if llm_csv is not None and not llm_csv.is_file():
-        parser.error(f"LLM subset CSV does not exist: {llm_csv}")
     commands = [
+        [
+            sys.executable,
+            "-m",
+            "safemap.cli",
+            "final-eval",
+            "--benchmarks",
+            "external_corpus/llvm_test_suite_misc/projects",
+            "--output",
+            str(reports_dir / "external-corpus"),
+            "--mode",
+            "safemap_deterministic",
+        ],
         [
             sys.executable,
             "-m",
@@ -141,7 +156,7 @@ def main() -> None:
             "--output",
             str(reports_dir / "final"),
             "--mode",
-            "safemap_full",
+            "safemap_deterministic",
         ],
         [
             sys.executable,
@@ -153,7 +168,7 @@ def main() -> None:
             "--output",
             str(reports_dir / "case-studies"),
             "--mode",
-            "safemap_full",
+            "safemap_deterministic",
         ],
         [
             sys.executable,
@@ -167,6 +182,18 @@ def main() -> None:
             "--mode",
             "c2rust_only",
         ],
+        [
+            sys.executable,
+            "-m",
+            "safemap.cli",
+            "final-eval",
+            "--benchmarks",
+            "examples",
+            "--output",
+            str(reports_dir / "ablation"),
+            "--mode",
+            "safemap_no_static_guidance",
+        ],
     ]
     combined = [
         sys.executable,
@@ -179,12 +206,14 @@ def main() -> None:
         str(reports_dir / "final" / "benchmark_results.csv"),
         "--case-study-csv",
         str(reports_dir / "case-studies" / "benchmark_results.csv"),
+        "--external-csv",
+        str(reports_dir / "external-corpus" / "benchmark_results.csv"),
         "--c2rust-csv",
         str(reports_dir / "c2rust-only" / "benchmark_results.csv"),
+        "--ablation-csv",
+        str(reports_dir / "ablation" / "benchmark_results.csv"),
     ]
-    if llm_csv is not None:
-        combined.extend(["--llm-smoke-csv", str(llm_csv)])
-    if not args.strict_denominators:
+    if args.allow_denominator_mismatch:
         combined.append("--allow-denominator-mismatch")
     commands.append(combined)
 
@@ -197,13 +226,6 @@ def main() -> None:
 
     metadata_path = reports_dir / "artifact_metadata.json"
     metadata = {} if args.dry_run else write_artifact_metadata(metadata_path)
-    extra_artifacts: tuple[str, ...] = ()
-    if not args.dry_run and llm_csv is not None:
-        llm_snapshot = reports_dir / "llm-subset" / "benchmark_results.csv"
-        llm_snapshot.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(llm_csv, llm_snapshot)
-        extra_artifacts = ("llm-subset/benchmark_results.csv",)
-
     manifest = {
         "command_lines": command_lines,
         "working_reports_dir": str(reports_dir),
@@ -215,15 +237,19 @@ def main() -> None:
             "case_studies": str(
                 reports_dir / "case-studies" / "benchmark_results.csv"
             ),
+            "external_corpus": str(
+                reports_dir / "external-corpus" / "benchmark_results.csv"
+            ),
             "c2rust_baseline": str(
                 reports_dir / "c2rust-only" / "benchmark_results.csv"
+            ),
+            "static_guidance_ablation": str(
+                reports_dir / "ablation" / "benchmark_results.csv"
             ),
             "combined_evaluation": str(reports_dir / "combined_evaluation.md"),
             "artifact_metadata": str(metadata_path),
         },
-        "strict_denominators": args.strict_denominators,
-        "llm_csv_included": llm_csv is not None,
-        "llm_csv_source": str(llm_csv) if llm_csv is not None else None,
+        "allow_denominator_mismatch": args.allow_denominator_mismatch,
         "metadata": metadata,
     }
     manifest_path = reports_dir / "reproduction_manifest.json"
@@ -232,11 +258,7 @@ def main() -> None:
             json.dumps(manifest, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-        published = publish_snapshot(
-            reports_dir,
-            snapshot_dir,
-            extra_artifacts=extra_artifacts,
-        )
+        published = publish_snapshot(reports_dir, snapshot_dir)
         snapshot_manifest = snapshot_dir / "reproduction_manifest.json"
         snapshot_manifest.write_text(
             json.dumps(

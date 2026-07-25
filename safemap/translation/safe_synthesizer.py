@@ -12,7 +12,18 @@ def synthesize_safe_crate(
     plans: list[MigrationPlan],
     output: Path,
 ) -> list[str]:
-    plan_by_function = {plan.function: plan for plan in plans if plan.status == "planned"}
+    plan_by_function = {
+        plan.function: plan
+        for plan in plans
+        if plan.status == "planned"
+        and not (
+            plan.patterns
+            and all(
+                pattern.pattern == "unguided_rewrite"
+                for pattern in plan.patterns
+            )
+        )
+    }
     rendered: list[str] = []
     generated: list[str] = []
     for function in functions:

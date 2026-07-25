@@ -14,14 +14,14 @@ Equivalent direct command:
 python scripts/reproduce_paper_artifacts.py
 ```
 
-Before a long benchmark run, validate local tools, selected modes, LLM key
-status, and output reuse with:
+Before a long benchmark run, validate local tools, selected modes, and output
+reuse with:
 
 ```bash
 python -m safemap.cli final-eval \
   --benchmarks examples \
   --output reports/final \
-  --mode safemap_full \
+  --mode safemap_deterministic \
   --dry-run
 ```
 
@@ -32,9 +32,12 @@ temporary differential harnesses from leaking into the publication snapshot.
 
 The script runs:
 
-- SafeMAP microbenchmarks: `examples` in `safemap_full` mode.
-- Case studies: `case_studies` in `safemap_full` mode.
+- SafeMAP microbenchmarks: `examples` in `safemap_deterministic` mode.
+- Case studies: `case_studies` in `safemap_deterministic` mode.
+- Pinned LLVM corpus: `external_corpus/llvm_test_suite_misc/projects` in
+  `safemap_deterministic` mode, including reference-output validation.
 - C2Rust strict-policy baseline: `examples` in `c2rust_only` mode.
+- Static-guidance ablation: `examples` in `safemap_no_static_guidance` mode.
 - Combined summary in the fresh working directory.
 - Tool metadata in the fresh working directory.
 - A clean snapshot under `reports/publication/`, including the command
@@ -42,7 +45,7 @@ The script runs:
   records whether the Git worktree was dirty and includes a SHA-256 checksum
   for every published file.
 
-The independently authored LLVM external corpus is currently reproduced
+The independently authored LLVM external corpus can also be reproduced
 separately:
 
 ```bash
@@ -55,7 +58,9 @@ programs under
 `safemap_deterministic` mode and writes CSV, Markdown, LaTeX, and manifest
 artifacts under `reports/external-corpus/`. It does not require C2Rust or an LLM
 provider. Corpus inputs, upstream reference outputs, source hashes, the
-selection rule, and licenses are tracked in the repository.
+reviewed contextual harness, the selection rule, and licenses are tracked in
+the repository. The canonical paper reproduction includes the same external
+evaluation under `reports/publication/external-corpus/`.
 
 To choose explicit locations, use:
 
@@ -82,17 +87,13 @@ Schema `safemap.benchmark_results.v2` additionally includes C LOC, function and
 parameter counts, pointer-parameter density, approximate cyclomatic complexity,
 and unsupported-construct counts for dataset characterization.
 
-The current locally generated C2Rust baseline reports `0 / 72` accepted units because
-two baseline rows did not produce complete metrics. The default reproduction
-script passes `--allow-denominator-mismatch` to make that discrepancy explicit
-in the workflow. Use `make paper-artifacts-strict` to fail instead when the
-C2Rust denominator differs from the SafeMAP microbenchmark denominator.
+The current C2Rust baseline reports `0 / 76` accepted units under the same
+eligible-unit denominator as deterministic SafeMAP. Reproduction rejects
+denominator mismatches by default; `--allow-denominator-mismatch` exists only
+for explicitly documented exceptional runs.
 
-Optional LLM subset results are excluded by default. Include a specific result
-set explicitly with `--llm-csv reports/gemini_benchmark_results.csv`; the exact
-CSV will then be copied into the clean snapshot. LLM runs require an API key and
-fixed provider/model settings, and remain diagnostic evidence unless the paper
-clearly labels the bounded subset.
+LLM experiments are excluded from the paper reproduction workflow and
+publication snapshot.
 
 Expected external tools:
 

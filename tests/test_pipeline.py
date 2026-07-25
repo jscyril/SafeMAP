@@ -113,6 +113,109 @@ def test_not_applicable_differential_is_not_counted_as_passed(
     assert metrics["differential_pass_units"] == 0
 
 
+def test_pipeline_matches_llvm_reference_output_with_reviewed_harness(
+    tmp_path: Path,
+) -> None:
+    project = tmp_path / "oracle"
+    project.mkdir()
+    (project / "oracle.c").write_text(
+        '#include <stdio.h>\n'
+        "int add(int a, int b) { return a + b; }\n"
+        'int main(void) { printf("%d\\n", add(2, 3)); return 0; }\n',
+        encoding="utf-8",
+    )
+    (project / "oracle.reference_output").write_text(
+        "5\nexit 0\n",
+        encoding="utf-8",
+    )
+    (project / "oracle.safemap_harness.rs").write_text(
+        "#![forbid(unsafe_code)]\n"
+        "use safemap_generated::add;\n"
+        'fn main() { println!("{}", add(2, 3)); }\n',
+        encoding="utf-8",
+    )
+    config = SafeMapConfig()
+    config.translation.use_c2rust = False
+    config.translation.use_llm = False
+    config.validation.run_clippy = False
+
+    store = run_pipeline(project, tmp_path / "results", config)
+    validation = store.read_json("validation/results.json")
+    metrics = store.read_json("reports/metrics.json")
+
+    assert validation["differential"]["status"] == "passed"
+    assert validation["differential"]["reason"] == (
+        "Matched LLVM reference output oracle.reference_output"
+    )
+    assert metrics["fully_safe_accepted_units"] == 1
+    assert metrics["differential_pass_units"] == 1
+
+
+def test_reference_output_requires_a_reviewed_rust_harness(
+    tmp_path: Path,
+) -> None:
+    project = tmp_path / "missing_harness"
+    project.mkdir()
+    (project / "main.c").write_text(
+        "double sqr(double value) { return value * value; }\n"
+        "int main(void) { return (int)sqr(2.0); }\n",
+        encoding="utf-8",
+    )
+    (project / "main.reference_output").write_text(
+        "exit 4\n",
+        encoding="utf-8",
+    )
+    config = SafeMapConfig()
+    config.translation.use_c2rust = False
+    config.translation.use_llm = False
+    config.validation.run_clippy = False
+
+    store = run_pipeline(project, tmp_path / "results", config)
+    validation = store.read_json("validation/results.json")
+    metrics = store.read_json("reports/metrics.json")
+
+    assert validation["differential"]["status"] == "failed"
+    assert "no reviewed reference-output harness" in (
+        validation["differential"]["reason"]
+    )
+    assert metrics["fully_safe_accepted_units"] == 0
+
+
+def test_reference_output_mismatch_rejects_generated_unit(
+    tmp_path: Path,
+) -> None:
+    project = tmp_path / "oracle_mismatch"
+    project.mkdir()
+    (project / "oracle.c").write_text(
+        '#include <stdio.h>\n'
+        "int add(int a, int b) { return a + b; }\n"
+        'int main(void) { printf("%d\\n", add(2, 3)); return 0; }\n',
+        encoding="utf-8",
+    )
+    (project / "oracle.reference_output").write_text(
+        "5\nexit 0\n",
+        encoding="utf-8",
+    )
+    (project / "oracle.safemap_harness.rs").write_text(
+        "#![forbid(unsafe_code)]\n"
+        "use safemap_generated::add;\n"
+        'fn main() { println!("{}", add(2, 4)); }\n',
+        encoding="utf-8",
+    )
+    config = SafeMapConfig()
+    config.translation.use_c2rust = False
+    config.translation.use_llm = False
+    config.validation.run_clippy = False
+
+    store = run_pipeline(project, tmp_path / "results", config)
+    validation = store.read_json("validation/results.json")
+    metrics = store.read_json("reports/metrics.json")
+
+    assert validation["differential"]["status"] == "failed"
+    assert "stdout differs at line 1" in validation["differential"]["reason"]
+    assert metrics["fully_safe_accepted_units"] == 0
+
+
 def test_pipeline_uses_randomized_library_differential_cases(tmp_path: Path) -> None:
     config = SafeMapConfig()
     config.translation.use_c2rust = False

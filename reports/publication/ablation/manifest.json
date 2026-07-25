@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "benchmark_csv": "reports/.reproduction/20260724T161307Z/ablation/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/20260724T161307Z/ablation/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/20260724T161307Z/ablation/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/20260724T161307Z/ablation/paper_tables.md"
+  },
+  "benchmarks": "examples",
+  "generated_at_utc": "2026-07-24T16:14:10Z",
+  "git_commit": "60487aaed9f0492f989c6af99e56c4a966095b38",
+  "git_dirty": true,
+  "modes": [
+    "safemap_no_static_guidance"
+  ],
+  "output_dir": "reports/.reproduction/20260724T161307Z/ablation",
+  "result_schema_version": "safemap.benchmark_results.v2",
+  "rows": 40
+}

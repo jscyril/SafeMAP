@@ -1,29 +1,29 @@
 {
-  "command_line": "/usr/bin/python -m safemap.cli final-eval --benchmarks external_corpus/llvm_test_suite_misc/projects --output reports/.reproduction/external-20260723T170042Z --mode safemap_deterministic",
+  "command_line": "/usr/bin/python -m safemap.cli final-eval --benchmarks external_corpus/llvm_test_suite_misc/projects --output reports/.reproduction/external-20260724T161416Z --mode safemap_deterministic",
   "corpus_manifest": "external_corpus/llvm_test_suite_misc/manifest.json",
-  "corpus_manifest_sha256": "381eff59d8a0baace33a35d9771575dd23a6b96e992110a9b2bb231096fc7de7",
+  "corpus_manifest_sha256": "8c25096c53c63b852d18a5075f574d95d6ac8f7b6685ad3e05e645f3ae0c013f",
   "published_artifacts": [
     {
       "path": "reports/external-corpus/benchmark_results.csv",
-      "sha256": "c6a327d5221469301d096d620cfcab26915e4c03251f0ced4618b617e5d81fd0"
+      "sha256": "e017a4fcf32c86aadc39d97c970a6898eb2b7b4881799dd92012f741efe81d84"
     },
     {
       "path": "reports/external-corpus/benchmark_results.md",
-      "sha256": "124285f789b10b72826233d963baab12855a22c3507ffe381268415236a8a71b"
+      "sha256": "6180f76d3858de26487b93151ac7db10185a3b3c1861adb202b612582107a64c"
     },
     {
       "path": "reports/external-corpus/paper_tables.md",
-      "sha256": "88c369e4ee900558ae50ca908d9e2ff3ec8b4dcc956fc5a7000ebbde1253a392"
+      "sha256": "203b71ce3b675c1c23b45ee0d9293d6abebb39bb1fd27b0b46290b606b477250"
     },
     {
       "path": "reports/external-corpus/paper_tables.tex",
-      "sha256": "24c57d5c98bf9a1508ad276b54575b9e5b6973d1eaace210fbe6312726e7e899"
+      "sha256": "288e57b252607700450e66458fd27fdb810c761f3513644d4f60401f53d77b45"
     },
     {
       "path": "reports/external-corpus/manifest.json",
-      "sha256": "693239018e0ef85f9d6c93586ed39b65169bfd2d8770fddb201b38457180d38d"
+      "sha256": "a0c26183e83259e4373ed55c8d5ec793e9315fd29d7a694a9a8aec991320ac00"
     }
   ],
   "snapshot_dir": "reports/external-corpus",
-  "working_reports_dir": "reports/.reproduction/external-20260723T170042Z"
+  "working_reports_dir": "reports/.reproduction/external-20260724T161416Z"
 }

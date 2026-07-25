@@ -181,7 +181,7 @@ baseline/reference lane, and fully safe acceptance is reported separately from
 unsafe reduction. Current local validation passes:
 
 ```text
-111 passed
+116 passed
 ```
 
 The current SafeMAP-only final-evaluation snapshot over `examples/` is:
@@ -206,7 +206,8 @@ The outcome-blind deterministic external-corpus snapshot is:
 10 pinned LLVM test-suite SingleSource/Misc programs
 589 C LOC and 32 analyzed functions
 1 fully safe accepted unit out of 22 eligible units
-the accepted project has differential validation marked not applicable
+the accepted helper passes a reviewed contextual harness against the retained
+LLVM reference stdout and exit code
 ```
 
 This result is evidence of limited external generalization and a gap between
@@ -218,18 +219,19 @@ The current C2Rust-only baseline snapshot over the 40-example benchmark suite is
 
 ```text
 40 benchmark rows
-0 fully safe accepted units out of 72 in the canonical publication snapshot
-because two baseline rows did not produce complete metrics
+0 fully safe accepted units out of 76 in the canonical publication snapshot
+under the same denominator as deterministic SafeMAP
 ```
 
-The current LLM smoke snapshot is:
+The publication static-guidance ablation is:
 
 ```text
-llm_only over examples/simple_sum with local Ollama gemma4:12b
-compiled successfully
-differential testing passed
-full LLM benchmark remains deferred because single-row latency was several minutes
+the analyzer-derived denominator is retained for comparison
+classifications, safe signatures, and migration plans are withheld from synthesis
+neither C2Rust nor an external model is used
 ```
+
+Empirical LLM results are excluded from paper-facing claims and artifacts.
 
 The strict rules in this document remain binding: if final Rust still contains
 unsafe constructs, raw-pointer public APIs, or unvalidated behavior, it must be
@@ -1351,9 +1353,8 @@ Make “fully safe accepted units” the main metric.
 Run across examples and compare modes:
 
 - `c2rust_only`
-- `llm_only`
-- `c2rust_llm_unguided`
-- `safemap_full`
+- `safemap_no_static_guidance`
+- `safemap_deterministic`
 
 ---
 
@@ -1385,9 +1386,8 @@ Required tables:
 3. Safe translation success by idiom.
 4. Baseline comparison:
    - C2Rust-only;
-   - LLM-only;
-   - C2Rust+LLM unguided;
-   - SafeMAP full.
+   - deterministic SafeMAP;
+   - SafeMAP with static guidance withheld.
 5. Unsafe/raw-pointer reduction.
 6. Failure category distribution.
 7. Validation results.
@@ -1397,7 +1397,7 @@ The report should make it easy to write statements like:
 ```text
 SafeMAP generated fully safe Rust for X/Y eligible units.
 C2Rust generated unsafe Rust for Z/Y units.
-LLM-only translation failed to compile for A units.
+Withholding static guidance produced A/Y policy-accepted units.
 SafeMAP rejected B units due to unresolved aliasing, unsupported unions, or external FFI dependencies.
 ```
 
@@ -1414,7 +1414,7 @@ The goal is not to make every C program translate.
 The goal is to show that:
 
 1. safe-first translation is possible for a meaningful subset of C;
-2. static analysis improves LLM-guided translation;
+2. structured static guidance enables the implemented deterministic synthesis;
 3. strict safe acceptance is more meaningful than unsafe-code reduction alone;
 4. unsupported code can be classified clearly for manual review.
 

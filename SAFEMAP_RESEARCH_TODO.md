@@ -1,6 +1,6 @@
 # SafeMAP Research TODO and Status
 
-Last audited: 2026-07-23
+Last audited: 2026-07-24
 
 This file is the working research TODO for SafeMAP. It summarizes what the
 current repository supports, what evidence exists for a paper, and what should
@@ -26,12 +26,12 @@ Do not claim:
 - production readiness;
 - support for arbitrary C projects;
 - formal semantic equivalence;
-- broad LLM superiority or broad LLM evaluation;
+- LLM effectiveness (LLM experiments are excluded from the paper);
 - success based only on unsafe-code reduction.
 
 ## Verified Local Evidence
 
-- Test suite: `111 passed` with `pytest`.
+- Test suite: `116 passed` with `pytest`.
 - Microbenchmarks: `40` example projects under `examples/`.
 - Case studies: `5` authored module-shaped projects under `case_studies/`.
 - External corpus: `10` outcome-blind programs from LLVM test-suite
@@ -40,13 +40,12 @@ Do not claim:
 - Canonical, trackable publication artifacts:
   - `reports/publication/final/`
   - `reports/publication/case-studies/`
+  - `reports/publication/external-corpus/`
   - `reports/publication/c2rust-only/`
+  - `reports/publication/ablation/`
   - `reports/publication/combined_evaluation.md`
   - `reports/publication/artifact_metadata.json`
   - `reports/publication/reproduction_manifest.json`
-- Locally generated LLM diagnostic artifacts (ignored by Git):
-  - `reports/gemini_benchmark_results.csv`
-  - `reports/gemini_benchmark_results.md`
 - SafeMAP-only microbenchmark result:
   - rows: `40`
   - accepted units: `37 / 76`
@@ -66,24 +65,19 @@ Do not claim:
   - accepted units: `1 / 22`
   - fully safe unit acceptance rate: `0.045`
   - `9` rows produced no supported deterministic synthesis
-  - the generated project passed Cargo check, Cargo test, and Clippy, but
-    differential validation was not applicable because the generic harness
-    does not yet consume LLVM reference outputs
+  - the accepted `mandel_2::sqr` unit passes Cargo check, Cargo test, Clippy,
+    and a reviewed contextual harness against the retained LLVM stdout and
+    exit-code oracle
 - C2Rust-only baseline result:
   - rows: `40`
-  - accepted units: `0`
-  - the canonical CSV reports `72` eligible units because two C2Rust baseline
-    rows failed before producing complete metrics
-  - the paper draft now says `0 / 72` and explains the denominator reduction
-- Gemini / OpenAI-compatible LLM subset result:
-  - parsed CSV rows: `48`
-  - projects: `12`
-  - modes: `c2rust_only`, `llm_only`, `c2rust_llm_unguided`, `safemap_full`
-  - `llm_only`: `3` completed rows, `9` rows with no final output, `0 / 20`
-    accepted units under strict SafeMAP unit matching
-  - `c2rust_llm_unguided`: `12` completed rows, `0 / 20` accepted units
-  - `safemap_full` on the same 12-project subset: `8 / 20` accepted units
-  - this is useful diagnostic evidence, but not a full LLM baseline
+  - accepted units: `0 / 76`
+  - the canonical CSV now uses the same denominator as deterministic SafeMAP
+- Static-guidance ablation:
+  - uses the same analyzer-derived denominator as the deterministic main run;
+  - withholds classifications, safe signatures, and migration plans from
+    synthesis;
+  - uses neither C2Rust nor an external model;
+  - publication artifacts are regenerated from this explicit mode.
 - Paper draft directory inspected:
   - `/mnt/data/college/research/my_paper/main.tex`
   - `/mnt/data/college/research/my_paper/tables/*.tex`
@@ -157,13 +151,9 @@ These should be done before treating the draft as submission-ready.
 ### P0: Reconcile Evaluation Numbers
 
 - [x] Reconcile all paper-facing tables from the locally generated CSVs.
-- [x] Resolve the C2Rust denominator mismatch:
-  - `reports/publication/combined_evaluation.md` reports C2Rust as `0 / 72`.
-  - `/mnt/data/college/research/my_paper/main.tex` and tables now report
-    `0 / 72`.
-- [x] Document the failed C2Rust baseline rows explicitly as denominator
-  reduction in the paper draft.
-- [x] Update repository test-count references to the current `111 passed`.
+- [x] Resolve the C2Rust denominator mismatch; both canonical lanes now report
+  over `76` eligible units.
+- [x] Update repository test-count references to the current `116 passed`.
 - [x] Add exact command lines and tool versions used for the final reported run
   through `scripts/reproduce_paper_artifacts.py`,
   `reports/publication/reproduction_manifest.json`, and
@@ -187,12 +177,12 @@ These should be done before treating the draft as submission-ready.
 ### P0: Refresh the Paper Draft
 
 - [x] Update `/mnt/data/college/research/my_paper/main.tex`:
-  - test count to the current `111`;
+  - test count to the current `116`;
   - C2Rust denominator after reconciliation;
   - execution snapshot to mention generated report paths;
   - limitations around authored datasets, external synthesis coverage, skipped
-    Miri, and unpublished LLM results.
-- [x] Keep the paper's test count synchronized with the current `111 passed`
+    Miri, and the explicit exclusion of LLM experiments.
+- [x] Keep the paper's test count synchronized with the current `116 passed`
   after adding publication and characterization tests.
 - [x] Update `/mnt/data/college/research/my_paper/tables/*.tex` from generated
   report outputs.
@@ -242,33 +232,20 @@ These should be done before treating the draft as submission-ready.
   are part of benchmark result schema v2 and its Markdown/LaTeX summaries.
 - Add ablation rows if possible:
   - [x] analysis-guided deterministic SafeMAP;
-  - SafeMAP without static guidance;
-  - LLM-only;
-  - C2Rust plus unguided LLM;
-  - C2Rust-only strict policy.
-- For a stronger paper, include confidence intervals or repeated LLM trials
-  where LLMs are evaluated.
+  - [x] SafeMAP without static guidance;
+  - [x] C2Rust-only strict policy.
 
 ### P1: LLM Baseline
 
-- Decide whether the paper will include LLM results as a main baseline or only
-  as preliminary engineering evidence.
-- If included, run a bounded, reproducible LLM evaluation:
-  - fixed model and provider;
-  - fixed prompts;
-  - fixed temperature;
-  - exact benchmark subset;
-  - saved prompts and responses;
-  - token counts and failure reasons;
-  - strict acceptance under the same SafeMAP policy.
-- Investigate why current `llm_only` rows often produce no final output.
-- Investigate why completed `llm_only` rows pass differential testing but still
-  accept `0` units under strict unit matching.
-- Update combined evaluation to include the LLM subset only if its scope is
-  clearly labeled.
+- [x] Exclude LLM experiments and empirical LLM claims from the paper-facing
+  artifact workflow. The optional implementation remains engineering scope.
 
 ### P1: Differential and Behavioral Validation
 
+- [x] Consume the LLVM reference outputs for the accepted external unit and
+  fail reference-backed library validation when no reviewed harness exists.
+- [x] Record the reviewed external harness and its SHA-256 in the corpus
+  manifest.
 - Expand differential harness support beyond known benchmark names.
 - Generate harnesses from function signatures and expected metadata instead of
   hard-coded project-name cases where feasible.

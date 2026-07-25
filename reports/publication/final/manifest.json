@@ -1,18 +1,18 @@
 {
   "artifacts": {
-    "benchmark_csv": "reports/.reproduction/20260723T165912Z/final/benchmark_results.csv",
-    "benchmark_summary": "reports/.reproduction/20260723T165912Z/final/benchmark_results.md",
-    "latex_tables": "reports/.reproduction/20260723T165912Z/final/paper_tables.tex",
-    "paper_tables": "reports/.reproduction/20260723T165912Z/final/paper_tables.md"
+    "benchmark_csv": "reports/.reproduction/20260724T161307Z/final/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/20260724T161307Z/final/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/20260724T161307Z/final/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/20260724T161307Z/final/paper_tables.md"
   },
   "benchmarks": "examples",
-  "generated_at_utc": "2026-07-23T17:00:00Z",
-  "git_commit": "ac1d92c4842fb75ceee96aec62121a921cfe5e99",
-  "git_dirty": false,
+  "generated_at_utc": "2026-07-24T16:13:45Z",
+  "git_commit": "60487aaed9f0492f989c6af99e56c4a966095b38",
+  "git_dirty": true,
   "modes": [
-    "safemap_full"
+    "safemap_deterministic"
   ],
-  "output_dir": "reports/.reproduction/20260723T165912Z/final",
+  "output_dir": "reports/.reproduction/20260724T161307Z/final",
   "result_schema_version": "safemap.benchmark_results.v2",
   "rows": 40
 }

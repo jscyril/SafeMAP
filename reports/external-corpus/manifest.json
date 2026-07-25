@@ -1,18 +1,18 @@
 {
   "artifacts": {
-    "benchmark_csv": "reports/.reproduction/external-20260723T170042Z/benchmark_results.csv",
-    "benchmark_summary": "reports/.reproduction/external-20260723T170042Z/benchmark_results.md",
-    "latex_tables": "reports/.reproduction/external-20260723T170042Z/paper_tables.tex",
-    "paper_tables": "reports/.reproduction/external-20260723T170042Z/paper_tables.md"
+    "benchmark_csv": "reports/.reproduction/external-20260724T161416Z/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/external-20260724T161416Z/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/external-20260724T161416Z/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/external-20260724T161416Z/paper_tables.md"
   },
   "benchmarks": "external_corpus/llvm_test_suite_misc/projects",
-  "generated_at_utc": "2026-07-23T17:00:44Z",
-  "git_commit": "ac1d92c4842fb75ceee96aec62121a921cfe5e99",
-  "git_dirty": false,
+  "generated_at_utc": "2026-07-24T16:14:21Z",
+  "git_commit": "60487aaed9f0492f989c6af99e56c4a966095b38",
+  "git_dirty": true,
   "modes": [
     "safemap_deterministic"
   ],
-  "output_dir": "reports/.reproduction/external-20260723T170042Z",
+  "output_dir": "reports/.reproduction/external-20260724T161416Z",
   "result_schema_version": "safemap.benchmark_results.v2",
   "rows": 10
 }

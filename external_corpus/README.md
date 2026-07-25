@@ -76,7 +76,16 @@ Equivalent command:
 python scripts/reproduce_external_corpus.py
 ```
 
-Reference outputs are retained for auditing, but SafeMAP's current generic
-differential harness does not yet consume LLVM reference-output files. A result
-must therefore report differential validation as unavailable or not applicable
-unless a comparable executable harness was actually generated.
+SafeMAP first compiles and runs the original C program and requires exact
+agreement with the retained LLVM stdout and exit-code oracle. Generated Rust
+executables are compared directly. For a translated library unit, acceptance
+requires a reviewed contextual Rust harness under `validation_harnesses/`;
+otherwise the reference-output check fails rather than being treated as not
+applicable.
+
+The current deterministic run synthesizes only `mandel_2::sqr`. Its reviewed
+harness reuses that generated safe function in the remaining Mandelbrot control
+flow and matches `mandel-2.reference_output` exactly. The harness is hashed in
+the corpus manifest and is explicitly authored validation code, not upstream
+LLVM source. This validates the accepted helper in its retained program context
+but is not a general proof of equivalence or broad harness generation.

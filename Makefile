@@ -8,7 +8,7 @@ paper-artifacts:
 	python scripts/reproduce_paper_artifacts.py
 
 paper-artifacts-strict:
-	python scripts/reproduce_paper_artifacts.py --strict-denominators
+	python scripts/reproduce_paper_artifacts.py
 
 external-corpus-artifacts:
 	python scripts/reproduce_external_corpus.py

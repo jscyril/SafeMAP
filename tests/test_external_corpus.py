@@ -21,7 +21,7 @@ def _sha256(path: Path) -> str:
 def test_external_corpus_manifest_is_complete_and_outcome_blind() -> None:
     manifest = json.loads((CORPUS / "manifest.json").read_text(encoding="utf-8"))
 
-    assert manifest["corpus_schema_version"] == "safemap.external_corpus.v1"
+    assert manifest["corpus_schema_version"] == "safemap.external_corpus.v2"
     assert manifest["selection"]["outcome_blind"] is True
     assert (
         manifest["selection"]["maximum_physical_source_lines"]
@@ -47,6 +47,10 @@ def test_external_corpus_files_match_manifest_hashes() -> None:
         assert _sha256(reference) == item["reference_output_sha256"]
         assert len(source.read_text(encoding="utf-8").splitlines()) == item["lines"]
         assert item["lines"] <= MAX_SOURCE_LINES
+        if "validation_harness" in item:
+            harness = CORPUS / item["validation_harness"]
+            assert harness.is_file()
+            assert _sha256(harness) == item["validation_harness_sha256"]
 
 
 def test_external_corpus_can_be_analyzed_without_expected_labels() -> None:
