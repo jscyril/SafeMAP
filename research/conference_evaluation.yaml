@@ -1,0 +1,62 @@
+project:
+  name: conference-heldout
+  input: external_corpus/conference_heldout/projects
+
+translation:
+  mode: safemap_deterministic
+  use_c2rust: false
+  use_llm: false
+  use_static_guidance: true
+  use_pointer_roles: true
+  use_safe_signatures: true
+  use_dependency_grouping: true
+  use_idiom_plans: true
+  use_validation_feedback: true
+  forbid_unsafe: true
+  allow_c2rust_fallback_as_success: false
+  max_units: null
+  max_repair_attempts: 0
+  direct_llm_max_c_loc: 5000
+  automatic_confidence_threshold: 0.75
+
+eligibility:
+  reject_unknown_pointers: true
+  reject_unresolved_aliasing: true
+  reject_unions: true
+  reject_function_pointers: true
+  reject_inline_asm: true
+
+llm:
+  provider: openai_compatible
+  model: REPLACE_WITH_FROZEN_BASELINE_MODEL
+  base_url: https://api.openai.com/v1
+  temperature: 0.0
+  max_tokens: 8192
+  timeout_seconds: 180
+  api_key_env: OPENAI_API_KEY
+
+validation:
+  run_cargo_check: true
+  run_tests: true
+  run_clippy: true
+  run_miri: false
+  run_differential_tests: true
+  run_c_sanitizers: true
+  differential_test_inputs: 1000
+  seed: 20260728
+  timeout_seconds: 180
+
+repair:
+  enabled: false
+  max_iterations: 0
+  forbid_unsafe: true
+
+metrics:
+  count_unsafe: true
+  count_raw_pointers: true
+  count_clippy_warnings: true
+
+reporting:
+  write_markdown: true
+  write_json: true
+  write_csv: true

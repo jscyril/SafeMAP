@@ -18,6 +18,13 @@ ELIGIBILITY_CATEGORIES = (
     "unsupported",
 )
 
+CANDIDATE_DECISIONS = (
+    "candidate_safe",
+    "manual_refactor_required",
+    "unsafe_required",
+    "unknown",
+)
+
 UNSUPPORTED_PATTERNS = (
     ("union_usage", re.compile(r"\bunion\b")),
     ("function_pointer", re.compile(r"\(\s*\*\s*[A-Za-z_]\w*\s*\)\s*\(")),
@@ -33,6 +40,7 @@ UNSAFE_REQUIRED_CALLS = {
 
 SUPPORTED_POINTER_KINDS = {
     "pointer_length_array",
+    "fixed_size_array",
     "output_parameter",
     "nullable_pointer",
     "owned_allocation",
@@ -42,12 +50,14 @@ SUPPORTED_POINTER_KINDS = {
 
 API_CHANGE_IDIOMS = {
     "pointer_length_array",
+    "fixed_size_array",
     "output_parameter",
     "nullable_pointer",
     "manual_allocation",
     "error_code_return",
     "c_string",
     "boolean_int",
+    "struct_pointer",
 }
 
 
@@ -90,7 +100,18 @@ def classify_function(function: FunctionInfo, unit_id: str) -> EligibilityResult
         unsupported_features=unsupported,
         pointer_roles=pointer_roles,
         eligible_for_safe_translation=category in SAFE_CATEGORIES,
+        candidate_decision=_candidate_decision(category),
     )
+
+
+def _candidate_decision(category: str) -> str:
+    if category in SAFE_CATEGORIES:
+        return "candidate_safe"
+    if category == "unsafe_required":
+        return "unsafe_required"
+    if category in {"requires_safe_wrapper", "requires_manual_refactor"}:
+        return "manual_refactor_required"
+    return "unknown"
 
 
 def _unsupported_features(function: FunctionInfo) -> list[str]:
@@ -124,7 +145,7 @@ def _has_complex_aliasing(function: FunctionInfo) -> bool:
     ]
     written = [
         name for name in mutable_pointers
-        if re.search(rf"(?:\*\s*{re.escape(name)}|{re.escape(name)}\s*\[)", function.body)
+        if _pointer_is_written(function.body, name)
     ]
     if len(written) <= 1:
         return False
@@ -144,6 +165,20 @@ def _has_only_direct_output_assignment(function: FunctionInfo, name: str) -> boo
         re.search(rf"\*\s*{escaped}\s*=", function.body) is not None
         and re.search(rf"\*\s*{escaped}\s*(?:[+\-*/]=|\+\+|--)", function.body) is None
         and re.search(rf"\b{escaped}\s*\[", function.body) is None
+    )
+
+
+def _pointer_is_written(body: str, name: str) -> bool:
+    escaped = re.escape(name)
+    return bool(
+        re.search(
+            rf"\*\s*{escaped}\s*(?:[+\-*/]?=|\+\+|--)",
+            body,
+        )
+        or re.search(
+            rf"\b{escaped}\s*\[[^\]]+\]\s*(?:[+\-*/]?=|\+\+|--)",
+            body,
+        )
     )
 
 

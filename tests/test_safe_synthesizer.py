@@ -13,7 +13,14 @@ from safemap.models import (
 )
 from safemap.process import run_command
 from safemap.translation.migration_planner import create_migration_plans
-from safemap.translation.safe_synthesizer import synthesize_safe_crate
+from safemap.translation.safe_synthesizer import (
+    detect_synthesis_rule,
+    synthesize_safe_crate,
+)
+from safemap.validation.differential_tester import (
+    build_and_compare_projects,
+    validate_c_oracle_sanitizers,
+)
 
 
 def test_synthesizes_slice_sum_crate(tmp_path: Path) -> None:
@@ -47,6 +54,7 @@ def test_synthesizes_slice_sum_crate(tmp_path: Path) -> None:
     )
 
     assert generated == ["unit_0"]
+    assert detect_synthesis_rule(function, plan) == "slice_sum"
     source = (tmp_path / "src" / "lib.rs").read_text(encoding="utf-8")
     assert "#![forbid(unsafe_code)]" in source
     assert "arr.iter().copied().sum()" in source
@@ -76,6 +84,126 @@ def test_synthesizes_simple_modulo_example(tmp_path: Path) -> None:
     assert generated == ["unit_0"]
     assert "pub fn remainder_value(a: i32, b: i32) -> i32" in source
     assert "a % b" in source
+    assert run_command(["cargo", "check", "--quiet"], tmp_path).status == "passed"
+
+
+def test_synthesizes_nested_floating_point_expression(tmp_path: Path) -> None:
+    function = FunctionInfo(
+        "fade",
+        "double",
+        [ParameterInfo("t", "double")],
+        "double fade(double t) { return t*t*t*(t*(t*6-15)+10); }",
+        "perlin.c",
+        1,
+        1,
+    )
+    plan = MigrationPlan(
+        unit_id="unit_0",
+        function="fade",
+        target_signature="pub fn fade(t: f64) -> f64",
+        patterns=[],
+        constraints=[],
+        validation_requirements=[],
+        status="planned",
+    )
+
+    generated = synthesize_safe_crate(
+        ProjectInfo(project_name="perlin"),
+        [function],
+        [plan],
+        tmp_path,
+    )
+
+    assert generated == ["unit_0"]
+    assert detect_synthesis_rule(function, plan) == "scalar_return"
+    assert run_command(["cargo", "check", "--quiet"], tmp_path).status == "passed"
+
+
+def test_synthesizes_standard_bit_reverse_idiom(tmp_path: Path) -> None:
+    function = FunctionInfo(
+        "reverse",
+        "unsigned int",
+        [ParameterInfo("n", "unsigned int")],
+        (
+            "unsigned reverse(unsigned n) { "
+            "n=((n>>1)&0x55555555u)|((n&0x55555555u)<<1);"
+            "n=((n>>2)&0x33333333u)|((n&0x33333333u)<<2);"
+            "n=((n>>4)&0x0f0f0f0fu)|((n&0x0f0f0f0fu)<<4);"
+            "return ((n&0xff000000u)>>24)|((n&0xffu)<<24); }"
+        ),
+        "bits.c",
+        1,
+        1,
+    )
+    plan = MigrationPlan(
+        unit_id="unit_0",
+        function="reverse",
+        target_signature="pub fn reverse(n: u32) -> u32",
+        patterns=[],
+        constraints=[],
+        validation_requirements=[],
+        status="planned",
+    )
+
+    generated = synthesize_safe_crate(
+        ProjectInfo(project_name="bits"),
+        [function],
+        [plan],
+        tmp_path,
+    )
+
+    assert generated == ["unit_0"]
+    assert detect_synthesis_rule(function, plan) == "bit_reverse"
+    assert "n.reverse_bits()" in (
+        tmp_path / "src" / "lib.rs"
+    ).read_text(encoding="utf-8")
+    assert run_command(["cargo", "check", "--quiet"], tmp_path).status == "passed"
+
+
+def test_synthesizes_two_slice_floating_reduction(tmp_path: Path) -> None:
+    function = FunctionInfo(
+        "dot",
+        "double",
+        [
+            ParameterInfo("x", "float *", True),
+            ParameterInfo("y", "float *", True),
+            ParameterInfo("length", "long"),
+        ],
+        (
+            "double accumulator=0.0; for(long i=0;i<length;i++) "
+            "accumulator += (double)x[i] * (double)y[i]; "
+            "return accumulator;"
+        ),
+        "dot.c",
+        1,
+        1,
+        pointer_facts=[
+            PointerFact("x", "float *", "pointer_length_array", "", 0.9),
+            PointerFact("y", "float *", "pointer_length_array", "", 0.9),
+        ],
+    )
+    plan = MigrationPlan(
+        unit_id="unit_0",
+        function="dot",
+        target_signature="pub fn dot(x: &[f32], y: &[f32]) -> f64",
+        patterns=[],
+        constraints=[],
+        validation_requirements=[],
+        status="planned",
+    )
+
+    generated = synthesize_safe_crate(
+        ProjectInfo(project_name="dot"),
+        [function],
+        [plan],
+        tmp_path,
+    )
+
+    assert generated == ["unit_0"]
+    assert detect_synthesis_rule(function, plan) == "slice_dot_product"
+    assert "x.iter().zip(y.iter())" in (
+        tmp_path / "src" / "lib.rs"
+    ).read_text(encoding="utf-8")
     assert run_command(["cargo", "check", "--quiet"], tmp_path).status == "passed"
 
 
@@ -250,6 +378,80 @@ def test_synthesizes_malloc_vec_example(tmp_path: Path) -> None:
     assert "pub fn make_sequence(len: i32) -> Vec<i32>" in source
     assert "(0..len).map(|value| value as i32).collect()" in source
     assert run_command(["cargo", "check", "--quiet"], tmp_path).status == "passed"
+
+
+def test_synthesizes_fixed_arrays_struct_fields_and_internal_composition(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "composed.c"
+    source.write_text(
+        "struct Pair { int left; int right; };\n"
+        "int sum4(const int values[4]) {\n"
+        "  int sum = 0;\n"
+        "  for (int i = 0; i < 4; ++i) sum += values[i];\n"
+        "  return sum;\n"
+        "}\n"
+        "int pair_total(const struct Pair *pair) {\n"
+        "  return pair->left + pair->right;\n"
+        "}\n"
+        "int square(int value) { return value * value; }\n"
+        "int composed(int value) { return square(value) + 1; }\n"
+        "int main(void) { return composed(2); }\n",
+        encoding="utf-8",
+    )
+    project = ProjectInfo(
+        project_name="composed",
+        c_files=[str(source)],
+    )
+    analysis = _analyze_fallback(project)
+    plans = create_migration_plans(
+        analysis,
+        create_translation_units(analysis),
+    )
+
+    generated = synthesize_safe_crate(
+        project,
+        analysis.functions,
+        plans,
+        tmp_path / "rust",
+        structs=analysis.structs,
+    )
+    rust = (
+        tmp_path / "rust" / "src" / "lib.rs"
+    ).read_text(encoding="utf-8")
+
+    assert len(generated) == 5
+    assert "pub struct Pair" in rust
+    assert "pub fn sum4(values: &[i32; 4]) -> i32" in rust
+    assert "values.iter().copied().sum()" in rust
+    assert "pub fn pair_total(pair: &Pair) -> i32" in rust
+    assert "pair.left + pair.right" in rust
+    assert "pub fn composed(value: i32) -> i32" in rust
+    assert "square(value) + 1" in rust
+    assert "pub fn main() -> i32" in rust
+    assert run_command(
+        ["cargo", "check", "--quiet"],
+        tmp_path / "rust",
+    ).status == "passed"
+    differential = build_and_compare_projects(
+        source,
+        tmp_path / "rust",
+        random_inputs=31,
+        seed=11,
+        functions=analysis.functions,
+        plans=plans,
+        structs=analysis.structs,
+    )
+    assert differential.status == "passed", differential.reason
+    sanitizers = validate_c_oracle_sanitizers(
+        source,
+        random_inputs=31,
+        seed=11,
+        functions=analysis.functions,
+        plans=plans,
+        structs=analysis.structs,
+    )
+    assert sanitizers.status == "passed", sanitizers.reason
 
 
 def _synthesize_example(name: str, output: Path) -> tuple[list[str], str]:

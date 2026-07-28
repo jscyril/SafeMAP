@@ -36,6 +36,24 @@ def create_translation_units(analysis: CAnalysis) -> list[TranslationUnit]:
     return _topological_units(units)
 
 
+def create_independent_translation_units(
+    analysis: CAnalysis,
+) -> list[TranslationUnit]:
+    return [
+        TranslationUnit(
+            unit_id=f"unit_{index}",
+            kind="function",
+            c_function=function.name,
+            rust_function=function.name,
+            dependencies=[],
+            priority=0.2,
+            reason="dependency grouping disabled",
+            members=[function.name],
+        )
+        for index, function in enumerate(analysis.functions)
+    ]
+
+
 def strongly_connected_components(graph: dict[str, set[str]]) -> list[list[str]]:
     index = 0
     indices: dict[str, int] = {}
@@ -89,4 +107,3 @@ def _topological_units(units: list[TranslationUnit]) -> list[TranslationUnit]:
             ordered.append(unit)
             remaining.pop(unit.unit_id)
     return ordered
-

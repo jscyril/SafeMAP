@@ -1,16 +1,21 @@
 from __future__ import annotations
 
 import json
+import copy
+import hashlib
 import shutil
 import time
 from pathlib import Path
 
 from .analysis.c_analyzer import analyze_c_project
-from .analysis.dependency_graph import create_translation_units
+from .analysis.dependency_graph import (
+    create_independent_translation_units,
+    create_translation_units,
+)
 from .analysis.eligibility import classify_analysis
 from .analysis.rust_analyzer import analyze_rust_path
 from .artifacts import ArtifactStore
-from .config import SafeMapConfig
+from .config import LLMConfig, SafeMapConfig
 from .ingestion.project_loader import ingest_project
 from .llm.client import LLMClient, OpenAICompatibleClient
 from .metrics.report_generator import comparison_csv, generate_markdown
@@ -26,7 +31,10 @@ from .translation.rewriter import rewrite_function
 from .translation.safe_synthesizer import synthesize_safe_crate
 from .repair.compiler_repair import repair_function
 from .validation.validator import validate_project
-from .validation.differential_tester import build_and_compare_projects
+from .validation.differential_tester import (
+    build_and_compare_projects,
+    validate_c_oracle_sanitizers,
+)
 from .analysis.complexity_metrics import cyclomatic_complexity
 from .llm.response_parser import reject_forbidden_constructs
 
@@ -44,21 +52,42 @@ def run_pipeline(
     store.record_environment()
     _record_tool_versions(store)
     project = ingest_project(source, store)
-    analysis = analyze_c_project(project)
+    raw_analysis = analyze_c_project(project)
+    store.write_json("analysis/c_analysis_raw.json", raw_analysis)
+    analysis = _effective_analysis(raw_analysis, config)
     store.write_json("analysis/c_analysis.json", analysis)
-    units = create_translation_units(analysis)
+    units = (
+        create_translation_units(analysis)
+        if config.translation.use_dependency_grouping
+        else create_independent_translation_units(analysis)
+    )
     store.write_json("analysis/translation_units.json", [item.to_dict() for item in units])
     eligibility = classify_analysis(analysis)
     store.write_json("analysis/eligibility.json", [item.to_dict() for item in eligibility])
     plans = (
         create_migration_plans(
-            analysis, units, config.translation.automatic_confidence_threshold
+            analysis,
+            units,
+            config.translation.automatic_confidence_threshold,
+            use_safe_signatures=config.translation.use_safe_signatures,
+            use_idiom_plans=config.translation.use_idiom_plans,
         )
         if config.translation.use_static_guidance
         else _unguided_plans(units)
     )
     for plan in plans:
         store.write_json(f"plans/{plan.unit_id}.json", plan)
+    store.write_json(
+        "analysis/component_configuration.json",
+        {
+            "use_static_guidance": config.translation.use_static_guidance,
+            "use_pointer_roles": config.translation.use_pointer_roles,
+            "use_safe_signatures": config.translation.use_safe_signatures,
+            "use_dependency_grouping": config.translation.use_dependency_grouping,
+            "use_idiom_plans": config.translation.use_idiom_plans,
+            "use_validation_feedback": config.translation.use_validation_feedback,
+        },
+    )
     baseline_result = run_c2rust(project, store) if config.translation.use_c2rust else None
     baseline_root = store.path("baseline/rust")
     final_root = store.path("final/rust")
@@ -68,7 +97,13 @@ def run_pipeline(
     if baseline_metrics:
         store.write_json("analysis/baseline_rust.json", baseline_metrics)
     synthesized_units: list[str] = []
-    synthesized_units = synthesize_safe_crate(project, analysis.functions, plans, final_root)
+    synthesized_units = synthesize_safe_crate(
+        project,
+        analysis.functions,
+        plans,
+        final_root,
+        structs=analysis.structs,
+    )
     if synthesized_units:
         store.write_json("logs/safe_synthesis.json", {
             "status": "passed",
@@ -84,12 +119,33 @@ def run_pipeline(
     ):
         llm = client or OpenAICompatibleClient(config.llm)
         try:
-            direct_llm_usage = _direct_llm_translation(project, final_root, llm, store)
+            direct_llm_usage = _direct_llm_translation(
+                project,
+                final_root,
+                llm,
+                store,
+                config.llm,
+            )
             used_direct_translation = True
         except Exception as error:
             store.write_json("logs/direct_llm_error.json", {
                 "status": "failed", "reason": str(error),
             })
+            call_path = store.path("logs/direct_llm_call.json")
+            if call_path.is_file():
+                call_record = json.loads(
+                    call_path.read_text(encoding="utf-8")
+                )
+                call_record["status"] = (
+                    "rejected"
+                    if call_record.get("response_path")
+                    else "failed"
+                )
+                call_record["failure"] = {
+                    "type": type(error).__name__,
+                    "message": str(error),
+                }
+                store.write_json("logs/direct_llm_call.json", call_record)
     metrics = RunMetrics(
         project=project.project_name,
         baseline=baseline_metrics,
@@ -97,6 +153,7 @@ def run_pipeline(
         total_units=len(units),
     )
     _apply_eligibility_metrics(metrics, eligibility)
+    _apply_synthesis_metrics(metrics, plans, synthesized_units)
     _record_synthesized_idioms(metrics, plans, synthesized_units)
     if direct_llm_usage:
         metrics.llm_calls += 1
@@ -111,7 +168,11 @@ def run_pipeline(
         llm = client or OpenAICompatibleClient(config.llm)
         _rewrite_units(
             analysis, units, plans, final_root, llm, store, metrics,
-            max_repair_attempts=config.translation.max_repair_attempts,
+            max_repair_attempts=(
+                config.translation.max_repair_attempts
+                if config.translation.use_validation_feedback
+                else 0
+            ),
             guided=config.translation.use_static_guidance,
         )
     if final_root.exists() and (final_root / "Cargo.toml").exists():
@@ -120,10 +181,28 @@ def run_pipeline(
             config.validation.run_differential_tests
             and len(project.c_files) == 1
         ):
+            if config.validation.run_c_sanitizers:
+                validation.c_sanitizers = validate_c_oracle_sanitizers(
+                    Path(project.c_files[0]),
+                    seed=config.validation.seed,
+                    random_inputs=config.validation.differential_test_inputs,
+                    functions=analysis.functions,
+                    plans=plans,
+                    structs=analysis.structs,
+                    artifact_path=store.path(
+                        "validation/c_sanitizer_cases.json"
+                    ),
+                )
             validation.differential = build_and_compare_projects(
                 Path(project.c_files[0]), final_root,
                 seed=config.validation.seed,
                 random_inputs=config.validation.differential_test_inputs,
+                functions=analysis.functions,
+                plans=plans,
+                structs=analysis.structs,
+                artifact_path=store.path(
+                    "validation/differential_cases.json"
+                ),
             )
         store.write_json("validation/results.json", validation)
         metrics.safemap_compile = validation.compile.status == "passed"
@@ -141,6 +220,15 @@ def run_pipeline(
         store.write_json("analysis/final_rust.json", metrics.safemap)
         _apply_safe_acceptance(metrics, plans, validation, final_root)
     _apply_research_metric_maps(metrics)
+    _write_unit_decisions(
+        store,
+        project,
+        analysis,
+        units,
+        eligibility,
+        plans,
+        metrics,
+    )
     metrics.translation_seconds = time.monotonic() - started
     _write_reports(store, metrics)
     store.write_json("run_status.json", {
@@ -149,6 +237,17 @@ def run_pipeline(
         "final_project": str(final_root) if final_root.exists() else None,
     })
     return store
+
+
+def _effective_analysis(
+    analysis: CAnalysis,
+    config: SafeMapConfig,
+) -> CAnalysis:
+    effective = copy.deepcopy(analysis)
+    if not config.translation.use_pointer_roles:
+        for function in effective.functions:
+            function.pointer_facts = []
+    return effective
 
 
 def load_project(store: ArtifactStore) -> ProjectInfo:
@@ -319,7 +418,9 @@ def _rewrite_units(
 
 def _find_function_file(root: Path, name: str) -> Path | None:
     import re
-    pattern = re.compile(rf"\bfn\s+{re.escape(name)}\s*(?:<|\()")
+    pattern = re.compile(
+        rf"\bfn\s+(?:r#)?{re.escape(name)}\s*(?:<|\()"
+    )
     for file in sorted(root.rglob("*.rs")):
         if "target" in file.relative_to(root).parts:
             continue
@@ -343,6 +444,7 @@ def _write_reports(store: ArtifactStore, metrics: RunMetrics) -> None:
 
 def _apply_eligibility_metrics(metrics: RunMetrics, eligibility) -> None:
     metrics.eligibility_counts = {}
+    metrics.candidate_decision_counts = {}
     for item in eligibility:
         metrics.eligibility_counts[item.category] = (
             metrics.eligibility_counts.get(item.category, 0) + 1
@@ -353,6 +455,29 @@ def _apply_eligibility_metrics(metrics: RunMetrics, eligibility) -> None:
             metrics.failure_categories[item.category] = (
                 metrics.failure_categories.get(item.category, 0) + 1
             )
+        metrics.candidate_decision_counts[item.candidate_decision] = (
+            metrics.candidate_decision_counts.get(item.candidate_decision, 0) + 1
+        )
+    metrics.candidate_safe_units = metrics.candidate_decision_counts.get(
+        "candidate_safe", 0
+    )
+
+
+def _apply_synthesis_metrics(
+    metrics: RunMetrics,
+    plans: list[MigrationPlan],
+    synthesized_units: list[str],
+) -> None:
+    metrics.synthesis_support_counts = {}
+    for plan in plans:
+        metrics.synthesis_support_counts[plan.synthesis_support] = (
+            metrics.synthesis_support_counts.get(plan.synthesis_support, 0) + 1
+        )
+    metrics.synthesis_supported_units = metrics.synthesis_support_counts.get(
+        "implemented_support", 0
+    )
+    metrics.generated_unit_ids = sorted(set(synthesized_units))
+    metrics.generated_units = len(metrics.generated_unit_ids)
 
 
 def _apply_safe_acceptance(
@@ -364,13 +489,11 @@ def _apply_safe_acceptance(
     final = metrics.safemap
     compile_ok = validation.compile.status == "passed"
     tests_ok = validation.tests.status in {"passed", "skipped"}
-    differential_ok = validation.differential.status in {
-        "passed", "skipped", "not_applicable"
-    }
-    fully_safe_project = (
+    clippy_ok = validation.clippy.status in {"passed", "skipped"}
+    policy_safe_project = (
         compile_ok
         and tests_ok
-        and differential_ok
+        and clippy_ok
         and final is not None
         and final.unsafe_blocks == 0
         and final.unsafe_functions == 0
@@ -389,12 +512,31 @@ def _apply_safe_acceptance(
         metrics.test_pass_units = len(planned_eligible)
     if validation.differential.status == "passed":
         metrics.differential_pass_units = len(planned_eligible)
-    if fully_safe_project:
-        metrics.fully_safe_accepted_unit_ids = planned_eligible
-        metrics.fully_safe_accepted_units = len(planned_eligible)
+    if policy_safe_project:
+        metrics.policy_safe_unit_ids = list(planned_eligible)
+        metrics.policy_safe_units = len(planned_eligible)
     elif planned_eligible:
         metrics.failure_categories["validation_failed"] = (
             metrics.failure_categories.get("validation_failed", 0) + len(planned_eligible)
+        )
+    behavioral_ok = (
+        policy_safe_project
+        and validation.differential.status == "passed"
+        and validation.c_sanitizers.status != "failed"
+    )
+    if behavioral_ok:
+        metrics.behaviorally_validated_unit_ids = list(planned_eligible)
+        metrics.behaviorally_validated_units = len(planned_eligible)
+        metrics.fully_safe_accepted_unit_ids = list(planned_eligible)
+        metrics.fully_safe_accepted_units = len(planned_eligible)
+    elif policy_safe_project and planned_eligible:
+        category = (
+            "c_oracle_undefined_behavior"
+            if validation.c_sanitizers.status == "failed"
+            else "behavioral_validation_missing_or_failed"
+        )
+        metrics.failure_categories[category] = (
+            metrics.failure_categories.get(category, 0) + len(planned_eligible)
         )
     metrics.fully_safe_translation_unit_acceptance_rate = (
         metrics.fully_safe_accepted_units / metrics.eligible_units
@@ -408,6 +550,124 @@ def _apply_safe_acceptance(
             metrics.safemap.raw_pointer_public_api_count if metrics.safemap else 0
         ),
     }
+
+
+def _write_unit_decisions(
+    store: ArtifactStore,
+    project: ProjectInfo,
+    analysis: CAnalysis,
+    units: list[TranslationUnit],
+    eligibility,
+    plans: list[MigrationPlan],
+    metrics: RunMetrics,
+) -> None:
+    metadata = {}
+    expected_path = Path(project.root) / "expected.json"
+    if expected_path.is_file():
+        metadata = json.loads(expected_path.read_text(encoding="utf-8"))
+    targets = set()
+    primary = metadata.get("primary_function")
+    if primary:
+        targets.add(str(primary))
+    expected_functions = metadata.get("expected_functions")
+    if isinstance(expected_functions, dict):
+        targets.update(str(name) for name in expected_functions)
+    entrypoints = set(project.detected_entrypoints)
+    entrypoints.add("main")
+
+    eligibility_by_function = {item.function: item for item in eligibility}
+    plans_by_unit = {plan.unit_id: plan for plan in plans}
+    generated = set(metrics.generated_unit_ids)
+    policy_safe = set(metrics.policy_safe_unit_ids)
+    behaviorally_validated = set(metrics.behaviorally_validated_unit_ids)
+    decisions = []
+    for unit in units:
+        plan = plans_by_unit.get(unit.unit_id)
+        item = eligibility_by_function.get(unit.c_function)
+        function = unit.c_function
+        role = (
+            "declared_target"
+            if function in targets
+            else "entry_point"
+            if function in entrypoints
+            else "helper"
+        )
+        decisions.append({
+            "project": project.project_name,
+            "unit_id": unit.unit_id,
+            "function": function,
+            "members": unit.members,
+            "role": role,
+            "analysis_backend": analysis.analysis_backend,
+            "legacy_eligibility": item.category if item else "unknown",
+            "candidate_decision": (
+                item.candidate_decision if item else "unknown"
+            ),
+            "candidate_reasons": item.reasons if item else ["Missing decision"],
+            "synthesis_support": (
+                plan.synthesis_support if plan else "not_applicable"
+            ),
+            "synthesis_rule": plan.synthesis_rule if plan else None,
+            "plan_status": plan.status if plan else "missing",
+            "generated": unit.unit_id in generated,
+            "compile_passed": (
+                unit.unit_id in policy_safe
+                or unit.unit_id in set(metrics.generated_unit_ids)
+                and metrics.safemap_compile is True
+            ),
+            "policy_safe": unit.unit_id in policy_safe,
+            "behaviorally_validated": unit.unit_id in behaviorally_validated,
+        })
+    store.write_json("analysis/unit_decisions.json", decisions)
+
+    unit_by_member = {
+        member: unit
+        for unit in units
+        for member in unit.members
+    }
+    function_decisions = []
+    for function in analysis.functions:
+        unit = unit_by_member.get(function.name)
+        plan = plans_by_unit.get(unit.unit_id) if unit else None
+        item = eligibility_by_function.get(function.name)
+        unit_id = unit.unit_id if unit else None
+        role = (
+            "declared_target"
+            if function.name in targets
+            else "entry_point"
+            if function.name in entrypoints
+            else "helper"
+        )
+        function_decisions.append({
+            "project": project.project_name,
+            "function": function.name,
+            "source_file": function.file,
+            "start_line": function.start_line,
+            "end_line": function.end_line,
+            "unit_id": unit_id,
+            "role": role,
+            "analysis_backend": analysis.analysis_backend,
+            "analysis_backend_reason": analysis.analysis_backend_reason,
+            "legacy_eligibility": item.category if item else "unknown",
+            "candidate_decision": (
+                item.candidate_decision if item else "unknown"
+            ),
+            "candidate_reasons": item.reasons if item else ["Missing decision"],
+            "unsupported_features": (
+                item.unsupported_features if item else []
+            ),
+            "pointer_roles": item.pointer_roles if item else {},
+            "synthesis_support": (
+                plan.synthesis_support if plan else "not_applicable"
+            ),
+            "synthesis_rule": plan.synthesis_rule if plan else None,
+            "generated": bool(unit_id and unit_id in generated),
+            "policy_safe": bool(unit_id and unit_id in policy_safe),
+            "behaviorally_validated": bool(
+                unit_id and unit_id in behaviorally_validated
+            ),
+        })
+    store.write_json("analysis/function_decisions.json", function_decisions)
 
 
 def _apply_research_metric_maps(metrics: RunMetrics) -> None:
@@ -489,6 +749,7 @@ def _direct_llm_translation(
     final_root: Path,
     client: LLMClient,
     store: ArtifactStore,
+    llm_config: LLMConfig,
 ) -> dict[str, int | str]:
     sources = "\n\n".join(
         f"// FILE: {Path(file).name}\n"
@@ -503,8 +764,47 @@ def _direct_llm_translation(
         "Avoid external crates.\n\n" + sources
     )
     store.write_text("prompts/direct_translation.txt", prompt)
-    response = client.generate(prompt)
+    call_record = {
+        "schema_version": "safemap.llm_call.v1",
+        "baseline": "direct_llm_c_to_safe_rust",
+        "provider": llm_config.provider,
+        "requested_model": llm_config.model,
+        "base_url": llm_config.base_url,
+        "temperature": llm_config.temperature,
+        "max_tokens": llm_config.max_tokens,
+        "timeout_seconds": llm_config.timeout_seconds,
+        "retry_index": 0,
+        "total_attempts": 1,
+        "system_prompt": None,
+        "prompt_path": "prompts/direct_translation.txt",
+        "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
+        "response_path": None,
+        "status": "requested",
+        "response_model": None,
+        "input_tokens": None,
+        "output_tokens": None,
+        "failure": None,
+    }
+    store.write_json("logs/direct_llm_call.json", call_record)
+    try:
+        response = client.generate(prompt)
+    except Exception as error:
+        call_record["status"] = "failed"
+        call_record["failure"] = {
+            "type": type(error).__name__,
+            "message": str(error),
+        }
+        store.write_json("logs/direct_llm_call.json", call_record)
+        raise
     store.write_text("responses/direct_translation.txt", response.text)
+    call_record.update({
+        "status": "completed",
+        "response_path": "responses/direct_translation.txt",
+        "response_model": response.model,
+        "input_tokens": response.input_tokens,
+        "output_tokens": response.output_tokens,
+    })
+    store.write_json("logs/direct_llm_call.json", call_record)
     rust = response.text.strip()
     if rust.startswith("```"):
         lines = rust.splitlines()

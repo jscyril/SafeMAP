@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, TypeVar, get_args, get_origin, get_type_hints
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 T = TypeVar("T")
 
 
@@ -96,6 +96,7 @@ class ParameterInfo(JsonModel):
     c_type: str
     is_pointer: bool = False
     is_const: bool = False
+    array_length: int | None = None
 
 
 @dataclass
@@ -126,6 +127,7 @@ class EligibilityResult(JsonModel):
     unsupported_features: list[str] = field(default_factory=list)
     pointer_roles: dict[str, list[str]] = field(default_factory=dict)
     eligible_for_safe_translation: bool = False
+    candidate_decision: str = "unknown"
 
 
 @dataclass
@@ -166,6 +168,8 @@ class CAnalysis(JsonModel):
     structs: list[StructInfo] = field(default_factory=list)
     globals: list[GlobalInfo] = field(default_factory=list)
     diagnostics: list[str] = field(default_factory=list)
+    analysis_backend: str = "unknown"
+    analysis_backend_reason: str | None = None
 
 
 @dataclass
@@ -221,6 +225,11 @@ class MigrationPlan(JsonModel):
     validation: dict[str, Any] = field(default_factory=dict)
     status: str = "planned"
     reason: str | None = None
+    candidate_decision: str = "unknown"
+    synthesis_support: str = "not_applicable"
+    synthesis_rule: str | None = None
+    analysis_backend: str = "unknown"
+    internal_calls: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -251,6 +260,10 @@ class ValidationResult(JsonModel):
     clippy: ValidationCheck
     miri: ValidationCheck
     differential: ValidationCheck
+    c_sanitizers: ValidationCheck = field(default_factory=lambda: ValidationCheck(
+        status="skipped",
+        reason="Requires an executable-compatible C oracle",
+    ))
 
 
 @dataclass
@@ -265,6 +278,11 @@ class RunMetrics(JsonModel):
     differential_pass_rate: float | None = None
     total_units: int = 0
     eligible_units: int = 0
+    candidate_safe_units: int = 0
+    synthesis_supported_units: int = 0
+    generated_units: int = 0
+    policy_safe_units: int = 0
+    behaviorally_validated_units: int = 0
     fully_safe_accepted_units: int = 0
     fully_safe_translation_unit_acceptance_rate: float = 0.0
     compile_success_units: int = 0
@@ -276,7 +294,12 @@ class RunMetrics(JsonModel):
     raw_pointer_count: dict[str, int] = field(default_factory=dict)
     idiom_migrations: dict[str, int] = field(default_factory=dict)
     eligibility_counts: dict[str, int] = field(default_factory=dict)
+    candidate_decision_counts: dict[str, int] = field(default_factory=dict)
+    synthesis_support_counts: dict[str, int] = field(default_factory=dict)
     failure_categories: dict[str, int] = field(default_factory=dict)
+    generated_unit_ids: list[str] = field(default_factory=list)
+    policy_safe_unit_ids: list[str] = field(default_factory=list)
+    behaviorally_validated_unit_ids: list[str] = field(default_factory=list)
     fully_safe_accepted_unit_ids: list[str] = field(default_factory=list)
     repair_attempts: int = 0
     llm_calls: int = 0

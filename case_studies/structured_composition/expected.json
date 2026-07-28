@@ -1,0 +1,30 @@
+{
+  "description": "Fixed arrays, scalar structs, internal helper calls, and entry-point composition emitted into one safe Rust crate.",
+  "expected_functions": {
+    "sum4": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["fixed_size_array"]
+    },
+    "pair_total": {
+      "expected_eligibility": "safe_translatable_with_api_change",
+      "expected_plan_status": "planned",
+      "expected_patterns": ["struct_pointer"]
+    },
+    "square": {
+      "expected_eligibility": "safe_translatable",
+      "expected_plan_status": "planned",
+      "expected_patterns": []
+    },
+    "composed": {
+      "expected_eligibility": "safe_translatable",
+      "expected_plan_status": "planned",
+      "expected_patterns": []
+    },
+    "main": {
+      "expected_eligibility": "safe_translatable",
+      "expected_plan_status": "planned",
+      "expected_patterns": []
+    }
+  }
+}

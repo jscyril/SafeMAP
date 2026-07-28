@@ -21,7 +21,10 @@ def classify_pointers(
         ))
         written = bool(re.search(rf"\*\s*{name}\s*(?:[+\-*/]?=|\+\+|--)", body))
         indexed = bool(re.search(rf"\b{name}\s*\[", body))
-        arithmetic = bool(re.search(rf"\b{name}\s*(?:\+\+|--|\+|-)", body))
+        arithmetic = bool(re.search(
+            rf"\b{name}\s*(?:\+\+|--|\+|-(?!>))",
+            body,
+        ))
         freed = bool(re.search(rf"\bfree\s*\(\s*{name}\s*\)", body))
         allocated = bool(re.search(
             rf"\b{name}\s*=\s*(?:\([^)]*\)\s*)?(?:malloc|calloc|realloc)\s*\(",
@@ -38,7 +41,14 @@ def classify_pointers(
             ),
             None,
         )
-        if length and indexed:
+        if parameter.array_length is not None and indexed:
+            kind = "fixed_size_array"
+            evidence = (
+                f"{parameter.name} is declared with fixed extent "
+                f"{parameter.array_length} and indexed"
+            )
+            confidence = 0.97
+        elif length and indexed:
             kind = "pointer_length_array"
             evidence = f"{parameter.name} is indexed and paired with {length}"
             confidence = 0.94
@@ -98,4 +108,3 @@ def classify_pointers(
                 confidence=0.98,
             ))
     return facts
-

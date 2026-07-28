@@ -192,7 +192,17 @@ def main() -> None:
             "--output",
             str(reports_dir / "ablation"),
             "--mode",
-            "safemap_no_static_guidance",
+            "safemap_deterministic",
+            "--mode",
+            "safemap_without_pointer_roles",
+            "--mode",
+            "safemap_without_safe_signatures",
+            "--mode",
+            "safemap_without_dependency_grouping",
+            "--mode",
+            "safemap_without_idiom_plans",
+            "--mode",
+            "safemap_without_validation_feedback",
         ],
     ]
     combined = [

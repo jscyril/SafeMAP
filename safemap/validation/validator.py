@@ -22,5 +22,5 @@ def validate_project(root: Path, config: ValidationConfig) -> ValidationResult:
         miri=run_miri(root, max(config.timeout_seconds, 600))
         if config.run_miri else skipped("Disabled"),
         differential=skipped("Requires an executable-compatible harness"),
+        c_sanitizers=skipped("Requires an executable-compatible C oracle"),
     )
-

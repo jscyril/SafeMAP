@@ -55,9 +55,13 @@ C input
 
 Supported MVP idioms include:
 
-- simple scalar integer functions
+- simple scalar integer and floating-point functions
 - integer boolean idioms to `bool`
+- standard integer bit reversal to `reverse_bits`
 - pointer-length arrays to `&[T]` or `&mut [T]`
+- fixed-size array parameters to `&[T; N]` or `&mut [T; N]`
+- scalar C structs and field-reading helpers
+- dependency-ordered scalar helper calls and simple entry-point composition
 - output parameters to return values
 - multiple output parameters to tuple returns
 - return-code plus output-parameter to `Result<T, i32>`
@@ -86,14 +90,14 @@ As of the current local validation pass:
 
 | Area | Current status |
 |---|---|
-| Test suite | `116 passed` |
+| Test suite | `144 passed` |
 | MVP benchmark examples | `40` example projects under `examples/` |
-| SafeMAP-only final eval | `37 / 76` eligible units accepted |
+| SafeMAP-only development eval | `36 / 76` eligible units and `35 / 40` declared targets accepted |
 | Supported examples with differential pass | `36` |
-| Case-study modules | `5` authored modules, `15 / 20` eligible units accepted |
-| External corpus | `10` pinned LLVM test-suite programs, `1 / 22` eligible units accepted; the accepted unit passes its LLVM reference-output harness |
+| Case-study modules | `6` authored modules, `17 / 25` eligible units accepted; the structured-composition module validates all five functions |
+| External development corpus | `10` pinned LLVM test-suite programs, `6 / 23` eligible units accepted with behavioral validation |
 | C2Rust-only baseline | `0 / 76` fully safe accepted units under the same denominator as deterministic SafeMAP |
-| Static-guidance ablation | Same analyzer denominator with classifications, safe signatures, and migration plans withheld from synthesis |
+| Component ablations | Pointer roles, safe signatures, dependency grouping, idiom plans, and validation feedback are disabled independently |
 | Accepted final Rust policy | `#![forbid(unsafe_code)]`, no unsafe blocks/functions, no raw-pointer public API |
 | Benchmark table export | `benchmark_results.csv`, `benchmark_results.md`, `paper_tables.md`, `paper_tables.tex`, `manifest.json`, plus combined evaluation summary |
 
@@ -420,9 +424,14 @@ Benchmark modes:
   SafeMAP static guidance.
 - `safemap_no_static_guidance`: preserve analyzer-derived evaluation
   denominators but withhold classifications, safe signatures, and migration
-  plans from deterministic synthesis.
+  plans from deterministic synthesis. This is retained as a pipeline
+  dependency check, not the primary ablation.
 - `safemap_deterministic`: use static guidance and deterministic synthesis
   without C2Rust or an LLM; this is the reproducible publication lane.
+- `safemap_without_pointer_roles`, `safemap_without_safe_signatures`,
+  `safemap_without_dependency_grouping`, `safemap_without_idiom_plans`, and
+  `safemap_without_validation_feedback`: disable exactly one SafeMAP component
+  for conference ablation reporting.
 - `safemap_full`: run the full analysis-guided SafeMAP pipeline.
 
 For publication snapshots, use `make paper-artifacts`. It evaluates in a fresh
@@ -456,7 +465,7 @@ Benchmark CSVs include per-check validation status fields for Cargo check,
 Cargo test, Clippy, Miri, and differential testing, plus
 `validation_status_counts` so skipped, unsupported, failed, and not-applicable
 outcomes can be reported separately. Result schema
-`safemap.benchmark_results.v2` also records per-project C LOC, analyzed function
+`safemap.benchmark_results.v3` also records per-project C LOC, analyzed function
 and parameter counts, pointer-parameter density, total and average approximate
 cyclomatic complexity, and unsupported-construct counts. Pointer density is
 defined as pointer parameters divided by all analyzed function parameters.
@@ -475,8 +484,27 @@ python -m compileall -q safemap
 Current expected test result:
 
 ```text
-116 passed
+144 passed
 ```
+
+The authored examples, authored case studies, and observed LLVM corpus are
+development data. Conference claims must come from the sealed held-out corpus
+defined in `research/heldout_corpus_manifest.json`.
+
+Before materializing the held-out sources, choose the exact direct-LLM baseline
+model in `research/conference_evaluation.yaml`, commit all implementation and
+development artifacts, and run:
+
+```bash
+python scripts/freeze_conference_implementation.py \
+  --development-artifact research/development_results/llvm_benchmark_results.csv \
+  --development-artifact research/development_results/case_study_component_ablations.csv \
+  --development-artifact research/development_results/microbenchmark_component_ablations.csv
+```
+
+The freeze command refuses placeholder model names, disabled conference
+components, fewer than 1,000 differential cases, missing sanitizers, a dirty
+worktree, failing tests, or an existing freeze record.
 
 ## Reproducing Paper Artifacts
 

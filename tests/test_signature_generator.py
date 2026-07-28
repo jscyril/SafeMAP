@@ -1,5 +1,9 @@
 from safemap.models import DetectedIdiom, FunctionInfo, ParameterInfo, PointerFact
-from safemap.translation.signature_generator import generate_signature
+from safemap.translation.signature_generator import (
+    generate_signature,
+    rust_identifier,
+    rust_type,
+)
 
 
 def test_generates_slice_result_signature() -> None:
@@ -60,3 +64,41 @@ def test_nullable_sentinel_returns_result() -> None:
     assert generate_signature(function) == (
         "pub fn read_value(value: Option<&i32>) -> Result<i32, i32>"
     )
+
+
+def test_maps_long_long_integer_types() -> None:
+    assert rust_type("long long") == "i64"
+    assert rust_type("unsigned long long") == "u64"
+
+
+def test_read_only_nonconst_indexed_pointer_becomes_shared_slice() -> None:
+    function = FunctionInfo(
+        "dot",
+        "double",
+        [
+            ParameterInfo("values", "float *", True, False),
+            ParameterInfo("length", "long"),
+        ],
+        "for (long i=0; i<length; i++) total += values[i]; return total;",
+        "dot.c",
+        1,
+        1,
+        pointer_facts=[
+            PointerFact(
+                "values", "float *", "pointer_length_array", "", 0.9
+            ),
+        ],
+    )
+
+    assert generate_signature(function) == (
+        "pub fn dot(values: &[f32]) -> f64"
+    )
+
+
+def test_escapes_rust_keyword_function_name() -> None:
+    function = FunctionInfo(
+        "loop", "int", [], "return 1;", "loop.c", 1, 1
+    )
+
+    assert rust_identifier("loop") == "r#loop"
+    assert generate_signature(function) == "pub fn r#loop() -> i32"

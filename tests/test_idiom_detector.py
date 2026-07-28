@@ -11,3 +11,18 @@ def test_detects_error_code_output_parameter() -> None:
     kinds = {item.idiom_type for item in detect_idioms(function)}
     assert {"output_parameter", "error_code_return"} <= kinds
 
+
+def test_does_not_mistake_bit_shifts_for_boolean_comparisons() -> None:
+    function = FunctionInfo(
+        "reverse",
+        "unsigned int",
+        [ParameterInfo("value", "unsigned int")],
+        "return ((value >> 1) & 0x55u) | ((value & 0x55u) << 1);",
+        "bits.c",
+        1,
+        1,
+    )
+
+    kinds = {item.idiom_type for item in detect_idioms(function)}
+
+    assert "boolean_int" not in kinds

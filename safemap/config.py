@@ -21,6 +21,11 @@ class TranslationConfig:
     use_c2rust: bool = True
     use_llm: bool = True
     use_static_guidance: bool = True
+    use_pointer_roles: bool = True
+    use_safe_signatures: bool = True
+    use_dependency_grouping: bool = True
+    use_idiom_plans: bool = True
+    use_validation_feedback: bool = True
     forbid_unsafe: bool = True
     allow_c2rust_fallback_as_success: bool = False
     max_units: int | None = None
@@ -47,6 +52,7 @@ class ValidationConfig:
     run_clippy: bool = True
     run_miri: bool = False
     run_differential_tests: bool = True
+    run_c_sanitizers: bool = True
     cargo_check: bool | None = None
     cargo_test: bool | None = None
     clippy: bool | None = None

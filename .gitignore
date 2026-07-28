@@ -31,6 +31,7 @@ work/
 compile_db/
 local-audit-report/
 reports/.reproduction/
+reports/development-*/
 reports/final/
 reports/case-studies/
 reports/c2rust-only/

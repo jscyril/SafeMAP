@@ -6,10 +6,12 @@ from ..models import (
     CAnalysis, EligibilityResult, MigrationPlan, PatternMigration, TranslationUnit,
 )
 from ..analysis.eligibility import classify_analysis
+from .safe_synthesizer import detect_synthesis_rule
 from .signature_generator import generate_signature
 
 SAFE_PATTERNS = {
     "pointer_length_array",
+    "fixed_size_array",
     "output_parameter",
     "nullable_pointer",
     "manual_allocation",
@@ -17,6 +19,7 @@ SAFE_PATTERNS = {
     "lock_unlock",
     "c_string",
     "boolean_int",
+    "struct_pointer",
 }
 
 
@@ -24,8 +27,12 @@ def create_migration_plans(
     analysis: CAnalysis,
     units: list[TranslationUnit],
     threshold: float = 0.75,
+    *,
+    use_safe_signatures: bool = True,
+    use_idiom_plans: bool = True,
 ) -> list[MigrationPlan]:
     functions = {item.name: item for item in analysis.functions}
+    known_functions = set(functions)
     eligibility_by_function = _eligibility_by_function(analysis)
     plans = []
     for unit in units:
@@ -46,18 +53,25 @@ def create_migration_plans(
                 confidence=idiom.confidence,
             )
             for idiom in function.idioms
-            if idiom.idiom_type in SAFE_PATTERNS and idiom.confidence >= threshold
+            if use_idiom_plans
+            and idiom.idiom_type in SAFE_PATTERNS
+            and idiom.confidence >= threshold
         ]
         safe_candidate = eligibility.eligible_for_safe_translation
         status = (
             "planned"
-            if safe_candidate and (patterns or _is_simple_safe_scalar(function))
+            if safe_candidate and (
+                patterns or _is_safe_scalar_candidate(function)
+            )
             else "rejected"
         )
         reason = None if status == "planned" else "; ".join(eligibility.reasons)
-        plans.append(MigrationPlan(
+        plan = MigrationPlan(
             unit_id=unit.unit_id,
-            target_signature=generate_signature(function),
+            target_signature=generate_signature(
+                function,
+                use_safe_signatures=use_safe_signatures,
+            ),
             patterns=patterns,
             constraints=[
                 "Preserve observable C behavior",
@@ -90,8 +104,62 @@ def create_migration_plans(
             },
             status=status,
             reason=reason,
-        ))
+            candidate_decision=eligibility.candidate_decision,
+            analysis_backend=analysis.analysis_backend,
+            internal_calls=[
+                call for call in function.calls if call in known_functions
+            ],
+        )
+        rule = detect_synthesis_rule(function, plan) if status == "planned" else None
+        if not use_idiom_plans and rule != "scalar_return":
+            rule = None
+        if (
+            rule == "internal_call_return"
+            and unit.reason == "dependency grouping disabled"
+        ):
+            rule = None
+            plan.reason = (
+                "Internal-call synthesis requires dependency grouping"
+            )
+        plan.synthesis_rule = rule
+        plan.synthesis_support = (
+            "implemented_support"
+            if rule is not None
+            else "not_implemented"
+            if eligibility.candidate_decision == "candidate_safe"
+            else "not_applicable"
+        )
+        plans.append(plan)
+    _enforce_supported_dependency_closure(plans)
     return plans
+
+
+def _enforce_supported_dependency_closure(
+    plans: list[MigrationPlan],
+) -> None:
+    by_function = {plan.function: plan for plan in plans}
+    changed = True
+    while changed:
+        changed = False
+        for plan in plans:
+            if plan.synthesis_support != "implemented_support":
+                continue
+            missing = [
+                dependency
+                for dependency in plan.internal_calls
+                if dependency not in by_function
+                or by_function[dependency].synthesis_support
+                != "implemented_support"
+            ]
+            if not missing:
+                continue
+            plan.synthesis_support = "not_implemented"
+            plan.synthesis_rule = None
+            plan.reason = (
+                "Internal dependency lacks implemented synthesis support: "
+                + ", ".join(sorted(missing))
+            )
+            changed = True
 
 
 def _eligibility_by_function(analysis: CAnalysis) -> dict[str, EligibilityResult]:
@@ -144,15 +212,9 @@ def _type_migrations(function) -> list[dict[str, str]]:
     return migrations
 
 
-def _is_simple_safe_scalar(function) -> bool:
-    if function.name == "main" or function.return_type.strip() == "void":
+def _is_safe_scalar_candidate(function) -> bool:
+    if function.return_type.strip() == "void":
         return False
     if function.parameters and any(parameter.is_pointer for parameter in function.parameters):
         return False
-    if function.calls:
-        return False
-    return bool(re.search(
-        r"\breturn\s+[A-Za-z_]\w*"
-        r"(?:\s*[-+*/%]\s*[A-Za-z_]\w*|\s*[-+*/%]\s*-?\d+)*\s*;",
-        function.body,
-    ))
+    return bool(re.search(r"\breturn\s+[^;]+;", function.body))

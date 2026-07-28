@@ -78,6 +78,37 @@ def test_row_status_explains_missing_deterministic_output(tmp_path: Path) -> Non
     assert "deterministic synthesizer" in reason
 
 
+def test_component_ablation_modes_disable_exactly_one_component() -> None:
+    modes = _selected_modes([
+        "safemap_without_pointer_roles",
+        "safemap_without_safe_signatures",
+        "safemap_without_dependency_grouping",
+        "safemap_without_idiom_plans",
+        "safemap_without_validation_feedback",
+    ])
+
+    assert [mode.disabled_components for mode in modes] == [
+        ("pointer_roles",),
+        ("safe_signatures",),
+        ("dependency_grouping",),
+        ("idiom_plans",),
+        ("validation_feedback",),
+    ]
+    assert all(mode.guided for mode in modes)
+    assert all(not mode.use_c2rust and not mode.use_llm for mode in modes)
+
+
+def test_row_status_names_disabled_ablation_component(tmp_path: Path) -> None:
+    status, reason = _row_status(
+        "safemap_without_safe_signatures",
+        {"safemap": None, "safemap_compile": None},
+        DummyStore(tmp_path),
+    )
+
+    assert status == "no_supported_synthesis"
+    assert "safe signatures" in reason
+
+
 def test_mode_summary_rows_aggregate_acceptance() -> None:
     rows = [
         {
@@ -250,6 +281,8 @@ def test_c_project_metrics_uses_saved_analysis_and_eligibility(tmp_path: Path) -
     result = _c_project_metrics(DummyStore(tmp_path))
 
     assert result == {
+        "analysis_backend": "unknown",
+        "analysis_backend_reason": "",
         "c_function_count": 2,
         "c_parameter_count": 2,
         "c_pointer_parameter_count": 1,

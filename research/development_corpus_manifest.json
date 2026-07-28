@@ -1,0 +1,24 @@
+{
+  "corpus_schema_version": "safemap.corpus_partition.v1",
+  "datasets": [
+    {
+      "name": "authored_microbenchmarks",
+      "path": "examples",
+      "role": "regression_and_development",
+      "reason": "Authored around SafeMAP idioms and therefore not independent evaluation data."
+    },
+    {
+      "name": "authored_case_studies",
+      "path": "case_studies",
+      "role": "regression_and_development",
+      "reason": "Authored module-composition cases used during implementation."
+    },
+    {
+      "name": "llvm_misc_observed",
+      "path": "external_corpus/llvm_test_suite_misc",
+      "role": "external_development_and_characterization",
+      "reason": "SafeMAP outcomes are already known and the accepted helper has an authored contextual harness.",
+      "upstream_commit": "6cdc54e005552e3444fa7402cd18a6e4b6db195d"
+    }
+  ]
+}

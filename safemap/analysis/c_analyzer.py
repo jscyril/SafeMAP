@@ -22,16 +22,18 @@ def analyze_c_project(project: ProjectInfo) -> CAnalysis:
             return _analyze_with_clang(project)
         except Exception as error:
             fallback = _analyze_fallback(project)
-            fallback.diagnostics.insert(0, f"libclang unavailable at runtime: {error}")
+            fallback.analysis_backend_reason = f"libclang unavailable at runtime: {error}"
+            fallback.diagnostics.insert(0, fallback.analysis_backend_reason)
             return fallback
     fallback = _analyze_fallback(project)
-    fallback.diagnostics.insert(0, "Python clang bindings are not installed")
+    fallback.analysis_backend_reason = "Python clang bindings are not installed"
+    fallback.diagnostics.insert(0, fallback.analysis_backend_reason)
     return fallback
 
 
 def _analyze_with_clang(project: ProjectInfo) -> CAnalysis:
     arguments = _compile_arguments(project)
-    analysis = CAnalysis()
+    analysis = CAnalysis(analysis_backend="libclang")
     index = cindex.Index.create()
     for file_name in project.c_files:
         args = arguments.get(str(Path(file_name).resolve()), [])
@@ -72,15 +74,7 @@ def _walk_clang(cursor, file_path: Path, source: str, analysis: CAnalysis) -> No
             start, end = child.extent.start, child.extent.end
             body = _source_extent(source, start.offset, end.offset)
             params = [
-                ParameterInfo(
-                    name=argument.spelling,
-                    c_type=argument.type.spelling,
-                    is_pointer=argument.type.kind == cindex.TypeKind.POINTER,
-                    is_const=(
-                        argument.type.kind == cindex.TypeKind.POINTER
-                        and argument.type.get_pointee().is_const_qualified()
-                    ),
-                )
+                _clang_parameter(argument, body)
                 for argument in child.get_arguments()
             ]
             calls = sorted({
@@ -89,7 +83,7 @@ def _walk_clang(cursor, file_path: Path, source: str, analysis: CAnalysis) -> No
             })
             analysis.functions.append(FunctionInfo(
                 name=child.spelling,
-                return_type=child.result_type.spelling,
+                return_type=child.result_type.get_canonical().spelling,
                 parameters=params,
                 body=body,
                 file=str(file_path),
@@ -122,13 +116,57 @@ def _descendants(cursor):
         yield from _descendants(child)
 
 
+def _clang_parameter(argument, function_source: str) -> ParameterInfo:
+    original = argument.type
+    canonical = argument.type.get_canonical()
+    array_kinds = {
+        cindex.TypeKind.CONSTANTARRAY,
+        cindex.TypeKind.INCOMPLETEARRAY,
+        cindex.TypeKind.VARIABLEARRAY,
+        cindex.TypeKind.DEPENDENTSIZEDARRAY,
+    }
+    is_array = canonical.kind in array_kinds
+    is_pointer = canonical.kind == cindex.TypeKind.POINTER or is_array
+    if canonical.kind == cindex.TypeKind.POINTER:
+        pointee = original.get_pointee()
+        c_type = canonical.spelling
+        is_const = pointee.is_const_qualified()
+    elif is_array:
+        element = original.element_type
+        is_const = (
+            element.is_const_qualified()
+            or _parameter_declared_const(
+                function_source,
+                argument.spelling,
+            )
+        )
+        base = canonical.element_type.spelling
+        c_type = f"{'const ' if is_const else ''}{base} *"
+    else:
+        c_type = canonical.spelling
+        is_const = canonical.is_const_qualified()
+    return ParameterInfo(
+        name=argument.spelling,
+        c_type=c_type,
+        is_pointer=is_pointer,
+        is_const=is_const,
+        array_length=_parameter_array_length(
+            function_source,
+            argument.spelling,
+        ),
+    )
+
+
 def _source_extent(source: str, start: int, end: int) -> str:
     raw = source.encode("utf-8")
     return raw[start:end].decode("utf-8", errors="replace")
 
 
 def _analyze_fallback(project: ProjectInfo) -> CAnalysis:
-    analysis = CAnalysis()
+    analysis = CAnalysis(
+        analysis_backend="regex_fallback",
+        analysis_backend_reason="Pattern-based fallback selected",
+    )
     for file_name in project.c_files:
         path = Path(file_name)
         source = path.read_text(encoding="utf-8", errors="replace")
@@ -199,8 +237,42 @@ def _parse_parameters(raw: str) -> list[ParameterInfo]:
             c_type=(c_type + " *").strip() if is_array else c_type,
             is_pointer="*" in c_type or is_array,
             is_const=bool(re.search(r"\bconst\b", c_type)),
+            array_length=_declared_array_length(item) if is_array else None,
         ))
     return parameters
+
+
+def _parameter_array_length(function_source: str, name: str) -> int | None:
+    opening = function_source.find("(")
+    closing = function_source.find(")", opening + 1)
+    if opening < 0 or closing < 0:
+        return None
+    parameters = function_source[opening + 1:closing]
+    match = re.search(
+        rf"\b{re.escape(name)}\s*\[\s*(\d+)\s*\]",
+        parameters,
+    )
+    return int(match.group(1)) if match else None
+
+
+def _parameter_declared_const(
+    function_source: str,
+    name: str,
+) -> bool:
+    opening = function_source.find("(")
+    closing = function_source.find(")", opening + 1)
+    if opening < 0 or closing < 0:
+        return False
+    parameters = function_source[opening + 1:closing]
+    return re.search(
+        rf"\bconst\b[^,)]*\b{re.escape(name)}\s*\[",
+        parameters,
+    ) is not None
+
+
+def _declared_array_length(declaration: str) -> int | None:
+    match = re.search(r"\[\s*(\d+)\s*\]\s*$", declaration)
+    return int(match.group(1)) if match else None
 
 
 def _fallback_structs(path: Path, source: str) -> list[StructInfo]:
@@ -222,4 +294,3 @@ def _enrich_functions(functions: list[FunctionInfo]) -> None:
     for function in functions:
         function.pointer_facts = classify_pointers(function.parameters, function.body)
         function.idioms = detect_idioms(function)
-

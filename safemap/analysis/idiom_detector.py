@@ -6,6 +6,7 @@ from ..models import DetectedIdiom, FunctionInfo
 
 PATTERN_RUST = {
     "pointer_length_array": "Use &[T] or &mut [T]",
+    "fixed_size_array": "Use &[T; N] or &mut [T; N]",
     "output_parameter": "Return the value, preferably in Result",
     "nullable_pointer": "Use Option<&T> or Option<&mut T>",
     "manual_allocation": "Use Box<T> or Vec<T>",
@@ -21,6 +22,25 @@ def detect_idioms(function: FunctionInfo) -> list[DetectedIdiom]:
     idioms: list[DetectedIdiom] = []
     for fact in function.pointer_facts:
         idiom_type = fact.usage_kind
+        parameter = next(
+            (
+                item
+                for item in function.parameters
+                if item.name == fact.variable
+            ),
+            None,
+        )
+        if (
+            parameter is not None
+            and parameter.is_pointer
+            and re.search(r"\bstruct\s+[A-Za-z_]\w*", parameter.c_type)
+            and fact.usage_kind in {
+                "input_borrow",
+                "output_parameter",
+                "mutable_borrow",
+            }
+        ):
+            idiom_type = "struct_pointer"
         if idiom_type in {"owned_allocation", "manual_free"}:
             idiom_type = "manual_allocation"
         if idiom_type not in PATTERN_RUST:
@@ -79,9 +99,17 @@ def detect_idioms(function: FunctionInfo) -> list[DetectedIdiom]:
             PATTERN_RUST["c_string"], 0.8,
             "C string API is called",
         ))
+    returned_expressions = re.findall(r"\breturn\s+([^;]+);", body)
+    has_boolean_return = any(
+        re.search(
+            r"(?:==|!=|<=|>=|(?<!<)<(?!<)|(?<!-)(?<!>)>(?!>))",
+            expression,
+        )
+        for expression in returned_expressions
+    )
     if (
         function.return_type.strip() in {"int", "unsigned int", "long", "short"}
-        and re.search(r"\breturn\s+[^;]*(?:==|!=|<=|>=|<|>)[^;]*;", body)
+        and has_boolean_return
     ):
         idioms.append(_idiom(
             function, "boolean_int", [],

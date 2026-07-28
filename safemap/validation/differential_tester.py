@@ -1,12 +1,29 @@
 from __future__ import annotations
 
+import json
+import os
 import random
 import re
 import tempfile
 from pathlib import Path
 
-from ..models import CommandResult, ValidationCheck
+from ..models import (
+    CommandResult,
+    FunctionInfo,
+    MigrationPlan,
+    StructInfo,
+    ValidationCheck,
+)
 from ..process import run_command
+from .harness_generator import generate_scalar_harness
+
+
+_SANITIZER_MARKERS = (
+    "AddressSanitizer",
+    "UndefinedBehaviorSanitizer",
+    "LeakSanitizer",
+    "runtime error:",
+)
 
 
 def compare_executables(
@@ -17,6 +34,8 @@ def compare_executables(
     random_inputs: int = 0,
     seed: int = 0,
     timeout: float = 30,
+    artifact_path: Path | None = None,
+    generator_metadata: dict[str, object] | None = None,
 ) -> ValidationCheck:
     corpus = list(inputs or [""])
     generator = random.Random(seed)
@@ -24,9 +43,25 @@ def compare_executables(
         f"{generator.randint(-1000, 1000)}\n" for _ in range(random_inputs)
     )
     mismatches = []
-    for test_input in corpus:
+    records = []
+    for index, test_input in enumerate(corpus):
         c_result = _run_with_input(c_command, cwd, test_input, timeout)
         rust_result = _run_with_input(rust_command, cwd, test_input, timeout)
+        records.append({
+            "case": index,
+            "input": test_input,
+            "c": {
+                "exit_code": c_result[0],
+                "stdout": c_result[1],
+                "stderr": c_result[2],
+            },
+            "rust": {
+                "exit_code": rust_result[0],
+                "stdout": rust_result[1],
+                "stderr": rust_result[2],
+            },
+            "matched": c_result == rust_result,
+        })
         if c_result != rust_result:
             mismatches.append({
                 "input": test_input,
@@ -38,6 +73,32 @@ def compare_executables(
     reason = None
     if mismatches:
         reason = f"{len(mismatches)} of {total} inputs differed; first={mismatches[0]!r}"
+    if artifact_path is not None:
+        artifact_path.parent.mkdir(parents=True, exist_ok=True)
+        artifact_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": "safemap.differential_cases.v1",
+                    "seed": seed,
+                    "random_inputs": random_inputs,
+                    "commands": {
+                        "c": c_command,
+                        "rust": rust_command,
+                        "cwd": str(cwd),
+                    },
+                    "generator": generator_metadata or {
+                        "name": "stdin-integer-v1",
+                    },
+                    "cases": records,
+                    "passed": passed,
+                    "failed": len(mismatches),
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
     return ValidationCheck(
         status="passed" if not mismatches else "failed",
         passed=passed,
@@ -52,12 +113,19 @@ def build_and_compare_projects(
     inputs: list[str] | None = None,
     seed: int = 0,
     random_inputs: int = 0,
+    functions: list[FunctionInfo] | None = None,
+    plans: list[MigrationPlan] | None = None,
+    structs: list[StructInfo] | None = None,
+    artifact_path: Path | None = None,
 ) -> ValidationCheck:
     with tempfile.TemporaryDirectory(prefix="safemap-diff-") as temporary:
         temporary_path = Path(temporary)
         c_binary = Path(temporary) / "original"
         compile_c = run_command(
-            ["clang", str(c_source), "-o", str(c_binary), "-lm"],
+            [
+                "clang", "-Wno-error=implicit-int",
+                str(c_source), "-o", str(c_binary), "-lm",
+            ],
             c_source.parent,
         )
         if compile_c.status != "passed":
@@ -121,6 +189,9 @@ def build_and_compare_projects(
             harness = _build_library_harness(
                 c_source, rust_root, package, temporary_path,
                 random_inputs=random_inputs, seed=seed,
+                functions=functions,
+                plans=plans,
+                structs=structs,
             )
             if harness is None:
                 return ValidationCheck(
@@ -128,8 +199,9 @@ def build_and_compare_projects(
                     passed=0 if reference is not None else None,
                     failed=1 if reference is not None else None,
                     reason=(
-                        "LLVM reference output is available, but the translated "
-                        "library has no reviewed reference-output harness"
+                            "LLVM reference output is available, but the translated "
+                            "library has neither a reviewed whole-program harness "
+                            "nor a generated function-level harness"
                         if reference is not None
                         else (
                             "Translated project does not produce a comparable "
@@ -140,6 +212,8 @@ def build_and_compare_projects(
             return compare_executables(
                 harness.c_command, harness.rust_command, rust_root,
                 inputs=inputs, seed=seed,
+                artifact_path=artifact_path,
+                generator_metadata=harness.metadata,
             )
         if reference is not None:
             translated = _run_exact([str(rust_binary)], rust_root, timeout=120)
@@ -161,7 +235,194 @@ def build_and_compare_projects(
         return compare_executables(
             [str(c_binary)], [str(rust_binary)], rust_root, inputs=inputs,
             random_inputs=random_inputs, seed=seed,
+            artifact_path=artifact_path,
         )
+
+
+def validate_c_oracle_sanitizers(
+    c_source: Path,
+    *,
+    seed: int = 0,
+    random_inputs: int = 0,
+    functions: list[FunctionInfo] | None = None,
+    plans: list[MigrationPlan] | None = None,
+    structs: list[StructInfo] | None = None,
+    artifact_path: Path | None = None,
+    timeout: float = 30,
+) -> ValidationCheck:
+    """Execute the C oracle under combined ASan and UBSan instrumentation."""
+    with tempfile.TemporaryDirectory(prefix="safemap-sanitize-") as temporary:
+        temporary_path = Path(temporary)
+        cases = max(1, random_inputs)
+        generated = generate_scalar_harness(
+            c_source,
+            "safemap_generated",
+            functions or [],
+            plans or [],
+            structs or [],
+            cases=cases,
+            seed=seed,
+        )
+        source_text = generated.c_source if generated is not None else (
+            _c_library_harness_source(
+                c_source.parent.name,
+                c_source,
+                cases,
+                seed,
+            )
+        )
+        compiled_source = c_source
+        generator_metadata: dict[str, object]
+        corpus: list[str]
+        if source_text is not None:
+            compiled_source = temporary_path / "sanitizer_harness.c"
+            compiled_source.write_text(source_text, encoding="utf-8")
+            generator_metadata = (
+                {
+                    "name": generated.generator,
+                    "functions": list(generated.functions),
+                    "cases_per_function": generated.cases,
+                    "seed": generated.seed,
+                }
+                if generated is not None
+                else {
+                    "name": "legacy-project-harness-v1",
+                    "project": c_source.parent.name,
+                    "cases": cases,
+                    "seed": seed,
+                }
+            )
+            corpus = [""]
+        else:
+            generator_metadata = {
+                "name": "stdin-integer-v1",
+                "seed": seed,
+                "random_inputs": random_inputs,
+            }
+            generator = random.Random(seed)
+            corpus = [""] + [
+                f"{generator.randint(-1000, 1000)}\n"
+                for _ in range(random_inputs)
+            ]
+
+        binary = temporary_path / "c_sanitized"
+        compile_result = run_command(
+            [
+                "clang",
+                str(compiled_source),
+                "-o",
+                str(binary),
+                "-lm",
+                "-fsanitize=address,undefined",
+                "-fno-sanitize-recover=all",
+                "-Wno-error=implicit-int",
+            ],
+            c_source.parent,
+        )
+        if compile_result.status != "passed":
+            check = ValidationCheck(
+                status="unsupported",
+                command=compile_result,
+                reason="Clang could not build the C oracle with ASan/UBSan",
+            )
+            _write_sanitizer_artifact(
+                artifact_path,
+                seed,
+                generator_metadata,
+                compile_result,
+                [],
+                check,
+            )
+            return check
+
+        records = []
+        failures = []
+        for index, stdin in enumerate(corpus):
+            exit_code, stdout, stderr = _run_with_input(
+                [str(binary)],
+                c_source.parent,
+                stdin,
+                timeout,
+                env={
+                    **os.environ,
+                    # LeakSanitizer cannot run in ptrace-based CI sandboxes.
+                    # AddressSanitizer and UndefinedBehaviorSanitizer remain on.
+                    "ASAN_OPTIONS": "detect_leaks=0",
+                },
+            )
+            markers = [
+                marker for marker in _SANITIZER_MARKERS
+                if marker in stderr
+            ]
+            timed_out = exit_code is None
+            record = {
+                "case": index,
+                "input": stdin,
+                "exit_code": exit_code,
+                "stdout": stdout,
+                "stderr": stderr,
+                "sanitizer_markers": markers,
+                "timed_out_or_failed_to_start": timed_out,
+            }
+            records.append(record)
+            if markers or timed_out:
+                failures.append(record)
+        check = ValidationCheck(
+            status="passed" if not failures else "failed",
+            command=compile_result,
+            passed=len(records) - len(failures),
+            failed=len(failures),
+            reason=(
+                None
+                if not failures
+                else (
+                    f"ASan/UBSan reported an issue in {len(failures)} of "
+                    f"{len(records)} executions"
+                )
+            ),
+        )
+        _write_sanitizer_artifact(
+            artifact_path,
+            seed,
+            generator_metadata,
+            compile_result,
+            records,
+            check,
+        )
+        return check
+
+
+def _write_sanitizer_artifact(
+    path: Path | None,
+    seed: int,
+    generator: dict[str, object],
+    compile_result: CommandResult,
+    cases: list[dict[str, object]],
+    check: ValidationCheck,
+) -> None:
+    if path is None:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": "safemap.c_sanitizer_cases.v1",
+                "sanitizers": ["address", "undefined"],
+                "seed": seed,
+                "generator": generator,
+                "compile": compile_result.to_dict(),
+                "cases": cases,
+                "status": check.status,
+                "passed": check.passed,
+                "failed": check.failed,
+                "reason": check.reason,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
 
 
 class _ReferenceOutput:
@@ -291,13 +552,17 @@ def _find_reference_output_harness(c_source: Path) -> Path | None:
 
 
 def _run_with_input(
-    command: list[str], cwd: Path, stdin: str, timeout: float
+    command: list[str],
+    cwd: Path,
+    stdin: str,
+    timeout: float,
+    env: dict[str, str] | None = None,
 ) -> tuple[int | None, str, str]:
     import subprocess
     try:
         result = subprocess.run(
             command, cwd=cwd, input=stdin, capture_output=True, text=True,
-            timeout=timeout, check=False,
+            timeout=timeout, check=False, env=env,
         )
         return result.returncode, result.stdout.strip(), result.stderr.strip()
     except (subprocess.TimeoutExpired, OSError) as error:
@@ -312,9 +577,15 @@ def _package_name(cargo_toml: Path) -> str:
 
 
 class _HarnessCommands:
-    def __init__(self, c_command: list[str], rust_command: list[str]) -> None:
+    def __init__(
+        self,
+        c_command: list[str],
+        rust_command: list[str],
+        metadata: dict[str, object] | None = None,
+    ) -> None:
         self.c_command = c_command
         self.rust_command = rust_command
+        self.metadata = metadata or {}
 
 
 def _build_library_harness(
@@ -324,18 +595,52 @@ def _build_library_harness(
     temporary: Path,
     random_inputs: int = 0,
     seed: int = 0,
+    functions: list[FunctionInfo] | None = None,
+    plans: list[MigrationPlan] | None = None,
+    structs: list[StructInfo] | None = None,
 ) -> _HarnessCommands | None:
     project = c_source.parent.name
     cases = max(1, random_inputs)
-    c_source_text = _c_library_harness_source(project, c_source, cases, seed)
-    rust_source = _rust_library_harness_source(project, package, cases, seed)
+    generated = generate_scalar_harness(
+        c_source,
+        package,
+        functions or [],
+        plans or [],
+        structs or [],
+        cases=cases,
+        seed=seed,
+    )
+    if generated is not None:
+        c_source_text = generated.c_source
+        rust_source = generated.rust_source
+        metadata = {
+            "name": generated.generator,
+            "functions": list(generated.functions),
+            "cases_per_function": generated.cases,
+            "seed": generated.seed,
+        }
+    else:
+        c_source_text = _c_library_harness_source(project, c_source, cases, seed)
+        rust_source = _rust_library_harness_source(project, package, cases, seed)
+        metadata = {
+            "name": "legacy-project-harness-v1",
+            "project": project,
+            "cases": cases,
+            "seed": seed,
+        }
     if c_source_text is None or rust_source is None:
         return None
 
     c_harness = temporary / "function_harness.c"
     c_binary = temporary / "function_harness"
     c_harness.write_text(c_source_text, encoding="utf-8")
-    compile_c = run_command(["clang", str(c_harness), "-o", str(c_binary)], temporary)
+    compile_c = run_command(
+        [
+            "clang", "-Wno-error=implicit-int",
+            str(c_harness), "-o", str(c_binary), "-lm",
+        ],
+        temporary,
+    )
     if compile_c.status != "passed":
         return None
 
@@ -358,7 +663,11 @@ def _build_library_harness(
     rust_binary = harness_root / "target" / "debug" / "safemap_differential_harness"
     if not rust_binary.exists():
         return None
-    return _HarnessCommands([str(c_binary)], [str(rust_binary)])
+    return _HarnessCommands(
+        [str(c_binary)],
+        [str(rust_binary)],
+        metadata=metadata,
+    )
 
 
 def _c_library_harness_source(

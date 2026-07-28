@@ -19,7 +19,7 @@ from ..models import ProjectInfo
 from ..pipeline import run_pipeline
 from .baseline_runner import BASELINES
 
-RESULT_SCHEMA_VERSION = "safemap.benchmark_results.v2"
+RESULT_SCHEMA_VERSION = "safemap.benchmark_results.v3"
 
 
 def run_benchmarks(
@@ -43,6 +43,8 @@ def run_benchmarks(
             mode_config.translation.use_c2rust = mode.use_c2rust
             mode_config.translation.use_llm = mode.use_llm
             mode_config.translation.use_static_guidance = mode.guided
+            for component in mode.disabled_components:
+                setattr(mode_config.translation, f"use_{component}", False)
             try:
                 store = run_pipeline(
                     project, output_csv.parent / mode.name, mode_config, client
@@ -57,6 +59,9 @@ def run_benchmarks(
                 test_check = _validation_check(validation, "tests")
                 clippy_check = _validation_check(validation, "clippy")
                 differential = validation.get("differential", {}) if validation else {}
+                c_sanitizers = (
+                    validation.get("c_sanitizers", {}) if validation else {}
+                )
                 miri = validation.get("miri", {}) if validation else {}
                 miri_passed = miri.get("passed")
                 miri_failed = miri.get("failed")
@@ -64,6 +69,7 @@ def run_benchmarks(
                 idiom_success_counts = _idiom_success_counts(store, metrics)
                 primary = _primary_target_result(project, store, metrics)
                 c_metrics = _c_project_metrics(store)
+                decision_metrics = _unit_decision_metrics(store)
                 rows.append({
                     **metadata,
                     "project": project.name,
@@ -71,9 +77,20 @@ def run_benchmarks(
                     "run_dir": str(store.root),
                     **primary,
                     **c_metrics,
+                    **decision_metrics,
                     "loc_c": _project_c_loc(project),
                     "total_units": metrics.get("total_units"),
                     "eligible_units": metrics.get("eligible_units"),
+                    "candidate_safe_units": metrics.get("candidate_safe_units"),
+                    "synthesis_supported_units": metrics.get(
+                        "synthesis_supported_units"
+                    ),
+                    "generated_units": metrics.get("generated_units"),
+                    "compile_success_units": metrics.get("compile_success_units"),
+                    "policy_safe_units": metrics.get("policy_safe_units"),
+                    "behaviorally_validated_units": metrics.get(
+                        "behaviorally_validated_units"
+                    ),
                     "fully_safe_accepted_units": metrics.get(
                         "fully_safe_accepted_units"
                     ),
@@ -82,6 +99,14 @@ def run_benchmarks(
                     ),
                     "eligibility_counts": json.dumps(
                         metrics.get("eligibility_counts", {}), sort_keys=True
+                    ),
+                    "candidate_decision_counts": json.dumps(
+                        metrics.get("candidate_decision_counts", {}),
+                        sort_keys=True,
+                    ),
+                    "synthesis_support_counts": json.dumps(
+                        metrics.get("synthesis_support_counts", {}),
+                        sort_keys=True,
                     ),
                     "idiom_success_counts": json.dumps(
                         idiom_success_counts, sort_keys=True
@@ -103,6 +128,8 @@ def run_benchmarks(
                     "safemap_clippy_reason": clippy_check.get("reason", ""),
                     "safemap_differential_status": differential.get("status"),
                     "safemap_differential_reason": differential.get("reason", ""),
+                    "c_sanitizer_status": c_sanitizers.get("status"),
+                    "c_sanitizer_reason": c_sanitizers.get("reason", ""),
                     "validation_status_counts": json.dumps(
                         _validation_status_counts(validation), sort_keys=True
                     ),
@@ -140,21 +167,29 @@ def run_benchmarks(
         "c_pointer_parameter_density", "c_cyclomatic_complexity_total",
         "c_cyclomatic_complexity_average", "unsupported_function_count",
         "unsupported_construct_count", "unsupported_constructs",
+        "analysis_backend", "analysis_backend_reason",
         "primary_function", "primary_expected_eligibility",
         "primary_plan_status", "primary_eligible",
         "primary_fully_safe_accepted", "primary_outcome",
         "target_functions", "target_count",
         "target_fully_safe_accepted_units", "target_acceptance_rate",
         "target_outcomes",
-        "total_units", "eligible_units", "fully_safe_accepted_units",
+        "total_units", "eligible_units", "candidate_safe_units",
+        "synthesis_supported_units", "generated_units",
+        "compile_success_units", "policy_safe_units",
+        "behaviorally_validated_units", "fully_safe_accepted_units",
         "fully_safe_translation_unit_acceptance_rate", "eligibility_counts",
+        "candidate_decision_counts", "synthesis_support_counts",
+        "role_outcome_counts", "complete_project_policy_safe",
+        "complete_project_behaviorally_validated",
         "idiom_success_counts", "failure_categories", "loc_rust_baseline",
         "loc_rust_safemap", "c2rust_compile", "safemap_compile", "c2rust_tests",
         "safemap_tests", "safemap_cargo_check_status",
         "safemap_cargo_check_reason", "safemap_cargo_test_status",
         "safemap_cargo_test_reason", "safemap_clippy_status",
         "safemap_clippy_reason", "safemap_differential_status",
-        "safemap_differential_reason", "validation_status_counts",
+        "safemap_differential_reason", "c_sanitizer_status",
+        "c_sanitizer_reason", "validation_status_counts",
         "c2rust_unsafe_blocks",
         "safemap_unsafe_blocks", "c2rust_raw_pointers", "safemap_raw_pointers",
         "clippy_warnings", "miri_status", "miri_reason", "miri_passed",
@@ -840,7 +875,10 @@ def _validation_status_counts(validation: dict) -> dict[str, int]:
     counts: dict[str, int] = {}
     if not validation:
         return counts
-    for name in ("compile", "tests", "clippy", "miri", "differential"):
+    for name in (
+        "compile", "tests", "clippy", "miri", "differential",
+        "c_sanitizers",
+    ):
         status = str(_validation_check(validation, name).get("status") or "")
         if status:
             counts[status] = counts.get(status, 0) + 1
@@ -884,6 +922,16 @@ def _c_metrics_from_payload(analysis, eligibility) -> dict[str, object]:
         if feature
     )
     return {
+        "analysis_backend": (
+            analysis.get("analysis_backend", "unknown")
+            if isinstance(analysis, dict)
+            else "unknown"
+        ),
+        "analysis_backend_reason": (
+            analysis.get("analysis_backend_reason", "")
+            if isinstance(analysis, dict)
+            else ""
+        ),
         "c_function_count": len(functions),
         "c_parameter_count": len(parameters),
         "c_pointer_parameter_count": pointer_parameters,
@@ -901,6 +949,57 @@ def _c_metrics_from_payload(analysis, eligibility) -> dict[str, object]:
         ),
         "unsupported_construct_count": sum(unsupported.values()),
         "unsupported_constructs": json.dumps(dict(sorted(unsupported.items()))),
+    }
+
+
+def _unit_decision_metrics(store) -> dict[str, object]:
+    payload = _read_json_if_exists(store.path("analysis/unit_decisions.json"))
+    decisions = payload if isinstance(payload, list) else []
+    roles = ("declared_target", "helper", "entry_point", "other")
+    stages = (
+        "total",
+        "candidate_safe",
+        "implemented_support",
+        "generated",
+        "compile_passed",
+        "policy_safe",
+        "behaviorally_validated",
+    )
+    counts = {
+        role: {stage: 0 for stage in stages}
+        for role in roles
+    }
+    for decision in decisions:
+        if not isinstance(decision, dict):
+            continue
+        role = str(decision.get("role") or "other")
+        if role not in counts:
+            role = "other"
+        item = counts[role]
+        item["total"] += 1
+        if decision.get("candidate_decision") == "candidate_safe":
+            item["candidate_safe"] += 1
+        if decision.get("synthesis_support") == "implemented_support":
+            item["implemented_support"] += 1
+        for stage in (
+            "generated",
+            "compile_passed",
+            "policy_safe",
+            "behaviorally_validated",
+        ):
+            if bool(decision.get(stage)):
+                item[stage] += 1
+    total = sum(item["total"] for item in counts.values())
+    policy_safe = sum(item["policy_safe"] for item in counts.values())
+    behaviorally_validated = sum(
+        item["behaviorally_validated"] for item in counts.values()
+    )
+    return {
+        "role_outcome_counts": json.dumps(counts, sort_keys=True),
+        "complete_project_policy_safe": bool(total and policy_safe == total),
+        "complete_project_behaviorally_validated": bool(
+            total and behaviorally_validated == total
+        ),
     }
 
 
@@ -1081,15 +1180,28 @@ def _row_status(mode: str, metrics: dict, store) -> tuple[str, str]:
     if mode == "c2rust_only":
         return "completed", ""
     if metrics.get("safemap") is None and metrics.get("safemap_compile") is None:
-        if mode in {
+        deterministic_modes = {
             "safemap_deterministic",
             "safemap_no_static_guidance",
-        }:
+            "safemap_without_pointer_roles",
+            "safemap_without_safe_signatures",
+            "safemap_without_dependency_grouping",
+            "safemap_without_idiom_plans",
+            "safemap_without_validation_feedback",
+        }
+        if mode in deterministic_modes:
             if mode == "safemap_no_static_guidance":
                 return (
                     "no_guided_synthesis",
                     "Static classifications, safe signatures, and migration "
                     "plans were withheld from deterministic synthesis.",
+                )
+            if mode.startswith("safemap_without_"):
+                component = mode.removeprefix("safemap_without_").replace("_", " ")
+                return (
+                    "no_supported_synthesis",
+                    f"No output remained when the {component} component was "
+                    "disabled.",
                 )
             return (
                 "no_supported_synthesis",
@@ -1260,6 +1372,7 @@ def _row_validation_statuses(row: dict) -> dict[str, str]:
         "clippy": "safemap_clippy_status",
         "miri": "miri_status",
         "differential": "safemap_differential_status",
+        "c_sanitizers": "c_sanitizer_status",
     }
     return {
         check: str(row.get(field) or "")
