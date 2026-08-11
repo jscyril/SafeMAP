@@ -51,8 +51,8 @@ deterministic synthesizer emits Rust only when a safe rule matches exactly.
 Accepted code must compile without unsafe operations, expose no raw pointers in
 its public API, and match the original C on recorded randomized inputs. The C
 oracle runs under AddressSanitizer and UndefinedBehaviorSanitizer. Six helpers
-from a 32-function LLVM development corpus pass every check; the previous rule
-set supported one. Each helper also passes 1,000 differential cases. We specify
+from a 32-function LLVM development corpus pass every check, including 1,000
+differential cases per generated project. We specify
 a frozen held-out study on three independently maintained C libraries. The
 protocol uses outcome-blind human labels, records analyzer provenance, compares
 against direct LLM translation to safe Rust, and tests individual components
@@ -408,7 +408,7 @@ not a held-out outcome.
 \subsection{Development evidence}
 
 The LLVM development corpus contains 32 functions from ten projects. After two
-analysis fixes and rule changes based only on development data, 23 functions
+analysis fixes and rule changes based only on development data, 21 functions
 receive \texttt{candidate\_safe} and six receive
 \texttt{implemented\_support}. The six generated functions compile, satisfy
 the policy, and pass behavioral testing. They are \texttt{sqr}, \texttt{fade},
@@ -418,23 +418,7 @@ floating-point reduction. Before these changes, only \texttt{sqr} passed. The
 pipeline. It cannot support a generalization claim because the same corpus
 guided the rule changes.
 
-\begin{table}[t]
-\centering
-\caption{Development-only outcome cascade. ``Cand.'' denotes
-\texttt{candidate\_safe}; ``Behav.'' denotes behaviorally validated
-policy-safe output.}
-\label{tab:development-cascade}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrrrrrrr}
-\toprule
-Corpus & Total & Cand. & Support & Gen. & Compile & Policy & Behav. \\
-\midrule
-LLVM programs & 32 & 23 & 6 & 6 & 6 & 6 & 6 \\
-Microbenchmarks & 81 & 76 & 36 & 36 & 36 & 36 & 36 \\
-Authored modules & 25 & 25 & 19 & 19 & 19 & 19 & 17 \\
-\bottomrule
-\end{tabular}}
-\end{table}
+\input{tables/development_cascade.tex}
 
 Two bugs show why the report keeps intermediate outcomes. The pointer screen
 first treated indexed reads as writes, which produced a false mutable-alias
@@ -460,24 +444,7 @@ and sanitizer harness. Across six authored modules, the full system validates
 the two composed callers lose support. The module was written to test this
 mechanism, so the result is development evidence.
 
-\begin{table}[t]
-\centering
-\caption{Behaviorally validated units in component ablations. Denominators
-include all functions or dependency units in each development corpus.}
-\label{tab:development-ablations}
-\begin{tabular}{lrr}
-\toprule
-Configuration & Microbenchmarks & Modules \\
-\midrule
-Full system & 36/81 & 17/25 \\
-Without pointer roles & 16/81 & 3/25 \\
-Without safe signatures & 6/81 & 0/25 \\
-Without dependency grouping & 36/81 & 15/25 \\
-Without idiom plans & 6/81 & 1/25 \\
-Without validation feedback & 36/81 & 17/25 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{tables/development_ablations.tex}
 
 \subsection{Held-out evaluation status}
 
@@ -518,7 +485,7 @@ begin.
 \subsection{Eligibility and synthesis coverage}
 
 The authored suites contain deliberately supported patterns, so they measure
-regression coverage. In the LLVM development set, 17 of 23 candidate-safe
+regression coverage. In the LLVM development set, 15 of 21 candidate-safe
 functions still lack a synthesis rule. Candidate labels and implementation
 support must therefore remain separate. Held-out human labels are needed to
 tell how much of the gap comes from classification error and how much comes

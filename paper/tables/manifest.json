@@ -1,0 +1,123 @@
+{
+  "development_ablations": [
+    {
+      "example_accepted": 36,
+      "example_total": 81,
+      "label": "Full system",
+      "mode": "safemap_deterministic",
+      "module_accepted": 17,
+      "module_total": 25
+    },
+    {
+      "example_accepted": 16,
+      "example_total": 81,
+      "label": "Without pointer roles",
+      "mode": "safemap_without_pointer_roles",
+      "module_accepted": 3,
+      "module_total": 25
+    },
+    {
+      "example_accepted": 6,
+      "example_total": 81,
+      "label": "Without safe signatures",
+      "mode": "safemap_without_safe_signatures",
+      "module_accepted": 0,
+      "module_total": 25
+    },
+    {
+      "example_accepted": 36,
+      "example_total": 81,
+      "label": "Without dependency grouping",
+      "mode": "safemap_without_dependency_grouping",
+      "module_accepted": 15,
+      "module_total": 25
+    },
+    {
+      "example_accepted": 6,
+      "example_total": 81,
+      "label": "Without idiom plans",
+      "mode": "safemap_without_idiom_plans",
+      "module_accepted": 1,
+      "module_total": 25
+    },
+    {
+      "example_accepted": 36,
+      "example_total": 81,
+      "label": "Without validation feedback",
+      "mode": "safemap_without_validation_feedback",
+      "module_accepted": 17,
+      "module_total": 25
+    }
+  ],
+  "development_cascade": [
+    {
+      "corpus": "LLVM programs",
+      "values": [
+        32,
+        21,
+        6,
+        6,
+        6,
+        6,
+        6
+      ]
+    },
+    {
+      "corpus": "Microbenchmarks",
+      "values": [
+        81,
+        76,
+        36,
+        36,
+        36,
+        36,
+        36
+      ]
+    },
+    {
+      "corpus": "Authored modules",
+      "values": [
+        25,
+        25,
+        19,
+        19,
+        19,
+        19,
+        17
+      ]
+    }
+  ],
+  "inputs": {
+    "c2rust": {
+      "path": "reports/publication/c2rust-only/benchmark_results.csv",
+      "sha256": "fc9af56f3fb2c095250441277ee1e65cd9b47b7953d0aef4ead7f7acfbb9128d"
+    },
+    "example_ablations": {
+      "path": "reports/publication/ablation/benchmark_results.csv",
+      "sha256": "e742ddef65ab889a5747103555ca235e5b12555d34282056ef69c33414fe52e3"
+    },
+    "examples": {
+      "path": "reports/publication/final/benchmark_results.csv",
+      "sha256": "5fada17a07df36bd9f782e9482be1a1b12fa0fb288f24ebe1c38a0514b7267e6"
+    },
+    "llvm": {
+      "path": "reports/publication/external-corpus/benchmark_results.csv",
+      "sha256": "a0c4c37d7eda202ce936c5a0bcb3a5b3420a2b1ccf27c8c609bebba819598b78"
+    },
+    "module_ablations": {
+      "path": "reports/publication/case-study-ablation/benchmark_results.csv",
+      "sha256": "23469e066064696691593c8524f6bfe1d00bff593def16bb0a273b9154837133"
+    },
+    "modules": {
+      "path": "reports/publication/case-studies/benchmark_results.csv",
+      "sha256": "7589bd8d103a6e9a9457e97df6b74bcef482483fb83c394d9c342af8e05ef7be"
+    }
+  },
+  "outputs": {
+    "development_ablations.tex": "2bab117e529c8041f2c47d0b7d3f16d2c7ad7b065940f230b601d3a3b4067a19",
+    "development_cascade.tex": "6129472aef8f6e74ff248d7fd2f51c0515f3a8dc6c42898736caaef59574ab21",
+    "paper/DEVELOPMENT_RESULT_AUDIT.md": "187aebf6f91db824d9ab9881fb25ce4787d82f23a919beae5a46fe83ecc9d71b"
+  },
+  "schema_version": "safemap.manuscript_tables.v1",
+  "source_git_commit": "0a2298ad00c181b06c755bf0047085aa8bfa7803"
+}

@@ -7,6 +7,13 @@ history and must not be edited or submitted.
 Generated result tables belong in `tables/` and must come from the frozen CSV
 and JSON artifacts. Do not hand-edit numerical results in a generated table.
 
+Regenerate the compact manuscript tables and their hash-backed development
+claim audit with:
+
+```bash
+python scripts/generate_manuscript_tables.py
+```
+
 Build from this directory with:
 
 ```bash

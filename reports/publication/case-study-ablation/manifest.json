@@ -1,0 +1,23 @@
+{
+  "artifacts": {
+    "benchmark_csv": "reports/.reproduction/final-draft-development-0a2298a/case-study-ablation/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/final-draft-development-0a2298a/case-study-ablation/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/final-draft-development-0a2298a/case-study-ablation/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/final-draft-development-0a2298a/case-study-ablation/paper_tables.md"
+  },
+  "benchmarks": "case_studies",
+  "generated_at_utc": "2026-08-11T03:38:32Z",
+  "git_commit": "0a2298ad00c181b06c755bf0047085aa8bfa7803",
+  "git_dirty": false,
+  "modes": [
+    "safemap_deterministic",
+    "safemap_without_dependency_grouping",
+    "safemap_without_idiom_plans",
+    "safemap_without_pointer_roles",
+    "safemap_without_safe_signatures",
+    "safemap_without_validation_feedback"
+  ],
+  "output_dir": "reports/.reproduction/final-draft-development-0a2298a/case-study-ablation",
+  "result_schema_version": "safemap.benchmark_results.v3",
+  "rows": 36
+}
