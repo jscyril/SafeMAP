@@ -1,0 +1,4 @@
+{
+  "reason": "Response introduces forbidden raw pointer type",
+  "status": "failed"
+}

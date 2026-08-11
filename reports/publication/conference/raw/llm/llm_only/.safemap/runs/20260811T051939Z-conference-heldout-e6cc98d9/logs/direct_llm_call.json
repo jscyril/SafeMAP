@@ -1,0 +1,24 @@
+{
+  "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+  "baseline": "direct_llm_c_to_safe_rust",
+  "failure": {
+    "message": "Response introduces forbidden extern C",
+    "type": "ValueError"
+  },
+  "input_tokens": 24812,
+  "max_tokens": 8192,
+  "output_tokens": 4472,
+  "prompt_path": "prompts/direct_translation.txt",
+  "prompt_sha256": "d180cf7a6977a31fad3f870f77c49982e4defe419adf66e7d52efee0bcde556d",
+  "provider": "openai_compatible",
+  "requested_model": "gemini-3.5-flash-lite",
+  "response_model": "gemini-3.5-flash-lite",
+  "response_path": "responses/direct_translation.txt",
+  "retry_index": 0,
+  "schema_version": "safemap.llm_call.v1",
+  "status": "rejected",
+  "system_prompt": null,
+  "temperature": 0.0,
+  "timeout_seconds": 180,
+  "total_attempts": 1
+}

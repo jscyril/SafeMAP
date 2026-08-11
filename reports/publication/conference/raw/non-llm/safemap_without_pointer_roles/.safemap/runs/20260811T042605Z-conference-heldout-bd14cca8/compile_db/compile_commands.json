@@ -1,0 +1,13 @@
+[
+  {
+    "directory": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih",
+    "arguments": [
+      "/opt/llvm-14.0.6/bin/clang",
+      "-resource-dir",
+      "/opt/llvm-14.0.6/lib/clang/14.0.6",
+      "-c",
+      "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c"
+    ],
+    "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c"
+  }
+]

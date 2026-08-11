@@ -1,0 +1,67 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.86,
+      "evidence": "Integer return value is produced from a boolean comparison",
+      "kind": "boolean_int",
+      "rust_type": "Use bool",
+      "variables": []
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "compare_double",
+  "internal_calls": [],
+  "original_signature": "int compare_double(double a, double b)",
+  "patterns": [
+    {
+      "confidence": 0.86,
+      "original": "Integer return value is produced from a boolean comparison",
+      "pattern": "boolean_int",
+      "replacement": "Use bool"
+    }
+  ],
+  "reason": null,
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "planned",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn compare_double(a: f64, b: f64) -> i32",
+  "type_migrations": [
+    {
+      "c": "boolean_int",
+      "reason": "Integer return value is produced from a boolean comparison",
+      "rust": "Use bool"
+    }
+  ],
+  "unit_id": "unit_34",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

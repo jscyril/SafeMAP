@@ -1,0 +1,88 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.75,
+      "evidence": "item is a const pointer",
+      "kind": "struct_pointer",
+      "rust_type": "Use a reference or owned struct",
+      "variables": [
+        "item"
+      ]
+    },
+    {
+      "confidence": 0.95,
+      "evidence": "output_buffer is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "output_buffer"
+      ]
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "print_array",
+  "internal_calls": [
+    "ensure",
+    "print_value",
+    "update_offset"
+  ],
+  "original_signature": "int print_array(const struct cJSON *const item, printbuffer *const output_buffer)",
+  "patterns": [
+    {
+      "confidence": 0.75,
+      "original": "item",
+      "pattern": "struct_pointer",
+      "replacement": "Use a reference or owned struct"
+    },
+    {
+      "confidence": 0.95,
+      "original": "output_buffer",
+      "pattern": "nullable_pointer",
+      "replacement": "Use Option<&T> or Option<&mut T>"
+    }
+  ],
+  "reason": "Internal dependency lacks implemented synthesis support: ensure, print_value, update_offset",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "planned",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn print_array(item: &cJSON, output_buffer: &mut printbuffer) -> i32",
+  "type_migrations": [
+    {
+      "c": "output_buffer",
+      "reason": "output_buffer is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    }
+  ],
+  "unit_id": "unit_93",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "build_files": [],
+  "build_system": "single_file",
+  "c_files": [
+    "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c"
+  ],
+  "compile_commands": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/llm/llm_only/.safemap/runs/20260811T051939Z-conference-heldout-e6cc98d9/compile_db/compile_commands.json",
+  "created_at": "2026-08-11T05:19:39.506912+00:00",
+  "detected_entrypoints": [],
+  "header_files": [
+    "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.h"
+  ],
+  "input_path": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson",
+  "project_name": "cjson",
+  "root": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson",
+  "schema_version": "1.1",
+  "test_commands": [],
+  "test_files": []
+}

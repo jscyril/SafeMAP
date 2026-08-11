@@ -1,0 +1,76 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.95,
+      "evidence": "string1 is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "string1"
+      ]
+    },
+    {
+      "confidence": 0.95,
+      "evidence": "string2 is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "string2"
+      ]
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "case_insensitive_strcmp",
+  "internal_calls": [],
+  "original_signature": "int case_insensitive_strcmp(const unsigned char * string1, const unsigned char * string2)",
+  "patterns": [],
+  "reason": "Safe translation is possible with a Rust-native API change",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn case_insensitive_strcmp(string1: Option<&u8>, string2: Option<&u8>) -> i32",
+  "type_migrations": [
+    {
+      "c": "string1",
+      "reason": "string1 is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "c": "string2",
+      "reason": "string2 is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    }
+  ],
+  "unit_id": "unit_32",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

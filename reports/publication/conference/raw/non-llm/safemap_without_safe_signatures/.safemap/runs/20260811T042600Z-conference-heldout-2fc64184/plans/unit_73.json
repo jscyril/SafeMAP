@@ -1,0 +1,89 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "manual_refactor_required",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.88,
+      "evidence": "input is written through",
+      "kind": "output_parameter",
+      "rust_type": "Return the value, preferably in Result",
+      "variables": [
+        "input"
+      ]
+    },
+    {
+      "confidence": 0.88,
+      "evidence": "output is written through",
+      "kind": "output_parameter",
+      "rust_type": "Return the value, preferably in Result",
+      "variables": [
+        "output"
+      ]
+    }
+  ],
+  "eligibility": "requires_manual_refactor",
+  "eligibility_reasons": [
+    "Multiple mutable pointer-like parameters create unresolved aliasing risk"
+  ],
+  "function": "minify_string",
+  "internal_calls": [],
+  "original_signature": "void minify_string(char ** input, char ** output)",
+  "patterns": [
+    {
+      "confidence": 0.88,
+      "original": "input",
+      "pattern": "output_parameter",
+      "replacement": "Return the value, preferably in Result"
+    },
+    {
+      "confidence": 0.88,
+      "original": "output",
+      "pattern": "output_parameter",
+      "replacement": "Return the value, preferably in Result"
+    }
+  ],
+  "reason": "Multiple mutable pointer-like parameters create unresolved aliasing risk",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "pub fn minify_string(input: *mut i8, output: *mut i8) -> ()",
+  "type_migrations": [
+    {
+      "c": "input",
+      "reason": "input is written through",
+      "rust": "Return the value, preferably in Result"
+    },
+    {
+      "c": "output",
+      "reason": "output is written through",
+      "rust": "Return the value, preferably in Result"
+    }
+  ],
+  "unit_id": "unit_73",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

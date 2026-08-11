@@ -1,0 +1,71 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "unknown",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.95,
+      "evidence": "input_buffer is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "input_buffer"
+      ]
+    }
+  ],
+  "eligibility": "unsupported",
+  "eligibility_reasons": [
+    "Unsupported C construct detected"
+  ],
+  "function": "parse_number",
+  "internal_calls": [
+    "get_decimal_point"
+  ],
+  "original_signature": "int parse_number(struct cJSON *const item, parse_buffer *const input_buffer)",
+  "patterns": [
+    {
+      "confidence": 0.95,
+      "original": "input_buffer",
+      "pattern": "nullable_pointer",
+      "replacement": "Use Option<&T> or Option<&mut T>"
+    }
+  ],
+  "reason": "Unsupported C construct detected",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "pub fn parse_number(item: &mut cJSON, input_buffer: Option<&mut parse_buffer>) -> i32",
+  "type_migrations": [
+    {
+      "c": "input_buffer",
+      "reason": "input_buffer is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    }
+  ],
+  "unit_id": "unit_82",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

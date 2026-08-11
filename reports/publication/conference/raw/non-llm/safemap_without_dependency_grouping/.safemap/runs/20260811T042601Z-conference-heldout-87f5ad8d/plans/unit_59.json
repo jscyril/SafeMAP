@@ -1,0 +1,50 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "manual_refactor_required",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [],
+  "eligibility": "requires_manual_refactor",
+  "eligibility_reasons": [
+    "Pointer role, ownership, or aliasing could not be resolved statically"
+  ],
+  "function": "cJSON_AddBoolToObject",
+  "internal_calls": [
+    "add_item_to_object",
+    "cJSON_CreateBool",
+    "cJSON_Delete"
+  ],
+  "original_signature": "struct cJSON * cJSON_AddBoolToObject(struct cJSON *const object, const char *const name, const int boolean)",
+  "patterns": [],
+  "reason": "Pointer role, ownership, or aliasing could not be resolved statically",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "pub fn cJSON_AddBoolToObject(object: &mut cJSON, name: &i8, boolean: i32) -> cJSON",
+  "type_migrations": [],
+  "unit_id": "unit_59",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

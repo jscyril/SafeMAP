@@ -1,0 +1,48 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [],
+  "eligibility": "safe_translatable",
+  "eligibility_reasons": [
+    "No unsupported constructs or unresolved pointer hazards detected"
+  ],
+  "function": "cJSON_AddItemToObject",
+  "internal_calls": [
+    "add_item_to_object"
+  ],
+  "original_signature": "int cJSON_AddItemToObject(struct cJSON * object, const char * string, struct cJSON * item)",
+  "patterns": [],
+  "reason": "No unsupported constructs or unresolved pointer hazards detected",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn cJSON_AddItemToObject(object: &mut cJSON, string: &i8, item: &mut cJSON) -> i32",
+  "type_migrations": [],
+  "unit_id": "unit_18",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

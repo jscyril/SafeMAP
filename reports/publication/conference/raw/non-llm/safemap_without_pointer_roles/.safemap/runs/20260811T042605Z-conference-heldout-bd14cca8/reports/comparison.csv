@@ -1,0 +1,11 @@
+unit_id,baseline,eligibility,generated,compile_status,test_status,differential_status,unsafe_blocks,raw_pointers,fully_safe_accepted,failure_reason
+unit_0,skipped,,safemap_final,False,,,0,0,False,
+unit_1,skipped,,safemap_final,False,,,0,0,False,
+unit_2,skipped,,safemap_final,False,,,0,0,False,
+unit_3,skipped,,safemap_final,False,,,0,0,False,
+unit_4,skipped,,safemap_final,False,,,0,0,False,
+unit_5,skipped,,safemap_final,False,,,0,0,False,
+unit_6,skipped,,safemap_final,False,,,0,0,False,
+unit_7,skipped,,safemap_final,False,,,0,0,False,
+unit_8,skipped,,safemap_final,False,,,0,0,False,
+unit_9,skipped,,safemap_final,False,,,0,0,False,

@@ -1,0 +1,71 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "manual_refactor_required",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.88,
+      "evidence": "output_pointer is written through",
+      "kind": "output_parameter",
+      "rust_type": "Return the value, preferably in Result",
+      "variables": [
+        "output_pointer"
+      ]
+    }
+  ],
+  "eligibility": "requires_manual_refactor",
+  "eligibility_reasons": [
+    "Pointer role, ownership, or aliasing could not be resolved statically"
+  ],
+  "function": "utf16_literal_to_utf8",
+  "internal_calls": [
+    "parse_hex4"
+  ],
+  "original_signature": "unsigned char utf16_literal_to_utf8(const unsigned char *const input_pointer, const unsigned char *const input_end, unsigned char ** output_pointer)",
+  "patterns": [
+    {
+      "confidence": 0.88,
+      "original": "output_pointer",
+      "pattern": "output_parameter",
+      "replacement": "Return the value, preferably in Result"
+    }
+  ],
+  "reason": "Pointer role, ownership, or aliasing could not be resolved statically",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "pub fn utf16_literal_to_utf8(input_pointer: &u8, input_end: &u8) -> u8",
+  "type_migrations": [
+    {
+      "c": "output_pointer",
+      "reason": "output_pointer is written through",
+      "rust": "Return the value, preferably in Result"
+    }
+  ],
+  "unit_id": "unit_18",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

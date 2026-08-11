@@ -1,0 +1,78 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.94,
+      "evidence": "dest is indexed and paired with size",
+      "kind": "pointer_length_array",
+      "pointer": "dest",
+      "rust_type": "Use &[T] or &mut [T]",
+      "variables": [
+        "dest"
+      ]
+    },
+    {
+      "confidence": 0.94,
+      "evidence": "src is indexed and paired with size",
+      "kind": "pointer_length_array",
+      "pointer": "src",
+      "rust_type": "Use &[T] or &mut [T]",
+      "variables": [
+        "src"
+      ]
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "ini_strncpy0",
+  "internal_calls": [],
+  "original_signature": "char * ini_strncpy0(char * dest, const char * src, unsigned long size)",
+  "patterns": [],
+  "reason": "Safe translation is possible with a Rust-native API change",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn ini_strncpy0(dest: &mut [i8], src: &[i8]) -> i8",
+  "type_migrations": [
+    {
+      "c": "dest",
+      "reason": "dest is indexed and paired with size",
+      "rust": "Use &[T] or &mut [T]"
+    },
+    {
+      "c": "src",
+      "reason": "src is indexed and paired with size",
+      "rust": "Use &[T] or &mut [T]"
+    }
+  ],
+  "unit_id": "unit_3",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

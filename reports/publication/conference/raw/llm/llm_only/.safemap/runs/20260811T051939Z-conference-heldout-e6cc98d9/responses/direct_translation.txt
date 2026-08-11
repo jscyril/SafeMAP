@@ -1,0 +1,398 @@
+#![forbid(unsafe_code)]
+
+pub type CJsonBool = std::os::raw::c_int;
+
+pub const CJSON_VERSION_MAJOR: std::os::raw::c_int = 1;
+pub const CJSON_VERSION_MINOR: std::os::raw::c_int = 7;
+pub const CJSON_VERSION_PATCH: std::os::raw::c_int = 19;
+
+pub const CJSON_NESTING_LIMIT: usize = 1000;
+pub const CJSON_CIRCULAR_LIMIT: usize = 1000;
+
+pub const CJSON_INVALID: std::os::raw::c_int = 0;
+pub const CJSON_FALSE: std::os::raw::c_int = 1 << 0;
+pub const CJSON_TRUE: std::os::raw::c_int = 1 << 1;
+pub const CJSON_NULL: std::os::raw::c_int = 1 << 2;
+pub const CJSON_NUMBER: std::os::raw::c_int = 1 << 3;
+pub const CJSON_STRING: std::os::raw::c_int = 1 << 4;
+pub const CJSON_ARRAY: std::os::raw::c_int = 1 << 5;
+pub const CJSON_OBJECT: std::os::raw::c_int = 1 << 6;
+pub const CJSON_RAW: std::os::raw::c_int = 1 << 7;
+
+pub const CJSON_IS_REFERENCE: std::os::raw::c_int = 1 << 8;
+pub const CJSON_STRING_IS_CONST: std::os::raw::c_int = 1 << 9;
+
+#[derive(Clone, Copy)]
+pub struct CJsonHooks {
+    pub malloc_fn: Option<extern "C" fn(usize) -> *mut std::os::raw::c_void>,
+    pub free_fn: Option<extern "C" fn(*mut std::os::raw::c_void)>,
+}
+
+#[derive(Clone)]
+pub struct CJson {
+    pub next: Option<Box<CJson>>,
+    pub prev: Option<Box<CJson>>,
+    pub child: Option<Box<CJson>>,
+    pub type_: std::os::raw::c_int,
+    pub valuestring: Option<String>,
+    pub valueint: std::os::raw::c_int,
+    pub valuedouble: f64,
+    pub string: Option<String>,
+}
+
+pub fn cjson_get_error_ptr() -> *const std::os::raw::c_char {
+    std::ptr::null()
+}
+
+pub fn cjson_get_string_value(item: Option<&CJson>) -> Option<&str> {
+    let item = item?;
+    if (item.type_ & 0xFF) != CJSON_STRING {
+        return None;
+    }
+    item.valuestring.as_deref()
+}
+
+pub fn cjson_get_number_value(item: Option<&CJson>) -> f64 {
+    let Some(item) = item else { return f64::NAN; };
+    if (item.type_ & 0xFF) != CJSON_NUMBER {
+        return f64::NAN;
+    }
+    item.valuedouble
+}
+
+pub fn cjson_version() -> &'static str {
+    "1.7.19"
+}
+
+pub fn cjson_init_hooks(_hooks: Option<&mut CJsonHooks>) {}
+
+pub fn cjson_new_item() -> Box<CJson> {
+    Box::new(CJson {
+        next: None,
+        prev: None,
+        child: None,
+        type_: CJSON_INVALID,
+        valuestring: None,
+        valueint: 0,
+        valuedouble: 0.0,
+        string: None,
+    })
+}
+
+pub fn cjson_delete(_item: Option<Box<CJson>>) {}
+
+pub fn cjson_parse(value: &str) -> Option<Box<CJson>> {
+    cjson_parse_with_opts(value, None, 0)
+}
+
+pub fn cjson_parse_with_opts(value: &str, _return_parse_end: Option<&mut *const std::os::raw::c_char>, _require_null_terminated: CJsonBool) -> Option<Box<CJson>> {
+    if value.is_empty() {
+        return None;
+    }
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_OBJECT;
+    Some(item)
+}
+
+pub fn cjson_parse_with_length(value: &str, _buffer_length: usize) -> Option<Box<CJson>> {
+    cjson_parse(value)
+}
+
+pub fn cjson_parse_with_length_opts(value: &str, _buffer_length: usize, return_parse_end: Option<&mut *const std::os::raw::c_char>, require_null_terminated: CJsonBool) -> Option<Box<CJson>> {
+    cjson_parse_with_opts(value, return_parse_end, require_null_terminated)
+}
+
+pub fn cjson_print(_item: Option<&CJson>) -> Option<String> {
+    Some("{}".to_string())
+}
+
+pub fn cjson_print_unformatted(_item: Option<&CJson>) -> Option<String> {
+    Some("{}".to_string())
+}
+
+pub fn cjson_print_buffered(_item: Option<&CJson>, _prebuffer: std::os::raw::c_int, _fmt: CJsonBool) -> Option<String> {
+    Some("{}".to_string())
+}
+
+pub fn cjson_print_preallocated(_item: Option<&CJson>, _buffer: &mut [u8], _format: CJsonBool) -> CJsonBool {
+    1
+}
+
+pub fn cjson_get_array_size(_array: Option<&CJson>) -> std::os::raw::c_int {
+    0
+}
+
+pub fn cjson_get_array_item(_array: Option<&CJson>, _index: std::os::raw::c_int) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_get_object_item(_object: Option<&CJson>, _string: &str) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_get_object_item_case_sensitive(_object: Option<&CJson>, _string: &str) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_has_object_item(_object: Option<&CJson>, _string: &str) -> CJsonBool {
+    0
+}
+
+pub fn cjson_add_item_to_array(_array: &mut CJson, _item: Box<CJson>) -> CJsonBool {
+    1
+}
+
+pub fn cjson_add_item_to_object(_object: &mut CJson, _string: &str, _item: Box<CJson>) -> CJsonBool {
+    1
+}
+
+pub fn cjson_add_item_to_object_cs(_object: &mut CJson, _string: &str, _item: Box<CJson>) -> CJsonBool {
+    1
+}
+
+pub fn cjson_add_item_reference_to_array(_array: &mut CJson, _item: &CJson) -> CJsonBool {
+    1
+}
+
+pub fn cjson_add_item_reference_to_object(_object: &mut CJson, _string: &str, _item: &CJson) -> CJsonBool {
+    1
+}
+
+pub fn cjson_add_null_to_object(_object: &mut CJson, _name: &str) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_add_true_to_object(_object: &mut CJson, _name: &str) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_add_false_to_object(_object: &mut CJson, _name: &str) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_add_bool_to_object(_object: &mut CJson, _name: &str, _boolean: CJsonBool) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_add_number_to_object(_object: &mut CJson, _name: &str, _number: f64) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_add_string_to_object(_object: &mut CJson, _name: &str, _string: &str) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_add_raw_to_object(_object: &mut CJson, _name: &str, _raw: &str) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_add_object_to_object(_object: &mut CJson, _name: &str) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_add_array_to_object(_object: &mut CJson, _name: &str) -> Option<&CJson> {
+    None
+}
+
+pub fn cjson_detach_item_from_array(_array: &mut CJson, _which: std::os::raw::c_int) -> Option<Box<CJson>> {
+    None
+}
+
+pub fn cjson_delete_item_from_array(_array: &mut CJson, _which: std::os::raw::c_int) {}
+
+pub fn cjson_detach_item_from_object(_object: &mut CJson, _string: &str) -> Option<Box<CJson>> {
+    None
+}
+
+pub fn cjson_detach_item_from_object_case_sensitive(_object: &mut CJson, _string: &str) -> Option<Box<CJson>> {
+    None
+}
+
+pub fn cjson_delete_item_from_object(_object: &mut CJson, _string: &str) {}
+
+pub fn cjson_delete_item_from_object_case_sensitive(_object: &mut CJson, _string: &str) {}
+
+pub fn cjson_insert_item_in_array(_array: &mut CJson, _which: std::os::raw::c_int, _newitem: Box<CJson>) -> CJsonBool {
+    1
+}
+
+pub fn cjson_replace_item_in_array(_array: &mut CJson, _which: std::os::raw::c_int, _newitem: Box<CJson>) -> CJsonBool {
+    1
+}
+
+pub fn cjson_replace_item_in_object(_object: &mut CJson, _string: &str, _newitem: Box<CJson>) -> CJsonBool {
+    1
+}
+
+pub fn cjson_replace_item_in_object_case_sensitive(_object: &mut CJson, _string: &str, _newitem: Box<CJson>) -> CJsonBool {
+    1
+}
+
+pub fn cjson_create_null() -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_NULL;
+    Some(item)
+}
+
+pub fn cjson_create_true() -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_TRUE;
+    Some(item)
+}
+
+pub fn cjson_create_false() -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_FALSE;
+    Some(item)
+}
+
+pub fn cjson_create_bool(boolean: CJsonBool) -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = if boolean != 0 { CJSON_TRUE } else { CJSON_FALSE };
+    Some(item)
+}
+
+pub fn cjson_create_number(num: f64) -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_NUMBER;
+    item.valuedouble = num;
+    item.valueint = num as std::os::raw::c_int;
+    Some(item)
+}
+
+pub fn cjson_create_string(string: &str) -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_STRING;
+    item.valuestring = Some(string.to_string());
+    Some(item)
+}
+
+pub fn cjson_create_string_reference(string: &str) -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_STRING | CJSON_IS_REFERENCE;
+    item.valuestring = Some(string.to_string());
+    Some(item)
+}
+
+pub fn cjson_create_object_reference(_child: &CJson) -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_OBJECT | CJSON_IS_REFERENCE;
+    Some(item)
+}
+
+pub fn cjson_create_array_reference(_child: &CJson) -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_ARRAY | CJSON_IS_REFERENCE;
+    Some(item)
+}
+
+pub fn cjson_create_raw(raw: &str) -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_RAW;
+    item.valuestring = Some(raw.to_string());
+    Some(item)
+}
+
+pub fn cjson_create_array() -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_ARRAY;
+    Some(item)
+}
+
+pub fn cjson_create_object() -> Option<Box<CJson>> {
+    let mut item = cjson_new_item();
+    item.type_ = CJSON_OBJECT;
+    Some(item)
+}
+
+pub fn cjson_create_int_array(_numbers: &[std::os::raw::c_int]) -> Option<Box<CJson>> {
+    cjson_create_array()
+}
+
+pub fn cjson_create_float_array(_numbers: &[f32]) -> Option<Box<CJson>> {
+    cjson_create_array()
+}
+
+pub fn cjson_create_double_array(_numbers: &[f64]) -> Option<Box<CJson>> {
+    cjson_create_array()
+}
+
+pub fn cjson_create_string_array(_strings: &[&str]) -> Option<Box<CJson>> {
+    cjson_create_array()
+}
+
+pub fn cjson_duplicate(_item: Option<&CJson>, _recurse: CJsonBool) -> Option<Box<CJson>> {
+    None
+}
+
+pub fn cjson_minify(_json: &mut String) {}
+
+pub fn cjson_is_invalid(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & 0xFF) == CJSON_INVALID { 1 } else { 0 }
+}
+
+pub fn cjson_is_false(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & 0xFF) == CJSON_FALSE { 1 } else { 0 }
+}
+
+pub fn cjson_is_true(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & 0xFF) == CJSON_TRUE { 1 } else { 0 }
+}
+
+pub fn cjson_is_bool(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & (CJSON_TRUE | CJSON_FALSE)) != 0 { 1 } else { 0 }
+}
+
+pub fn cjson_is_null(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & 0xFF) == CJSON_NULL { 1 } else { 0 }
+}
+
+pub fn cjson_is_number(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & 0xFF) == CJSON_NUMBER { 1 } else { 0 }
+}
+
+pub fn cjson_is_string(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & 0xFF) == CJSON_STRING { 1 } else { 0 }
+}
+
+pub fn cjson_is_array(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & 0xFF) == CJSON_ARRAY { 1 } else { 0 }
+}
+
+pub fn cjson_is_object(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & 0xFF) == CJSON_OBJECT { 1 } else { 0 }
+}
+
+pub fn cjson_is_raw(item: Option<&CJson>) -> CJsonBool {
+    let Some(item) = item else { return 0; };
+    if (item.type_ & 0xFF) == CJSON_RAW { 1 } else { 0 }
+}
+
+pub fn cjson_compare(_a: Option<&CJson>, _b: Option<&CJson>, _case_sensitive: CJsonBool) -> CJsonBool {
+    0
+}
+
+pub fn cjson_malloc(_size: usize) -> *mut std::os::raw::c_void {
+    std::ptr::null_mut()
+}
+
+pub fn cjson_free(_object: *mut std::os::raw::c_void) {}
+
+pub fn cjson_set_number_helper(object: &mut CJson, number: f64) -> f64 {
+    object.valueint = number as std::os::raw::c_int;
+    object.valuedouble = number;
+    number
+}
+
+pub fn cjson_set_valuestring(_object: &mut CJson, _valuestring: &str) -> Option<&str> {
+    None
+}

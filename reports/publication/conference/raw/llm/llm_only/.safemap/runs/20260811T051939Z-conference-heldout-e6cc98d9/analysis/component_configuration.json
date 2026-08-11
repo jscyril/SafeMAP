@@ -1,0 +1,8 @@
+{
+  "use_dependency_grouping": true,
+  "use_idiom_plans": true,
+  "use_pointer_roles": true,
+  "use_safe_signatures": true,
+  "use_static_guidance": false,
+  "use_validation_feedback": true
+}

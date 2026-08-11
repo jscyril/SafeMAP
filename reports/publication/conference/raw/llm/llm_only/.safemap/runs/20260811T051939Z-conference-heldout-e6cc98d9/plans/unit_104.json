@@ -1,0 +1,36 @@
+{
+  "analysis_backend": "unknown",
+  "candidate_decision": "unknown",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Avoid unsafe where possible"
+  ],
+  "detected_idioms": [],
+  "eligibility": "unsupported",
+  "eligibility_reasons": [],
+  "function": "cJSON_ReplaceItemInObjectCaseSensitive",
+  "internal_calls": [],
+  "original_signature": "",
+  "patterns": [
+    {
+      "confidence": 1.0,
+      "original": "C2Rust-generated function",
+      "pattern": "unguided_rewrite",
+      "replacement": "Safer idiomatic Rust"
+    }
+  ],
+  "reason": null,
+  "safety_constraints": [],
+  "source_file": "",
+  "status": "planned",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "Preserve the current Rust signature exactly",
+  "type_migrations": [],
+  "unit_id": "unit_104",
+  "validation": {},
+  "validation_requirements": [
+    "cargo check",
+    "cargo test"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "cases": [],
+  "compile": {
+    "command": [
+      "clang",
+      "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "-o",
+      "/tmp/safemap-sanitize-8ek_s1ym/c_sanitized",
+      "-lm",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-Wno-error=implicit-int"
+    ],
+    "cwd": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv",
+    "duration_seconds": 0.1645854349999354,
+    "exit_code": 1,
+    "reason": null,
+    "status": "failed",
+    "stderr": "/usr/bin/ld: /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../lib64/Scrt1.o: in function `_start':\n(.text+0x1b): undefined reference to `main'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+    "stdout": ""
+  },
+  "failed": null,
+  "generator": {
+    "name": "stdin-integer-v1",
+    "random_inputs": 1000,
+    "seed": 20260728
+  },
+  "passed": null,
+  "reason": "Clang could not build the C oracle with ASan/UBSan",
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "schema_version": "safemap.c_sanitizer_cases.v1",
+  "seed": 20260728,
+  "status": "unsupported"
+}

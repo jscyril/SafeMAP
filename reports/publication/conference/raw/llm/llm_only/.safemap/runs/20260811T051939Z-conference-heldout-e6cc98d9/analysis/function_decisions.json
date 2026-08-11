@@ -1,0 +1,3233 @@
+[
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 97,
+    "function": "cJSON_GetErrorPtr",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 94,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_57",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 107,
+    "function": "cJSON_GetStringValue",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 99,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_61",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 117,
+    "function": "cJSON_GetNumberValue",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 109,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_59",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 130,
+    "function": "cJSON_Version",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 124,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_107",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 154,
+    "function": "case_insensitive_strcmp",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "string1": [
+        "nullable_pointer"
+      ],
+      "string2": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 133,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_32",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unsafe_required",
+    "candidate_reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "end_line": 207,
+    "function": "cJSON_strdup",
+    "generated": false,
+    "legacy_eligibility": "unsafe_required",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ],
+      "string": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 188,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_3",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 238,
+    "function": "cJSON_InitHooks",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "hooks": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 209,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_63",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unsafe_required",
+    "candidate_reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "end_line": 250,
+    "function": "cJSON_New_Item",
+    "generated": false,
+    "legacy_eligibility": "unsafe_required",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 241,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_7",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 276,
+    "function": "cJSON_Delete",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 253,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_6",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 287,
+    "function": "get_decimal_point",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 279,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_80",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 408,
+    "function": "parse_number",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "input_buffer": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 307,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_81",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 427,
+    "function": "cJSON_SetNumberHelper",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 411,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_105",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 471,
+    "function": "cJSON_SetValuestring",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "object": [
+        "nullable_pointer"
+      ],
+      "valuestring": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 430,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_106",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unsafe_required",
+    "candidate_reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "end_line": 568,
+    "function": "ensure",
+    "generated": false,
+    "legacy_eligibility": "unsafe_required",
+    "pointer_roles": {
+      "p": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 485,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_89",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 581,
+    "function": "update_offset",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 571,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_88",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 588,
+    "function": "compare_double",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 584,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_34",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 658,
+    "function": "print_number",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 591,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_91",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 694,
+    "function": "parse_hex4",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "input": [
+        "array_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 661,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_77",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 816,
+    "function": "utf16_literal_to_utf8",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "input_end": [
+        "unknown_pointer"
+      ],
+      "input_pointer": [
+        "input_pointer"
+      ],
+      "output_pointer": [
+        "output_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 698,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_78",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 946,
+    "function": "parse_string",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "input_buffer": [
+        "unknown_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 819,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_79",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unsafe_required",
+    "candidate_reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "end_line": 1068,
+    "function": "print_string_ptr",
+    "generated": false,
+    "legacy_eligibility": "unsafe_required",
+    "pointer_roles": {
+      "input": [
+        "nullable_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 949,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_90",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 1074,
+    "function": "print_string",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ],
+      "p": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1071,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_92",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1108,
+    "function": "buffer_skip_whitespace",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1085,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_5",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1124,
+    "function": "skip_utf8_bom",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1111,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_83",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 1139,
+    "function": "cJSON_ParseWithOpts",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "return_parse_end": [
+        "unknown_pointer"
+      ],
+      "value": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1126,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_85",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1219,
+    "function": "cJSON_ParseWithLengthOpts",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "return_parse_end": [
+        "output_pointer"
+      ],
+      "value": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1142,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_84",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 1225,
+    "function": "cJSON_Parse",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {
+      "value": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1222,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_86",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 1230,
+    "function": "cJSON_ParseWithLength",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {
+      "value": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1227,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_87",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unsafe_required",
+    "candidate_reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "end_line": 1299,
+    "function": "print",
+    "generated": false,
+    "legacy_eligibility": "unsafe_required",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ],
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1234,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_94",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1305,
+    "function": "cJSON_Print",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1302,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_95",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1310,
+    "function": "cJSON_PrintUnformatted",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1307,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_98",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 1341,
+    "function": "cJSON_PrintBuffered",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1312,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_96",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 1360,
+    "function": "cJSON_PrintPreallocated",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "buffer": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1343,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_97",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 1415,
+    "function": "parse_value",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "input_buffer": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1363,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_82",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unsafe_required",
+    "candidate_reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "end_line": 1489,
+    "function": "print_value",
+    "generated": false,
+    "legacy_eligibility": "unsafe_required",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1418,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_93",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 1587,
+    "function": "parse_array",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "input_buffer": [
+        "unknown_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1492,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_82",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1649,
+    "function": "print_array",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1590,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_93",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 1767,
+    "function": "parse_object",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "input_buffer": [
+        "unknown_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1652,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_82",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1881,
+    "function": "print_object",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1770,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_93",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 1905,
+    "function": "cJSON_GetArraySize",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "array": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1884,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_56",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1924,
+    "function": "get_array_item",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "array": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1907,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_43",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 1934,
+    "function": "cJSON_GetArrayItem",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "array": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1926,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_55",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1966,
+    "function": "get_object_item",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "name": [
+        "nullable_pointer"
+      ],
+      "object": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1936,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_33",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1971,
+    "function": "cJSON_GetObjectItem",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "object": [
+        "input_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1968,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_47",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1976,
+    "function": "cJSON_GetObjectItemCaseSensitive",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "object": [
+        "input_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1973,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_50",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 1981,
+    "function": "cJSON_HasObjectItem",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "object": [
+        "input_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1978,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_62",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 1988,
+    "function": "suffix_object",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ],
+      "prev": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1984,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_0",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unsafe_required",
+    "candidate_reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "end_line": 2010,
+    "function": "create_reference",
+    "generated": false,
+    "legacy_eligibility": "unsafe_required",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 1991,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_14",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2043,
+    "function": "add_item_to_array",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "array": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2012,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_1",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2049,
+    "function": "cJSON_AddItemToArray",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2046,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_17",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2061,
+    "function": "cast_away_const",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2058,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_2",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2102,
+    "function": "add_item_to_object",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ],
+      "object": [
+        "nullable_pointer"
+      ],
+      "string": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2067,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_4",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2107,
+    "function": "cJSON_AddItemToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2104,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_18",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2113,
+    "function": "cJSON_AddItemToObjectCS",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2110,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_19",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2123,
+    "function": "cJSON_AddItemReferenceToArray",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "array": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2115,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_15",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2133,
+    "function": "cJSON_AddItemReferenceToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "nullable_pointer"
+      ],
+      "string": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2125,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_16",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2145,
+    "function": "cJSON_AddNullToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2135,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_21",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2157,
+    "function": "cJSON_AddTrueToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2147,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_31",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2169,
+    "function": "cJSON_AddFalseToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2159,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_13",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2181,
+    "function": "cJSON_AddBoolToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2171,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_11",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2193,
+    "function": "cJSON_AddNumberToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2183,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_23",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2205,
+    "function": "cJSON_AddStringToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2195,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_29",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2217,
+    "function": "cJSON_AddRawToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "raw": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2207,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_27",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2229,
+    "function": "cJSON_AddObjectToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2219,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_25",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2241,
+    "function": "cJSON_AddArrayToObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2231,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_9",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2277,
+    "function": "cJSON_DetachItemViaPointer",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ],
+      "parent": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2243,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_44",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 2287,
+    "function": "cJSON_DetachItemFromArray",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2279,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_45",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2292,
+    "function": "cJSON_DeleteItemFromArray",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2289,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_46",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2299,
+    "function": "cJSON_DetachItemFromObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2294,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_48",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2306,
+    "function": "cJSON_DetachItemFromObjectCaseSensitive",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2301,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_51",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2311,
+    "function": "cJSON_DeleteItemFromObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2308,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_49",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2316,
+    "function": "cJSON_DeleteItemFromObjectCaseSensitive",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2313,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_52",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 2351,
+    "function": "cJSON_InsertItemInArray",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ],
+      "newitem": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2319,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_64",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2400,
+    "function": "cJSON_ReplaceItemViaPointer",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ],
+      "parent": [
+        "nullable_pointer"
+      ],
+      "replacement": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2353,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_99",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 2410,
+    "function": "cJSON_ReplaceItemInArray",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ],
+      "newitem": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2402,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_100",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2433,
+    "function": "replace_item_in_object",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "replacement": [
+        "nullable_pointer"
+      ],
+      "string": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2412,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_102",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2438,
+    "function": "cJSON_ReplaceItemInObject",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "newitem": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2435,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_103",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 2443,
+    "function": "cJSON_ReplaceItemInObjectCaseSensitive",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "newitem": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2440,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_104",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2455,
+    "function": "cJSON_CreateNull",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2446,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_20",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2466,
+    "function": "cJSON_CreateTrue",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2457,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_30",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2477,
+    "function": "cJSON_CreateFalse",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2468,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_12",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2488,
+    "function": "cJSON_CreateBool",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2479,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_10",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 2514,
+    "function": "cJSON_CreateNumber",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2490,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_22",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2531,
+    "function": "cJSON_CreateString",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2516,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_28",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2543,
+    "function": "cJSON_CreateStringReference",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2533,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_42",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2554,
+    "function": "cJSON_CreateObjectReference",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "child": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2545,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_40",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2564,
+    "function": "cJSON_CreateArrayReference",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "child": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2556,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_36",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2581,
+    "function": "cJSON_CreateRaw",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {
+      "raw": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2566,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_26",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2592,
+    "function": "cJSON_CreateArray",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2583,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_8",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 2603,
+    "function": "cJSON_CreateObject",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2594,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_24",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 2644,
+    "function": "cJSON_CreateIntArray",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "numbers": [
+        "array_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2606,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_39",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 2684,
+    "function": "cJSON_CreateFloatArray",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "numbers": [
+        "array_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2646,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_38",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 2724,
+    "function": "cJSON_CreateDoubleArray",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "numbers": [
+        "array_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2686,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_37",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 2764,
+    "function": "cJSON_CreateStringArray",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "strings": [
+        "array_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2726,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_41",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2772,
+    "function": "cJSON_Duplicate",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2769,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_54",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2858,
+    "function": "cJSON_Duplicate_rec",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2774,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_53",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2871,
+    "function": "skip_oneline_comment",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "input": [
+        "output_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2860,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_73",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2885,
+    "function": "skip_multiline_comment",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "input": [
+        "output_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2873,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_74",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Multiple mutable pointer-like parameters create unresolved aliasing risk"
+    ],
+    "end_line": 2907,
+    "function": "minify_string",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "input": [
+        "output_pointer"
+      ],
+      "output": [
+        "output_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2887,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_75",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2955,
+    "function": "cJSON_Minify",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "json": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2909,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_76",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2965,
+    "function": "cJSON_IsInvalid",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2957,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_68",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2975,
+    "function": "cJSON_IsFalse",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2967,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_67",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2985,
+    "function": "cJSON_IsTrue",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2977,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_72",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 2996,
+    "function": "cJSON_IsBool",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2988,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_66",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 3005,
+    "function": "cJSON_IsNull",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 2997,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_69",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 3015,
+    "function": "cJSON_IsNumber",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 3007,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_58",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 3025,
+    "function": "cJSON_IsString",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 3017,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_60",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 3035,
+    "function": "cJSON_IsArray",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 3027,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_65",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 3045,
+    "function": "cJSON_IsObject",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 3037,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_70",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 3055,
+    "function": "cJSON_IsRaw",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 3047,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_71",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 3180,
+    "function": "cJSON_Compare",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "a": [
+        "nullable_pointer"
+      ],
+      "b": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 3057,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_35",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 3185,
+    "function": "cJSON_malloc",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 3182,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_108",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 3191,
+    "function": "cJSON_free",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "cjson",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+    "start_line": 3187,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_101",
+    "unsupported_features": []
+  }
+]

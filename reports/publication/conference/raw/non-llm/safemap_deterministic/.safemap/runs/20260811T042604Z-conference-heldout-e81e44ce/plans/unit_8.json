@@ -1,0 +1,71 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "manual_refactor_required",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.8,
+      "evidence": "C string API is called",
+      "kind": "c_string",
+      "rust_type": "Use CStr/CString at FFI boundaries or str/String internally",
+      "variables": [
+        "string"
+      ]
+    }
+  ],
+  "eligibility": "requires_manual_refactor",
+  "eligibility_reasons": [
+    "Pointer role, ownership, or aliasing could not be resolved statically"
+  ],
+  "function": "ini_parse_string",
+  "internal_calls": [
+    "ini_parse_string_length"
+  ],
+  "original_signature": "int ini_parse_string(const char * string, int (*)(void *, const char *, const char *, const char *) handler, void * user)",
+  "patterns": [
+    {
+      "confidence": 0.8,
+      "original": "string",
+      "pattern": "c_string",
+      "replacement": "Use CStr/CString at FFI boundaries or str/String internally"
+    }
+  ],
+  "reason": "Pointer role, ownership, or aliasing could not be resolved statically",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "pub fn ini_parse_string(string: &str, handler: &mut int_void_char_char_char, user: &mut ()) -> i32",
+  "type_migrations": [
+    {
+      "c": "string",
+      "reason": "C string API is called",
+      "rust": "Use CStr/CString at FFI boundaries or str/String internally"
+    }
+  ],
+  "unit_id": "unit_8",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

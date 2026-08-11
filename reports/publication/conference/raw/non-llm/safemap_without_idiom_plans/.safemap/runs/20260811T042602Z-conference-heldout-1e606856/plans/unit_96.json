@@ -1,0 +1,58 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "unknown",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.75,
+      "evidence": "item is a const pointer",
+      "kind": "struct_pointer",
+      "rust_type": "Use a reference or owned struct",
+      "variables": [
+        "item"
+      ]
+    }
+  ],
+  "eligibility": "unsupported",
+  "eligibility_reasons": [
+    "Unsupported C construct detected"
+  ],
+  "function": "cJSON_PrintBuffered",
+  "internal_calls": [
+    "print_value"
+  ],
+  "original_signature": "char * cJSON_PrintBuffered(const struct cJSON * item, int prebuffer, int fmt)",
+  "patterns": [],
+  "reason": "Unsupported C construct detected",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "pub fn cJSON_PrintBuffered(item: &cJSON, prebuffer: i32, fmt: i32) -> i8",
+  "type_migrations": [],
+  "unit_id": "unit_96",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

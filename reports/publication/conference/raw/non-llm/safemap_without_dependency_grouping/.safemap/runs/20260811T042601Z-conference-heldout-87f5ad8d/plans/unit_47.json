@@ -1,0 +1,86 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "unsafe_required",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.95,
+      "evidence": "item is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "item"
+      ]
+    },
+    {
+      "confidence": 0.75,
+      "evidence": "hooks is a const pointer",
+      "kind": "struct_pointer",
+      "rust_type": "Use a reference or owned struct",
+      "variables": [
+        "hooks"
+      ]
+    }
+  ],
+  "eligibility": "unsafe_required",
+  "eligibility_reasons": [
+    "Function depends on operations that normally require unsafe Rust or FFI"
+  ],
+  "function": "create_reference",
+  "internal_calls": [
+    "cJSON_New_Item"
+  ],
+  "original_signature": "struct cJSON * create_reference(const struct cJSON * item, const struct internal_hooks *const hooks)",
+  "patterns": [
+    {
+      "confidence": 0.95,
+      "original": "item",
+      "pattern": "nullable_pointer",
+      "replacement": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "confidence": 0.75,
+      "original": "hooks",
+      "pattern": "struct_pointer",
+      "replacement": "Use a reference or owned struct"
+    }
+  ],
+  "reason": "Function depends on operations that normally require unsafe Rust or FFI",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "pub fn create_reference(item: Option<&cJSON>, hooks: &internal_hooks) -> cJSON",
+  "type_migrations": [
+    {
+      "c": "item",
+      "reason": "item is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    }
+  ],
+  "unit_id": "unit_47",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

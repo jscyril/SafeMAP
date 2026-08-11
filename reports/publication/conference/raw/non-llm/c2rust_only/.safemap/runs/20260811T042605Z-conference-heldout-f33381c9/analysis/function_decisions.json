@@ -1,0 +1,319 @@
+[
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 54,
+    "function": "ini_rstrip",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "end": [
+        "output_pointer"
+      ],
+      "s": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 49,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_2",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 62,
+    "function": "ini_lskip",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "s": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 57,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_1",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 82,
+    "function": "ini_find_chars_or_comment",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "chars": [
+        "nullable_pointer"
+      ],
+      "s": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 67,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_0",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 94,
+    "function": "ini_strncpy0",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "dest": [
+        "array_pointer"
+      ],
+      "src": [
+        "array_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 86,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_3",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 263,
+    "function": "ini_parse_stream",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "handler": [
+        "unknown_pointer"
+      ],
+      "reader": [
+        "unknown_pointer"
+      ],
+      "stream": [
+        "unknown_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 97,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_4",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 269,
+    "function": "ini_parse_file",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "file": [
+        "unknown_pointer"
+      ],
+      "handler": [
+        "unknown_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 266,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_5",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unsafe_required",
+    "candidate_reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "end_line": 283,
+    "function": "ini_parse",
+    "generated": false,
+    "legacy_eligibility": "unsafe_required",
+    "pointer_roles": {
+      "filename": [
+        "input_pointer"
+      ],
+      "handler": [
+        "unknown_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 272,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_6",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 310,
+    "function": "ini_reader_string",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "str": [
+        "unknown_pointer"
+      ],
+      "stream": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 287,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_9",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 315,
+    "function": "ini_parse_string",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "handler": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 313,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_8",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 326,
+    "function": "ini_parse_string_length",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "handler": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+    "start_line": 318,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_7",
+    "unsupported_features": []
+  }
+]

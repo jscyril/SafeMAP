@@ -1,0 +1,46 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [],
+  "eligibility": "safe_translatable",
+  "eligibility_reasons": [
+    "No unsupported constructs or unresolved pointer hazards detected"
+  ],
+  "function": "cJSON_malloc",
+  "internal_calls": [],
+  "original_signature": "void * cJSON_malloc(unsigned long size)",
+  "patterns": [],
+  "reason": null,
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "planned",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn cJSON_malloc(size: u64) -> ()",
+  "type_migrations": [],
+  "unit_id": "unit_108",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

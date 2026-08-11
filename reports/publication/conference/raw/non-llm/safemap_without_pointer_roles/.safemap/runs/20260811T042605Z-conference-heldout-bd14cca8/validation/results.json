@@ -1,0 +1,144 @@
+{
+  "c_sanitizers": {
+    "command": {
+      "command": [
+        "clang",
+        "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+        "-o",
+        "/tmp/safemap-sanitize-1tmlppa0/c_sanitized",
+        "-lm",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-Wno-error=implicit-int"
+      ],
+      "cwd": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih",
+      "duration_seconds": 0.14821755699995265,
+      "exit_code": 1,
+      "reason": null,
+      "status": "failed",
+      "stderr": "/usr/bin/ld: /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../lib64/Scrt1.o: in function `_start':\n(.text+0x1b): undefined reference to `main'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+      "stdout": ""
+    },
+    "errors": [],
+    "failed": null,
+    "passed": null,
+    "reason": "Clang could not build the C oracle with ASan/UBSan",
+    "status": "unsupported"
+  },
+  "clippy": {
+    "command": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--message-format=json",
+        "--all-targets"
+      ],
+      "cwd": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust",
+      "duration_seconds": 0.1328204289993664,
+      "exit_code": 101,
+      "reason": null,
+      "status": "failed",
+      "stderr": "    Checking inih v0.1.0 (/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust)\nerror: could not compile `inih` (lib) due to 1 previous error\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `inih` (lib test) due to 1 previous error\n",
+      "stdout": "{\"reason\":\"compiler-message\",\"package_id\":\"path+file:///mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust#inih@0.1.0\",\"manifest_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"inih\",\"src_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"message\":{\"rendered\":\"error[E0308]: mismatched types\\n --> src/lib.rs:4:5\\n  |\\n3 | pub fn ini_strncpy0(dest: &mut i8, src: &i8, size: u64) -> i8 {\\n  |                                                            -- expected `i8` because of return type\\n4 |     dest\\n  |     ^^^^ expected `i8`, found `&mut i8`\\n  |\\nhelp: consider dereferencing the borrow\\n  |\\n4 |     *dest\\n  |     +\\n\\n\",\"$message_type\":\"diagnostic\",\"children\":[{\"children\":[],\"code\":null,\"level\":\"help\",\"message\":\"consider dereferencing the borrow\",\"rendered\":null,\"spans\":[{\"byte_end\":93,\"byte_start\":93,\"column_end\":5,\"column_start\":5,\"expansion\":null,\"file_name\":\"src/lib.rs\",\"is_primary\":true,\"label\":null,\"line_end\":4,\"line_start\":4,\"suggested_replacement\":\"*\",\"suggestion_applicability\":\"MachineApplicable\",\"text\":[{\"highlight_end\":5,\"highlight_start\":5,\"text\":\"    dest\"}]}]}],\"level\":\"error\",\"message\":\"mismatched types\",\"spans\":[{\"byte_end\":97,\"byte_start\":93,\"column_end\":9,\"column_start\":5,\"expansion\":null,\"file_name\":\"src/lib.rs\",\"is_primary\":true,\"label\":\"expected `i8`, found `&mut i8`\",\"line_end\":4,\"line_start\":4,\"suggested_replacement\":null,\"suggestion_applicability\":null,\"text\":[{\"highlight_end\":9,\"highlight_start\":5,\"text\":\"    dest\"}]},{\"byte_end\":86,\"byte_start\":84,\"column_end\":62,\"column_start\":60,\"expansion\":null,\"file_name\":\"src/lib.rs\",\"is_primary\":false,\"label\":\"expected `i8` because of return type\",\"line_end\":3,\"line_start\":3,\"suggested_replacement\":null,\"suggestion_applicability\":null,\"text\":[{\"highlight_end\":62,\"highlight_start\":60,\"text\":\"pub fn ini_strncpy0(dest: &mut i8, src: &i8, size: u64) -> i8 {\"}]}],\"code\":{\"code\":\"E0308\",\"explanation\":\"Expected type did not match the received type.\\n\\nErroneous code examples:\\n\\n```compile_fail,E0308\\nfn plus_one(x: i32) -> i32 {\\n    x + 1\\n}\\n\\nplus_one(\\\"Not a number\\\");\\n//       ^^^^^^^^^^^^^^ expected `i32`, found `&str`\\n\\nif \\\"Not a bool\\\" {\\n// ^^^^^^^^^^^^ expected `bool`, found `&str`\\n}\\n\\nlet x: f32 = \\\"Not a float\\\";\\n//     ---   ^^^^^^^^^^^^^ expected `f32`, found `&str`\\n//     |\\n//     expected due to this\\n```\\n\\nThis error occurs when an expression was used in a place where the compiler\\nexpected an expression of a different type. It can occur in several cases, the\\nmost common being when calling a function and passing an argument which has a\\ndifferent type than the matching type in the function declaration.\\n\"}}}\n{\"reason\":\"compiler-message\",\"package_id\":\"path+file:///mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust#inih@0.1.0\",\"manifest_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"inih\",\"src_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"message\":{\"rendered\":\"For more information about this error, try `rustc --explain E0308`.\\n\",\"$message_type\":\"diagnostic\",\"children\":[],\"level\":\"failure-note\",\"message\":\"For more information about this error, try `rustc --explain E0308`.\",\"spans\":[],\"code\":null}}\n{\"reason\":\"compiler-message\",\"package_id\":\"path+file:///mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust#inih@0.1.0\",\"manifest_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"inih\",\"src_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"message\":{\"rendered\":\"error[E0308]: mismatched types\\n --> src/lib.rs:4:5\\n  |\\n3 | pub fn ini_strncpy0(dest: &mut i8, src: &i8, size: u64) -> i8 {\\n  |                                                            -- expected `i8` because of return type\\n4 |     dest\\n  |     ^^^^ expected `i8`, found `&mut i8`\\n  |\\nhelp: consider dereferencing the borrow\\n  |\\n4 |     *dest\\n  |     +\\n\\n\",\"$message_type\":\"diagnostic\",\"children\":[{\"children\":[],\"code\":null,\"level\":\"help\",\"message\":\"consider dereferencing the borrow\",\"rendered\":null,\"spans\":[{\"byte_end\":93,\"byte_start\":93,\"column_end\":5,\"column_start\":5,\"expansion\":null,\"file_name\":\"src/lib.rs\",\"is_primary\":true,\"label\":null,\"line_end\":4,\"line_start\":4,\"suggested_replacement\":\"*\",\"suggestion_applicability\":\"MachineApplicable\",\"text\":[{\"highlight_end\":5,\"highlight_start\":5,\"text\":\"    dest\"}]}]}],\"level\":\"error\",\"message\":\"mismatched types\",\"spans\":[{\"byte_end\":97,\"byte_start\":93,\"column_end\":9,\"column_start\":5,\"expansion\":null,\"file_name\":\"src/lib.rs\",\"is_primary\":true,\"label\":\"expected `i8`, found `&mut i8`\",\"line_end\":4,\"line_start\":4,\"suggested_replacement\":null,\"suggestion_applicability\":null,\"text\":[{\"highlight_end\":9,\"highlight_start\":5,\"text\":\"    dest\"}]},{\"byte_end\":86,\"byte_start\":84,\"column_end\":62,\"column_start\":60,\"expansion\":null,\"file_name\":\"src/lib.rs\",\"is_primary\":false,\"label\":\"expected `i8` because of return type\",\"line_end\":3,\"line_start\":3,\"suggested_replacement\":null,\"suggestion_applicability\":null,\"text\":[{\"highlight_end\":62,\"highlight_start\":60,\"text\":\"pub fn ini_strncpy0(dest: &mut i8, src: &i8, size: u64) -> i8 {\"}]}],\"code\":{\"code\":\"E0308\",\"explanation\":\"Expected type did not match the received type.\\n\\nErroneous code examples:\\n\\n```compile_fail,E0308\\nfn plus_one(x: i32) -> i32 {\\n    x + 1\\n}\\n\\nplus_one(\\\"Not a number\\\");\\n//       ^^^^^^^^^^^^^^ expected `i32`, found `&str`\\n\\nif \\\"Not a bool\\\" {\\n// ^^^^^^^^^^^^ expected `bool`, found `&str`\\n}\\n\\nlet x: f32 = \\\"Not a float\\\";\\n//     ---   ^^^^^^^^^^^^^ expected `f32`, found `&str`\\n//     |\\n//     expected due to this\\n```\\n\\nThis error occurs when an expression was used in a place where the compiler\\nexpected an expression of a different type. It can occur in several cases, the\\nmost common being when calling a function and passing an argument which has a\\ndifferent type than the matching type in the function declaration.\\n\"}}}\n{\"reason\":\"compiler-message\",\"package_id\":\"path+file:///mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust#inih@0.1.0\",\"manifest_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"inih\",\"src_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"message\":{\"rendered\":\"For more information about this error, try `rustc --explain E0308`.\\n\",\"$message_type\":\"diagnostic\",\"children\":[],\"level\":\"failure-note\",\"message\":\"For more information about this error, try `rustc --explain E0308`.\",\"spans\":[],\"code\":null}}\n{\"reason\":\"build-finished\",\"success\":false}\n"
+    },
+    "errors": [],
+    "failed": null,
+    "passed": null,
+    "reason": null,
+    "status": "failed"
+  },
+  "compile": {
+    "command": {
+      "command": [
+        "cargo",
+        "check",
+        "--message-format=json"
+      ],
+      "cwd": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust",
+      "duration_seconds": 0.09932051400028286,
+      "exit_code": 101,
+      "reason": null,
+      "status": "failed",
+      "stderr": "    Checking inih v0.1.0 (/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust)\nerror: could not compile `inih` (lib) due to 1 previous error\n",
+      "stdout": "{\"reason\":\"compiler-message\",\"package_id\":\"path+file:///mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust#inih@0.1.0\",\"manifest_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"inih\",\"src_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"message\":{\"rendered\":\"error[E0308]: mismatched types\\n --> src/lib.rs:4:5\\n  |\\n3 | pub fn ini_strncpy0(dest: &mut i8, src: &i8, size: u64) -> i8 {\\n  |                                                            -- expected `i8` because of return type\\n4 |     dest\\n  |     ^^^^ expected `i8`, found `&mut i8`\\n  |\\nhelp: consider dereferencing the borrow\\n  |\\n4 |     *dest\\n  |     +\\n\\n\",\"$message_type\":\"diagnostic\",\"children\":[{\"children\":[],\"code\":null,\"level\":\"help\",\"message\":\"consider dereferencing the borrow\",\"rendered\":null,\"spans\":[{\"byte_end\":93,\"byte_start\":93,\"column_end\":5,\"column_start\":5,\"expansion\":null,\"file_name\":\"src/lib.rs\",\"is_primary\":true,\"label\":null,\"line_end\":4,\"line_start\":4,\"suggested_replacement\":\"*\",\"suggestion_applicability\":\"MachineApplicable\",\"text\":[{\"highlight_end\":5,\"highlight_start\":5,\"text\":\"    dest\"}]}]}],\"level\":\"error\",\"message\":\"mismatched types\",\"spans\":[{\"byte_end\":97,\"byte_start\":93,\"column_end\":9,\"column_start\":5,\"expansion\":null,\"file_name\":\"src/lib.rs\",\"is_primary\":true,\"label\":\"expected `i8`, found `&mut i8`\",\"line_end\":4,\"line_start\":4,\"suggested_replacement\":null,\"suggestion_applicability\":null,\"text\":[{\"highlight_end\":9,\"highlight_start\":5,\"text\":\"    dest\"}]},{\"byte_end\":86,\"byte_start\":84,\"column_end\":62,\"column_start\":60,\"expansion\":null,\"file_name\":\"src/lib.rs\",\"is_primary\":false,\"label\":\"expected `i8` because of return type\",\"line_end\":3,\"line_start\":3,\"suggested_replacement\":null,\"suggestion_applicability\":null,\"text\":[{\"highlight_end\":62,\"highlight_start\":60,\"text\":\"pub fn ini_strncpy0(dest: &mut i8, src: &i8, size: u64) -> i8 {\"}]}],\"code\":{\"code\":\"E0308\",\"explanation\":\"Expected type did not match the received type.\\n\\nErroneous code examples:\\n\\n```compile_fail,E0308\\nfn plus_one(x: i32) -> i32 {\\n    x + 1\\n}\\n\\nplus_one(\\\"Not a number\\\");\\n//       ^^^^^^^^^^^^^^ expected `i32`, found `&str`\\n\\nif \\\"Not a bool\\\" {\\n// ^^^^^^^^^^^^ expected `bool`, found `&str`\\n}\\n\\nlet x: f32 = \\\"Not a float\\\";\\n//     ---   ^^^^^^^^^^^^^ expected `f32`, found `&str`\\n//     |\\n//     expected due to this\\n```\\n\\nThis error occurs when an expression was used in a place where the compiler\\nexpected an expression of a different type. It can occur in several cases, the\\nmost common being when calling a function and passing an argument which has a\\ndifferent type than the matching type in the function declaration.\\n\"}}}\n{\"reason\":\"compiler-message\",\"package_id\":\"path+file:///mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust#inih@0.1.0\",\"manifest_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"inih\",\"src_path\":\"/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"message\":{\"rendered\":\"For more information about this error, try `rustc --explain E0308`.\\n\",\"$message_type\":\"diagnostic\",\"children\":[],\"level\":\"failure-note\",\"message\":\"For more information about this error, try `rustc --explain E0308`.\",\"spans\":[],\"code\":null}}\n{\"reason\":\"build-finished\",\"success\":false}\n"
+    },
+    "errors": [
+      {
+        "code": "E0308",
+        "column": 5,
+        "file": "src/lib.rs",
+        "level": "error",
+        "line": 4,
+        "message": "mismatched types",
+        "rendered": "error[E0308]: mismatched types\n --> src/lib.rs:4:5\n  |\n3 | pub fn ini_strncpy0(dest: &mut i8, src: &i8, size: u64) -> i8 {\n  |                                                            -- expected `i8` because of return type\n4 |     dest\n  |     ^^^^ expected `i8`, found `&mut i8`\n  |\nhelp: consider dereferencing the borrow\n  |\n4 |     *dest\n  |     +\n\n"
+      },
+      {
+        "code": null,
+        "column": null,
+        "file": null,
+        "level": "failure-note",
+        "line": null,
+        "message": "For more information about this error, try `rustc --explain E0308`.",
+        "rendered": "For more information about this error, try `rustc --explain E0308`.\n"
+      }
+    ],
+    "failed": null,
+    "passed": null,
+    "reason": null,
+    "status": "failed"
+  },
+  "differential": {
+    "command": {
+      "command": [
+        "clang",
+        "-Wno-error=implicit-int",
+        "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+        "-o",
+        "/tmp/safemap-diff-oitoszeu/original",
+        "-lm"
+      ],
+      "cwd": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih",
+      "duration_seconds": 0.07405424299940933,
+      "exit_code": 1,
+      "reason": null,
+      "status": "failed",
+      "stderr": "/usr/bin/ld: /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../lib64/Scrt1.o: in function `_start':\n(.text+0x1b): undefined reference to `main'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+      "stdout": ""
+    },
+    "errors": [],
+    "failed": null,
+    "passed": null,
+    "reason": "Could not compile original C program",
+    "status": "failed"
+  },
+  "miri": {
+    "command": null,
+    "errors": [],
+    "failed": null,
+    "passed": null,
+    "reason": "Disabled",
+    "status": "skipped"
+  },
+  "tests": {
+    "command": {
+      "command": [
+        "cargo",
+        "test",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust",
+      "duration_seconds": 0.0639416859994526,
+      "exit_code": 101,
+      "reason": null,
+      "status": "failed",
+      "stderr": "   Compiling inih v0.1.0 (/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/non-llm/safemap_without_pointer_roles/.safemap/runs/20260811T042605Z-conference-heldout-bd14cca8/final/rust)\nerror[E0308]: mismatched types\n --> src/lib.rs:4:5\n  |\n3 | pub fn ini_strncpy0(dest: &mut i8, src: &i8, size: u64) -> i8 {\n  |                                                            -- expected `i8` because of return type\n4 |     dest\n  |     ^^^^ expected `i8`, found `&mut i8`\n  |\nhelp: consider dereferencing the borrow\n  |\n4 |     *dest\n  |     +\n\nFor more information about this error, try `rustc --explain E0308`.\nerror: could not compile `inih` (lib test) due to 1 previous error\nwarning: build failed, waiting for other jobs to finish...\nerror: could not compile `inih` (lib) due to 1 previous error\n",
+      "stdout": ""
+    },
+    "errors": [],
+    "failed": 0,
+    "passed": 0,
+    "reason": null,
+    "status": "failed"
+  }
+}

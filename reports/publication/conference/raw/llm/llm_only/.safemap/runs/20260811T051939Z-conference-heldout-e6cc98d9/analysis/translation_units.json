@@ -1,0 +1,1535 @@
+[
+  {
+    "c_function": "cJSON_strdup",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_strdup"
+    ],
+    "priority": 0.6,
+    "reason": "nullable_pointer, struct_pointer",
+    "rust_function": "cJSON_strdup",
+    "unit_id": "unit_3"
+  },
+  {
+    "c_function": "case_insensitive_strcmp",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "case_insensitive_strcmp"
+    ],
+    "priority": 0.52,
+    "reason": "nullable_pointer",
+    "rust_function": "case_insensitive_strcmp",
+    "unit_id": "unit_32"
+  },
+  {
+    "c_function": "cJSON_DetachItemViaPointer",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_DetachItemViaPointer"
+    ],
+    "priority": 0.52,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_DetachItemViaPointer",
+    "unit_id": "unit_44"
+  },
+  {
+    "c_function": "minify_string",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "minify_string"
+    ],
+    "priority": 0.52,
+    "reason": "output_parameter",
+    "rust_function": "minify_string",
+    "unit_id": "unit_75"
+  },
+  {
+    "c_function": "cJSON_IsNumber",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsNumber"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsNumber",
+    "unit_id": "unit_58"
+  },
+  {
+    "c_function": "cJSON_IsString",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsString"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsString",
+    "unit_id": "unit_60"
+  },
+  {
+    "c_function": "cJSON_IsArray",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsArray"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsArray",
+    "unit_id": "unit_65"
+  },
+  {
+    "c_function": "cJSON_IsBool",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsBool"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsBool",
+    "unit_id": "unit_66"
+  },
+  {
+    "c_function": "cJSON_IsFalse",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsFalse"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsFalse",
+    "unit_id": "unit_67"
+  },
+  {
+    "c_function": "cJSON_IsInvalid",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsInvalid"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsInvalid",
+    "unit_id": "unit_68"
+  },
+  {
+    "c_function": "cJSON_IsNull",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsNull"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsNull",
+    "unit_id": "unit_69"
+  },
+  {
+    "c_function": "cJSON_IsObject",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsObject"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsObject",
+    "unit_id": "unit_70"
+  },
+  {
+    "c_function": "cJSON_IsRaw",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsRaw"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsRaw",
+    "unit_id": "unit_71"
+  },
+  {
+    "c_function": "cJSON_IsTrue",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_IsTrue"
+    ],
+    "priority": 0.48,
+    "reason": "boolean_int, nullable_pointer",
+    "rust_function": "cJSON_IsTrue",
+    "unit_id": "unit_72"
+  },
+  {
+    "c_function": "suffix_object",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "suffix_object"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "suffix_object",
+    "unit_id": "unit_0"
+  },
+  {
+    "c_function": "get_array_item",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "get_array_item"
+    ],
+    "priority": 0.4,
+    "reason": "nullable_pointer",
+    "rust_function": "get_array_item",
+    "unit_id": "unit_43"
+  },
+  {
+    "c_function": "buffer_skip_whitespace",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "buffer_skip_whitespace"
+    ],
+    "priority": 0.4,
+    "reason": "nullable_pointer",
+    "rust_function": "buffer_skip_whitespace",
+    "unit_id": "unit_5"
+  },
+  {
+    "c_function": "cJSON_GetArraySize",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_GetArraySize"
+    ],
+    "priority": 0.4,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_GetArraySize",
+    "unit_id": "unit_56"
+  },
+  {
+    "c_function": "cJSON_InitHooks",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_InitHooks"
+    ],
+    "priority": 0.4,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_InitHooks",
+    "unit_id": "unit_63"
+  },
+  {
+    "c_function": "cJSON_New_Item",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_New_Item"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_New_Item",
+    "unit_id": "unit_7"
+  },
+  {
+    "c_function": "skip_oneline_comment",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "skip_oneline_comment"
+    ],
+    "priority": 0.4,
+    "reason": "output_parameter",
+    "rust_function": "skip_oneline_comment",
+    "unit_id": "unit_73"
+  },
+  {
+    "c_function": "skip_multiline_comment",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "skip_multiline_comment"
+    ],
+    "priority": 0.4,
+    "reason": "output_parameter",
+    "rust_function": "skip_multiline_comment",
+    "unit_id": "unit_74"
+  },
+  {
+    "c_function": "skip_utf8_bom",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "skip_utf8_bom"
+    ],
+    "priority": 0.4,
+    "reason": "nullable_pointer",
+    "rust_function": "skip_utf8_bom",
+    "unit_id": "unit_83"
+  },
+  {
+    "c_function": "update_offset",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "update_offset"
+    ],
+    "priority": 0.4,
+    "reason": "nullable_pointer",
+    "rust_function": "update_offset",
+    "unit_id": "unit_88"
+  },
+  {
+    "c_function": "ensure",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ensure"
+    ],
+    "priority": 0.4,
+    "reason": "nullable_pointer",
+    "rust_function": "ensure",
+    "unit_id": "unit_89"
+  },
+  {
+    "c_function": "cJSON_free",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_free"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_free",
+    "unit_id": "unit_101"
+  },
+  {
+    "c_function": "cJSON_SetNumberHelper",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_SetNumberHelper"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_SetNumberHelper",
+    "unit_id": "unit_105"
+  },
+  {
+    "c_function": "cast_away_const",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cast_away_const"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cast_away_const",
+    "unit_id": "unit_2"
+  },
+  {
+    "c_function": "cJSON_Delete",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_Delete"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_Delete",
+    "unit_id": "unit_6"
+  },
+  {
+    "c_function": "parse_hex4",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "parse_hex4"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "parse_hex4",
+    "unit_id": "unit_77"
+  },
+  {
+    "c_function": "compare_double",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "compare_double"
+    ],
+    "priority": 0.28,
+    "reason": "boolean_int",
+    "rust_function": "compare_double",
+    "unit_id": "unit_34"
+  },
+  {
+    "c_function": "cJSON_Version",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_Version"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_Version",
+    "unit_id": "unit_107"
+  },
+  {
+    "c_function": "cJSON_malloc",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_malloc"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_malloc",
+    "unit_id": "unit_108"
+  },
+  {
+    "c_function": "cJSON_GetErrorPtr",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "cJSON_GetErrorPtr"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_GetErrorPtr",
+    "unit_id": "unit_57"
+  },
+  {
+    "c_function": "get_decimal_point",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "get_decimal_point"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "get_decimal_point",
+    "unit_id": "unit_80"
+  },
+  {
+    "c_function": "utf16_literal_to_utf8",
+    "dependencies": [
+      "unit_77"
+    ],
+    "kind": "function",
+    "members": [
+      "utf16_literal_to_utf8"
+    ],
+    "priority": 0.64,
+    "reason": "output_parameter",
+    "rust_function": "utf16_literal_to_utf8",
+    "unit_id": "unit_78"
+  },
+  {
+    "c_function": "cJSON_ReplaceItemViaPointer",
+    "dependencies": [
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_ReplaceItemViaPointer"
+    ],
+    "priority": 0.64,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_ReplaceItemViaPointer",
+    "unit_id": "unit_99"
+  },
+  {
+    "c_function": "cJSON_SetValuestring",
+    "dependencies": [
+      "unit_101",
+      "unit_3"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_SetValuestring"
+    ],
+    "priority": 0.6,
+    "reason": "c_string, nullable_pointer",
+    "rust_function": "cJSON_SetValuestring",
+    "unit_id": "unit_106"
+  },
+  {
+    "c_function": "create_reference",
+    "dependencies": [
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "create_reference"
+    ],
+    "priority": 0.6,
+    "reason": "nullable_pointer, struct_pointer",
+    "rust_function": "create_reference",
+    "unit_id": "unit_14"
+  },
+  {
+    "c_function": "get_object_item",
+    "dependencies": [
+      "unit_32"
+    ],
+    "kind": "function",
+    "members": [
+      "get_object_item"
+    ],
+    "priority": 0.6,
+    "reason": "c_string, nullable_pointer",
+    "rust_function": "get_object_item",
+    "unit_id": "unit_33"
+  },
+  {
+    "c_function": "print_number",
+    "dependencies": [
+      "unit_34",
+      "unit_80",
+      "unit_89"
+    ],
+    "kind": "function",
+    "members": [
+      "print_number"
+    ],
+    "priority": 0.6,
+    "reason": "nullable_pointer, struct_pointer",
+    "rust_function": "print_number",
+    "unit_id": "unit_91"
+  },
+  {
+    "c_function": "add_item_to_array",
+    "dependencies": [
+      "unit_0"
+    ],
+    "kind": "function",
+    "members": [
+      "add_item_to_array"
+    ],
+    "priority": 0.52,
+    "reason": "nullable_pointer",
+    "rust_function": "add_item_to_array",
+    "unit_id": "unit_1"
+  },
+  {
+    "c_function": "parse_number",
+    "dependencies": [
+      "unit_80"
+    ],
+    "kind": "function",
+    "members": [
+      "parse_number"
+    ],
+    "priority": 0.52,
+    "reason": "nullable_pointer",
+    "rust_function": "parse_number",
+    "unit_id": "unit_81"
+  },
+  {
+    "c_function": "print_string_ptr",
+    "dependencies": [
+      "unit_89"
+    ],
+    "kind": "function",
+    "members": [
+      "print_string_ptr"
+    ],
+    "priority": 0.52,
+    "reason": "nullable_pointer",
+    "rust_function": "print_string_ptr",
+    "unit_id": "unit_90"
+  },
+  {
+    "c_function": "cJSON_CreateArrayReference",
+    "dependencies": [
+      "unit_2",
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateArrayReference"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_CreateArrayReference",
+    "unit_id": "unit_36"
+  },
+  {
+    "c_function": "cJSON_CreateObjectReference",
+    "dependencies": [
+      "unit_2",
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateObjectReference"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_CreateObjectReference",
+    "unit_id": "unit_40"
+  },
+  {
+    "c_function": "cJSON_Duplicate_rec",
+    "dependencies": [
+      "unit_3",
+      "unit_6",
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_Duplicate_rec"
+    ],
+    "priority": 0.4,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_Duplicate_rec",
+    "unit_id": "unit_53"
+  },
+  {
+    "c_function": "cJSON_GetArrayItem",
+    "dependencies": [
+      "unit_43"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_GetArrayItem"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_GetArrayItem",
+    "unit_id": "unit_55"
+  },
+  {
+    "c_function": "cJSON_GetNumberValue",
+    "dependencies": [
+      "unit_58"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_GetNumberValue"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_GetNumberValue",
+    "unit_id": "unit_59"
+  },
+  {
+    "c_function": "cJSON_GetStringValue",
+    "dependencies": [
+      "unit_60"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_GetStringValue"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_GetStringValue",
+    "unit_id": "unit_61"
+  },
+  {
+    "c_function": "cJSON_Minify",
+    "dependencies": [
+      "unit_73",
+      "unit_74",
+      "unit_75"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_Minify"
+    ],
+    "priority": 0.4,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_Minify",
+    "unit_id": "unit_76"
+  },
+  {
+    "c_function": "cJSON_CreateRaw",
+    "dependencies": [
+      "unit_3",
+      "unit_6",
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateRaw"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateRaw",
+    "unit_id": "unit_26"
+  },
+  {
+    "c_function": "cJSON_CreateString",
+    "dependencies": [
+      "unit_3",
+      "unit_6",
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateString"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateString",
+    "unit_id": "unit_28"
+  },
+  {
+    "c_function": "cJSON_CreateStringReference",
+    "dependencies": [
+      "unit_2",
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateStringReference"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateStringReference",
+    "unit_id": "unit_42"
+  },
+  {
+    "c_function": "cJSON_DetachItemFromArray",
+    "dependencies": [
+      "unit_43",
+      "unit_44"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_DetachItemFromArray"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_DetachItemFromArray",
+    "unit_id": "unit_45"
+  },
+  {
+    "c_function": "cJSON_CreateBool",
+    "dependencies": [
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateBool"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateBool",
+    "unit_id": "unit_10"
+  },
+  {
+    "c_function": "cJSON_CreateFalse",
+    "dependencies": [
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateFalse"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateFalse",
+    "unit_id": "unit_12"
+  },
+  {
+    "c_function": "cJSON_CreateNull",
+    "dependencies": [
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateNull"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateNull",
+    "unit_id": "unit_20"
+  },
+  {
+    "c_function": "cJSON_CreateNumber",
+    "dependencies": [
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateNumber"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateNumber",
+    "unit_id": "unit_22"
+  },
+  {
+    "c_function": "cJSON_CreateObject",
+    "dependencies": [
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateObject"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateObject",
+    "unit_id": "unit_24"
+  },
+  {
+    "c_function": "cJSON_CreateTrue",
+    "dependencies": [
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateTrue"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateTrue",
+    "unit_id": "unit_30"
+  },
+  {
+    "c_function": "cJSON_CreateArray",
+    "dependencies": [
+      "unit_7"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateArray"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_CreateArray",
+    "unit_id": "unit_8"
+  },
+  {
+    "c_function": "add_item_to_object",
+    "dependencies": [
+      "unit_1",
+      "unit_2",
+      "unit_3"
+    ],
+    "kind": "function",
+    "members": [
+      "add_item_to_object"
+    ],
+    "priority": 0.84,
+    "reason": "nullable_pointer, struct_pointer",
+    "rust_function": "add_item_to_object",
+    "unit_id": "unit_4"
+  },
+  {
+    "c_function": "replace_item_in_object",
+    "dependencies": [
+      "unit_101",
+      "unit_3",
+      "unit_33",
+      "unit_99"
+    ],
+    "kind": "function",
+    "members": [
+      "replace_item_in_object"
+    ],
+    "priority": 0.64,
+    "reason": "nullable_pointer",
+    "rust_function": "replace_item_in_object",
+    "unit_id": "unit_102"
+  },
+  {
+    "c_function": "cJSON_Compare",
+    "dependencies": [
+      "unit_33",
+      "unit_34"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_Compare"
+    ],
+    "priority": 0.6,
+    "reason": "c_string, nullable_pointer",
+    "rust_function": "cJSON_Compare",
+    "unit_id": "unit_35"
+  },
+  {
+    "c_function": "cJSON_AddItemReferenceToArray",
+    "dependencies": [
+      "unit_1",
+      "unit_14"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddItemReferenceToArray"
+    ],
+    "priority": 0.52,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_AddItemReferenceToArray",
+    "unit_id": "unit_15"
+  },
+  {
+    "c_function": "cJSON_GetObjectItem",
+    "dependencies": [
+      "unit_33"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_GetObjectItem"
+    ],
+    "priority": 0.52,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_GetObjectItem",
+    "unit_id": "unit_47"
+  },
+  {
+    "c_function": "cJSON_GetObjectItemCaseSensitive",
+    "dependencies": [
+      "unit_33"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_GetObjectItemCaseSensitive"
+    ],
+    "priority": 0.52,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_GetObjectItemCaseSensitive",
+    "unit_id": "unit_50"
+  },
+  {
+    "c_function": "cJSON_InsertItemInArray",
+    "dependencies": [
+      "unit_1",
+      "unit_43"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_InsertItemInArray"
+    ],
+    "priority": 0.52,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_InsertItemInArray",
+    "unit_id": "unit_64"
+  },
+  {
+    "c_function": "print_string",
+    "dependencies": [
+      "unit_90"
+    ],
+    "kind": "function",
+    "members": [
+      "print_string"
+    ],
+    "priority": 0.52,
+    "reason": "struct_pointer",
+    "rust_function": "print_string",
+    "unit_id": "unit_92"
+  },
+  {
+    "c_function": "cJSON_ReplaceItemInArray",
+    "dependencies": [
+      "unit_43",
+      "unit_99"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_ReplaceItemInArray"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_ReplaceItemInArray",
+    "unit_id": "unit_100"
+  },
+  {
+    "c_function": "cJSON_AddItemToArray",
+    "dependencies": [
+      "unit_1"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddItemToArray"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddItemToArray",
+    "unit_id": "unit_17"
+  },
+  {
+    "c_function": "parse_string",
+    "dependencies": [
+      "unit_78"
+    ],
+    "kind": "function",
+    "members": [
+      "parse_string"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "parse_string",
+    "unit_id": "unit_79"
+  },
+  {
+    "c_function": "cJSON_CreateDoubleArray",
+    "dependencies": [
+      "unit_0",
+      "unit_22",
+      "unit_6",
+      "unit_8"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateDoubleArray"
+    ],
+    "priority": 0.4,
+    "reason": "pointer_length_array",
+    "rust_function": "cJSON_CreateDoubleArray",
+    "unit_id": "unit_37"
+  },
+  {
+    "c_function": "cJSON_CreateFloatArray",
+    "dependencies": [
+      "unit_0",
+      "unit_22",
+      "unit_6",
+      "unit_8"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateFloatArray"
+    ],
+    "priority": 0.4,
+    "reason": "pointer_length_array",
+    "rust_function": "cJSON_CreateFloatArray",
+    "unit_id": "unit_38"
+  },
+  {
+    "c_function": "cJSON_CreateIntArray",
+    "dependencies": [
+      "unit_0",
+      "unit_22",
+      "unit_6",
+      "unit_8"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateIntArray"
+    ],
+    "priority": 0.4,
+    "reason": "pointer_length_array",
+    "rust_function": "cJSON_CreateIntArray",
+    "unit_id": "unit_39"
+  },
+  {
+    "c_function": "cJSON_CreateStringArray",
+    "dependencies": [
+      "unit_0",
+      "unit_28",
+      "unit_6",
+      "unit_8"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_CreateStringArray"
+    ],
+    "priority": 0.4,
+    "reason": "pointer_length_array",
+    "rust_function": "cJSON_CreateStringArray",
+    "unit_id": "unit_41"
+  },
+  {
+    "c_function": "cJSON_Duplicate",
+    "dependencies": [
+      "unit_53"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_Duplicate"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_Duplicate",
+    "unit_id": "unit_54"
+  },
+  {
+    "c_function": "cJSON_DeleteItemFromArray",
+    "dependencies": [
+      "unit_45",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_DeleteItemFromArray"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_DeleteItemFromArray",
+    "unit_id": "unit_46"
+  },
+  {
+    "c_function": "parse_array",
+    "dependencies": [
+      "unit_5",
+      "unit_6",
+      "unit_7",
+      "unit_79",
+      "unit_81"
+    ],
+    "kind": "recursive_group",
+    "members": [
+      "parse_array",
+      "parse_object",
+      "parse_value"
+    ],
+    "priority": 1.0,
+    "reason": "nullable_pointer",
+    "rust_function": "parse_array",
+    "unit_id": "unit_82"
+  },
+  {
+    "c_function": "print_array",
+    "dependencies": [
+      "unit_88",
+      "unit_89",
+      "unit_90",
+      "unit_91",
+      "unit_92"
+    ],
+    "kind": "recursive_group",
+    "members": [
+      "print_array",
+      "print_object",
+      "print_value"
+    ],
+    "priority": 1.0,
+    "reason": "c_string, nullable_pointer, struct_pointer",
+    "rust_function": "print_array",
+    "unit_id": "unit_93"
+  },
+  {
+    "c_function": "cJSON_AddItemReferenceToObject",
+    "dependencies": [
+      "unit_14",
+      "unit_4"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddItemReferenceToObject"
+    ],
+    "priority": 0.64,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_AddItemReferenceToObject",
+    "unit_id": "unit_16"
+  },
+  {
+    "c_function": "cJSON_ReplaceItemInObject",
+    "dependencies": [
+      "unit_102"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_ReplaceItemInObject"
+    ],
+    "priority": 0.56,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_ReplaceItemInObject",
+    "unit_id": "unit_103"
+  },
+  {
+    "c_function": "cJSON_ReplaceItemInObjectCaseSensitive",
+    "dependencies": [
+      "unit_102"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_ReplaceItemInObjectCaseSensitive"
+    ],
+    "priority": 0.56,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_ReplaceItemInObjectCaseSensitive",
+    "unit_id": "unit_104"
+  },
+  {
+    "c_function": "cJSON_AddItemToObject",
+    "dependencies": [
+      "unit_4"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddItemToObject"
+    ],
+    "priority": 0.56,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddItemToObject",
+    "unit_id": "unit_18"
+  },
+  {
+    "c_function": "cJSON_AddItemToObjectCS",
+    "dependencies": [
+      "unit_4"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddItemToObjectCS"
+    ],
+    "priority": 0.56,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddItemToObjectCS",
+    "unit_id": "unit_19"
+  },
+  {
+    "c_function": "cJSON_AddRawToObject",
+    "dependencies": [
+      "unit_26",
+      "unit_4",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddRawToObject"
+    ],
+    "priority": 0.56,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddRawToObject",
+    "unit_id": "unit_27"
+  },
+  {
+    "c_function": "cJSON_AddStringToObject",
+    "dependencies": [
+      "unit_28",
+      "unit_4",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddStringToObject"
+    ],
+    "priority": 0.56,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddStringToObject",
+    "unit_id": "unit_29"
+  },
+  {
+    "c_function": "cJSON_HasObjectItem",
+    "dependencies": [
+      "unit_47"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_HasObjectItem"
+    ],
+    "priority": 0.52,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_HasObjectItem",
+    "unit_id": "unit_62"
+  },
+  {
+    "c_function": "cJSON_AddBoolToObject",
+    "dependencies": [
+      "unit_10",
+      "unit_4",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddBoolToObject"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddBoolToObject",
+    "unit_id": "unit_11"
+  },
+  {
+    "c_function": "cJSON_AddFalseToObject",
+    "dependencies": [
+      "unit_12",
+      "unit_4",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddFalseToObject"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddFalseToObject",
+    "unit_id": "unit_13"
+  },
+  {
+    "c_function": "cJSON_AddNullToObject",
+    "dependencies": [
+      "unit_20",
+      "unit_4",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddNullToObject"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddNullToObject",
+    "unit_id": "unit_21"
+  },
+  {
+    "c_function": "cJSON_AddNumberToObject",
+    "dependencies": [
+      "unit_22",
+      "unit_4",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddNumberToObject"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddNumberToObject",
+    "unit_id": "unit_23"
+  },
+  {
+    "c_function": "cJSON_AddObjectToObject",
+    "dependencies": [
+      "unit_24",
+      "unit_4",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddObjectToObject"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddObjectToObject",
+    "unit_id": "unit_25"
+  },
+  {
+    "c_function": "cJSON_AddTrueToObject",
+    "dependencies": [
+      "unit_30",
+      "unit_4",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddTrueToObject"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddTrueToObject",
+    "unit_id": "unit_31"
+  },
+  {
+    "c_function": "cJSON_DetachItemFromObject",
+    "dependencies": [
+      "unit_44",
+      "unit_47"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_DetachItemFromObject"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_DetachItemFromObject",
+    "unit_id": "unit_48"
+  },
+  {
+    "c_function": "cJSON_DetachItemFromObjectCaseSensitive",
+    "dependencies": [
+      "unit_44",
+      "unit_50"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_DetachItemFromObjectCaseSensitive"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_DetachItemFromObjectCaseSensitive",
+    "unit_id": "unit_51"
+  },
+  {
+    "c_function": "cJSON_AddArrayToObject",
+    "dependencies": [
+      "unit_4",
+      "unit_6",
+      "unit_8"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_AddArrayToObject"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_AddArrayToObject",
+    "unit_id": "unit_9"
+  },
+  {
+    "c_function": "cJSON_ParseWithLengthOpts",
+    "dependencies": [
+      "unit_5",
+      "unit_6",
+      "unit_7",
+      "unit_82",
+      "unit_83"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_ParseWithLengthOpts"
+    ],
+    "priority": 0.6,
+    "reason": "nullable_pointer, output_parameter",
+    "rust_function": "cJSON_ParseWithLengthOpts",
+    "unit_id": "unit_84"
+  },
+  {
+    "c_function": "print",
+    "dependencies": [
+      "unit_88",
+      "unit_93"
+    ],
+    "kind": "function",
+    "members": [
+      "print"
+    ],
+    "priority": 0.52,
+    "reason": "struct_pointer",
+    "rust_function": "print",
+    "unit_id": "unit_94"
+  },
+  {
+    "c_function": "cJSON_PrintPreallocated",
+    "dependencies": [
+      "unit_93"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_PrintPreallocated"
+    ],
+    "priority": 0.52,
+    "reason": "nullable_pointer",
+    "rust_function": "cJSON_PrintPreallocated",
+    "unit_id": "unit_97"
+  },
+  {
+    "c_function": "cJSON_DeleteItemFromObject",
+    "dependencies": [
+      "unit_48",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_DeleteItemFromObject"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_DeleteItemFromObject",
+    "unit_id": "unit_49"
+  },
+  {
+    "c_function": "cJSON_DeleteItemFromObjectCaseSensitive",
+    "dependencies": [
+      "unit_51",
+      "unit_6"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_DeleteItemFromObjectCaseSensitive"
+    ],
+    "priority": 0.44,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_DeleteItemFromObjectCaseSensitive",
+    "unit_id": "unit_52"
+  },
+  {
+    "c_function": "cJSON_PrintBuffered",
+    "dependencies": [
+      "unit_93"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_PrintBuffered"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_PrintBuffered",
+    "unit_id": "unit_96"
+  },
+  {
+    "c_function": "cJSON_ParseWithOpts",
+    "dependencies": [
+      "unit_84"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_ParseWithOpts"
+    ],
+    "priority": 0.6,
+    "reason": "c_string, nullable_pointer",
+    "rust_function": "cJSON_ParseWithOpts",
+    "unit_id": "unit_85"
+  },
+  {
+    "c_function": "cJSON_Print",
+    "dependencies": [
+      "unit_94"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_Print"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_Print",
+    "unit_id": "unit_95"
+  },
+  {
+    "c_function": "cJSON_PrintUnformatted",
+    "dependencies": [
+      "unit_94"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_PrintUnformatted"
+    ],
+    "priority": 0.4,
+    "reason": "struct_pointer",
+    "rust_function": "cJSON_PrintUnformatted",
+    "unit_id": "unit_98"
+  },
+  {
+    "c_function": "cJSON_ParseWithLength",
+    "dependencies": [
+      "unit_84"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_ParseWithLength"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_ParseWithLength",
+    "unit_id": "unit_87"
+  },
+  {
+    "c_function": "cJSON_Parse",
+    "dependencies": [
+      "unit_85"
+    ],
+    "kind": "function",
+    "members": [
+      "cJSON_Parse"
+    ],
+    "priority": 0.32,
+    "reason": "dependency-ordered function",
+    "rust_function": "cJSON_Parse",
+    "unit_id": "unit_86"
+  }
+]

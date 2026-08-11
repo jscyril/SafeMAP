@@ -1,0 +1,153 @@
+{
+  "ablations": [
+    {
+      "accepted": 0,
+      "candidate": 70,
+      "compiled": 0,
+      "generated": 17,
+      "label": "Full system",
+      "mode": "safemap_deterministic",
+      "supported": 17,
+      "units": 142
+    },
+    {
+      "accepted": 0,
+      "candidate": 115,
+      "compiled": 0,
+      "generated": 10,
+      "label": "Without pointer roles",
+      "mode": "safemap_without_pointer_roles",
+      "supported": 10,
+      "units": 142
+    },
+    {
+      "accepted": 0,
+      "candidate": 70,
+      "compiled": 0,
+      "generated": 17,
+      "label": "Without safe signatures",
+      "mode": "safemap_without_safe_signatures",
+      "supported": 17,
+      "units": 142
+    },
+    {
+      "accepted": 0,
+      "candidate": 70,
+      "compiled": 0,
+      "generated": 17,
+      "label": "Without dependency grouping",
+      "mode": "safemap_without_dependency_grouping",
+      "supported": 17,
+      "units": 146
+    },
+    {
+      "accepted": 0,
+      "candidate": 70,
+      "compiled": 0,
+      "generated": 1,
+      "label": "Without idiom plans",
+      "mode": "safemap_without_idiom_plans",
+      "supported": 1,
+      "units": 142
+    },
+    {
+      "accepted": 0,
+      "candidate": 70,
+      "compiled": 0,
+      "generated": 17,
+      "label": "Without validation feedback",
+      "mode": "safemap_without_validation_feedback",
+      "supported": 17,
+      "units": 142
+    }
+  ],
+  "c2rust_baseline": {
+    "attempts": 3,
+    "outputs": 0,
+    "projects": [
+      {
+        "project": "cjson",
+        "reason": "C2Rust could not resolve standard C headers. Check the Clang resource directory and C_INCLUDE_PATH; SAFEMAP_C2RUST_RESOURCE_DIR can override the builtin include path.",
+        "status": "failed"
+      },
+      {
+        "project": "inih",
+        "reason": "C2Rust could not resolve standard C headers. Check the Clang resource directory and C_INCLUDE_PATH; SAFEMAP_C2RUST_RESOURCE_DIR can override the builtin include path.",
+        "status": "failed"
+      },
+      {
+        "project": "libcsv",
+        "reason": "",
+        "status": "failed"
+      }
+    ],
+    "status_counts": {
+      "failed": 3
+    }
+  },
+  "freeze_git_commit": "b2f455ce1f9e675f800e195f11bbb478fae4194c",
+  "human_review_status": "awaiting_two_independent_reviews_and_adjudication",
+  "inputs": {
+    "reports/publication/conference/benchmark_results.csv": "6fea5f767eb2161e8cd997d1db3ac815151d4a99d99216532bafc02c00c70070",
+    "reports/publication/conference/reproduction_manifest.json": "46d778c985c55403609fc4240a16e8d7f908151922cbd7696ae3654a39eee1e9",
+    "research/results/heldout_characterization.json": "92e23a8f51feef33cdb878cc18152a80859c979ca817d150e41caab5e944cb10"
+  },
+  "llm_baseline": {
+    "attempts": 3,
+    "input_tokens": 32790,
+    "output_tokens": 12370,
+    "outputs": 1,
+    "projects": [
+      {
+        "failure": {
+          "message": "Response introduces forbidden extern C",
+          "type": "ValueError"
+        },
+        "input_tokens": 24812,
+        "output_tokens": 4472,
+        "project": "cjson",
+        "response_model": "gemini-3.5-flash-lite",
+        "status": "rejected"
+      },
+      {
+        "failure": "",
+        "input_tokens": 3007,
+        "output_tokens": 2554,
+        "project": "inih",
+        "response_model": "gemini-3.5-flash-lite",
+        "status": "completed"
+      },
+      {
+        "failure": {
+          "message": "Response introduces forbidden raw pointer type",
+          "type": "ValueError"
+        },
+        "input_tokens": 4971,
+        "output_tokens": 5344,
+        "project": "libcsv",
+        "response_model": "gemini-3.5-flash-lite",
+        "status": "rejected"
+      }
+    ],
+    "status_counts": {
+      "completed": 1,
+      "rejected": 2
+    }
+  },
+  "outputs": {
+    "paper/tables/heldout_ablations.tex": "58457054e81216500b8187f17aba4ddaa6e324900beae6098769937c92576ddb",
+    "paper/tables/heldout_baselines.tex": "df78a546107641113bd9c87ca74fd03729812a0181696587080cb29130684ba3",
+    "paper/tables/heldout_cascade.tex": "17697d47bcd092c2ee4a90857f2bfc822a0d3735527d49ac43b003c6cc002725",
+    "paper/tables/heldout_corpus.tex": "aa607a8f9e125df426f1963e37edd1c0cb322ec5c4a7f772b78dec78166ced75"
+  },
+  "safemap_outcome": {
+    "behavioral": 0,
+    "candidate_safe": 70,
+    "compiled": 0,
+    "generated": 17,
+    "policy_safe": 0,
+    "supported": 17,
+    "translation_units": 142
+  },
+  "schema_version": "safemap.heldout_manuscript_tables.v1"
+}

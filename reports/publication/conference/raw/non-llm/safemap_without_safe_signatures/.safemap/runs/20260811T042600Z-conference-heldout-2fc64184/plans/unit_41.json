@@ -1,0 +1,75 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "unknown",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.94,
+      "evidence": "strings is indexed and paired with count",
+      "kind": "pointer_length_array",
+      "pointer": "strings",
+      "rust_type": "Use &[T] or &mut [T]",
+      "variables": [
+        "strings"
+      ]
+    }
+  ],
+  "eligibility": "unsupported",
+  "eligibility_reasons": [
+    "Unsupported C construct detected"
+  ],
+  "function": "cJSON_CreateStringArray",
+  "internal_calls": [
+    "cJSON_CreateArray",
+    "cJSON_CreateString",
+    "cJSON_Delete",
+    "suffix_object"
+  ],
+  "original_signature": "struct cJSON * cJSON_CreateStringArray(const char *const * strings, int count)",
+  "patterns": [
+    {
+      "confidence": 0.94,
+      "original": "strings",
+      "pattern": "pointer_length_array",
+      "replacement": "Use &[T] or &mut [T]"
+    }
+  ],
+  "reason": "Unsupported C construct detected",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "pub fn cJSON_CreateStringArray(strings: *const i8, count: i32) -> *mut cJSON",
+  "type_migrations": [
+    {
+      "c": "strings",
+      "reason": "strings is indexed and paired with count",
+      "rust": "Use &[T] or &mut [T]"
+    }
+  ],
+  "unit_id": "unit_41",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

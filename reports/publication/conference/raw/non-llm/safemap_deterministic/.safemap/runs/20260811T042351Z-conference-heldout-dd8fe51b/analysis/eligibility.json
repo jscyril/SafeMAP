@@ -1,0 +1,1990 @@
+[
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_GetErrorPtr",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_0",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_GetStringValue",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_1",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_GetNumberValue",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_2",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_Version",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_3",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "case_insensitive_strcmp",
+    "pointer_roles": {
+      "string1": [
+        "nullable_pointer"
+      ],
+      "string2": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_4",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unsafe_required",
+    "category": "unsafe_required",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_strdup",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ],
+      "string": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "unit_id": "unit_5",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_InitHooks",
+    "pointer_roles": {
+      "hooks": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_6",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unsafe_required",
+    "category": "unsafe_required",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_New_Item",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "unit_id": "unit_7",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_Delete",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_8",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "get_decimal_point",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_9",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "parse_number",
+    "pointer_roles": {
+      "input_buffer": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_10",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_SetNumberHelper",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_11",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_SetValuestring",
+    "pointer_roles": {
+      "object": [
+        "nullable_pointer"
+      ],
+      "valuestring": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_12",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unsafe_required",
+    "category": "unsafe_required",
+    "eligible_for_safe_translation": false,
+    "function": "ensure",
+    "pointer_roles": {
+      "p": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "unit_id": "unit_13",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "update_offset",
+    "pointer_roles": {
+      "buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_14",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "compare_double",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_15",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "print_number",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_16",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "parse_hex4",
+    "pointer_roles": {
+      "input": [
+        "array_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_17",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "utf16_literal_to_utf8",
+    "pointer_roles": {
+      "input_end": [
+        "unknown_pointer"
+      ],
+      "input_pointer": [
+        "input_pointer"
+      ],
+      "output_pointer": [
+        "output_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_18",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "parse_string",
+    "pointer_roles": {
+      "input_buffer": [
+        "unknown_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_19",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unsafe_required",
+    "category": "unsafe_required",
+    "eligible_for_safe_translation": false,
+    "function": "print_string_ptr",
+    "pointer_roles": {
+      "input": [
+        "nullable_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "unit_id": "unit_20",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "print_string",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ],
+      "p": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_21",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "buffer_skip_whitespace",
+    "pointer_roles": {
+      "buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_22",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "skip_utf8_bom",
+    "pointer_roles": {
+      "buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_23",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_ParseWithOpts",
+    "pointer_roles": {
+      "return_parse_end": [
+        "unknown_pointer"
+      ],
+      "value": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_24",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_ParseWithLengthOpts",
+    "pointer_roles": {
+      "return_parse_end": [
+        "output_pointer"
+      ],
+      "value": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_25",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_Parse",
+    "pointer_roles": {
+      "value": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_26",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_ParseWithLength",
+    "pointer_roles": {
+      "value": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_27",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unsafe_required",
+    "category": "unsafe_required",
+    "eligible_for_safe_translation": false,
+    "function": "print",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ],
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "unit_id": "unit_28",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_Print",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_29",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_PrintUnformatted",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_30",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_PrintBuffered",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_31",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_PrintPreallocated",
+    "pointer_roles": {
+      "buffer": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_32",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "parse_value",
+    "pointer_roles": {
+      "input_buffer": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_33",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unsafe_required",
+    "category": "unsafe_required",
+    "eligible_for_safe_translation": false,
+    "function": "print_value",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "unit_id": "unit_34",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "parse_array",
+    "pointer_roles": {
+      "input_buffer": [
+        "unknown_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_35",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "print_array",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_36",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "parse_object",
+    "pointer_roles": {
+      "input_buffer": [
+        "unknown_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_37",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "print_object",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ],
+      "output_buffer": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_38",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_GetArraySize",
+    "pointer_roles": {
+      "array": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_39",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "get_array_item",
+    "pointer_roles": {
+      "array": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_40",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_GetArrayItem",
+    "pointer_roles": {
+      "array": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_41",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "get_object_item",
+    "pointer_roles": {
+      "name": [
+        "nullable_pointer"
+      ],
+      "object": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_42",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_GetObjectItem",
+    "pointer_roles": {
+      "object": [
+        "input_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_43",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_GetObjectItemCaseSensitive",
+    "pointer_roles": {
+      "object": [
+        "input_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_44",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_HasObjectItem",
+    "pointer_roles": {
+      "object": [
+        "input_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_45",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "suffix_object",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ],
+      "prev": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_46",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unsafe_required",
+    "category": "unsafe_required",
+    "eligible_for_safe_translation": false,
+    "function": "create_reference",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "unit_id": "unit_47",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "add_item_to_array",
+    "pointer_roles": {
+      "array": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_48",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddItemToArray",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_49",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cast_away_const",
+    "pointer_roles": {
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_50",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "add_item_to_object",
+    "pointer_roles": {
+      "hooks": [
+        "input_pointer"
+      ],
+      "item": [
+        "nullable_pointer"
+      ],
+      "object": [
+        "nullable_pointer"
+      ],
+      "string": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_51",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddItemToObject",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_52",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddItemToObjectCS",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_53",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddItemReferenceToArray",
+    "pointer_roles": {
+      "array": [
+        "nullable_pointer"
+      ],
+      "item": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_54",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddItemReferenceToObject",
+    "pointer_roles": {
+      "item": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "nullable_pointer"
+      ],
+      "string": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_55",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddNullToObject",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_56",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddTrueToObject",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_57",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddFalseToObject",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_58",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddBoolToObject",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_59",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddNumberToObject",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_60",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddStringToObject",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_61",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddRawToObject",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "raw": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_62",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddObjectToObject",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_63",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_AddArrayToObject",
+    "pointer_roles": {
+      "name": [
+        "input_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_64",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_DetachItemViaPointer",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ],
+      "parent": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_65",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_DetachItemFromArray",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_66",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_DeleteItemFromArray",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_67",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_DetachItemFromObject",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_68",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_DetachItemFromObjectCaseSensitive",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_69",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_DeleteItemFromObject",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_70",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_DeleteItemFromObjectCaseSensitive",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_71",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_InsertItemInArray",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ],
+      "newitem": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_72",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_ReplaceItemViaPointer",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ],
+      "parent": [
+        "nullable_pointer"
+      ],
+      "replacement": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_73",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_ReplaceItemInArray",
+    "pointer_roles": {
+      "array": [
+        "unknown_pointer"
+      ],
+      "newitem": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_74",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "replace_item_in_object",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ],
+      "replacement": [
+        "nullable_pointer"
+      ],
+      "string": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_75",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_ReplaceItemInObject",
+    "pointer_roles": {
+      "newitem": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_76",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_ReplaceItemInObjectCaseSensitive",
+    "pointer_roles": {
+      "newitem": [
+        "unknown_pointer"
+      ],
+      "object": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_77",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateNull",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_78",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateTrue",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_79",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateFalse",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_80",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateBool",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_81",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_CreateNumber",
+    "pointer_roles": {},
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_82",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateString",
+    "pointer_roles": {
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_83",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateStringReference",
+    "pointer_roles": {
+      "string": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_84",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateObjectReference",
+    "pointer_roles": {
+      "child": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_85",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateArrayReference",
+    "pointer_roles": {
+      "child": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_86",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateRaw",
+    "pointer_roles": {
+      "raw": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_87",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateArray",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_88",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_CreateObject",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_89",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_CreateIntArray",
+    "pointer_roles": {
+      "numbers": [
+        "array_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_90",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_CreateFloatArray",
+    "pointer_roles": {
+      "numbers": [
+        "array_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_91",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_CreateDoubleArray",
+    "pointer_roles": {
+      "numbers": [
+        "array_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_92",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_CreateStringArray",
+    "pointer_roles": {
+      "strings": [
+        "array_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_93",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_Duplicate",
+    "pointer_roles": {
+      "item": [
+        "input_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_94",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_Duplicate_rec",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_95",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "skip_oneline_comment",
+    "pointer_roles": {
+      "input": [
+        "output_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_96",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "skip_multiline_comment",
+    "pointer_roles": {
+      "input": [
+        "output_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_97",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "minify_string",
+    "pointer_roles": {
+      "input": [
+        "output_pointer"
+      ],
+      "output": [
+        "output_pointer"
+      ]
+    },
+    "reasons": [
+      "Multiple mutable pointer-like parameters create unresolved aliasing risk"
+    ],
+    "unit_id": "unit_98",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_Minify",
+    "pointer_roles": {
+      "json": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_99",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsInvalid",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_100",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsFalse",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_101",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsTrue",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_102",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsBool",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_103",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsNull",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_104",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsNumber",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_105",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsString",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_106",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsArray",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_107",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsObject",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_108",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_IsRaw",
+    "pointer_roles": {
+      "item": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_109",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_Compare",
+    "pointer_roles": {
+      "a": [
+        "nullable_pointer"
+      ],
+      "b": [
+        "nullable_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_110",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "cJSON_malloc",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_111",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "cJSON_free",
+    "pointer_roles": {
+      "object": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_112",
+    "unsupported_features": []
+  }
+]

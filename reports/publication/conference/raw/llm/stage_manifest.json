@@ -1,0 +1,30 @@
+{
+  "automatic_retries": 0,
+  "command": [
+    "/usr/bin/python",
+    "-m",
+    "safemap.cli",
+    "final-eval",
+    "--benchmarks",
+    "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects",
+    "--output",
+    "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/llm",
+    "--config",
+    "/mnt/data/college/research/SafeMAP/research/conference_evaluation.yaml",
+    "--mode",
+    "llm_only"
+  ],
+  "completed_at_utc": "2026-08-11T05:20:11Z",
+  "config_sha256": "34fc6f8e1e7ee9c584ebcb5a2b12e0aa2157b3fd924ccd83b09d622a05921ae8",
+  "corpus_manifest_sha256": "9e0107ccbd15f31242eca9b917ed55beaaf3a03af173c02e9ba5b79b62f90ae4",
+  "freeze_git_commit": "b2f455ce1f9e675f800e195f11bbb478fae4194c",
+  "llm_requests_per_project": 1,
+  "modes": [
+    "llm_only"
+  ],
+  "output": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/llm",
+  "schema_version": "safemap.heldout_stage.v1",
+  "stage": "llm",
+  "started_at_utc": "2026-08-11T05:19:39Z",
+  "status": "complete"
+}

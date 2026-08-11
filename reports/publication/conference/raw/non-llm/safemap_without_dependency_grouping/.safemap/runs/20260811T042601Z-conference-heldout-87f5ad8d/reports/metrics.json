@@ -1,0 +1,116 @@
+{
+  "baseline": null,
+  "baseline_compile": null,
+  "behaviorally_validated_unit_ids": [],
+  "behaviorally_validated_units": 0,
+  "candidate_decision_counts": {
+    "candidate_safe": 57,
+    "manual_refactor_required": 34,
+    "unknown": 15,
+    "unsafe_required": 7
+  },
+  "candidate_safe_units": 57,
+  "compile_success_units": 0,
+  "differential_pass_rate": null,
+  "differential_pass_units": 0,
+  "eligibility_counts": {
+    "requires_manual_refactor": 34,
+    "safe_translatable": 16,
+    "safe_translatable_with_api_change": 41,
+    "unsafe_required": 7,
+    "unsupported": 15
+  },
+  "eligible_units": 57,
+  "failed_units": [],
+  "failure_categories": {
+    "requires_manual_refactor": 34,
+    "unsafe_required": 7,
+    "unsupported": 15,
+    "validation_failed": 9
+  },
+  "fully_safe_accepted_unit_ids": [],
+  "fully_safe_accepted_units": 0,
+  "fully_safe_translation_unit_acceptance_rate": 0.0,
+  "generated_unit_ids": [
+    "unit_0",
+    "unit_14",
+    "unit_22",
+    "unit_23",
+    "unit_4",
+    "unit_40",
+    "unit_42",
+    "unit_6",
+    "unit_65"
+  ],
+  "generated_units": 9,
+  "idiom_migrations": {
+    "boolean_int_to_bool": 0,
+    "c_string_to_str": 1,
+    "error_code_to_result": 0,
+    "malloc_free_to_vec_or_box": 0,
+    "nullable_pointer_to_option": 11,
+    "output_parameter_to_return": 0,
+    "pointer_length_array_to_slice": 0
+  },
+  "llm_calls": 0,
+  "llm_input_tokens": 0,
+  "llm_output_tokens": 0,
+  "maintainability": {
+    "approximate_cyclomatic_complexity": 1,
+    "average_function_length": 6.78,
+    "function_count": 9,
+    "lines_of_code": 61
+  },
+  "migrated_idioms": {
+    "c_string": 1,
+    "nullable_pointer": 11
+  },
+  "original_runtime_seconds": null,
+  "policy_safe_unit_ids": [],
+  "policy_safe_units": 0,
+  "project": "cjson",
+  "raw_pointer_count": {
+    "baseline_c2rust": 0,
+    "safemap_final": 0
+  },
+  "raw_pointer_public_api_count": {
+    "baseline_c2rust": 0,
+    "safemap_final": 0
+  },
+  "repair_attempts": 0,
+  "residual_unsafe": [],
+  "rust_runtime_seconds": null,
+  "safemap": {
+    "candidate_functions_for_rewrite": [],
+    "extern_c_blocks": 0,
+    "ffi_calls": 0,
+    "libc_usages": 0,
+    "raw_pointer_dereferences": 8,
+    "raw_pointer_public_api_count": 0,
+    "raw_pointer_types": 0,
+    "transmute_calls": 0,
+    "unsafe_blocks": 0,
+    "unsafe_functions": 0,
+    "unsafe_lines": 0
+  },
+  "safemap_compile": false,
+  "schema_version": "1.1",
+  "synthesis_support_counts": {
+    "implemented_support": 9,
+    "not_applicable": 56,
+    "not_implemented": 48
+  },
+  "synthesis_supported_units": 9,
+  "test_pass_rate": null,
+  "test_pass_units": 0,
+  "total_units": 113,
+  "translation_seconds": 1.2124827400002687,
+  "unsafe_blocks": {
+    "baseline_c2rust": 0,
+    "safemap_final": 0
+  },
+  "unsafe_functions": {
+    "baseline_c2rust": 0,
+    "safemap_final": 0
+  }
+}

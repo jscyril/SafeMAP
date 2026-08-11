@@ -1,0 +1,13 @@
+{
+  "candidate_functions_for_rewrite": [],
+  "extern_c_blocks": 0,
+  "ffi_calls": 0,
+  "libc_usages": 0,
+  "raw_pointer_dereferences": 8,
+  "raw_pointer_public_api_count": 0,
+  "raw_pointer_types": 0,
+  "transmute_calls": 0,
+  "unsafe_blocks": 0,
+  "unsafe_functions": 0,
+  "unsafe_lines": 0
+}

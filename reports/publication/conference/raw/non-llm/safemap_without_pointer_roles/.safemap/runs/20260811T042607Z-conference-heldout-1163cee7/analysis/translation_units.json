@@ -1,0 +1,284 @@
+[
+  {
+    "c_function": "csv_fini",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_fini"
+    ],
+    "priority": 0.36,
+    "reason": "error_code_return, nullable_pointer",
+    "rust_function": "csv_fini",
+    "unit_id": "unit_1"
+  },
+  {
+    "c_function": "csv_init",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_init"
+    ],
+    "priority": 0.36,
+    "reason": "error_code_return, nullable_pointer",
+    "rust_function": "csv_init",
+    "unit_id": "unit_10"
+  },
+  {
+    "c_function": "csv_set_opts",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_set_opts"
+    ],
+    "priority": 0.36,
+    "reason": "error_code_return, nullable_pointer",
+    "rust_function": "csv_set_opts",
+    "unit_id": "unit_15"
+  },
+  {
+    "c_function": "csv_get_opts",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_get_opts"
+    ],
+    "priority": 0.36,
+    "reason": "error_code_return, nullable_pointer",
+    "rust_function": "csv_get_opts",
+    "unit_id": "unit_7"
+  },
+  {
+    "c_function": "csv_increase_buffer",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_increase_buffer"
+    ],
+    "priority": 0.36,
+    "reason": "error_code_return, nullable_pointer",
+    "rust_function": "csv_increase_buffer",
+    "unit_id": "unit_9"
+  },
+  {
+    "c_function": "csv_error",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_error"
+    ],
+    "priority": 0.28,
+    "reason": "struct_pointer",
+    "rust_function": "csv_error",
+    "unit_id": "unit_0"
+  },
+  {
+    "c_function": "csv_free",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_free"
+    ],
+    "priority": 0.28,
+    "reason": "nullable_pointer",
+    "rust_function": "csv_free",
+    "unit_id": "unit_2"
+  },
+  {
+    "c_function": "csv_write2",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_write2"
+    ],
+    "priority": 0.28,
+    "reason": "nullable_pointer",
+    "rust_function": "csv_write2",
+    "unit_id": "unit_21"
+  },
+  {
+    "c_function": "csv_fwrite2",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_fwrite2"
+    ],
+    "priority": 0.28,
+    "reason": "nullable_pointer",
+    "rust_function": "csv_fwrite2",
+    "unit_id": "unit_3"
+  },
+  {
+    "c_function": "csv_get_buffer_size",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_get_buffer_size"
+    ],
+    "priority": 0.28,
+    "reason": "struct_pointer",
+    "rust_function": "csv_get_buffer_size",
+    "unit_id": "unit_5"
+  },
+  {
+    "c_function": "csv_get_delim",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_get_delim"
+    ],
+    "priority": 0.28,
+    "reason": "struct_pointer",
+    "rust_function": "csv_get_delim",
+    "unit_id": "unit_6"
+  },
+  {
+    "c_function": "csv_get_quote",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_get_quote"
+    ],
+    "priority": 0.28,
+    "reason": "struct_pointer",
+    "rust_function": "csv_get_quote",
+    "unit_id": "unit_8"
+  },
+  {
+    "c_function": "csv_set_blk_size",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_set_blk_size"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_set_blk_size",
+    "unit_id": "unit_12"
+  },
+  {
+    "c_function": "csv_set_delim",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_set_delim"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_set_delim",
+    "unit_id": "unit_13"
+  },
+  {
+    "c_function": "csv_set_free_func",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_set_free_func"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_set_free_func",
+    "unit_id": "unit_14"
+  },
+  {
+    "c_function": "csv_set_quote",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_set_quote"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_set_quote",
+    "unit_id": "unit_16"
+  },
+  {
+    "c_function": "csv_set_realloc_func",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_set_realloc_func"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_set_realloc_func",
+    "unit_id": "unit_17"
+  },
+  {
+    "c_function": "csv_set_space_func",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_set_space_func"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_set_space_func",
+    "unit_id": "unit_18"
+  },
+  {
+    "c_function": "csv_set_term_func",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_set_term_func"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_set_term_func",
+    "unit_id": "unit_19"
+  },
+  {
+    "c_function": "csv_strerror",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "csv_strerror"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_strerror",
+    "unit_id": "unit_20"
+  },
+  {
+    "c_function": "csv_parse",
+    "dependencies": [
+      "unit_9"
+    ],
+    "kind": "function",
+    "members": [
+      "csv_parse"
+    ],
+    "priority": 0.28,
+    "reason": "nullable_pointer",
+    "rust_function": "csv_parse",
+    "unit_id": "unit_11"
+  },
+  {
+    "c_function": "csv_write",
+    "dependencies": [
+      "unit_21"
+    ],
+    "kind": "function",
+    "members": [
+      "csv_write"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_write",
+    "unit_id": "unit_22"
+  },
+  {
+    "c_function": "csv_fwrite",
+    "dependencies": [
+      "unit_3"
+    ],
+    "kind": "function",
+    "members": [
+      "csv_fwrite"
+    ],
+    "priority": 0.2,
+    "reason": "dependency-ordered function",
+    "rust_function": "csv_fwrite",
+    "unit_id": "unit_4"
+  }
+]

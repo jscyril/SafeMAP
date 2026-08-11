@@ -1,0 +1,87 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.95,
+      "evidence": "item is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "item"
+      ]
+    },
+    {
+      "confidence": 0.86,
+      "evidence": "Integer return value is produced from a boolean comparison",
+      "kind": "boolean_int",
+      "rust_type": "Use bool",
+      "variables": []
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "cJSON_IsInvalid",
+  "internal_calls": [],
+  "original_signature": "int cJSON_IsInvalid(const struct cJSON *const item)",
+  "patterns": [
+    {
+      "confidence": 0.95,
+      "original": "item",
+      "pattern": "nullable_pointer",
+      "replacement": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "confidence": 0.86,
+      "original": "Integer return value is produced from a boolean comparison",
+      "pattern": "boolean_int",
+      "replacement": "Use bool"
+    }
+  ],
+  "reason": null,
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "planned",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn cJSON_IsInvalid(item: &cJSON) -> bool",
+  "type_migrations": [
+    {
+      "c": "item",
+      "reason": "item is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "c": "boolean_int",
+      "reason": "Integer return value is produced from a boolean comparison",
+      "rust": "Use bool"
+    }
+  ],
+  "unit_id": "unit_68",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

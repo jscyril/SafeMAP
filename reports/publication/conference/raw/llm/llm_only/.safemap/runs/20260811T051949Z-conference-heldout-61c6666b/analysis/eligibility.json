@@ -1,0 +1,209 @@
+[
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "ini_rstrip",
+    "pointer_roles": {
+      "end": [
+        "output_pointer"
+      ],
+      "s": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_0",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "ini_lskip",
+    "pointer_roles": {
+      "s": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_1",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "ini_find_chars_or_comment",
+    "pointer_roles": {
+      "chars": [
+        "nullable_pointer"
+      ],
+      "s": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_2",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "ini_strncpy0",
+    "pointer_roles": {
+      "dest": [
+        "array_pointer"
+      ],
+      "src": [
+        "array_pointer"
+      ]
+    },
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_3",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "ini_parse_stream",
+    "pointer_roles": {
+      "handler": [
+        "unknown_pointer"
+      ],
+      "reader": [
+        "unknown_pointer"
+      ],
+      "stream": [
+        "unknown_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_4",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "ini_parse_file",
+    "pointer_roles": {
+      "file": [
+        "unknown_pointer"
+      ],
+      "handler": [
+        "unknown_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_5",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unsafe_required",
+    "category": "unsafe_required",
+    "eligible_for_safe_translation": false,
+    "function": "ini_parse",
+    "pointer_roles": {
+      "filename": [
+        "input_pointer"
+      ],
+      "handler": [
+        "unknown_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "unit_id": "unit_6",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "ini_reader_string",
+    "pointer_roles": {
+      "str": [
+        "unknown_pointer"
+      ],
+      "stream": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_7",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "ini_parse_string",
+    "pointer_roles": {
+      "handler": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_8",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "manual_refactor_required",
+    "category": "requires_manual_refactor",
+    "eligible_for_safe_translation": false,
+    "function": "ini_parse_string_length",
+    "pointer_roles": {
+      "handler": [
+        "unknown_pointer"
+      ],
+      "string": [
+        "input_pointer"
+      ],
+      "user": [
+        "unknown_pointer"
+      ]
+    },
+    "reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "unit_id": "unit_9",
+    "unsupported_features": []
+  }
+]

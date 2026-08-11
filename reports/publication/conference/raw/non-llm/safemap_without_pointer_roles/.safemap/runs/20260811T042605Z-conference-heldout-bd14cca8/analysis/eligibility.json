@@ -1,0 +1,124 @@
+[
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "ini_rstrip",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_0",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "ini_lskip",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_1",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "ini_find_chars_or_comment",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_2",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "ini_strncpy0",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_3",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "ini_parse_stream",
+    "pointer_roles": {},
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_4",
+    "unsupported_features": [
+      "pointer_integer_cast"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "ini_parse_file",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_5",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unsafe_required",
+    "category": "unsafe_required",
+    "eligible_for_safe_translation": false,
+    "function": "ini_parse",
+    "pointer_roles": {},
+    "reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "unit_id": "unit_6",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "ini_reader_string",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_7",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "ini_parse_string",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_8",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "ini_parse_string_length",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_9",
+    "unsupported_features": []
+  }
+]

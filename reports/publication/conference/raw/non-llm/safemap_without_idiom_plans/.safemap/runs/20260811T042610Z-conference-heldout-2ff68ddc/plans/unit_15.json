@@ -1,0 +1,74 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.95,
+      "evidence": "p is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "p"
+      ]
+    },
+    {
+      "confidence": 0.82,
+      "evidence": "A negative sentinel is returned when a nullable pointer is absent",
+      "kind": "error_code_return",
+      "rust_type": "Use Result<T, ErrorCode>",
+      "variables": []
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "csv_set_opts",
+  "internal_calls": [],
+  "original_signature": "int csv_set_opts(struct csv_parser * p, unsigned char options)",
+  "patterns": [],
+  "reason": "Safe translation is possible with a Rust-native API change",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn csv_set_opts(p: Option<&mut csv_parser>, options: u8) -> Result<i32, i32>",
+  "type_migrations": [
+    {
+      "c": "p",
+      "reason": "p is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "c": "error_code_return",
+      "reason": "A negative sentinel is returned when a nullable pointer is absent",
+      "rust": "Use Result<T, ErrorCode>"
+    }
+  ],
+  "unit_id": "unit_15",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

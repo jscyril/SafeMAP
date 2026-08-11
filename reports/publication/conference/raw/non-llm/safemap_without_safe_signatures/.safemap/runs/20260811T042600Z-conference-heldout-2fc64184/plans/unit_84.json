@@ -1,0 +1,95 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.95,
+      "evidence": "value is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "value"
+      ]
+    },
+    {
+      "confidence": 0.88,
+      "evidence": "return_parse_end is written through",
+      "kind": "output_parameter",
+      "rust_type": "Return the value, preferably in Result",
+      "variables": [
+        "return_parse_end"
+      ]
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "cJSON_ParseWithLengthOpts",
+  "internal_calls": [
+    "buffer_skip_whitespace",
+    "cJSON_Delete",
+    "cJSON_New_Item",
+    "parse_value",
+    "skip_utf8_bom"
+  ],
+  "original_signature": "struct cJSON * cJSON_ParseWithLengthOpts(const char * value, unsigned long buffer_length, const char ** return_parse_end, int require_null_terminated)",
+  "patterns": [
+    {
+      "confidence": 0.95,
+      "original": "value",
+      "pattern": "nullable_pointer",
+      "replacement": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "confidence": 0.88,
+      "original": "return_parse_end",
+      "pattern": "output_parameter",
+      "replacement": "Return the value, preferably in Result"
+    }
+  ],
+  "reason": "Internal dependency lacks implemented synthesis support: cJSON_Delete, cJSON_New_Item, parse_value",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "planned",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn cJSON_ParseWithLengthOpts(value: *const i8, buffer_length: u64, return_parse_end: *mut i8, require_null_terminated: i32) -> *mut cJSON",
+  "type_migrations": [
+    {
+      "c": "value",
+      "reason": "value is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "c": "return_parse_end",
+      "reason": "return_parse_end is written through",
+      "rust": "Return the value, preferably in Result"
+    }
+  ],
+  "unit_id": "unit_84",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

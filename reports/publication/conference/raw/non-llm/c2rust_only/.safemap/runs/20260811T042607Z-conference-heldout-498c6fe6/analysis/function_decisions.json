@@ -1,0 +1,676 @@
+[
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 86,
+    "function": "csv_error",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "p": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 79,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_0",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "end_line": 96,
+    "function": "csv_strerror",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable",
+    "pointer_roles": {},
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 88,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_20",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 106,
+    "function": "csv_get_opts",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "p": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 98,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_7",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 117,
+    "function": "csv_set_opts",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "p": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 108,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_15",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 144,
+    "function": "csv_init",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "p": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 119,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_10",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 160,
+    "function": "csv_free",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "p": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 146,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_2",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 203,
+    "function": "csv_fini",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "cb1": [
+        "unknown_pointer"
+      ],
+      "cb2": [
+        "unknown_pointer"
+      ],
+      "data": [
+        "unknown_pointer"
+      ],
+      "p": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 162,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_1",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 210,
+    "function": "csv_set_delim",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "p": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 205,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_13",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 217,
+    "function": "csv_set_quote",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "p": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 212,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_16",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 226,
+    "function": "csv_get_delim",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "p": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 219,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_6",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 235,
+    "function": "csv_get_quote",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "p": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 228,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_8",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 242,
+    "function": "csv_set_space_func",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "f": [
+        "unknown_pointer"
+      ],
+      "p": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 237,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_18",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 249,
+    "function": "csv_set_term_func",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "f": [
+        "unknown_pointer"
+      ],
+      "p": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 244,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_19",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 256,
+    "function": "csv_set_realloc_func",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "f": [
+        "unknown_pointer"
+      ],
+      "p": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 251,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_17",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 263,
+    "function": "csv_set_free_func",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "f": [
+        "unknown_pointer"
+      ],
+      "p": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 258,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_14",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 270,
+    "function": "csv_set_blk_size",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "p": [
+        "unknown_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 265,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_12",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 279,
+    "function": "csv_get_buffer_size",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "p": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 272,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_5",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 316,
+    "function": "csv_increase_buffer",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "p": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 281,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_9",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "end_line": 467,
+    "function": "csv_parse",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "pointer_roles": {
+      "cb1": [
+        "unknown_pointer"
+      ],
+      "cb2": [
+        "unknown_pointer"
+      ],
+      "data": [
+        "unknown_pointer"
+      ],
+      "p": [
+        "nullable_pointer"
+      ],
+      "s": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 318,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_11",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 473,
+    "function": "csv_write",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "dest": [
+        "unknown_pointer"
+      ],
+      "src": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 469,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_22",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "end_line": 479,
+    "function": "csv_fwrite",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "pointer_roles": {
+      "fp": [
+        "unknown_pointer"
+      ],
+      "src": [
+        "input_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 475,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_4",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 516,
+    "function": "csv_write2",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "dest": [
+        "nullable_pointer"
+      ],
+      "src": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 481,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_21",
+    "unsupported_features": []
+  },
+  {
+    "analysis_backend": "libclang",
+    "analysis_backend_reason": null,
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "end_line": 545,
+    "function": "csv_fwrite2",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "pointer_roles": {
+      "fp": [
+        "nullable_pointer"
+      ],
+      "src": [
+        "nullable_pointer"
+      ]
+    },
+    "policy_safe": false,
+    "project": "libcsv",
+    "role": "helper",
+    "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+    "start_line": 518,
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_3",
+    "unsupported_features": []
+  }
+]

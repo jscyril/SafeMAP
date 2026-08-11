@@ -1,0 +1,122 @@
+[
+  {
+    "c_function": "ini_rstrip",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_rstrip"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_rstrip",
+    "unit_id": "unit_0"
+  },
+  {
+    "c_function": "ini_lskip",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_lskip"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_lskip",
+    "unit_id": "unit_1"
+  },
+  {
+    "c_function": "ini_find_chars_or_comment",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_find_chars_or_comment"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_find_chars_or_comment",
+    "unit_id": "unit_2"
+  },
+  {
+    "c_function": "ini_strncpy0",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_strncpy0"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_strncpy0",
+    "unit_id": "unit_3"
+  },
+  {
+    "c_function": "ini_parse_stream",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_parse_stream"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_parse_stream",
+    "unit_id": "unit_4"
+  },
+  {
+    "c_function": "ini_parse_file",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_parse_file"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_parse_file",
+    "unit_id": "unit_5"
+  },
+  {
+    "c_function": "ini_parse",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_parse"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_parse",
+    "unit_id": "unit_6"
+  },
+  {
+    "c_function": "ini_reader_string",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_reader_string"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_reader_string",
+    "unit_id": "unit_7"
+  },
+  {
+    "c_function": "ini_parse_string",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_parse_string"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_parse_string",
+    "unit_id": "unit_8"
+  },
+  {
+    "c_function": "ini_parse_string_length",
+    "dependencies": [],
+    "kind": "function",
+    "members": [
+      "ini_parse_string_length"
+    ],
+    "priority": 0.2,
+    "reason": "dependency grouping disabled",
+    "rust_function": "ini_parse_string_length",
+    "unit_id": "unit_9"
+  }
+]

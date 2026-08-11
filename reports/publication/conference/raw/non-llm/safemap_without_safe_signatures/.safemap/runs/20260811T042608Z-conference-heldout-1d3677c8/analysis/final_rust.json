@@ -1,0 +1,21 @@
+{
+  "candidate_functions_for_rewrite": [
+    "csv_free",
+    "csv_fwrite2",
+    "csv_get_buffer_size",
+    "csv_get_opts",
+    "csv_increase_buffer",
+    "csv_init",
+    "csv_set_opts"
+  ],
+  "extern_c_blocks": 0,
+  "ffi_calls": 0,
+  "libc_usages": 0,
+  "raw_pointer_dereferences": 10,
+  "raw_pointer_public_api_count": 8,
+  "raw_pointer_types": 10,
+  "transmute_calls": 0,
+  "unsafe_blocks": 0,
+  "unsafe_functions": 0,
+  "unsafe_lines": 0
+}

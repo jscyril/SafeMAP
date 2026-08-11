@@ -1,0 +1,290 @@
+[
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_error",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_0",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "csv_strerror",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_1",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_get_opts",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_2",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_set_opts",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_3",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_init",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_4",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_free",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_5",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "csv_fini",
+    "pointer_roles": {},
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_6",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "csv_set_delim",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_7",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "csv_set_quote",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_8",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_get_delim",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_9",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_get_quote",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_10",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "csv_set_space_func",
+    "pointer_roles": {},
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_11",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "csv_set_term_func",
+    "pointer_roles": {},
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_12",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "csv_set_realloc_func",
+    "pointer_roles": {},
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_13",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "csv_set_free_func",
+    "pointer_roles": {},
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_14",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "csv_set_blk_size",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_15",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_get_buffer_size",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_16",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_increase_buffer",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_17",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "unknown",
+    "category": "unsupported",
+    "eligible_for_safe_translation": false,
+    "function": "csv_parse",
+    "pointer_roles": {},
+    "reasons": [
+      "Unsupported C construct detected"
+    ],
+    "unit_id": "unit_18",
+    "unsupported_features": [
+      "function_pointer"
+    ]
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "csv_write",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_19",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable",
+    "eligible_for_safe_translation": true,
+    "function": "csv_fwrite",
+    "pointer_roles": {},
+    "reasons": [
+      "No unsupported constructs or unresolved pointer hazards detected"
+    ],
+    "unit_id": "unit_20",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_write2",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_21",
+    "unsupported_features": []
+  },
+  {
+    "candidate_decision": "candidate_safe",
+    "category": "safe_translatable_with_api_change",
+    "eligible_for_safe_translation": true,
+    "function": "csv_fwrite2",
+    "pointer_roles": {},
+    "reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "unit_id": "unit_22",
+    "unsupported_features": []
+  }
+]

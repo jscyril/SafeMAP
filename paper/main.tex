@@ -52,13 +52,16 @@ Accepted code must compile without unsafe operations, expose no raw pointers in
 its public API, and match the original C on recorded randomized inputs. The C
 oracle runs under AddressSanitizer and UndefinedBehaviorSanitizer. Six helpers
 from a 32-function LLVM development corpus pass every check, including 1,000
-differential cases per generated project. We specify
-a frozen held-out study on three independently maintained C libraries. The
-protocol uses outcome-blind human labels, records analyzer provenance, compares
-against direct LLM translation to safe Rust, and tests individual components
-through ablation. At manuscript freeze, held-out outcomes and reviewer
-agreement replace this protocol-only statement. Development results test the
-mechanism but do not measure generalization.
+differential cases per generated project. We then froze the implementation and
+ran it once on 146 functions from three independently maintained C libraries.
+Dependency grouping produced 142 units; 70 were classified candidate-safe and
+17 produced Rust, but none compiled, so the held-out accepted rate is 0/142.
+Raw C2Rust produced no output in three project-level attempts because of
+toolchain failures. One of three one-shot Gemini requests produced retained
+Rust, which did not compile. The outcome-blind human label audit is still
+pending and its agreement and classification statistics are not reported.
+These results delimit the prototype's current generalization and the baseline
+comparison rather than demonstrating an effectiveness advantage.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -116,8 +119,8 @@ The evaluation keeps development and test data separate. Development data
 contains 40 authored microbenchmarks, six authored regression modules, and ten
 LLVM programs whose results were already known. The frozen test corpus retains
 every function definition in preselected production source files from pinned
-revisions of inih, cJSON, and libcsv. The files stay sealed until the
-implementation is frozen.
+revisions of inih, cJSON, and libcsv. The files remained sealed until the
+implementation was frozen.
 
 This paper contributes:
 
@@ -129,9 +132,9 @@ This paper contributes:
   \item a deterministic synthesizer for supported C idioms, connected to
   compilation, source-policy checks, differential testing, and recorded
   sanitizer status; and
-  \item a pre-specified function-level study with independent eligibility
-  labels, analyzer provenance, replayable test cases, component ablations, and
-  a direct safe-output baseline.
+  \item a frozen function-level study with analyzer provenance, replayable test
+  artifacts, component ablations, and direct safe-output and C2Rust baselines;
+  independent eligibility labels remain a separately reported pending audit.
 \end{itemize}
 
 \section{Background and related work}
@@ -366,7 +369,7 @@ LLVM sources are pinned at commit \texttt{6cdc54e} \cite{llvmtestsuite}. They
 contain 589 lines of C and 32 functions. libclang analyzed every function.
 Their outcomes informed rule development, so they provide no held-out evidence.
 
-The sealed test corpus uses pinned production sources from inih r62, cJSON
+The held-out test corpus uses pinned production sources from inih r62, cJSON
 v1.7.19, and libcsv commit \texttt{b1d5212}. A documented selection rule keeps
 every function in named production \texttt{.c} files without consulting \tool
 output. Before execution, the experiment records repository URLs, revisions,
@@ -374,8 +377,8 @@ source hashes, licenses, and physical line counts. A materialization script
 blocks access until the implementation has a frozen Git commit. This keeps test
 sources out of rule development.
 
-Two reviewers label each held-out function without seeing the \tool decision.
-They then resolve disagreements. The labels use the candidate taxonomy.
+Two reviewers will label each held-out function without seeing the \tool
+decision, then resolve disagreements. The labels use the candidate taxonomy.
 \texttt{unknown} cases are reported separately and excluded from binary
 precision and recall. The study reports raw agreement, Cohen's $\kappa$,
 disagreements by construct, and separate results for libclang and the fallback
@@ -394,14 +397,14 @@ construct frequencies.
 
 \subsection{Execution snapshot}
 
-Before unsealing, the implementation and configuration are committed. A freeze
-record binds the experiment to that Git revision. The held-out test then runs
-once. Artifacts record source and configuration hashes, tool versions, analyzer
-backend, commands, generated code, differential inputs and outputs, random
-seeds, sanitizer status, timing, and failures. The direct-LLM baseline fixes
-the model and sampling settings before this run. The implementation-freeze
-record stores the exact pre-freeze test command and result; the test count is
-not a held-out outcome.
+Before unsealing, the implementation and configuration were committed at
+\texttt{b2f455c}. A freeze record binds the experiment to that revision and
+records 153 passing pre-freeze tests. The held-out automatic evaluation then
+ran once, without post-outcome repair or retry. Artifacts record source and
+configuration hashes, tool versions, analyzer backend, commands, generated
+code, prompts and responses, random seeds, sanitizer status, timing, and
+failures. The direct-LLM baseline fixed its model and sampling settings before
+execution. The pre-freeze test count is not a held-out outcome.
 
 \section{Results}
 
@@ -446,15 +449,56 @@ mechanism, so the result is development evidence.
 
 \input{tables/development_ablations.tex}
 
-\subsection{Held-out evaluation status}
+\subsection{Held-out corpus and primary outcome}
 
-The held-out corpus has not been materialized or run for this manuscript.
-There is therefore no effectiveness estimate for RQ1--RQ4. We also do not
-combine authored and LLVM development results into a substitute test rate.
-After the implementation freeze, the artifact will generate final tables for
-corpus composition, label agreement, eligibility errors, outcomes by function
-role, complete modules, both baselines, and the five component ablations. Those
-results must replace this section before submission.
+The frozen corpus contains 4,062 physical lines of C and 146 functions. All
+functions were analyzed with libclang. Dependency grouping reduced them to 142
+translation units; the no-grouping ablation retains all 146 separately.
+
+\input{tables/heldout_corpus.tex}
+
+\tool classified 70/142 units as candidate-safe and matched an implemented
+synthesis rule for 17. All 17 produced Rust. The cJSON and libcsv project
+crates failed compilation because generated functions referred to untranslated
+project types or retained C expressions. inih had no supported generated unit.
+Consequently, no held-out unit reached policy or behavioral validation, and the
+primary accepted rate is 0/142. The C-oracle build also treated each library
+source as an executable and failed for lack of \texttt{main}; sanitizer and
+differential checks therefore could not rescue any unit. These are observed
+prototype and harness limitations, not excluded cases.
+
+\input{tables/heldout_cascade.tex}
+
+\subsection{Held-out baselines and ablations}
+
+Raw C2Rust was invoked once for each project and returned no translated output.
+Two logs identify failure to resolve standard C headers; the third records a
+failed invocation without a more specific reason. These failures remain in the
+denominator, but they prevent a meaningful output-quality comparison with
+\tool. The direct Gemini baseline made three one-shot requests. Responses for
+cJSON and libcsv were rejected before validation for introducing,
+respectively, an \texttt{extern "C"} block and a raw pointer type. The retained
+inih response failed Cargo checking because it contained the C postfix
+increment operator. Raw provider logs record 32,790 input and 12,370 output
+tokens. No baseline output was accepted.
+
+\input{tables/heldout_baselines.tex}
+
+Removing pointer roles increased candidate classifications from 70 to 115 but
+reduced generated units from 17 to 10. Removing idiom plans reduced generation
+to one unit. Safe-signature removal and validation-feedback removal did not
+change the pre-compilation counts; disabling dependency grouping changed the
+denominator from 142 to 146 but not the 17 generated functions. Every
+configuration accepted zero units. The ablations therefore diagnose screening
+and synthesis dependencies, but provide no evidence that any component
+improves accepted held-out translation.
+
+\input{tables/heldout_ablations.tex}
+
+The two independent outcome-blind reviews have not yet been collected.
+Eligibility precision, recall, raw agreement, Cohen's $\kappa$, construct-level
+disagreements, and adjudicated labels are therefore pending and must not be
+inferred from \tool's own classifications.
 
 \section{Discussion}
 
@@ -486,10 +530,11 @@ begin.
 
 The authored suites contain deliberately supported patterns, so they measure
 regression coverage. In the LLVM development set, 15 of 21 candidate-safe
-functions still lack a synthesis rule. Candidate labels and implementation
-support must therefore remain separate. Held-out human labels are needed to
-tell how much of the gap comes from classification error and how much comes
-from missing rules.
+functions still lack a synthesis rule. In the held-out run, 53 of 70
+candidate-safe units lack implemented support, and none of the 17 generated
+units compile. Candidate labels, synthesis coverage, and validation must
+therefore remain separate. Held-out human labels are still needed to estimate
+classification error.
 
 \section{Threats to validity}
 
@@ -511,14 +556,22 @@ using an undefined C execution as an oracle, but they cannot say whether
 unexecuted inputs are defined.
 
 \textbf{Label subjectivity.} Candidate safety sometimes requires judgment
-about whether an API redesign is automatic or manual. Two outcome-blind labels,
-retained disagreements, adjudication, confidence scores, and $\kappa$ expose
-that judgment in the report.
+about whether an API redesign is automatic or manual. The planned outcome-
+blind reviews retain disagreements, adjudication, confidence scores, and
+$\kappa$, but those reviews are not yet complete. Until they are, the paper
+makes no precision, recall, or agreement claim.
 
 \textbf{Toolchain sensitivity.} C2Rust, Clang, Rust, Clippy, and Miri can
 behave differently across host versions and configurations. The artifact
 records skipped and failed stages. Reproduction across machines will need
-tighter toolchain pinning.
+tighter toolchain pinning. In this run C2Rust failed before emitting output, so
+its zero is an operational result rather than evidence about output safety.
+
+\textbf{Harness completeness.} The production inputs are libraries, but the
+frozen C oracle attempted to link each source as an executable. The resulting
+missing-\texttt{main} failures made differential and sanitizer checks
+inapplicable. This limitation remains in the reported denominator because
+changing the harness after observing held-out outcomes would break the freeze.
 
 \textbf{Metric interpretation.} Units are functions or dependency groups, not
 lines of code or whole-project migration percentages. Analyzer eligibility may
@@ -540,14 +593,19 @@ to rule changes, the next generalization study will need a new frozen corpus.
 \tool records each stage of C-to-Rust migration instead of reducing the result
 to compilation success. Classification, synthesis support, policy checks, and
 behavioral tests have separate outcomes. A missing test harness cannot count as
-a behavioral pass. Six functions in the LLVM development corpus now pass every
-stage, among them a floating-point reduction and two bit-reversal helpers. The
-held-out protocol is prepared for three independent projects and includes
-outcome-blind labels, replayable differential cases, C sanitizers, a direct
-safe-output baseline, and component ablations. Until that study runs, the
-results establish only that the implemented rules and measurement pipeline work
-on development data.
+a behavioral pass. Six functions in the LLVM development corpus pass every
+stage. In the frozen held-out run, 17 of 142 units generated Rust but none
+compiled or passed the acceptance policy. C2Rust emitted no output under the
+frozen toolchain, and Gemini produced no compiling output. The ablations expose
+screening and synthesis dependencies but have identical zero acceptance. The
+study therefore finds that the prototype and frozen validation harness do not
+yet generalize to these production libraries. Independent human eligibility
+review remains necessary before reporting classification accuracy or reviewer
+agreement.
 
+% Balance the final bibliography page for the current seven-page draft.
+% Re-check this trigger after any substantive text or reference change.
+\IEEEtriggeratref{12}
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 

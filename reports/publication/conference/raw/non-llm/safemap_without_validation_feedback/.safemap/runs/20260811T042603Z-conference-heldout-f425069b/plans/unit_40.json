@@ -1,0 +1,66 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.75,
+      "evidence": "child is a const pointer",
+      "kind": "struct_pointer",
+      "rust_type": "Use a reference or owned struct",
+      "variables": [
+        "child"
+      ]
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "cJSON_CreateObjectReference",
+  "internal_calls": [
+    "cJSON_New_Item",
+    "cast_away_const"
+  ],
+  "original_signature": "struct cJSON * cJSON_CreateObjectReference(const struct cJSON * child)",
+  "patterns": [
+    {
+      "confidence": 0.75,
+      "original": "child",
+      "pattern": "struct_pointer",
+      "replacement": "Use a reference or owned struct"
+    }
+  ],
+  "reason": null,
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "planned",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn cJSON_CreateObjectReference(child: &cJSON) -> cJSON",
+  "type_migrations": [],
+  "unit_id": "unit_40",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

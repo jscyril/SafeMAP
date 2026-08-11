@@ -1,0 +1,89 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.95,
+      "evidence": "fp is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "fp"
+      ]
+    },
+    {
+      "confidence": 0.95,
+      "evidence": "src is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "src"
+      ]
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "csv_fwrite2",
+  "internal_calls": [],
+  "original_signature": "int csv_fwrite2(struct _IO_FILE * fp, const void * src, unsigned long src_size, unsigned char quote)",
+  "patterns": [
+    {
+      "confidence": 0.95,
+      "original": "fp",
+      "pattern": "nullable_pointer",
+      "replacement": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "confidence": 0.95,
+      "original": "src",
+      "pattern": "nullable_pointer",
+      "replacement": "Use Option<&T> or Option<&mut T>"
+    }
+  ],
+  "reason": null,
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+  "status": "planned",
+  "synthesis_rule": "nullable_read",
+  "synthesis_support": "implemented_support",
+  "target_signature": "pub fn csv_fwrite2(fp: Option<&mut _IO_FILE>, src: Option<&()>, src_size: u64, quote: u8) -> i32",
+  "type_migrations": [
+    {
+      "c": "fp",
+      "reason": "fp is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "c": "src",
+      "reason": "src is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    }
+  ],
+  "unit_id": "unit_3",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

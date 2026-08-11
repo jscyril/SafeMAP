@@ -1,0 +1,147 @@
+\begin{table}[t]
+\centering
+\caption{Fully safe acceptance by evaluation mode.}
+\label{tab:safemap-mode-summary}
+\begin{tabular}{lrrrr}
+\hline
+Mode & Rows & Accepted Units & Eligible Units & Acceptance Rate \\
+\hline
+c2rust\_only & 3 & 0 & 70 & 0.000 \\
+llm\_only & 3 & 0 & 70 & 0.000 \\
+safemap\_deterministic & 3 & 0 & 70 & 0.000 \\
+safemap\_without\_dependency\_grouping & 3 & 0 & 70 & 0.000 \\
+safemap\_without\_idiom\_plans & 3 & 0 & 70 & 0.000 \\
+safemap\_without\_pointer\_roles & 3 & 0 & 115 & 0.000 \\
+safemap\_without\_safe\_signatures & 3 & 0 & 70 & 0.000 \\
+safemap\_without\_validation\_feedback & 3 & 0 & 70 & 0.000 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Declared target-function acceptance by evaluation mode.}
+\label{tab:safemap-target-summary}
+\begin{tabular}{lrrr}
+\hline
+Mode & Target Functions & Accepted Targets & Acceptance Rate \\
+\hline
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table*}[t]
+\centering
+\caption{C dataset characterization by evaluation mode. Pointer density is the fraction of function parameters that are pointers.}
+\label{tab:safemap-dataset-characterization}
+\begin{tabular}{lrrrrrrr}
+\hline
+Mode & C LOC & Functions & Pointer Params & Params & Pointer Density & Complexity & Unsupported \\
+\hline
+c2rust\_only & 4062 & 146 & 229 & 282 & 0.812 & 851 & 22 \\
+llm\_only & 4062 & 146 & 229 & 282 & 0.812 & 851 & 22 \\
+safemap\_deterministic & 4062 & 146 & 229 & 282 & 0.812 & 851 & 22 \\
+safemap\_without\_dependency\_grouping & 4062 & 146 & 229 & 282 & 0.812 & 851 & 22 \\
+safemap\_without\_idiom\_plans & 4062 & 146 & 229 & 282 & 0.812 & 851 & 22 \\
+safemap\_without\_pointer\_roles & 4062 & 146 & 229 & 282 & 0.812 & 851 & 22 \\
+safemap\_without\_safe\_signatures & 4062 & 146 & 229 & 282 & 0.812 & 851 & 22 \\
+safemap\_without\_validation\_feedback & 4062 & 146 & 229 & 282 & 0.812 & 851 & 22 \\
+\hline
+\end{tabular}
+\end{table*}
+
+\begin{table}[t]
+\centering
+\caption{SafeMAP failure categories by evaluation mode.}
+\label{tab:safemap-failure-summary}
+\begin{tabular}{llr}
+\hline
+Mode & Category & Count \\
+\hline
+c2rust\_only & requires\_manual\_refactor & 46 \\
+c2rust\_only & unsafe\_required & 8 \\
+c2rust\_only & unsupported & 22 \\
+llm\_only & requires\_manual\_refactor & 46 \\
+llm\_only & unsafe\_required & 8 \\
+llm\_only & unsupported & 22 \\
+safemap\_deterministic & requires\_manual\_refactor & 46 \\
+safemap\_deterministic & unsafe\_required & 8 \\
+safemap\_deterministic & unsupported & 22 \\
+safemap\_deterministic & validation\_failed & 17 \\
+safemap\_without\_dependency\_grouping & requires\_manual\_refactor & 46 \\
+safemap\_without\_dependency\_grouping & unsafe\_required & 8 \\
+safemap\_without\_dependency\_grouping & unsupported & 22 \\
+safemap\_without\_dependency\_grouping & validation\_failed & 17 \\
+safemap\_without\_idiom\_plans & requires\_manual\_refactor & 46 \\
+safemap\_without\_idiom\_plans & unsafe\_required & 8 \\
+safemap\_without\_idiom\_plans & unsupported & 22 \\
+safemap\_without\_idiom\_plans & validation\_failed & 1 \\
+safemap\_without\_pointer\_roles & requires\_manual\_refactor & 1 \\
+safemap\_without\_pointer\_roles & unsafe\_required & 8 \\
+safemap\_without\_pointer\_roles & unsupported & 22 \\
+safemap\_without\_pointer\_roles & validation\_failed & 10 \\
+safemap\_without\_safe\_signatures & requires\_manual\_refactor & 46 \\
+safemap\_without\_safe\_signatures & unsafe\_required & 8 \\
+safemap\_without\_safe\_signatures & unsupported & 22 \\
+safemap\_without\_safe\_signatures & validation\_failed & 17 \\
+safemap\_without\_validation\_feedback & requires\_manual\_refactor & 46 \\
+safemap\_without\_validation\_feedback & unsafe\_required & 8 \\
+safemap\_without\_validation\_feedback & unsupported & 22 \\
+safemap\_without\_validation\_feedback & validation\_failed & 17 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Validation outcomes by evaluation mode and check.}
+\label{tab:safemap-validation-statuses}
+\begin{tabular}{lllr}
+\hline
+Mode & Check & Status & Count \\
+\hline
+llm\_only & c\_sanitizers & unsupported & 1 \\
+llm\_only & cargo\_check & failed & 1 \\
+llm\_only & cargo\_test & failed & 1 \\
+llm\_only & clippy & failed & 1 \\
+llm\_only & differential & failed & 1 \\
+llm\_only & miri & skipped & 1 \\
+safemap\_deterministic & c\_sanitizers & unsupported & 2 \\
+safemap\_deterministic & cargo\_check & failed & 2 \\
+safemap\_deterministic & cargo\_test & failed & 2 \\
+safemap\_deterministic & clippy & failed & 2 \\
+safemap\_deterministic & differential & failed & 2 \\
+safemap\_deterministic & miri & skipped & 2 \\
+safemap\_without\_dependency\_grouping & c\_sanitizers & unsupported & 2 \\
+safemap\_without\_dependency\_grouping & cargo\_check & failed & 2 \\
+safemap\_without\_dependency\_grouping & cargo\_test & failed & 2 \\
+safemap\_without\_dependency\_grouping & clippy & failed & 2 \\
+safemap\_without\_dependency\_grouping & differential & failed & 2 \\
+safemap\_without\_dependency\_grouping & miri & skipped & 2 \\
+safemap\_without\_idiom\_plans & c\_sanitizers & unsupported & 1 \\
+safemap\_without\_idiom\_plans & cargo\_check & failed & 1 \\
+safemap\_without\_idiom\_plans & cargo\_test & failed & 1 \\
+safemap\_without\_idiom\_plans & clippy & failed & 1 \\
+safemap\_without\_idiom\_plans & differential & failed & 1 \\
+safemap\_without\_idiom\_plans & miri & skipped & 1 \\
+safemap\_without\_pointer\_roles & c\_sanitizers & unsupported & 3 \\
+safemap\_without\_pointer\_roles & cargo\_check & failed & 3 \\
+safemap\_without\_pointer\_roles & cargo\_test & failed & 3 \\
+safemap\_without\_pointer\_roles & clippy & failed & 3 \\
+safemap\_without\_pointer\_roles & differential & failed & 3 \\
+safemap\_without\_pointer\_roles & miri & skipped & 3 \\
+safemap\_without\_safe\_signatures & c\_sanitizers & unsupported & 2 \\
+safemap\_without\_safe\_signatures & cargo\_check & failed & 2 \\
+safemap\_without\_safe\_signatures & cargo\_test & failed & 2 \\
+safemap\_without\_safe\_signatures & clippy & failed & 2 \\
+safemap\_without\_safe\_signatures & differential & failed & 2 \\
+safemap\_without\_safe\_signatures & miri & skipped & 2 \\
+safemap\_without\_validation\_feedback & c\_sanitizers & unsupported & 2 \\
+safemap\_without\_validation\_feedback & cargo\_check & failed & 2 \\
+safemap\_without\_validation\_feedback & cargo\_test & failed & 2 \\
+safemap\_without\_validation\_feedback & clippy & failed & 2 \\
+safemap\_without\_validation\_feedback & differential & failed & 2 \\
+safemap\_without\_validation\_feedback & miri & skipped & 2 \\
+\hline
+\end{tabular}
+\end{table}

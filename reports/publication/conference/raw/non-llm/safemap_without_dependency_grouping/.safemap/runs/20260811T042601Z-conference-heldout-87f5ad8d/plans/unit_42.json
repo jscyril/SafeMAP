@@ -1,0 +1,111 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.95,
+      "evidence": "object is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "object"
+      ]
+    },
+    {
+      "confidence": 0.95,
+      "evidence": "name is explicitly checked for null",
+      "kind": "nullable_pointer",
+      "rust_type": "Use Option<&T> or Option<&mut T>",
+      "variables": [
+        "name"
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "evidence": "C string API is called",
+      "kind": "c_string",
+      "rust_type": "Use CStr/CString at FFI boundaries or str/String internally",
+      "variables": [
+        "name"
+      ]
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "get_object_item",
+  "internal_calls": [
+    "case_insensitive_strcmp"
+  ],
+  "original_signature": "struct cJSON * get_object_item(const struct cJSON *const object, const char *const name, const int case_sensitive)",
+  "patterns": [
+    {
+      "confidence": 0.95,
+      "original": "object",
+      "pattern": "nullable_pointer",
+      "replacement": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "confidence": 0.95,
+      "original": "name",
+      "pattern": "nullable_pointer",
+      "replacement": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "confidence": 0.8,
+      "original": "name",
+      "pattern": "c_string",
+      "replacement": "Use CStr/CString at FFI boundaries or str/String internally"
+    }
+  ],
+  "reason": null,
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "planned",
+  "synthesis_rule": "nullable_read",
+  "synthesis_support": "implemented_support",
+  "target_signature": "pub fn get_object_item(object: Option<&cJSON>, name: &str, case_sensitive: i32) -> cJSON",
+  "type_migrations": [
+    {
+      "c": "object",
+      "reason": "object is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "c": "name",
+      "reason": "name is explicitly checked for null",
+      "rust": "Use Option<&T> or Option<&mut T>"
+    },
+    {
+      "c": "name",
+      "reason": "C string API is called",
+      "rust": "Use CStr/CString at FFI boundaries or str/String internally"
+    }
+  ],
+  "unit_id": "unit_42",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

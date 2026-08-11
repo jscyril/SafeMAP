@@ -1,0 +1,23 @@
+{
+  "candidate_functions_for_rewrite": [
+    "buffer_skip_whitespace",
+    "cJSON_DetachItemViaPointer",
+    "cJSON_GetErrorPtr",
+    "cJSON_InitHooks",
+    "case_insensitive_strcmp",
+    "get_array_item",
+    "get_object_item",
+    "skip_utf8_bom",
+    "update_offset"
+  ],
+  "extern_c_blocks": 0,
+  "ffi_calls": 0,
+  "libc_usages": 0,
+  "raw_pointer_dereferences": 8,
+  "raw_pointer_public_api_count": 8,
+  "raw_pointer_types": 17,
+  "transmute_calls": 0,
+  "unsafe_blocks": 0,
+  "unsafe_functions": 0,
+  "unsafe_lines": 0
+}

@@ -1,0 +1,37 @@
+{
+  "c2rust": {
+    "reason": null,
+    "status": "passed",
+    "version": [
+      "C2Rust 0.22.1"
+    ]
+  },
+  "cargo": {
+    "reason": null,
+    "status": "passed",
+    "version": [
+      "cargo 1.94.0 (85eff7c80 2026-01-15)"
+    ]
+  },
+  "clang": {
+    "reason": null,
+    "status": "passed",
+    "version": [
+      "clang version 22.1.8"
+    ]
+  },
+  "python": {
+    "reason": null,
+    "status": "passed",
+    "version": [
+      "Python 3.14.6"
+    ]
+  },
+  "rustc": {
+    "reason": null,
+    "status": "passed",
+    "version": [
+      "rustc 1.94.0 (4a4ef493e 2026-03-02)"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "build_files": [],
+  "build_system": "single_file",
+  "c_files": [
+    "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c"
+  ],
+  "compile_commands": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/llm/llm_only/.safemap/runs/20260811T051949Z-conference-heldout-61c6666b/compile_db/compile_commands.json",
+  "created_at": "2026-08-11T05:19:49.987621+00:00",
+  "detected_entrypoints": [],
+  "header_files": [
+    "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.h"
+  ],
+  "input_path": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih",
+  "project_name": "inih",
+  "root": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih",
+  "schema_version": "1.1",
+  "test_commands": [],
+  "test_files": []
+}

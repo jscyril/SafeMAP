@@ -1,0 +1,69 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "manual_refactor_required",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.88,
+      "evidence": "end is written through",
+      "kind": "output_parameter",
+      "rust_type": "Return the value, preferably in Result",
+      "variables": [
+        "end"
+      ]
+    }
+  ],
+  "eligibility": "requires_manual_refactor",
+  "eligibility_reasons": [
+    "Pointer role, ownership, or aliasing could not be resolved statically"
+  ],
+  "function": "ini_rstrip",
+  "internal_calls": [],
+  "original_signature": "char * ini_rstrip(char * s, char * end)",
+  "patterns": [
+    {
+      "confidence": 0.88,
+      "original": "end",
+      "pattern": "output_parameter",
+      "replacement": "Return the value, preferably in Result"
+    }
+  ],
+  "reason": "Pointer role, ownership, or aliasing could not be resolved statically",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/inih/ini.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_applicable",
+  "target_signature": "pub fn ini_rstrip(s: &mut i8) -> i8",
+  "type_migrations": [
+    {
+      "c": "end",
+      "reason": "end is written through",
+      "rust": "Return the value, preferably in Result"
+    }
+  ],
+  "unit_id": "unit_0",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

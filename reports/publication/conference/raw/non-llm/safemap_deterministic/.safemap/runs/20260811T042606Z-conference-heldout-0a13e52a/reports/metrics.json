@@ -1,0 +1,113 @@
+{
+  "baseline": null,
+  "baseline_compile": null,
+  "behaviorally_validated_unit_ids": [],
+  "behaviorally_validated_units": 0,
+  "candidate_decision_counts": {
+    "candidate_safe": 12,
+    "manual_refactor_required": 5,
+    "unknown": 6
+  },
+  "candidate_safe_units": 12,
+  "compile_success_units": 0,
+  "differential_pass_rate": null,
+  "differential_pass_units": 0,
+  "eligibility_counts": {
+    "requires_manual_refactor": 5,
+    "safe_translatable": 1,
+    "safe_translatable_with_api_change": 11,
+    "unsupported": 6
+  },
+  "eligible_units": 12,
+  "failed_units": [],
+  "failure_categories": {
+    "requires_manual_refactor": 5,
+    "unsupported": 6,
+    "validation_failed": 8
+  },
+  "fully_safe_accepted_unit_ids": [],
+  "fully_safe_accepted_units": 0,
+  "fully_safe_translation_unit_acceptance_rate": 0.0,
+  "generated_unit_ids": [
+    "unit_10",
+    "unit_15",
+    "unit_2",
+    "unit_21",
+    "unit_3",
+    "unit_5",
+    "unit_7",
+    "unit_9"
+  ],
+  "generated_units": 8,
+  "idiom_migrations": {
+    "boolean_int_to_bool": 0,
+    "c_string_to_str": 0,
+    "error_code_to_result": 4,
+    "malloc_free_to_vec_or_box": 0,
+    "nullable_pointer_to_option": 9,
+    "output_parameter_to_return": 0,
+    "pointer_length_array_to_slice": 0
+  },
+  "llm_calls": 0,
+  "llm_input_tokens": 0,
+  "llm_output_tokens": 0,
+  "maintainability": {
+    "approximate_cyclomatic_complexity": 1,
+    "average_function_length": 6.75,
+    "function_count": 8,
+    "lines_of_code": 54
+  },
+  "migrated_idioms": {
+    "error_code_return": 4,
+    "nullable_pointer": 9,
+    "struct_pointer": 1
+  },
+  "original_runtime_seconds": null,
+  "policy_safe_unit_ids": [],
+  "policy_safe_units": 0,
+  "project": "libcsv",
+  "raw_pointer_count": {
+    "baseline_c2rust": 0,
+    "safemap_final": 0
+  },
+  "raw_pointer_public_api_count": {
+    "baseline_c2rust": 0,
+    "safemap_final": 0
+  },
+  "repair_attempts": 0,
+  "residual_unsafe": [],
+  "rust_runtime_seconds": null,
+  "safemap": {
+    "candidate_functions_for_rewrite": [],
+    "extern_c_blocks": 0,
+    "ffi_calls": 0,
+    "libc_usages": 0,
+    "raw_pointer_dereferences": 7,
+    "raw_pointer_public_api_count": 0,
+    "raw_pointer_types": 0,
+    "transmute_calls": 0,
+    "unsafe_blocks": 0,
+    "unsafe_functions": 0,
+    "unsafe_lines": 0
+  },
+  "safemap_compile": false,
+  "schema_version": "1.1",
+  "synthesis_support_counts": {
+    "implemented_support": 8,
+    "not_applicable": 11,
+    "not_implemented": 4
+  },
+  "synthesis_supported_units": 8,
+  "test_pass_rate": null,
+  "test_pass_units": 0,
+  "total_units": 23,
+  "translation_seconds": 0.8461276199996064,
+  "unsafe_blocks": {
+    "baseline_c2rust": 0,
+    "safemap_final": 0
+  },
+  "unsafe_functions": {
+    "baseline_c2rust": 0,
+    "safemap_final": 0
+  }
+}

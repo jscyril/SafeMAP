@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "benchmark_csv": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/llm/benchmark_results.csv",
+    "benchmark_summary": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/llm/benchmark_results.md",
+    "latex_tables": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/llm/paper_tables.tex",
+    "paper_tables": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/llm/paper_tables.md"
+  },
+  "benchmarks": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects",
+  "generated_at_utc": "2026-08-11T05:20:11Z",
+  "git_commit": "b2f455ce1f9e675f800e195f11bbb478fae4194c",
+  "git_dirty": true,
+  "modes": [
+    "llm_only"
+  ],
+  "output_dir": "/mnt/data/college/research/SafeMAP/reports/.reproduction/conference/llm",
+  "result_schema_version": "safemap.benchmark_results.v3",
+  "rows": 3
+}

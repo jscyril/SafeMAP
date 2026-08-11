@@ -1,0 +1,62 @@
+{
+  "analysis_backend": "libclang",
+  "candidate_decision": "candidate_safe",
+  "constraints": [
+    "Preserve observable C behavior",
+    "Do not use unsafe code",
+    "Do not expose raw pointer public APIs",
+    "Do not introduce unapproved external crates",
+    "Compile with #![forbid(unsafe_code)]"
+  ],
+  "detected_idioms": [
+    {
+      "confidence": 0.88,
+      "evidence": "input is written through",
+      "kind": "output_parameter",
+      "rust_type": "Return the value, preferably in Result",
+      "variables": [
+        "input"
+      ]
+    }
+  ],
+  "eligibility": "safe_translatable_with_api_change",
+  "eligibility_reasons": [
+    "Safe translation is possible with a Rust-native API change"
+  ],
+  "function": "skip_multiline_comment",
+  "internal_calls": [],
+  "original_signature": "void skip_multiline_comment(char ** input)",
+  "patterns": [],
+  "reason": "Safe translation is possible with a Rust-native API change",
+  "safety_constraints": [
+    "no unsafe code",
+    "no raw pointer public API",
+    "compile with #![forbid(unsafe_code)]"
+  ],
+  "source_file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/cjson/cJSON.c",
+  "status": "rejected",
+  "synthesis_rule": null,
+  "synthesis_support": "not_implemented",
+  "target_signature": "pub fn skip_multiline_comment(input: &mut i8) -> ()",
+  "type_migrations": [
+    {
+      "c": "input",
+      "reason": "input is written through",
+      "rust": "Return the value, preferably in Result"
+    }
+  ],
+  "unit_id": "unit_75",
+  "validation": {
+    "clippy": true,
+    "compile": true,
+    "differential_tests": "if_applicable",
+    "miri": "optional",
+    "unit_tests": "if_available"
+  },
+  "validation_requirements": [
+    "cargo check",
+    "cargo test",
+    "cargo clippy",
+    "differential testing"
+  ]
+}

@@ -1,0 +1,222 @@
+[
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "compile_passed": false,
+    "function": "ini_find_chars_or_comment",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "members": [
+      "ini_find_chars_or_comment"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_0"
+  },
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "compile_passed": false,
+    "function": "ini_rstrip",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "members": [
+      "ini_rstrip"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_2"
+  },
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "candidate_safe",
+    "candidate_reasons": [
+      "Safe translation is possible with a Rust-native API change"
+    ],
+    "compile_passed": false,
+    "function": "ini_strncpy0",
+    "generated": false,
+    "legacy_eligibility": "safe_translatable_with_api_change",
+    "members": [
+      "ini_strncpy0"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_implemented",
+    "unit_id": "unit_3"
+  },
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "compile_passed": false,
+    "function": "ini_reader_string",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "members": [
+      "ini_reader_string"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_9"
+  },
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "compile_passed": false,
+    "function": "ini_lskip",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "members": [
+      "ini_lskip"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_1"
+  },
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "unknown",
+    "candidate_reasons": [
+      "Unsupported C construct detected"
+    ],
+    "compile_passed": false,
+    "function": "ini_parse_stream",
+    "generated": false,
+    "legacy_eligibility": "unsupported",
+    "members": [
+      "ini_parse_stream"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_4"
+  },
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "compile_passed": false,
+    "function": "ini_parse_file",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "members": [
+      "ini_parse_file"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_5"
+  },
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "compile_passed": false,
+    "function": "ini_parse_string_length",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "members": [
+      "ini_parse_string_length"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_7"
+  },
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "manual_refactor_required",
+    "candidate_reasons": [
+      "Pointer role, ownership, or aliasing could not be resolved statically"
+    ],
+    "compile_passed": false,
+    "function": "ini_parse_string",
+    "generated": false,
+    "legacy_eligibility": "requires_manual_refactor",
+    "members": [
+      "ini_parse_string"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_8"
+  },
+  {
+    "analysis_backend": "libclang",
+    "behaviorally_validated": false,
+    "candidate_decision": "unsafe_required",
+    "candidate_reasons": [
+      "Function depends on operations that normally require unsafe Rust or FFI"
+    ],
+    "compile_passed": false,
+    "function": "ini_parse",
+    "generated": false,
+    "legacy_eligibility": "unsafe_required",
+    "members": [
+      "ini_parse"
+    ],
+    "plan_status": "rejected",
+    "policy_safe": false,
+    "project": "inih",
+    "role": "helper",
+    "synthesis_rule": null,
+    "synthesis_support": "not_applicable",
+    "unit_id": "unit_6"
+  }
+]

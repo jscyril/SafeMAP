@@ -1,0 +1,920 @@
+{
+  "analysis_backend": "libclang",
+  "analysis_backend_reason": null,
+  "diagnostics": [],
+  "functions": [
+    {
+      "body": "int\ncsv_error(const struct csv_parser *p)\n{\n  assert(p && \"received null csv_parser\");\n\n  /* Return the current status of the parser */\n  return p->status;\n}",
+      "calls": [
+        "__assert_fail"
+      ],
+      "end_line": 86,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.75,
+          "evidence": "p is a const pointer",
+          "idiom_type": "struct_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:79",
+          "suggested_rust_pattern": "Use a reference or owned struct",
+          "variables": [
+            "p"
+          ]
+        }
+      ],
+      "name": "csv_error",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "const struct csv_parser *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "p"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "int",
+      "start_line": 79
+    },
+    {
+      "body": "const char *\ncsv_strerror(int status)\n{\n  /* Return a textual description of status */\n  if (status >= CSV_EINVALID || status < 0)\n    return csv_errors[CSV_EINVALID];\n  else\n    return csv_errors[status];\n}",
+      "calls": [],
+      "end_line": 96,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_strerror",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "int",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "status"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "const char *",
+      "start_line": 88
+    },
+    {
+      "body": "int\ncsv_get_opts(const struct csv_parser *p)\n{\n  /* Return the currently set options of parser */\n  if (p == NULL)\n    return -1;\n\n  return p->options;\n}",
+      "calls": [],
+      "end_line": 106,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.95,
+          "evidence": "p is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:98",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "p"
+          ]
+        },
+        {
+          "confidence": 0.82,
+          "evidence": "A negative sentinel is returned when a nullable pointer is absent",
+          "idiom_type": "error_code_return",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:98",
+          "suggested_rust_pattern": "Use Result<T, ErrorCode>",
+          "variables": []
+        }
+      ],
+      "name": "csv_get_opts",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "const struct csv_parser *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "p"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "int",
+      "start_line": 98
+    },
+    {
+      "body": "int\ncsv_set_opts(struct csv_parser *p, unsigned char options)\n{\n  /* Set the options */\n  if (p == NULL)\n    return -1;\n\n  p->options = options;\n  return 0;\n}",
+      "calls": [],
+      "end_line": 117,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.95,
+          "evidence": "p is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:108",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "p"
+          ]
+        },
+        {
+          "confidence": 0.82,
+          "evidence": "A negative sentinel is returned when a nullable pointer is absent",
+          "idiom_type": "error_code_return",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:108",
+          "suggested_rust_pattern": "Use Result<T, ErrorCode>",
+          "variables": []
+        }
+      ],
+      "name": "csv_set_opts",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned char",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "options"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "int",
+      "start_line": 108
+    },
+    {
+      "body": "int\ncsv_init(struct csv_parser *p, unsigned char options)\n{\n  /* Initialize a csv_parser object returns 0 on success, -1 on error */\n  if (p == NULL)\n    return -1;\n\n  p->entry_buf = NULL;\n  p->pstate = ROW_NOT_BEGUN;\n  p->quoted = 0;\n  p->spaces = 0;\n  p->entry_pos = 0;\n  p->entry_size = 0;\n  p->status = 0;\n  p->options = options;\n  p->quote_char = CSV_QUOTE;\n  p->delim_char = CSV_COMMA;\n  p->is_space = NULL;\n  p->is_term = NULL;\n  p->blk_size = MEM_BLK_SIZE;\n  p->malloc_func = NULL;\n  p->realloc_func = realloc;\n  p->free_func = free;\n\n  return 0;\n}",
+      "calls": [],
+      "end_line": 144,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.95,
+          "evidence": "p is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:119",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "p"
+          ]
+        },
+        {
+          "confidence": 0.82,
+          "evidence": "A negative sentinel is returned when a nullable pointer is absent",
+          "idiom_type": "error_code_return",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:119",
+          "suggested_rust_pattern": "Use Result<T, ErrorCode>",
+          "variables": []
+        }
+      ],
+      "name": "csv_init",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned char",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "options"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "int",
+      "start_line": 119
+    },
+    {
+      "body": "void\ncsv_free(struct csv_parser *p)\n{\n  /* Free the entry_buffer of csv_parser object */\n  if (p == NULL)\n    return;\n\n  if (p->entry_buf && p->free_func)\n    p->free_func(p->entry_buf);\n\n  p->entry_buf = NULL;\n  p->entry_size = 0;\n\n  return;\n}",
+      "calls": [
+        "free_func"
+      ],
+      "end_line": 160,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.95,
+          "evidence": "p is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:146",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "p"
+          ]
+        }
+      ],
+      "name": "csv_free",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "void",
+      "start_line": 146
+    },
+    {
+      "body": "int\ncsv_fini(struct csv_parser *p, void (*cb1)(void *, size_t, void *), void (*cb2)(int c, void *), void *data)\n{\n  if (p == NULL)\n    return -1;\n\n  /* Finalize parsing.  Needed, for example, when file does not end in a newline */\n  int quoted = p->quoted;\n  int pstate = p->pstate;\n  size_t spaces = p->spaces;\n  size_t entry_pos = p->entry_pos;\n\n  if ((pstate == FIELD_BEGUN) && p->quoted && (p->options & CSV_STRICT) && (p->options & CSV_STRICT_FINI)) {\n    /* Current field is quoted, no end-quote was seen, and CSV_STRICT_FINI is set */\n    p->status = CSV_EPARSE;\n    return -1;\n  }\n\n  switch (pstate) {\n    case FIELD_MIGHT_HAVE_ENDED:\n      p->entry_pos -= p->spaces + 1;  /* get rid of spaces and original quote */\n      entry_pos = p->entry_pos;\n      /*lint -fallthrough */\n    case FIELD_NOT_BEGUN:\n    case FIELD_BEGUN:\n      /* Unnecessary:\n      quoted = p->quoted, pstate = p->pstate;\n      spaces = p->spaces, entry_pos = p->entry_pos;\n      */\n      SUBMIT_FIELD(p);\n      SUBMIT_ROW(p, -1);\n      break;\n    case ROW_NOT_BEGUN: /* Already ended properly */\n      ;\n  }\n\n  /* Reset parser */\n  p->spaces = p->quoted = p->entry_pos = p->status = 0;\n  p->pstate = ROW_NOT_BEGUN;\n\n  return 0;\n}",
+      "calls": [
+        "cb1",
+        "cb2"
+      ],
+      "end_line": 203,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.95,
+          "evidence": "p is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:162",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "p"
+          ]
+        },
+        {
+          "confidence": 0.82,
+          "evidence": "A negative sentinel is returned when a nullable pointer is absent",
+          "idiom_type": "error_code_return",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:162",
+          "suggested_rust_pattern": "Use Result<T, ErrorCode>",
+          "variables": []
+        }
+      ],
+      "name": "csv_fini",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "void (*)(void *, unsigned long, void *)",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "cb1"
+        },
+        {
+          "array_length": null,
+          "c_type": "void (*)(int, void *)",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "cb2"
+        },
+        {
+          "array_length": null,
+          "c_type": "void *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "data"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "int",
+      "start_line": 162
+    },
+    {
+      "body": "void\ncsv_set_delim(struct csv_parser *p, unsigned char c)\n{\n  /* Set the delimiter */\n  if (p) p->delim_char = c;\n}",
+      "calls": [],
+      "end_line": 210,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_set_delim",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned char",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "c"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "void",
+      "start_line": 205
+    },
+    {
+      "body": "void\ncsv_set_quote(struct csv_parser *p, unsigned char c)\n{\n  /* Set the quote character */\n  if (p) p->quote_char = c;\n}",
+      "calls": [],
+      "end_line": 217,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_set_quote",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned char",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "c"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "void",
+      "start_line": 212
+    },
+    {
+      "body": "unsigned char\ncsv_get_delim(const struct csv_parser *p)\n{\n  assert(p && \"received null csv_parser\");\n\n  /* Get the delimiter */\n  return p->delim_char;\n}",
+      "calls": [
+        "__assert_fail"
+      ],
+      "end_line": 226,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.75,
+          "evidence": "p is a const pointer",
+          "idiom_type": "struct_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:219",
+          "suggested_rust_pattern": "Use a reference or owned struct",
+          "variables": [
+            "p"
+          ]
+        }
+      ],
+      "name": "csv_get_delim",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "const struct csv_parser *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "p"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "unsigned char",
+      "start_line": 219
+    },
+    {
+      "body": "unsigned char\ncsv_get_quote(const struct csv_parser *p)\n{\n  assert(p && \"received null csv_parser\");\n\n  /* Get the quote character */\n  return p->quote_char;\n}",
+      "calls": [
+        "__assert_fail"
+      ],
+      "end_line": 235,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.75,
+          "evidence": "p is a const pointer",
+          "idiom_type": "struct_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:228",
+          "suggested_rust_pattern": "Use a reference or owned struct",
+          "variables": [
+            "p"
+          ]
+        }
+      ],
+      "name": "csv_get_quote",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "const struct csv_parser *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "p"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "unsigned char",
+      "start_line": 228
+    },
+    {
+      "body": "void\ncsv_set_space_func(struct csv_parser *p, int (*f)(unsigned char))\n{\n  /* Set the space function */\n  if (p) p->is_space = f;\n}",
+      "calls": [],
+      "end_line": 242,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_set_space_func",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "int (*)(unsigned char)",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "f"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "void",
+      "start_line": 237
+    },
+    {
+      "body": "void\ncsv_set_term_func(struct csv_parser *p, int (*f)(unsigned char))\n{\n  /* Set the term function */\n  if (p) p->is_term = f;\n}",
+      "calls": [],
+      "end_line": 249,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_set_term_func",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "int (*)(unsigned char)",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "f"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "void",
+      "start_line": 244
+    },
+    {
+      "body": "void\ncsv_set_realloc_func(struct csv_parser *p, void *(*f)(void *, size_t))\n{\n  /* Set the realloc function used to increase buffer size */\n  if (p && f) p->realloc_func = f;\n}",
+      "calls": [],
+      "end_line": 256,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_set_realloc_func",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "void *(*)(void *, unsigned long)",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "f"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "void",
+      "start_line": 251
+    },
+    {
+      "body": "void\ncsv_set_free_func(struct csv_parser *p, void (*f)(void *))\n{\n  /* Set the free function used to free the buffer */\n  if (p && f) p->free_func = f;\n}",
+      "calls": [],
+      "end_line": 263,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_set_free_func",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "void (*)(void *)",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "f"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "void",
+      "start_line": 258
+    },
+    {
+      "body": "void\ncsv_set_blk_size(struct csv_parser *p, size_t size)\n{\n  /* Set the block size used to increment buffer size */\n  if (p) p->blk_size = size;\n}",
+      "calls": [],
+      "end_line": 270,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_set_blk_size",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned long",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "size"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "void",
+      "start_line": 265
+    },
+    {
+      "body": "size_t\ncsv_get_buffer_size(const struct csv_parser *p)\n{\n  /* Get the size of the entry buffer */\n  if (p)\n    return p->entry_size;\n  return 0;\n}",
+      "calls": [],
+      "end_line": 279,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.75,
+          "evidence": "p is a const pointer",
+          "idiom_type": "struct_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:272",
+          "suggested_rust_pattern": "Use a reference or owned struct",
+          "variables": [
+            "p"
+          ]
+        }
+      ],
+      "name": "csv_get_buffer_size",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "const struct csv_parser *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "p"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "unsigned long",
+      "start_line": 272
+    },
+    {
+      "body": "static int\ncsv_increase_buffer(struct csv_parser *p)\n{\n  if (p == NULL) return 0;\n  if (p->realloc_func == NULL) return 0;\n  \n  /* Increase the size of the entry buffer.  Attempt to increase size by \n   * p->blk_size, if this is larger than SIZE_MAX try to increase current\n   * buffer size to SIZE_MAX.  If allocation fails, try to allocate halve \n   * the size and try again until successful or increment size is zero.\n   */\n\n  size_t to_add = p->blk_size;\n  void *vp;\n\n  if ( p->entry_size >= SIZE_MAX - to_add )\n    to_add = SIZE_MAX - p->entry_size;\n\n  if (!to_add) {\n    p->status = CSV_ETOOBIG;\n    return -1;\n  }\n\n  while ((vp = p->realloc_func(p->entry_buf, p->entry_size + to_add)) == NULL) {\n    to_add /= 2;\n    if (!to_add) {\n      p->status = CSV_ENOMEM;\n      return -1;\n    }\n  }\n\n  /* Update entry buffer pointer and entry_size if successful */\n  p->entry_buf = vp;\n  p->entry_size += to_add;\n  return 0;\n}",
+      "calls": [
+        "realloc_func"
+      ],
+      "end_line": 316,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.95,
+          "evidence": "p is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:281",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "p"
+          ]
+        },
+        {
+          "confidence": 0.82,
+          "evidence": "A negative sentinel is returned when a nullable pointer is absent",
+          "idiom_type": "error_code_return",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:281",
+          "suggested_rust_pattern": "Use Result<T, ErrorCode>",
+          "variables": []
+        }
+      ],
+      "name": "csv_increase_buffer",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "int",
+      "start_line": 281
+    },
+    {
+      "body": "size_t\ncsv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(void *, size_t, void *), void (*cb2)(int c, void *), void *data)\n{\n  assert(p && \"received null csv_parser\");\n\n  if (s == NULL) return 0;\n  \n  unsigned const char *us = s;  /* Access input data as array of unsigned char */\n  unsigned char c;              /* The character we are currently processing */\n  size_t pos = 0;               /* The number of characters we have processed in this call */\n\n  /* Store key fields into local variables for performance */\n  unsigned char delim = p->delim_char;\n  unsigned char quote = p->quote_char;\n  int (*is_space)(unsigned char) = p->is_space;\n  int (*is_term)(unsigned char) = p->is_term;\n  int quoted = p->quoted;\n  int pstate = p->pstate;\n  size_t spaces = p->spaces;\n  size_t entry_pos = p->entry_pos;\n\n\n  if (!p->entry_buf && pos < len) {\n    /* Buffer hasn't been allocated yet and len > 0 */\n    if (csv_increase_buffer(p) != 0) { \n      p->quoted = quoted, p->pstate = pstate, p->spaces = spaces, p->entry_pos = entry_pos;\n      return pos;\n    }\n  }\n\n  while (pos < len) {\n    /* Check memory usage, increase buffer if necessary */\n    if (entry_pos == ((p->options & CSV_APPEND_NULL) ? p->entry_size - 1 : p->entry_size) ) {\n      if (csv_increase_buffer(p) != 0) {\n        p->quoted = quoted, p->pstate = pstate, p->spaces = spaces, p->entry_pos = entry_pos;\n        return pos;\n      }\n    }\n\n    c = us[pos++];\n\n    switch (pstate) {\n      case ROW_NOT_BEGUN:\n      case FIELD_NOT_BEGUN:\n        if ((is_space ? is_space(c) : c == CSV_SPACE || c == CSV_TAB) && c!=delim) { /* Space or Tab */\n          continue;\n        } else if (is_term ? is_term(c) : c == CSV_CR || c == CSV_LF) { /* Carriage Return or Line Feed */\n          if (pstate == FIELD_NOT_BEGUN) {\n            SUBMIT_FIELD(p);\n            SUBMIT_ROW(p, c); \n          } else {  /* ROW_NOT_BEGUN */\n            /* Don't submit empty rows by default */\n            if (p->options & CSV_REPALL_NL) {\n              SUBMIT_ROW(p, c);\n            }\n          }\n          continue;\n        } else if (c == delim) { /* Comma */\n          SUBMIT_FIELD(p);\n          break;\n        } else if (c == quote) { /* Quote */\n          pstate = FIELD_BEGUN;\n          quoted = 1;\n        } else {               /* Anything else */\n          pstate = FIELD_BEGUN;\n          quoted = 0;\n          SUBMIT_CHAR(p, c);\n        }\n        break;\n      case FIELD_BEGUN:\n        if (c == quote) {         /* Quote */\n          if (quoted) {\n            SUBMIT_CHAR(p, c);\n            pstate = FIELD_MIGHT_HAVE_ENDED;\n          } else {\n            /* STRICT ERROR - double quote inside non-quoted field */\n            if (p->options & CSV_STRICT) {\n              p->status = CSV_EPARSE;\n              p->quoted = quoted, p->pstate = pstate, p->spaces = spaces, p->entry_pos = entry_pos;\n              return pos-1;\n            }\n            SUBMIT_CHAR(p, c);\n            spaces = 0;\n          }\n        } else if (c == delim) {  /* Comma */\n          if (quoted) {\n            SUBMIT_CHAR(p, c);\n          } else {\n            SUBMIT_FIELD(p);\n          }\n        } else if (is_term ? is_term(c) : c == CSV_CR || c == CSV_LF) {  /* Carriage Return or Line Feed */\n          if (!quoted) {\n            SUBMIT_FIELD(p);\n            SUBMIT_ROW(p, c);\n          } else {\n            SUBMIT_CHAR(p, c);\n          }\n        } else if (!quoted && (is_space? is_space(c) : c == CSV_SPACE || c == CSV_TAB)) { /* Tab or space for non-quoted field */\n            SUBMIT_CHAR(p, c);\n            spaces++;\n        } else {  /* Anything else */\n          SUBMIT_CHAR(p, c);\n          spaces = 0;\n        }\n        break;\n      case FIELD_MIGHT_HAVE_ENDED:\n        /* This only happens when a quote character is encountered in a quoted field */\n        if (c == delim) {  /* Comma */\n          entry_pos -= spaces + 1;  /* get rid of spaces and original quote */\n          SUBMIT_FIELD(p);\n        } else if (is_term ? is_term(c) : c == CSV_CR || c == CSV_LF) {  /* Carriage Return or Line Feed */\n          entry_pos -= spaces + 1;  /* get rid of spaces and original quote */\n          SUBMIT_FIELD(p);\n          SUBMIT_ROW(p, c);\n        } else if (is_space ? is_space(c) : c == CSV_SPACE || c == CSV_TAB) {  /* Space or Tab */\n          SUBMIT_CHAR(p, c);\n          spaces++;\n        } else if (c == quote) {  /* Quote */\n          if (spaces) {\n            /* STRICT ERROR - unescaped double quote */\n            if (p->options & CSV_STRICT) {\n              p->status = CSV_EPARSE;\n              p->quoted = quoted, p->pstate = pstate, p->spaces = spaces, p->entry_pos = entry_pos;\n              return pos-1;\n            }\n            spaces = 0;\n            SUBMIT_CHAR(p, c);\n          } else {\n            /* Two quotes in a row */\n            pstate = FIELD_BEGUN;\n          }\n        } else {  /* Anything else */\n          /* STRICT ERROR - unescaped double quote */\n          if (p->options & CSV_STRICT) {\n            p->status = CSV_EPARSE;\n            p->quoted = quoted, p->pstate = pstate, p->spaces = spaces, p->entry_pos = entry_pos;\n            return pos-1;\n          }\n          pstate = FIELD_BEGUN;\n          spaces = 0;\n          SUBMIT_CHAR(p, c);\n        }\n        break;\n     default:\n       break;\n    }\n  }\n  p->quoted = quoted, p->pstate = pstate, p->spaces = spaces, p->entry_pos = entry_pos;\n  return pos;\n}",
+      "calls": [
+        "__assert_fail",
+        "cb1",
+        "cb2",
+        "csv_increase_buffer",
+        "is_space",
+        "is_term"
+      ],
+      "end_line": 467,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.95,
+          "evidence": "p is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:318",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "p"
+          ]
+        },
+        {
+          "confidence": 0.95,
+          "evidence": "s is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:318",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "s"
+          ]
+        }
+      ],
+      "name": "csv_parse",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct csv_parser *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "p"
+        },
+        {
+          "array_length": null,
+          "c_type": "const void *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "s"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned long",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "len"
+        },
+        {
+          "array_length": null,
+          "c_type": "void (*)(void *, unsigned long, void *)",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "cb1"
+        },
+        {
+          "array_length": null,
+          "c_type": "void (*)(int, void *)",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "cb2"
+        },
+        {
+          "array_length": null,
+          "c_type": "void *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "data"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "unsigned long",
+      "start_line": 318
+    },
+    {
+      "body": "size_t\ncsv_write (void *dest, size_t dest_size, const void *src, size_t src_size)\n{\n  return csv_write2(dest, dest_size, src, src_size, CSV_QUOTE);\n}",
+      "calls": [
+        "csv_write2"
+      ],
+      "end_line": 473,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_write",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "void *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "dest"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned long",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "dest_size"
+        },
+        {
+          "array_length": null,
+          "c_type": "const void *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "src"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned long",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "src_size"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "unsigned long",
+      "start_line": 469
+    },
+    {
+      "body": "int\ncsv_fwrite (FILE *fp, const void *src, size_t src_size)\n{\n  return csv_fwrite2(fp, src, src_size, CSV_QUOTE);\n}",
+      "calls": [
+        "csv_fwrite2"
+      ],
+      "end_line": 479,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [],
+      "name": "csv_fwrite",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct _IO_FILE *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "fp"
+        },
+        {
+          "array_length": null,
+          "c_type": "const void *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "src"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned long",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "src_size"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "int",
+      "start_line": 475
+    },
+    {
+      "body": "size_t\ncsv_write2 (void *dest, size_t dest_size, const void *src, size_t src_size, unsigned char quote)\n{\n  unsigned char *cdest = dest;\n  const unsigned char *csrc = src;\n  size_t chars = 0;\n\n  if (src == NULL)\n    return 0;\n\n  if (dest == NULL)\n    dest_size = 0;\n\n  if (dest_size > 0)\n    *cdest++ = quote;\n  chars++;\n\n  while (src_size) {\n    if (*csrc == quote) {\n      if (dest_size > chars)\n        *cdest++ = quote;\n      if (chars < SIZE_MAX) chars++;\n    }\n    if (dest_size > chars)\n      *cdest++ = *csrc;\n    if (chars < SIZE_MAX) chars++;\n    src_size--;\n    csrc++;\n  }\n\n  if (dest_size > chars)\n    *cdest = quote;\n  if (chars < SIZE_MAX) chars++;\n\n  return chars;\n}",
+      "calls": [],
+      "end_line": 516,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.95,
+          "evidence": "dest is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:481",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "dest"
+          ]
+        },
+        {
+          "confidence": 0.95,
+          "evidence": "src is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:481",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "src"
+          ]
+        }
+      ],
+      "name": "csv_write2",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "void *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "dest"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned long",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "dest_size"
+        },
+        {
+          "array_length": null,
+          "c_type": "const void *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "src"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned long",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "src_size"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned char",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "quote"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "unsigned long",
+      "start_line": 481
+    },
+    {
+      "body": "int\ncsv_fwrite2 (FILE *fp, const void *src, size_t src_size, unsigned char quote)\n{\n  const unsigned char *csrc = src;\n\n  if (fp == NULL || src == NULL)\n    return 0;\n\n  if (fputc(quote, fp) == EOF)\n    return EOF;\n\n  while (src_size) {\n    if (*csrc == quote) {\n      if (fputc(quote, fp) == EOF)\n        return EOF;\n    }\n    if (fputc(*csrc, fp) == EOF)\n      return EOF;\n    src_size--;\n    csrc++;\n  }\n\n  if (fputc(quote, fp) == EOF) {\n    return EOF;\n  }\n\n  return 0;\n}",
+      "calls": [
+        "fputc"
+      ],
+      "end_line": 545,
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "idioms": [
+        {
+          "confidence": 0.95,
+          "evidence": "fp is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:518",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "fp"
+          ]
+        },
+        {
+          "confidence": 0.95,
+          "evidence": "src is explicitly checked for null",
+          "idiom_type": "nullable_pointer",
+          "location": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c:518",
+          "suggested_rust_pattern": "Use Option<&T> or Option<&mut T>",
+          "variables": [
+            "src"
+          ]
+        }
+      ],
+      "name": "csv_fwrite2",
+      "parameters": [
+        {
+          "array_length": null,
+          "c_type": "struct _IO_FILE *",
+          "is_const": false,
+          "is_pointer": true,
+          "name": "fp"
+        },
+        {
+          "array_length": null,
+          "c_type": "const void *",
+          "is_const": true,
+          "is_pointer": true,
+          "name": "src"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned long",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "src_size"
+        },
+        {
+          "array_length": null,
+          "c_type": "unsigned char",
+          "is_const": false,
+          "is_pointer": false,
+          "name": "quote"
+        }
+      ],
+      "pointer_facts": [],
+      "return_type": "int",
+      "start_line": 518
+    }
+  ],
+  "globals": [
+    {
+      "c_type": "const char *[5]",
+      "file": "/mnt/data/college/research/SafeMAP/external_corpus/conference_heldout/projects/libcsv/libcsv.c",
+      "line": 73,
+      "mutable": true,
+      "name": "csv_errors"
+    }
+  ],
+  "schema_version": "1.1",
+  "structs": []
+}
