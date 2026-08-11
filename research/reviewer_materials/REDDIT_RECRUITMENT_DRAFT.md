@@ -33,9 +33,14 @@ to the selected libraries should be disclosed rather than hidden.
 
 ### Review process
 
-- You receive a pinned, hash-recorded source packet and a local browser form.
-- The form runs entirely on your computer and exports CSV/JSON; it sends
-  nothing automatically.
+- You receive a link to an outcome-blind website hosted on the project's
+  GitHub Pages domain. The instructions, consent questions, complete codebook,
+  pinned source, and browser form are available there without an installer or
+  compressed download.
+- Reviewer site: <https://jscyril.github.io/SafeMAP/review/>
+- The form runs entirely in your browser and exports CSV/JSON; it sends nothing
+  automatically. A hash-recorded ZIP is available only as an optional offline
+  fallback.
 - You do not see SafeMAP's decisions, generated code, or the other reviewer's
   answers.
 - Responses are returned privately, not posted in the thread.
