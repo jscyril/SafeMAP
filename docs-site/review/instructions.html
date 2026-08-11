@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reviewer instructions · SafeMAP Independent Review</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <a class="identity" href="index.html"><span class="mark" aria-hidden="true">SM</span>
+      <span><strong>SafeMAP</strong><small>Independent eligibility review</small></span></a>
+    <span class="status">Outcome-blind packet · UI2</span>
+  </header>
+  <main id="main" class="document">
+    <section>
+      <nav><a href="index.html">← Reviewer home</a> · <a href="instructions.html">Instructions</a>
+        · <a href="consent.html">Consent</a> · <a href="codebook.html">Codebook</a>
+        · <a href="form.html">Review form</a></nav>
+      <h1>Private Reviewer Handoff</h1>
+<p>Thank you for agreeing to review the SafeMAP held-out eligibility corpus.</p>
+<p>Before starting:</p>
+<ol>
+<li>Return the completed consent and screening form privately.</li>
+<li>Read the complete eligibility codebook from the website navigation.</li>
+<li>Verify the SHA-256 values in <code>packet_manifest.json</code> if your platform permits.</li>
+<li>Confirm that the packet contains source and form files but no SafeMAP decision, plan, generated Rust, or outcome file.</li>
+<li>Open the review form from the website navigation in a current browser.</li>
+</ol>
+<p>Enter only the pseudonymous reviewer identifier assigned by the coordinator. Do not enter your email address or Reddit username into the review form.</p>
+<p>For every function, select one label, set confidence from 1 to 5, select the construct tags that affected the decision, and write a specific rationale. Use the source links and full pinned source files when the excerpt is insufficient.</p>
+<p>The form autosaves to browser local storage, but browser data can be cleared. Use <strong>Export draft JSON</strong> periodically. When all rows pass validation, export both final CSV and final JSON. Return both files privately to the coordinator.</p>
+<p>Do not:</p>
+<ul>
+<li>look for SafeMAP results in repository branches, issues, or reports;</li>
+<li>consult the other reviewer;</li>
+<li>post function-specific reasoning publicly;</li>
+<li>change the source or function identifiers in the export; or</li>
+<li>include personal information in rationales.</li>
+</ul>
+<p>Record external documentation or source history used in the <code>external_sources</code> field of the JSON export. Procedural questions may be sent to the coordinator, but the coordinator should not advise which label to choose.</p>
+    </section>
+  </main>
+  <footer><p>SafeMAP independent review · Static site hosted with GitHub Pages</p></footer>
+</body>
+</html>

@@ -1,0 +1,92 @@
+{
+  "characterization_sha256": "92e23a8f51feef33cdb878cc18152a80859c979ca817d150e41caab5e944cb10",
+  "codebook_sha256": "2273647a24fe57732a65de1c5caf4aaa6d6f8d2a8ad1cb92a03493ee2bde47de",
+  "files": [
+    {
+      "path": "REVIEWER_CODEBOOK.md",
+      "sha256": "2273647a24fe57732a65de1c5caf4aaa6d6f8d2a8ad1cb92a03493ee2bde47de"
+    },
+    {
+      "path": "REVIEWER_CONSENT_AND_SCREENING.md",
+      "sha256": "6865a336d67cdda8a8fdb6fb1ac38ed0b3b4ce6a6a7bb17e5f0547f6903905b0"
+    },
+    {
+      "path": "REVIEWER_HANDOFF.md",
+      "sha256": "870c45fd432672404d9f20aab149ad9690ce41f9c2f9d2cad77eae7dc82980cf"
+    },
+    {
+      "path": "function_inventory.json",
+      "sha256": "00914293432760527b9f637fc285a6adfb401a20fe1caf95b3e26b9b19a28696"
+    },
+    {
+      "path": "review.html",
+      "sha256": "61b13c983e2d3b14644ee86050acb49d437d77e1da84bcc91791e2147033ae4a"
+    },
+    {
+      "path": "sources/manifest.json",
+      "sha256": "9e0107ccbd15f31242eca9b917ed55beaaf3a03af173c02e9ba5b79b62f90ae4"
+    },
+    {
+      "path": "sources/projects/cjson/LICENSE",
+      "sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c"
+    },
+    {
+      "path": "sources/projects/cjson/cJSON.c",
+      "sha256": "298581a04a36c0165da4b0aade235c23088cb2faa58651d720ea2f3706ed0b0d"
+    },
+    {
+      "path": "sources/projects/cjson/cJSON.h",
+      "sha256": "25b0145150d500498e4d209cec69c18c42cf818bffcc54690be3b895a2a16dee"
+    },
+    {
+      "path": "sources/projects/cjson/source_metadata.json",
+      "sha256": "58a77d43eac36b4e8a917f391fab73a43035318c3d0e423c7cc84c230c914b6d"
+    },
+    {
+      "path": "sources/projects/inih/LICENSE.txt",
+      "sha256": "9ae3b39e83e9158e44b67733baa3bb2d84e80efdcfb14a5820210a42c7abdf7f"
+    },
+    {
+      "path": "sources/projects/inih/ini.c",
+      "sha256": "cdba16f9e826d2c692efaecbbe010c17b417315db8261fbd48b66aaab8a9d46f"
+    },
+    {
+      "path": "sources/projects/inih/ini.h",
+      "sha256": "154b56f8437ec3e08d19f9c455a409ddccd4462cff33babe5f2713269d6dd64e"
+    },
+    {
+      "path": "sources/projects/inih/source_metadata.json",
+      "sha256": "415ff829a9930d0e9a052a0c564050b28a894890cb0802b2350308118b07375d"
+    },
+    {
+      "path": "sources/projects/libcsv/COPYING",
+      "sha256": "2337fbb1cccac9c6cc7303442760d83bbb3ae5d44e11237cda95f83f1ad700ce"
+    },
+    {
+      "path": "sources/projects/libcsv/csv.h",
+      "sha256": "0b89a06b1052014f75942618aa05e90cb6d2f3bfad69fd2afeac79471f1efd60"
+    },
+    {
+      "path": "sources/projects/libcsv/libcsv.c",
+      "sha256": "75f39188a5c24ebe3faabbf0249a8732e82544b2158e4af99419cee2b97f8e81"
+    },
+    {
+      "path": "sources/projects/libcsv/source_metadata.json",
+      "sha256": "67fb6d22f0818d3039cf6e7c6ea5e7ecb1c666753efc1a3085f46c0ee8c31c06"
+    }
+  ],
+  "function_count": 146,
+  "generated_at_utc": "2026-08-11T05:17:29Z",
+  "outcome_blind": true,
+  "packet_id": "conference-heldout-eligibility-v1",
+  "packet_sha256": "395125387fc42e16c1c07c2bd5d7c0b4c3594acaa396ec7eb8de570724a33540",
+  "prohibited_content": [
+    "SafeMAP decisions",
+    "migration plans",
+    "generated Rust",
+    "validation outcomes",
+    "baseline outcomes",
+    "aggregate outcomes"
+  ],
+  "schema_version": "safemap.reviewer_packet.v1"
+}
