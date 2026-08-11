@@ -1,18 +1,23 @@
 {
   "artifacts": {
-    "benchmark_csv": "reports/.reproduction/20260724T161307Z/ablation/benchmark_results.csv",
-    "benchmark_summary": "reports/.reproduction/20260724T161307Z/ablation/benchmark_results.md",
-    "latex_tables": "reports/.reproduction/20260724T161307Z/ablation/paper_tables.tex",
-    "paper_tables": "reports/.reproduction/20260724T161307Z/ablation/paper_tables.md"
+    "benchmark_csv": "reports/.reproduction/final-draft-development-7f15f2f/ablation/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/final-draft-development-7f15f2f/ablation/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/final-draft-development-7f15f2f/ablation/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/final-draft-development-7f15f2f/ablation/paper_tables.md"
   },
   "benchmarks": "examples",
-  "generated_at_utc": "2026-07-24T16:14:10Z",
-  "git_commit": "60487aaed9f0492f989c6af99e56c4a966095b38",
-  "git_dirty": true,
+  "generated_at_utc": "2026-08-11T03:32:19Z",
+  "git_commit": "7f15f2f23ce0cf536792c3eee288791324ae530c",
+  "git_dirty": false,
   "modes": [
-    "safemap_no_static_guidance"
+    "safemap_deterministic",
+    "safemap_without_dependency_grouping",
+    "safemap_without_idiom_plans",
+    "safemap_without_pointer_roles",
+    "safemap_without_safe_signatures",
+    "safemap_without_validation_feedback"
   ],
-  "output_dir": "reports/.reproduction/20260724T161307Z/ablation",
-  "result_schema_version": "safemap.benchmark_results.v2",
-  "rows": 40
+  "output_dir": "reports/.reproduction/final-draft-development-7f15f2f/ablation",
+  "result_schema_version": "safemap.benchmark_results.v3",
+  "rows": 240
 }

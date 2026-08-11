@@ -1,18 +1,18 @@
 {
   "artifacts": {
-    "benchmark_csv": "reports/.reproduction/20260724T161307Z/case-studies/benchmark_results.csv",
-    "benchmark_summary": "reports/.reproduction/20260724T161307Z/case-studies/benchmark_results.md",
-    "latex_tables": "reports/.reproduction/20260724T161307Z/case-studies/paper_tables.tex",
-    "paper_tables": "reports/.reproduction/20260724T161307Z/case-studies/paper_tables.md"
+    "benchmark_csv": "reports/.reproduction/final-draft-development-7f15f2f/case-studies/benchmark_results.csv",
+    "benchmark_summary": "reports/.reproduction/final-draft-development-7f15f2f/case-studies/benchmark_results.md",
+    "latex_tables": "reports/.reproduction/final-draft-development-7f15f2f/case-studies/paper_tables.tex",
+    "paper_tables": "reports/.reproduction/final-draft-development-7f15f2f/case-studies/paper_tables.md"
   },
   "benchmarks": "case_studies",
-  "generated_at_utc": "2026-07-24T16:13:50Z",
-  "git_commit": "60487aaed9f0492f989c6af99e56c4a966095b38",
-  "git_dirty": true,
+  "generated_at_utc": "2026-08-11T03:29:14Z",
+  "git_commit": "7f15f2f23ce0cf536792c3eee288791324ae530c",
+  "git_dirty": false,
   "modes": [
     "safemap_deterministic"
   ],
-  "output_dir": "reports/.reproduction/20260724T161307Z/case-studies",
-  "result_schema_version": "safemap.benchmark_results.v2",
-  "rows": 5
+  "output_dir": "reports/.reproduction/final-draft-development-7f15f2f/case-studies",
+  "result_schema_version": "safemap.benchmark_results.v3",
+  "rows": 6
 }

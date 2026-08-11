@@ -1,27 +1,27 @@
 {
   "allow_denominator_mismatch": false,
   "artifacts": {
-    "artifact_metadata": "reports/.reproduction/20260724T161307Z/artifact_metadata.json",
-    "c2rust_baseline": "reports/.reproduction/20260724T161307Z/c2rust-only/benchmark_results.csv",
-    "case_studies": "reports/.reproduction/20260724T161307Z/case-studies/benchmark_results.csv",
-    "combined_evaluation": "reports/.reproduction/20260724T161307Z/combined_evaluation.md",
-    "external_corpus": "reports/.reproduction/20260724T161307Z/external-corpus/benchmark_results.csv",
-    "safemap_microbenchmarks": "reports/.reproduction/20260724T161307Z/final/benchmark_results.csv",
-    "static_guidance_ablation": "reports/.reproduction/20260724T161307Z/ablation/benchmark_results.csv"
+    "artifact_metadata": "reports/.reproduction/final-draft-development-7f15f2f/artifact_metadata.json",
+    "c2rust_baseline": "reports/.reproduction/final-draft-development-7f15f2f/c2rust-only/benchmark_results.csv",
+    "case_studies": "reports/.reproduction/final-draft-development-7f15f2f/case-studies/benchmark_results.csv",
+    "combined_evaluation": "reports/.reproduction/final-draft-development-7f15f2f/combined_evaluation.md",
+    "external_corpus": "reports/.reproduction/final-draft-development-7f15f2f/external-corpus/benchmark_results.csv",
+    "safemap_microbenchmarks": "reports/.reproduction/final-draft-development-7f15f2f/final/benchmark_results.csv",
+    "static_guidance_ablation": "reports/.reproduction/final-draft-development-7f15f2f/ablation/benchmark_results.csv"
   },
   "command_lines": [
-    "/usr/bin/python -m safemap.cli final-eval --benchmarks external_corpus/llvm_test_suite_misc/projects --output reports/.reproduction/20260724T161307Z/external-corpus --mode safemap_deterministic",
-    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/20260724T161307Z/final --mode safemap_deterministic",
-    "/usr/bin/python -m safemap.cli final-eval --benchmarks case_studies --output reports/.reproduction/20260724T161307Z/case-studies --mode safemap_deterministic",
-    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/20260724T161307Z/c2rust-only --mode c2rust_only",
-    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/20260724T161307Z/ablation --mode safemap_no_static_guidance",
-    "/usr/bin/python -m safemap.cli combined-eval --output reports/.reproduction/20260724T161307Z/combined_evaluation.md --main-csv reports/.reproduction/20260724T161307Z/final/benchmark_results.csv --case-study-csv reports/.reproduction/20260724T161307Z/case-studies/benchmark_results.csv --external-csv reports/.reproduction/20260724T161307Z/external-corpus/benchmark_results.csv --c2rust-csv reports/.reproduction/20260724T161307Z/c2rust-only/benchmark_results.csv --ablation-csv reports/.reproduction/20260724T161307Z/ablation/benchmark_results.csv"
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks external_corpus/llvm_test_suite_misc/projects --output reports/.reproduction/final-draft-development-7f15f2f/external-corpus --mode safemap_deterministic",
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/final-draft-development-7f15f2f/final --mode safemap_deterministic",
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks case_studies --output reports/.reproduction/final-draft-development-7f15f2f/case-studies --mode safemap_deterministic",
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/final-draft-development-7f15f2f/c2rust-only --mode c2rust_only",
+    "/usr/bin/python -m safemap.cli final-eval --benchmarks examples --output reports/.reproduction/final-draft-development-7f15f2f/ablation --mode safemap_deterministic --mode safemap_without_pointer_roles --mode safemap_without_safe_signatures --mode safemap_without_dependency_grouping --mode safemap_without_idiom_plans --mode safemap_without_validation_feedback",
+    "/usr/bin/python -m safemap.cli combined-eval --output reports/.reproduction/final-draft-development-7f15f2f/combined_evaluation.md --main-csv reports/.reproduction/final-draft-development-7f15f2f/final/benchmark_results.csv --case-study-csv reports/.reproduction/final-draft-development-7f15f2f/case-studies/benchmark_results.csv --external-csv reports/.reproduction/final-draft-development-7f15f2f/external-corpus/benchmark_results.csv --c2rust-csv reports/.reproduction/final-draft-development-7f15f2f/c2rust-only/benchmark_results.csv --ablation-csv reports/.reproduction/final-draft-development-7f15f2f/ablation/benchmark_results.csv"
   ],
   "metadata": {
-    "generated_at_utc": "2026-07-24T16:14:10Z",
-    "git_commit": "60487aaed9f0492f989c6af99e56c4a966095b38",
-    "git_dirty": true,
-    "result_schema_version": "safemap.benchmark_results.v2",
+    "generated_at_utc": "2026-08-11T03:32:19Z",
+    "git_commit": "7f15f2f23ce0cf536792c3eee288791324ae530c",
+    "git_dirty": false,
+    "result_schema_version": "safemap.benchmark_results.v3",
     "tool_versions": {
       "c2rust": "C2Rust 0.22.1",
       "cargo": "cargo 1.94.0 (85eff7c80 2026-01-15)",
@@ -35,67 +35,67 @@
   "published_artifacts": [
     {
       "path": "reports/publication/final/benchmark_results.csv",
-      "sha256": "05c26e89ddba8c8ce7c7eb23c827e1bb31b506d3180471bf7fb82790cfca7193"
+      "sha256": "a1db89011f00b4efac471db147294f8e196577099eaecec0452735b699c7ef9f"
     },
     {
       "path": "reports/publication/final/benchmark_results.md",
-      "sha256": "23ed64eca8571abacad5c3c91c7b7f4a00bad02109b25d26ea8ed5dca6985eb8"
+      "sha256": "7bc3102024d8052abdc4d4c833bedbef9de3e361e71dd5628a52683bc1450ece"
     },
     {
       "path": "reports/publication/final/paper_tables.md",
-      "sha256": "894c5b08c0b0c05dd0399db5cd43f0f77e3f07e1926084ee791d1a80c348eec4"
+      "sha256": "aa26bd902bead6aa9876e0002bac0c0f95aecdfa591dd35a839c87e3e437b782"
     },
     {
       "path": "reports/publication/final/paper_tables.tex",
-      "sha256": "52443bcc40218a253d81ff319c87952e38301533e8ca58b76d77d8e46c4faa24"
+      "sha256": "be9baba2079b8df0b6b1fddd71a163b6db50852bee479c3801671daf6f2cb77b"
     },
     {
       "path": "reports/publication/final/manifest.json",
-      "sha256": "9ab3e8646092c3d396d45a50768a3fec74a6792659161651a00e720be6144aee"
+      "sha256": "284cc2b1d590df610ecbd6be49f985e6ce8d7e1e42f24720af836b727cb401bd"
     },
     {
       "path": "reports/publication/case-studies/benchmark_results.csv",
-      "sha256": "1627366ed862ef73e57d25af2c3da2872a3a06d4d3040b6112dd51d9848ad03f"
+      "sha256": "1999d70cd03614efede5adeeb18da9700457aa782fb555161190988fb0dc787f"
     },
     {
       "path": "reports/publication/case-studies/benchmark_results.md",
-      "sha256": "832b76cbba313d207d5bc7d09342d76e26bc206e7447e48a72032265fb5f9c20"
+      "sha256": "1fe0f99891d3b20d317538a7a04a4b31a924bb6101230e437490a4a1b7b28c6d"
     },
     {
       "path": "reports/publication/case-studies/paper_tables.md",
-      "sha256": "e193002cd7a94872474fcf6dec97a43ea49f6059f76bf0032f1ae8d54f9101ea"
+      "sha256": "40e4cd7925860e0d3cb085e2dcf679ecd774675fe4a33046d55fa698e152de53"
     },
     {
       "path": "reports/publication/case-studies/paper_tables.tex",
-      "sha256": "9f14328baa105a623637da39c794992f1539a78818dafff1f40d4de12eb33f48"
+      "sha256": "fc29ec6326f82dc97d7a19d4f1d70702ddab8357b6f818d8da9a08942d0e85ab"
     },
     {
       "path": "reports/publication/case-studies/manifest.json",
-      "sha256": "44c373de74fa1a80c2d433838fb5db22645b73003ab3823ddb758337e5595e23"
+      "sha256": "0d7310966a2b48ed57fa4bf567b946579e55128e3c69f8a38da63f6c32a6e54f"
     },
     {
       "path": "reports/publication/external-corpus/benchmark_results.csv",
-      "sha256": "3f0123af4f87245d5d15ad2cf56f76d58c57a8f284a339a86f08c0b65abcfa41"
+      "sha256": "a74929a9b1f1a374f48d60bbb0d5f61cc78a9404f7a94b1ff71a55f7a9f9a417"
     },
     {
       "path": "reports/publication/external-corpus/benchmark_results.md",
-      "sha256": "6180f76d3858de26487b93151ac7db10185a3b3c1861adb202b612582107a64c"
+      "sha256": "02d42713a0a3736b2378fd74336f233b16f518cad4b71249b81761c7c0d77735"
     },
     {
       "path": "reports/publication/external-corpus/paper_tables.md",
-      "sha256": "203b71ce3b675c1c23b45ee0d9293d6abebb39bb1fd27b0b46290b606b477250"
+      "sha256": "4cfbdf7dcd989479902c614e57e9bed6d04de13ce75078d180989aaff251654c"
     },
     {
       "path": "reports/publication/external-corpus/paper_tables.tex",
-      "sha256": "288e57b252607700450e66458fd27fdb810c761f3513644d4f60401f53d77b45"
+      "sha256": "368a495aea84057ef45c3bf7fd5cdc5c1eb442e0decf31c791d6472a9d71ec31"
     },
     {
       "path": "reports/publication/external-corpus/manifest.json",
-      "sha256": "cc8df89bc67a564905ce3445de66429ee99f4d22e33c071fa186271074bea270"
+      "sha256": "8824cfdb1193c2aac64be5020158e9b6b20d08813b931abd50397b08cbfe7509"
     },
     {
       "path": "reports/publication/c2rust-only/benchmark_results.csv",
-      "sha256": "9992b3ca45dcca2c3f725b11f656d025b5c1d18c0e1b284056105c642bbb68ca"
+      "sha256": "ca628d834fc3d7a4c37c039fac1f0010901d2be3a2b3e4e4c6b1842288dc2982"
     },
     {
       "path": "reports/publication/c2rust-only/benchmark_results.md",
@@ -111,37 +111,37 @@
     },
     {
       "path": "reports/publication/c2rust-only/manifest.json",
-      "sha256": "e6a7b6ac678d6d383ad7361f0ff8b032b30fee73bb2dbd12151361c09ba38826"
+      "sha256": "a3ba701f2ef7fc382306f66dfb9ca8010b55df17dca2784ce95658ac3f32b6f4"
     },
     {
       "path": "reports/publication/ablation/benchmark_results.csv",
-      "sha256": "d6c6a8c09a155982818a6d56ea3b17a4c32235801b1b44d5ff3ed68a5a8d7e19"
+      "sha256": "576e483d2b9d03918bf712415676c1fb5e9bdfc9e7acc51d5a45a1202e72768e"
     },
     {
       "path": "reports/publication/ablation/benchmark_results.md",
-      "sha256": "1be1c3e0ecfc59b62752b9871f9485cf61227ec4cb4e64f3dd9d6ac117d93683"
+      "sha256": "b3ed7311325993d501cd18c6c89e7e39d1a95038a13bdc56b5fcf522d4c08f2e"
     },
     {
       "path": "reports/publication/ablation/paper_tables.md",
-      "sha256": "a8a4a6808586abf0d088586b3f49dfdac66609948d18dbe079d370ea0343eb53"
+      "sha256": "cdb75f7087039d858f14cd6d88ba1592e7635b493f8138ff85d0413ac3e93fe2"
     },
     {
       "path": "reports/publication/ablation/paper_tables.tex",
-      "sha256": "f68203f3471bb0d99ef6226914d00608be1537c69b3415e47449f1eab0627196"
+      "sha256": "4a259b0cb2f891fb441e5cf919fb9500b4207736175e1aca57c8b8f511f712d1"
     },
     {
       "path": "reports/publication/ablation/manifest.json",
-      "sha256": "6918a1b9fe3366c0ec2ad4226402b487b7adb8bd4df635661bc1dedff832eff6"
+      "sha256": "9cbe444e8c7124fda416dff4af0078aaf60f26a6ebc460713efdb1a80d5141a2"
     },
     {
       "path": "reports/publication/combined_evaluation.md",
-      "sha256": "443a16b74db1fcca6cba82f0d1c1c87c6db855508b3b372e95a1dd67f231e29e"
+      "sha256": "d78be0d603a0259e320b160adf7420de1e3bc6e24d0b7395de61490bc868f5c6"
     },
     {
       "path": "reports/publication/artifact_metadata.json",
-      "sha256": "691fd172140b75ee61cd6163baa345945be79aaaadda8c5f4105ad56f9eadb3a"
+      "sha256": "301fb634693ed1ea3400baecd7bbaab37c3be984cb64c90f693328c349030a64"
     }
   ],
   "snapshot_dir": "reports/publication",
-  "working_reports_dir": "reports/.reproduction/20260724T161307Z"
+  "working_reports_dir": "reports/.reproduction/final-draft-development-7f15f2f"
 }

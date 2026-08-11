@@ -6,7 +6,12 @@
 \hline
 Mode & Rows & Accepted Units & Eligible Units & Acceptance Rate \\
 \hline
-safemap\_no\_static\_guidance & 40 & 0 & 76 & 0.000 \\
+safemap\_deterministic & 40 & 36 & 76 & 0.474 \\
+safemap\_without\_dependency\_grouping & 40 & 36 & 76 & 0.474 \\
+safemap\_without\_idiom\_plans & 40 & 6 & 76 & 0.079 \\
+safemap\_without\_pointer\_roles & 40 & 16 & 73 & 0.219 \\
+safemap\_without\_safe\_signatures & 40 & 6 & 76 & 0.079 \\
+safemap\_without\_validation\_feedback & 40 & 36 & 76 & 0.474 \\
 \hline
 \end{tabular}
 \end{table}
@@ -19,7 +24,12 @@ safemap\_no\_static\_guidance & 40 & 0 & 76 & 0.000 \\
 \hline
 Mode & Target Functions & Accepted Targets & Acceptance Rate \\
 \hline
-safemap\_no\_static\_guidance & 40 & 0 & 0.000 \\
+safemap\_deterministic & 40 & 35 & 0.875 \\
+safemap\_without\_dependency\_grouping & 40 & 35 & 0.875 \\
+safemap\_without\_idiom\_plans & 40 & 5 & 0.125 \\
+safemap\_without\_pointer\_roles & 40 & 15 & 0.375 \\
+safemap\_without\_safe\_signatures & 40 & 5 & 0.125 \\
+safemap\_without\_validation\_feedback & 40 & 35 & 0.875 \\
 \hline
 \end{tabular}
 \end{table}
@@ -32,7 +42,12 @@ safemap\_no\_static\_guidance & 40 & 0 & 0.000 \\
 \hline
 Mode & C LOC & Functions & Pointer Params & Params & Pointer Density & Complexity & Unsupported \\
 \hline
-safemap\_no\_static\_guidance & 513 & 81 & 29 & 74 & 0.392 & 103 & 6 \\
+safemap\_deterministic & 513 & 81 & 29 & 74 & 0.392 & 103 & 6 \\
+safemap\_without\_dependency\_grouping & 513 & 81 & 29 & 74 & 0.392 & 103 & 6 \\
+safemap\_without\_idiom\_plans & 513 & 81 & 29 & 74 & 0.392 & 103 & 6 \\
+safemap\_without\_pointer\_roles & 513 & 81 & 29 & 74 & 0.392 & 103 & 6 \\
+safemap\_without\_safe\_signatures & 513 & 81 & 29 & 74 & 0.392 & 103 & 6 \\
+safemap\_without\_validation\_feedback & 513 & 81 & 29 & 74 & 0.392 & 103 & 6 \\
 \hline
 \end{tabular}
 \end{table*}
@@ -45,7 +60,16 @@ safemap\_no\_static\_guidance & 513 & 81 & 29 & 74 & 0.392 & 103 & 6 \\
 \hline
 Mode & Category & Count \\
 \hline
-safemap\_no\_static\_guidance & unsupported & 5 \\
+safemap\_deterministic & unsupported & 5 \\
+safemap\_without\_dependency\_grouping & unsupported & 5 \\
+safemap\_without\_idiom\_plans & unsupported & 5 \\
+safemap\_without\_pointer\_roles & behavioral\_validation\_missing\_or\_failed & 1 \\
+safemap\_without\_pointer\_roles & requires\_manual\_refactor & 3 \\
+safemap\_without\_pointer\_roles & unsupported & 5 \\
+safemap\_without\_pointer\_roles & validation\_failed & 7 \\
+safemap\_without\_safe\_signatures & unsupported & 5 \\
+safemap\_without\_safe\_signatures & validation\_failed & 29 \\
+safemap\_without\_validation\_feedback & unsupported & 5 \\
 \hline
 \end{tabular}
 \end{table}
@@ -58,7 +82,51 @@ safemap\_no\_static\_guidance & unsupported & 5 \\
 \hline
 Mode & Check & Status & Count \\
 \hline
-No validation & none & none & 0 \\
+safemap\_deterministic & c\_sanitizers & passed & 36 \\
+safemap\_deterministic & cargo\_check & passed & 36 \\
+safemap\_deterministic & cargo\_test & passed & 36 \\
+safemap\_deterministic & clippy & passed & 36 \\
+safemap\_deterministic & differential & passed & 36 \\
+safemap\_deterministic & miri & skipped & 36 \\
+safemap\_without\_dependency\_grouping & c\_sanitizers & passed & 36 \\
+safemap\_without\_dependency\_grouping & cargo\_check & passed & 36 \\
+safemap\_without\_dependency\_grouping & cargo\_test & passed & 36 \\
+safemap\_without\_dependency\_grouping & clippy & passed & 36 \\
+safemap\_without\_dependency\_grouping & differential & passed & 36 \\
+safemap\_without\_dependency\_grouping & miri & skipped & 36 \\
+safemap\_without\_idiom\_plans & c\_sanitizers & passed & 6 \\
+safemap\_without\_idiom\_plans & cargo\_check & passed & 6 \\
+safemap\_without\_idiom\_plans & cargo\_test & passed & 6 \\
+safemap\_without\_idiom\_plans & clippy & passed & 6 \\
+safemap\_without\_idiom\_plans & differential & passed & 6 \\
+safemap\_without\_idiom\_plans & miri & skipped & 6 \\
+safemap\_without\_pointer\_roles & c\_sanitizers & passed & 24 \\
+safemap\_without\_pointer\_roles & cargo\_check & failed & 7 \\
+safemap\_without\_pointer\_roles & cargo\_check & passed & 17 \\
+safemap\_without\_pointer\_roles & cargo\_test & failed & 7 \\
+safemap\_without\_pointer\_roles & cargo\_test & passed & 17 \\
+safemap\_without\_pointer\_roles & clippy & failed & 7 \\
+safemap\_without\_pointer\_roles & clippy & passed & 17 \\
+safemap\_without\_pointer\_roles & differential & failed & 7 \\
+safemap\_without\_pointer\_roles & differential & not\_applicable & 1 \\
+safemap\_without\_pointer\_roles & differential & passed & 16 \\
+safemap\_without\_pointer\_roles & miri & skipped & 24 \\
+safemap\_without\_safe\_signatures & c\_sanitizers & passed & 35 \\
+safemap\_without\_safe\_signatures & cargo\_check & failed & 29 \\
+safemap\_without\_safe\_signatures & cargo\_check & passed & 6 \\
+safemap\_without\_safe\_signatures & cargo\_test & failed & 29 \\
+safemap\_without\_safe\_signatures & cargo\_test & passed & 6 \\
+safemap\_without\_safe\_signatures & clippy & failed & 29 \\
+safemap\_without\_safe\_signatures & clippy & passed & 6 \\
+safemap\_without\_safe\_signatures & differential & failed & 29 \\
+safemap\_without\_safe\_signatures & differential & passed & 6 \\
+safemap\_without\_safe\_signatures & miri & skipped & 35 \\
+safemap\_without\_validation\_feedback & c\_sanitizers & passed & 36 \\
+safemap\_without\_validation\_feedback & cargo\_check & passed & 36 \\
+safemap\_without\_validation\_feedback & cargo\_test & passed & 36 \\
+safemap\_without\_validation\_feedback & clippy & passed & 36 \\
+safemap\_without\_validation\_feedback & differential & passed & 36 \\
+safemap\_without\_validation\_feedback & miri & skipped & 36 \\
 \hline
 \end{tabular}
 \end{table}

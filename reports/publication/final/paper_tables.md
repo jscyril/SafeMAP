@@ -4,20 +4,20 @@
 
 | Mode | Rows | Status Counts | Accepted Units | Eligible Units | Acceptance Rate |
 |---|---:|---|---:|---:|---:|
-| safemap_deterministic | 40 | `completed`: 37, `no_supported_synthesis`: 3 | 37 | 76 | 0.487 |
+| safemap_deterministic | 40 | `completed`: 36, `no_supported_synthesis`: 4 | 36 | 76 | 0.474 |
 
 ## Declared Target Summary
 
 | Mode | Target Functions | Accepted Target Functions | Acceptance Rate | Outcomes |
 |---|---:|---:|---:|---|
-| safemap_deterministic | 40 | 36 | 0.900 | `accepted`: 36, `unsupported`: 4 |
+| safemap_deterministic | 40 | 35 | 0.875 | `accepted`: 35, `not_accepted`: 1, `unsupported`: 4 |
 
 ## Idiom Success
 
 | Mode | Idiom | Planned Units | Accepted Units | Acceptance Rate |
 |---|---|---:|---:|---:|
 | safemap_deterministic | boolean_int | 5 | 5 | 1.000 |
-| safemap_deterministic | c_string | 3 | 3 | 1.000 |
+| safemap_deterministic | c_string | 3 | 2 | 0.667 |
 | safemap_deterministic | error_code_return | 4 | 4 | 1.000 |
 | safemap_deterministic | manual_allocation | 6 | 3 | 0.500 |
 | safemap_deterministic | nullable_pointer | 2 | 2 | 1.000 |
@@ -34,12 +34,12 @@
 
 | Mode | Check | Status | Count |
 |---|---|---|---:|
-| safemap_deterministic | cargo_check | passed | 37 |
-| safemap_deterministic | cargo_test | passed | 37 |
-| safemap_deterministic | clippy | passed | 37 |
-| safemap_deterministic | differential | not_applicable | 1 |
+| safemap_deterministic | c_sanitizers | passed | 36 |
+| safemap_deterministic | cargo_check | passed | 36 |
+| safemap_deterministic | cargo_test | passed | 36 |
+| safemap_deterministic | clippy | passed | 36 |
 | safemap_deterministic | differential | passed | 36 |
-| safemap_deterministic | miri | skipped | 37 |
+| safemap_deterministic | miri | skipped | 36 |
 
 ## Dataset Characterization
 
@@ -85,9 +85,9 @@
 | simple_sum | safemap_deterministic | 10 | 2 | 0.0 | 2 | 0 | 1 | 0.5 | passed | skipped |
 | string_length | safemap_deterministic | 11 | 2 | 1.0 | 2 | 0 | 1 | 0.5 | passed | skipped |
 | string_length_long | safemap_deterministic | 11 | 2 | 1.0 | 2 | 0 | 1 | 0.5 | passed | skipped |
-| string_length_size_t | safemap_deterministic | 11 | 2 | 1.0 | 2 | 0 | 1 | 0.5 | passed | skipped |
+| string_length_size_t | safemap_deterministic | 11 | 2 | 1.0 | 2 | 0 | 0 | 0.0 |  |  |
 | sum_diff_outputs | safemap_deterministic | 14 | 2 | 0.5 | 2 | 0 | 1 | 0.5 | passed | skipped |
-| unsupported_function_pointer | safemap_deterministic | 14 | 3 | 0.2 | 3 | 1 | 1 | 0.5 | not_applicable | skipped |
+| unsupported_function_pointer | safemap_deterministic | 14 | 3 | 0.2 | 3 | 1 | 1 | 0.5 | passed | skipped |
 | unsupported_inline_asm | safemap_deterministic | 11 | 2 | 0.0 | 2 | 2 | 0 | 0.0 |  |  |
 | unsupported_union | safemap_deterministic | 15 | 2 | 0.0 | 2 | 1 | 0 | 0.0 |  |  |
 | unsupported_volatile | safemap_deterministic | 12 | 2 | 1.0 | 2 | 2 | 0 | 0.0 |  |  |

@@ -6,7 +6,7 @@
 \hline
 Mode & Rows & Accepted Units & Eligible Units & Acceptance Rate \\
 \hline
-safemap\_deterministic & 10 & 1 & 22 & 0.045 \\
+safemap\_deterministic & 10 & 6 & 21 & 0.286 \\
 \hline
 \end{tabular}
 \end{table}
@@ -31,7 +31,7 @@ Mode & Target Functions & Accepted Targets & Acceptance Rate \\
 \hline
 Mode & C LOC & Functions & Pointer Params & Params & Pointer Density & Complexity & Unsupported \\
 \hline
-safemap\_deterministic & 589 & 32 & 11 & 45 & 0.244 & 93 & 3 \\
+safemap\_deterministic & 589 & 32 & 20 & 45 & 0.444 & 93 & 3 \\
 \hline
 \end{tabular}
 \end{table*}
@@ -44,7 +44,7 @@ safemap\_deterministic & 589 & 32 & 11 & 45 & 0.244 & 93 & 3 \\
 \hline
 Mode & Category & Count \\
 \hline
-safemap\_deterministic & requires\_manual\_refactor & 6 \\
+safemap\_deterministic & requires\_manual\_refactor & 7 \\
 safemap\_deterministic & unsafe\_required & 1 \\
 safemap\_deterministic & unsupported & 3 \\
 \hline
@@ -59,11 +59,12 @@ safemap\_deterministic & unsupported & 3 \\
 \hline
 Mode & Check & Status & Count \\
 \hline
-safemap\_deterministic & cargo\_check & passed & 1 \\
-safemap\_deterministic & cargo\_test & passed & 1 \\
-safemap\_deterministic & clippy & passed & 1 \\
-safemap\_deterministic & differential & passed & 1 \\
-safemap\_deterministic & miri & skipped & 1 \\
+safemap\_deterministic & c\_sanitizers & passed & 4 \\
+safemap\_deterministic & cargo\_check & passed & 4 \\
+safemap\_deterministic & cargo\_test & passed & 4 \\
+safemap\_deterministic & clippy & passed & 4 \\
+safemap\_deterministic & differential & passed & 4 \\
+safemap\_deterministic & miri & skipped & 4 \\
 \hline
 \end{tabular}
 \end{table}

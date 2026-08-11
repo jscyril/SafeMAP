@@ -42,6 +42,11 @@ PUBLICATION_ARTIFACTS = (
     "ablation/paper_tables.md",
     "ablation/paper_tables.tex",
     "ablation/manifest.json",
+    "case-study-ablation/benchmark_results.csv",
+    "case-study-ablation/benchmark_results.md",
+    "case-study-ablation/paper_tables.md",
+    "case-study-ablation/paper_tables.tex",
+    "case-study-ablation/manifest.json",
     "combined_evaluation.md",
     "artifact_metadata.json",
 )
@@ -204,6 +209,28 @@ def main() -> None:
             "--mode",
             "safemap_without_validation_feedback",
         ],
+        [
+            sys.executable,
+            "-m",
+            "safemap.cli",
+            "final-eval",
+            "--benchmarks",
+            "case_studies",
+            "--output",
+            str(reports_dir / "case-study-ablation"),
+            "--mode",
+            "safemap_deterministic",
+            "--mode",
+            "safemap_without_pointer_roles",
+            "--mode",
+            "safemap_without_safe_signatures",
+            "--mode",
+            "safemap_without_dependency_grouping",
+            "--mode",
+            "safemap_without_idiom_plans",
+            "--mode",
+            "safemap_without_validation_feedback",
+        ],
     ]
     combined = [
         sys.executable,
@@ -255,6 +282,9 @@ def main() -> None:
             ),
             "static_guidance_ablation": str(
                 reports_dir / "ablation" / "benchmark_results.csv"
+            ),
+            "case_study_component_ablations": str(
+                reports_dir / "case-study-ablation" / "benchmark_results.csv"
             ),
             "combined_evaluation": str(reports_dir / "combined_evaluation.md"),
             "artifact_metadata": str(metadata_path),
