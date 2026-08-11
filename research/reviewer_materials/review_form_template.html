@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SafeMAP Independent Eligibility Review</title>
+  <style>
+    :root { color-scheme: light; --ink:#17212b; --muted:#596775; --line:#c8d2dc;
+      --accent:#176b87; --soft:#eef6f8; --warn:#9b4a30; }
+    * { box-sizing: border-box; }
+    body { margin:0; color:var(--ink); background:#f6f8fa;
+      font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    header { position:sticky; top:0; z-index:10; padding:14px 24px;
+      color:white; background:#17324d; box-shadow:0 2px 8px #0003; }
+    header h1 { margin:0 0 6px; font-size:1.15rem; }
+    .progress { display:flex; gap:12px; align-items:center; }
+    progress { width:min(520px,65vw); height:14px; }
+    main { max-width:1180px; margin:24px auto; padding:0 18px 72px; }
+    section,.function { margin:0 0 20px; padding:22px; background:white;
+      border:1px solid var(--line); border-radius:10px; }
+    h2,h3 { margin-top:0; }
+    .notice { border-left:5px solid var(--accent); background:var(--soft); }
+    .warning { border-left-color:var(--warn); }
+    label { display:block; margin:12px 0 5px; font-weight:650; }
+    input[type=text],input[type=number],textarea,select { width:100%; padding:9px;
+      border:1px solid #9eabb8; border-radius:5px; font:inherit; }
+    textarea { min-height:110px; resize:vertical; }
+    .inline { display:flex; flex-wrap:wrap; gap:8px 18px; }
+    .inline label,.checks label { display:inline-flex; gap:6px; align-items:flex-start;
+      font-weight:450; margin:5px 0; }
+    .checks { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:2px 14px; }
+    pre { padding:14px; overflow:auto; background:#101820; color:#eef4f7;
+      border-radius:6px; tab-size:4; font:13px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .meta { color:var(--muted); font-size:.92rem; }
+    .invalid { border-color:#b3261e !important; box-shadow:0 0 0 2px #b3261e22; }
+    .actions { position:fixed; bottom:0; left:0; right:0; z-index:12; display:flex;
+      flex-wrap:wrap; justify-content:center; gap:8px; padding:10px;
+      background:#fffffff2; border-top:1px solid var(--line); }
+    button { padding:9px 14px; border:1px solid #176b87; border-radius:6px;
+      background:#176b87; color:white; font-weight:650; cursor:pointer; }
+    button.secondary { background:white; color:#176b87; }
+    #status { min-height:1.4em; font-weight:650; }
+    details summary { cursor:pointer; font-weight:700; }
+    @media print { header,.actions { position:static; } button { display:none; }
+      body { background:white; } main { max-width:none; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>SafeMAP Independent Eligibility Review</h1>
+  <div class="progress"><progress id="progress" value="0" max="1"></progress>
+    <span id="progressText">0 / 0 complete</span></div>
+</header>
+<main>
+  <section class="notice warning">
+    <h2>Outcome-blind review</h2>
+    <p>Judge eligibility from the pinned C source and codebook only. Do not seek
+      SafeMAP decisions, generated Rust, validation results, or another reviewer's
+      answers. Recruitment and procedural questions may be public; function-level
+      judgments must remain private until both independent reviews are frozen.</p>
+  </section>
+  <section>
+    <h2>Reviewer record</h2>
+    <label for="reviewer">Assigned pseudonymous reviewer ID</label>
+    <input id="reviewer" type="text" autocomplete="off" placeholder="reviewer_a">
+    <label for="experience">Relevant C/Rust experience summary</label>
+    <textarea id="experience" placeholder="Do not include private contact details."></textarea>
+    <label for="conflicts">Relevant conflicts or prior exposure to SafeMAP held-out outcomes</label>
+    <textarea id="conflicts" placeholder="Write none if there are none."></textarea>
+    <div class="checks">
+      <label><input id="attestCodebook" type="checkbox">I read the complete codebook.</label>
+      <label><input id="attestIndependent" type="checkbox">I completed labels independently.</label>
+      <label><input id="attestBlind" type="checkbox">I did not inspect prohibited outcome information.</label>
+      <label><input id="attestPublish" type="checkbox">I consent to publication of de-identified responses.</label>
+    </div>
+  </section>
+  <section class="notice">
+    <details>
+      <summary>Compact label reference</summary>
+      <p><b>candidate_safe:</b> no visible obstacle; a routine local safe-Rust API
+        mapping appears sufficient.</p>
+      <p><b>manual_refactor_required:</b> safe Rust appears possible, but ownership,
+        aliasing, lifetime, state, or API design needs non-local human judgment.</p>
+      <p><b>unsafe_required:</b> intended behavior genuinely appears to require an
+        unsafe/raw/foreign boundary under the study policy.</p>
+      <p><b>unknown:</b> essential evidence is missing or contradictory. Identify it.</p>
+    </details>
+    <p>Read <code>REVIEWER_CODEBOOK.md</code> before using this reference.</p>
+  </section>
+  <div id="functions"></div>
+  <section>
+    <h2>Review-level notes</h2>
+    <label for="externalSources">External documentation or source history consulted</label>
+    <textarea id="externalSources" placeholder="Give URLs, revisions, or citations; write none if none."></textarea>
+    <label for="finalNotes">Methodological concerns, recurring ambiguities, or codebook feedback</label>
+    <textarea id="finalNotes"></textarea>
+    <p id="status" aria-live="polite"></p>
+  </section>
+</main>
+<div class="actions">
+  <button class="secondary" id="save">Save in this browser</button>
+  <button class="secondary" id="draft">Export draft JSON</button>
+  <button id="finalJson">Validate + export final JSON</button>
+  <button id="finalCsv">Validate + export final CSV</button>
+</div>
+<script>
+const packet = __PACKET_JSON__;
+const labels = ["candidate_safe","manual_refactor_required","unsafe_required","unknown"];
+const tags = ["aliasing","allocation","array_or_slice","callback_or_function_pointer",
+  "c_string","custom_allocator","error_code","extern_or_ffi","global_state",
+  "inline_assembly","macro_or_conditional_compilation","nullable_pointer",
+  "output_parameter","pointer_arithmetic","pointer_integer_cast",
+  "recursive_or_cyclic_call","setjmp_longjmp","shared_mutability","struct_or_union",
+  "threading_or_synchronization","unknown_pointer_ownership","volatile_access","other"];
+const root = document.getElementById("functions");
+const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+packet.functions.forEach((f,i) => {
+  const id = `f${i}`;
+  const node = document.createElement("article"); node.className="function"; node.dataset.index=i;
+  node.innerHTML = `<h2>${i+1}. <code>${escapeHtml(f.project)}::${escapeHtml(f.function)}</code></h2>
+    <p class="meta"><code>${escapeHtml(f.source_file)}:${f.start_line}-${f.end_line}</code> · packet SHA-256 <code>${escapeHtml(packet.packet_sha256)}</code></p>
+    <pre>${escapeHtml(f.source_excerpt)}</pre>
+    <p><a href="${escapeHtml(f.packet_source_path)}" target="_blank" rel="noopener">Open full pinned source</a></p>
+    <fieldset><legend><b>Eligibility label</b></legend><div class="inline">${labels.map(l=>`<label><input type="radio" name="${id}-label" value="${l}">${l}</label>`).join("")}</div></fieldset>
+    <label for="${id}-confidence">Confidence (1 very low – 5 very high)</label>
+    <input id="${id}-confidence" class="confidence" type="number" min="1" max="5" step="1">
+    <fieldset><legend><b>Constructs that materially affected the judgment</b></legend><div class="checks">${tags.map(t=>`<label><input class="tag" type="checkbox" value="${t}">${t}</label>`).join("")}</div></fieldset>
+    <label for="${id}-rationale">Technical rationale (minimum 80 characters)</label>
+    <textarea id="${id}-rationale" class="rationale" placeholder="Name the source evidence, likely safe representation or obstacle, assumptions, and nearest alternative label."></textarea>`;
+  root.appendChild(node);
+});
+const fields = ["reviewer","experience","conflicts","externalSources","finalNotes","attestCodebook","attestIndependent","attestBlind","attestPublish"];
+const storageKey = `safemap-review-${packet.packet_sha256}`;
+function collect() {
+  return {schema_version:"safemap.independent_review.v1", packet_id:packet.packet_id,
+    packet_sha256:packet.packet_sha256, codebook_sha256:packet.codebook_sha256,
+    generated_at_utc:new Date().toISOString(), reviewer:reviewer.value.trim(),
+    experience:experience.value.trim(), conflicts:conflicts.value.trim(),
+    attestations:{codebook:attestCodebook.checked, independent:attestIndependent.checked,
+      outcome_blind:attestBlind.checked, publication:attestPublish.checked},
+    external_sources:externalSources.value.trim(), final_notes:finalNotes.value.trim(),
+    functions:[...document.querySelectorAll(".function")].map((node,i)=>({
+      ...packet.functions[i], label:node.querySelector("input[type=radio]:checked")?.value||"",
+      confidence:node.querySelector(".confidence").value,
+      construct_tags:[...node.querySelectorAll(".tag:checked")].map(x=>x.value),
+      rationale:node.querySelector(".rationale").value.trim()}))};
+}
+function restore(data) {
+  if (!data || data.packet_sha256!==packet.packet_sha256) return;
+  fields.forEach(id=>{ const el=document.getElementById(id); const source=data.attestations && id.startsWith("attest") ?
+    ({attestCodebook:"codebook",attestIndependent:"independent",attestBlind:"outcome_blind",attestPublish:"publication"}[id]) : null;
+    if (source) el.checked=!!data.attestations[source]; else if (id==="reviewer") el.value=data.reviewer||"";
+    else if (id==="experience") el.value=data.experience||""; else if (id==="conflicts") el.value=data.conflicts||"";
+    else if (id==="externalSources") el.value=data.external_sources||""; else if (id==="finalNotes") el.value=data.final_notes||""; });
+  (data.functions||[]).forEach((answer,i)=>{ const node=document.querySelector(`.function[data-index="${i}"]`); if(!node)return;
+    const radio=node.querySelector(`input[type=radio][value="${answer.label}"]`); if(radio)radio.checked=true;
+    node.querySelector(".confidence").value=answer.confidence||""; node.querySelector(".rationale").value=answer.rationale||"";
+    node.querySelectorAll(".tag").forEach(x=>x.checked=(answer.construct_tags||[]).includes(x.value)); }); updateProgress();
+}
+function validate(data) {
+  document.querySelectorAll(".invalid").forEach(x=>x.classList.remove("invalid")); const errors=[];
+  if(!data.reviewer) errors.push("Enter the assigned reviewer ID.");
+  if(!data.experience) errors.push("Summarize relevant experience."); if(!data.conflicts) errors.push("Complete the conflict field (use none if applicable).");
+  if(!Object.values(data.attestations).every(Boolean)) errors.push("Confirm all four attestations.");
+  data.functions.forEach((a,i)=>{ const node=document.querySelector(`.function[data-index="${i}"]`);
+    if(!labels.includes(a.label)){errors.push(`Function ${i+1}: select a label.`);node.querySelector("fieldset").classList.add("invalid");}
+    if(!["1","2","3","4","5"].includes(String(a.confidence))){errors.push(`Function ${i+1}: confidence must be 1–5.`);node.querySelector(".confidence").classList.add("invalid");}
+    if(!a.construct_tags.length){errors.push(`Function ${i+1}: select at least one material construct tag.`);}
+    if(a.rationale.length<80){errors.push(`Function ${i+1}: rationale must contain at least 80 characters.`);node.querySelector(".rationale").classList.add("invalid");}});
+  return errors;
+}
+function download(name,type,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);}
+function csvCell(v){const s=String(v??"");return /[",\n]/.test(s)?`"${s.replaceAll('"','""')}"`:s;}
+function asCsv(data){const head=["project","function","source_file","start_line","end_line","reviewer","packet_sha256","codebook_sha256","label","construct_tags","confidence","rationale","external_sources"];
+  return [head.join(","),...data.functions.map(f=>[f.project,f.function,f.source_file,f.start_line,f.end_line,data.reviewer,data.packet_sha256,data.codebook_sha256,f.label,f.construct_tags.join(";"),f.confidence,f.rationale,data.external_sources].map(csvCell).join(","))].join("\n")+"\n";}
+function updateProgress(){const data=collect();const done=data.functions.filter(a=>a.label&&a.confidence&&a.rationale.length>=80).length;progress.max=data.functions.length;progress.value=done;progressText.textContent=`${done} / ${data.functions.length} complete`;}
+function save(){localStorage.setItem(storageKey,JSON.stringify(collect()));status.textContent="Saved locally in this browser.";}
+document.addEventListener("input",()=>{updateProgress();clearTimeout(window.autosave);window.autosave=setTimeout(save,600);});
+document.getElementById("save").onclick=save;
+document.getElementById("draft").onclick=()=>{const d=collect();download(`${d.reviewer||"reviewer"}-draft.json`,"application/json",JSON.stringify(d,null,2)+"\n");};
+function final(kind){const d=collect(),errors=validate(d);if(errors.length){status.textContent=`Cannot export: ${errors.length} issue(s). First: ${errors[0]}`;document.querySelector(".invalid")?.scrollIntoView({behavior:"smooth",block:"center"});return;} save();
+  if(kind==="json")download(`${d.reviewer}-final.json`,"application/json",JSON.stringify(d,null,2)+"\n");else download(`${d.reviewer}-final.csv`,"text/csv",asCsv(d));status.textContent=`Validated and exported final ${kind.toUpperCase()}.`;}
+document.getElementById("finalJson").onclick=()=>final("json");document.getElementById("finalCsv").onclick=()=>final("csv");
+try{restore(JSON.parse(localStorage.getItem(storageKey)));}catch{} updateProgress();
+</script>
+</body>
+</html>

@@ -187,6 +187,28 @@ tokens, measured input/output tokens, timeout, retry index, and failures in
 `logs/direct_llm_call.json`. The model configuration is frozen before held-out
 execution, and failed or rejected responses remain in the result denominator.
 
+The frozen baseline model is `gemini-3.5-flash-lite`, accessed through Google
+AI Studio's OpenAI-compatible endpoint. It was selected because Google lists
+the stable model as available without input/output token charges on the free
+tier as of the freeze date. The experiment makes at most one request per held-
+out project and performs no result-dependent retries. A quota, rate-limit,
+timeout, refusal, truncation, or malformed response remains a baseline failure;
+SafeMAP's deterministic result never depends on the external service. Free-tier
+requests may be retained by the provider under its published data-use terms, so
+only the already-public pinned C sources are sent.
+
+Provider facts were checked against Google's official documentation before the
+freeze:
+
+- OpenAI-compatible endpoint and authentication:
+  <https://ai.google.dev/gemini-api/docs/openai>
+- model identifiers and lifecycle:
+  <https://ai.google.dev/gemini-api/docs/models>
+- free-tier pricing and data-use table:
+  <https://ai.google.dev/gemini-api/docs/pricing>
+- project-level quota behavior:
+  <https://ai.google.dev/gemini-api/docs/rate-limits>
+
 Component ablations remove one factor at a time:
 
 - pointer-role evidence;

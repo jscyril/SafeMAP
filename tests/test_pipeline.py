@@ -127,6 +127,33 @@ def test_generic_scalar_differential_is_counted_as_passed(
     assert metrics["behaviorally_validated_units"] == 1
 
 
+def test_behavioral_acceptance_requires_a_passed_c_sanitizer_oracle(
+    tmp_path: Path,
+) -> None:
+    project = tmp_path / "sanitizer_required"
+    project.mkdir()
+    (project / "main.c").write_text(
+        "double sqr(double value) { return value * value; }\n"
+        "int main(void) { return (int)sqr(2.0); }\n",
+        encoding="utf-8",
+    )
+    config = SafeMapConfig()
+    config.translation.use_c2rust = False
+    config.translation.use_llm = False
+    config.validation.run_clippy = False
+    config.validation.run_c_sanitizers = False
+
+    store = run_pipeline(project, tmp_path / "results", config)
+    validation = store.read_json("validation/results.json")
+    metrics = store.read_json("reports/metrics.json")
+
+    assert validation["differential"]["status"] == "passed"
+    assert validation["c_sanitizers"]["status"] == "skipped"
+    assert metrics["policy_safe_units"] == 1
+    assert metrics["behaviorally_validated_units"] == 0
+    assert metrics["fully_safe_accepted_units"] == 0
+
+
 def test_pipeline_matches_llvm_reference_output_with_reviewed_harness(
     tmp_path: Path,
 ) -> None:

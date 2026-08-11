@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from scripts.freeze_conference_implementation import (
+    _assert_no_runtime_config_overrides,
     validate_conference_config,
 )
 
@@ -51,3 +52,10 @@ def test_freeze_config_accepts_fully_specified_protocol(
     parsed = validate_conference_config(path)
 
     assert parsed["llm"]["model"] == "provider-model-version"
+
+
+def test_freeze_rejects_runtime_model_override(monkeypatch) -> None:
+    monkeypatch.setenv("SAFEMAP_MODEL", "different-model")
+
+    with pytest.raises(ValueError, match="SAFEMAP_MODEL"):
+        _assert_no_runtime_config_overrides()

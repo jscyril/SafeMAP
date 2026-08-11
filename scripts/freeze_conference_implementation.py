@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import platform
 import subprocess
 from datetime import datetime, timezone
@@ -56,6 +57,19 @@ def _assert_clean_worktree() -> None:
     if status:
         raise ValueError(
             "Implementation freeze requires a clean committed worktree"
+        )
+
+
+def _assert_no_runtime_config_overrides() -> None:
+    overrides = [
+        name for name in ("SAFEMAP_MODEL", "SAFEMAP_BASE_URL")
+        if os.getenv(name)
+    ]
+    if overrides:
+        raise ValueError(
+            "Implementation freeze requires the model and base URL from the "
+            "hashed conference configuration; unset runtime override(s): "
+            + ", ".join(overrides)
         )
 
 
@@ -131,6 +145,7 @@ def freeze(
             f"Refusing to replace existing freeze record: {output}"
         )
     validate_conference_config(config)
+    _assert_no_runtime_config_overrides()
     _assert_clean_worktree()
     test = _run(["python", "-m", "pytest", "-q"])
     artifacts = [config, *REQUIRED_INPUTS, *development_artifacts]
@@ -149,6 +164,7 @@ def freeze(
         .replace("+00:00", "Z"),
         "git_commit": _git_head(),
         "git_worktree": "clean",
+        "runtime_config_overrides": "none",
         "python": platform.python_version(),
         "test_command": ["python", "-m", "pytest", "-q"],
         "test_status": "passed",

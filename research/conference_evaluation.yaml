@@ -28,12 +28,12 @@ eligibility:
 
 llm:
   provider: openai_compatible
-  model: REPLACE_WITH_FROZEN_BASELINE_MODEL
-  base_url: https://api.openai.com/v1
+  model: gemini-3.5-flash-lite
+  base_url: https://generativelanguage.googleapis.com/v1beta/openai/
   temperature: 0.0
   max_tokens: 8192
   timeout_seconds: 180
-  api_key_env: OPENAI_API_KEY
+  api_key_env: GEMINI_API_KEY
 
 validation:
   run_cargo_check: true

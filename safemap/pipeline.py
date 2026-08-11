@@ -522,7 +522,7 @@ def _apply_safe_acceptance(
     behavioral_ok = (
         policy_safe_project
         and validation.differential.status == "passed"
-        and validation.c_sanitizers.status != "failed"
+        and validation.c_sanitizers.status == "passed"
     )
     if behavioral_ok:
         metrics.behaviorally_validated_unit_ids = list(planned_eligible)
