@@ -31,6 +31,9 @@ def test_reviewer_packet_contains_source_but_no_outcomes(tmp_path: Path) -> None
     html = (output / "review.html").read_text(encoding="utf-8")
     assert "return a + b" in html
     assert "candidate_safe" in html
+    assert "Import draft JSON" in html
+    assert "Next incomplete" in html
+    assert "draft belongs to a different packet" in html
     assert "generated Rust" in html
     assert not (output / "function_decisions.json").exists()
     assert (output / "sources/projects/demo/LICENSE").is_file()

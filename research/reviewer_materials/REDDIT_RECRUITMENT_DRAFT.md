@@ -13,10 +13,11 @@ appears mechanically feasible, requires human API/ownership redesign, appears
 to require unsafe Rust, or cannot be determined from the available evidence.
 
 The study uses inih, cJSON, and libcsv at fixed public revisions. Each reviewer
-must label the full retained function set independently. The final packet will
-state the exact function count and an honest pilot-based time estimate before
-you agree to participate. Please do not volunteer unless you can complete the
-whole packet; partial reviews cannot be used for the planned agreement metric.
+must independently label all 146 retained functions. The final post must add an
+honest pilot-based time estimate before recruitment begins; expect the review
+to require multiple sessions. Please do not volunteer unless you can complete
+the whole packet, because partial reviews cannot be used for the planned
+agreement metric.
 
 ### Suitable background
 

@@ -100,6 +100,9 @@
 <div class="actions">
   <button class="secondary" id="save">Save in this browser</button>
   <button class="secondary" id="draft">Export draft JSON</button>
+  <button class="secondary" id="importDraft">Import draft JSON</button>
+  <input id="draftFile" type="file" accept="application/json,.json" hidden>
+  <button class="secondary" id="nextIncomplete">Next incomplete</button>
   <button id="finalJson">Validate + export final JSON</button>
   <button id="finalCsv">Validate + export final CSV</button>
 </div>
@@ -173,11 +176,14 @@ function download(name,type,text){const a=document.createElement("a");a.href=URL
 function csvCell(v){const s=String(v??"");return /[",\n]/.test(s)?`"${s.replaceAll('"','""')}"`:s;}
 function asCsv(data){const head=["project","function","source_file","start_line","end_line","reviewer","packet_sha256","codebook_sha256","label","construct_tags","confidence","rationale","external_sources"];
   return [head.join(","),...data.functions.map(f=>[f.project,f.function,f.source_file,f.start_line,f.end_line,data.reviewer,data.packet_sha256,data.codebook_sha256,f.label,f.construct_tags.join(";"),f.confidence,f.rationale,data.external_sources].map(csvCell).join(","))].join("\n")+"\n";}
-function updateProgress(){const data=collect();const done=data.functions.filter(a=>a.label&&a.confidence&&a.rationale.length>=80).length;progress.max=data.functions.length;progress.value=done;progressText.textContent=`${done} / ${data.functions.length} complete`;}
+function updateProgress(){const data=collect();const done=data.functions.filter(a=>a.label&&["1","2","3","4","5"].includes(String(a.confidence))&&a.construct_tags.length&&a.rationale.length>=80).length;progress.max=data.functions.length;progress.value=done;progressText.textContent=`${done} / ${data.functions.length} complete`;}
 function save(){localStorage.setItem(storageKey,JSON.stringify(collect()));status.textContent="Saved locally in this browser.";}
 document.addEventListener("input",()=>{updateProgress();clearTimeout(window.autosave);window.autosave=setTimeout(save,600);});
 document.getElementById("save").onclick=save;
 document.getElementById("draft").onclick=()=>{const d=collect();download(`${d.reviewer||"reviewer"}-draft.json`,"application/json",JSON.stringify(d,null,2)+"\n");};
+document.getElementById("importDraft").onclick=()=>document.getElementById("draftFile").click();
+document.getElementById("draftFile").onchange=event=>{const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(String(reader.result));if(data.schema_version!=="safemap.independent_review.v1")throw new Error("unsupported review schema");if(data.packet_sha256!==packet.packet_sha256)throw new Error("draft belongs to a different packet");if(!Array.isArray(data.functions)||data.functions.length!==packet.functions.length)throw new Error("draft function inventory is incomplete");const sameInventory=data.functions.every((item,index)=>["project","function","source_file","start_line","end_line"].every(field=>String(item[field])===String(packet.functions[index][field])));if(!sameInventory)throw new Error("draft function identifiers were changed");restore(data);save();status.textContent=`Imported ${file.name}. Verify the reviewer ID before continuing.`;}catch(error){status.textContent=`Import failed: ${error.message}`;}};reader.readAsText(file);event.target.value="";};
+document.getElementById("nextIncomplete").onclick=()=>{const data=collect();const index=data.functions.findIndex(a=>!a.label||!["1","2","3","4","5"].includes(String(a.confidence))||!a.construct_tags.length||a.rationale.length<80);if(index<0){status.textContent="Every function has the required fields.";return;}document.querySelector(`.function[data-index="${index}"]`)?.scrollIntoView({behavior:"smooth",block:"start"});status.textContent=`Moved to function ${index+1}, the first incomplete response.`;};
 function final(kind){const d=collect(),errors=validate(d);if(errors.length){status.textContent=`Cannot export: ${errors.length} issue(s). First: ${errors[0]}`;document.querySelector(".invalid")?.scrollIntoView({behavior:"smooth",block:"center"});return;} save();
   if(kind==="json")download(`${d.reviewer}-final.json`,"application/json",JSON.stringify(d,null,2)+"\n");else download(`${d.reviewer}-final.csv`,"text/csv",asCsv(d));status.textContent=`Validated and exported final ${kind.toUpperCase()}.`;}
 document.getElementById("finalJson").onclick=()=>final("json");document.getElementById("finalCsv").onclick=()=>final("csv");
