@@ -1,0 +1,140 @@
+{
+  "codebook_sha256": "2273647a24fe57732a65de1c5caf4aaa6d6f8d2a8ad1cb92a03493ee2bde47de",
+  "files": [
+    {
+      "bytes": 679,
+      "path": "README.md",
+      "sha256": "a1566d5a156dd080d0bb0c4f4940cdac91ecaaf2363f9d70197eac5d52848fea"
+    },
+    {
+      "bytes": 7561,
+      "path": "REVIEWER_CODEBOOK.md",
+      "sha256": "2273647a24fe57732a65de1c5caf4aaa6d6f8d2a8ad1cb92a03493ee2bde47de"
+    },
+    {
+      "bytes": 2267,
+      "path": "REVIEWER_CONSENT_AND_SCREENING.md",
+      "sha256": "6865a336d67cdda8a8fdb6fb1ac38ed0b3b4ce6a6a7bb17e5f0547f6903905b0"
+    },
+    {
+      "bytes": 1592,
+      "path": "REVIEWER_HANDOFF.md",
+      "sha256": "870c45fd432672404d9f20aab149ad9690ce41f9c2f9d2cad77eae7dc82980cf"
+    },
+    {
+      "bytes": 123743,
+      "path": "SafeMAP-reviewer-packet-ui2.zip",
+      "sha256": "eff6182e080d4a23e73e6c49670c358831905a8f80419edb0533a9e811ad6a03"
+    },
+    {
+      "bytes": 10087,
+      "path": "codebook.html",
+      "sha256": "f7ef76aab24cd2236f389e644bdf36a6b6d9e4ad0cc6491e1c16697fddd7ed1d"
+    },
+    {
+      "bytes": 3489,
+      "path": "consent.html",
+      "sha256": "42c32ec6daf54cd1dca4abecfb726c429d9f51e72af4a6a09a8b705e73eeff49"
+    },
+    {
+      "bytes": 167729,
+      "path": "form.html",
+      "sha256": "b3df18ddace705c49faf4fa7b64caf5873736a9ea61429ca28547ec02528abf1"
+    },
+    {
+      "bytes": 159199,
+      "path": "function_inventory.json",
+      "sha256": "00914293432760527b9f637fc285a6adfb401a20fe1caf95b3e26b9b19a28696"
+    },
+    {
+      "bytes": 5183,
+      "path": "index.html",
+      "sha256": "e195f1ee6814b94f461951e65dd94e1025c109667b5f67b276b931f5ceb053ca"
+    },
+    {
+      "bytes": 2848,
+      "path": "instructions.html",
+      "sha256": "d869ebb886b85795b447e5f07bb0ff30c1579c52fe9210b719bfec02ca32525f"
+    },
+    {
+      "bytes": 3246,
+      "path": "packet_manifest.json",
+      "sha256": "9f3425b7fa2647f5183747beff7e326e526beee422e180c00114e993a4740ea7"
+    },
+    {
+      "bytes": 5521,
+      "path": "site.css",
+      "sha256": "9aefe760e5edd2614363933f87b4f4cfc95462dbb21bdebc0a5145629e21f83e"
+    },
+    {
+      "bytes": 3258,
+      "path": "sources/manifest.json",
+      "sha256": "9e0107ccbd15f31242eca9b917ed55beaaf3a03af173c02e9ba5b79b62f90ae4"
+    },
+    {
+      "bytes": 1084,
+      "path": "sources/projects/cjson/LICENSE",
+      "sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c"
+    },
+    {
+      "bytes": 80399,
+      "path": "sources/projects/cjson/cJSON.c",
+      "sha256": "298581a04a36c0165da4b0aade235c23088cb2faa58651d720ea2f3706ed0b0d"
+    },
+    {
+      "bytes": 16394,
+      "path": "sources/projects/cjson/cJSON.h",
+      "sha256": "25b0145150d500498e4d209cec69c18c42cf818bffcc54690be3b895a2a16dee"
+    },
+    {
+      "bytes": 967,
+      "path": "sources/projects/cjson/source_metadata.json",
+      "sha256": "58a77d43eac36b4e8a917f391fab73a43035318c3d0e423c7cc84c230c914b6d"
+    },
+    {
+      "bytes": 1510,
+      "path": "sources/projects/inih/LICENSE.txt",
+      "sha256": "9ae3b39e83e9158e44b67733baa3bb2d84e80efdcfb14a5820210a42c7abdf7f"
+    },
+    {
+      "bytes": 9191,
+      "path": "sources/projects/inih/ini.c",
+      "sha256": "cdba16f9e826d2c692efaecbbe010c17b417315db8261fbd48b66aaab8a9d46f"
+    },
+    {
+      "bytes": 6425,
+      "path": "sources/projects/inih/ini.h",
+      "sha256": "154b56f8437ec3e08d19f9c455a409ddccd4462cff33babe5f2713269d6dd64e"
+    },
+    {
+      "bytes": 970,
+      "path": "sources/projects/inih/source_metadata.json",
+      "sha256": "415ff829a9930d0e9a052a0c564050b28a894890cb0802b2350308118b07375d"
+    },
+    {
+      "bytes": 24478,
+      "path": "sources/projects/libcsv/COPYING",
+      "sha256": "2337fbb1cccac9c6cc7303442760d83bbb3ae5d44e11237cda95f83f1ad700ce"
+    },
+    {
+      "bytes": 4411,
+      "path": "sources/projects/libcsv/csv.h",
+      "sha256": "0b89a06b1052014f75942618aa05e90cb6d2f3bfad69fd2afeac79471f1efd60"
+    },
+    {
+      "bytes": 14390,
+      "path": "sources/projects/libcsv/libcsv.c",
+      "sha256": "75f39188a5c24ebe3faabbf0249a8732e82544b2158e4af99419cee2b97f8e81"
+    },
+    {
+      "bytes": 979,
+      "path": "sources/projects/libcsv/source_metadata.json",
+      "sha256": "67fb6d22f0818d3039cf6e7c6ea5e7ecb1c666753efc1a3085f46c0ee8c31c06"
+    }
+  ],
+  "function_count": 146,
+  "outcome_blind": true,
+  "packet_sha256": "395125387fc42e16c1c07c2bd5d7c0b4c3594acaa396ec7eb8de570724a33540",
+  "response_transport": "local_export_only",
+  "schema_version": "safemap.reviewer_site.v1"
+}

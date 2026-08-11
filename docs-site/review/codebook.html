@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eligibility codebook · SafeMAP Independent Review</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <a class="identity" href="index.html"><span class="mark" aria-hidden="true">SM</span>
+      <span><strong>SafeMAP</strong><small>Independent eligibility review</small></span></a>
+    <span class="status">Outcome-blind packet · UI2</span>
+  </header>
+  <main id="main" class="document">
+    <section>
+      <nav><a href="index.html">← Reviewer home</a> · <a href="instructions.html">Instructions</a>
+        · <a href="consent.html">Consent</a> · <a href="codebook.html">Codebook</a>
+        · <a href="form.html">Review form</a></nav>
+      <h1>SafeMAP Held-Out Eligibility Review Codebook</h1>
+<p>Version: <code>safemap.eligibility_codebook.v1</code></p>
+<h2>Review question</h2>
+<p>For each C function, answer:</p>
+<blockquote>
+<p>Based only on the pinned C source and this codebook, can an automatic tool</p>
+<p>plausibly translate the function to Rust whose implementation uses no unsafe</p>
+<p>Rust, contains no <code>extern "C"</code> block, and exposes no raw-pointer public API,</p>
+<p>while preserving the function's intended observable behavior under a</p>
+<p>reasonable Rust-native API redesign?</p>
+</blockquote>
+<p>Do not judge whether SafeMAP, C2Rust, an LLM, or any named tool can perform the translation today. Do not reward or penalize a function because its pattern looks easy to implement in a particular tool.</p>
+<h2>Labels</h2>
+<h3><code>candidate_safe</code></h3>
+<p>Use when no source-level obstacle is visible and a routine, local Rust-native representation appears sufficient. Typical examples include:</p>
+<ul>
+<li>scalar arithmetic and branching;</li>
+<li>read-only pointer plus length that can become <code>&amp;[T]</code>;</li>
+<li>exclusive mutable pointer plus length that can become <code>&amp;mut [T]</code>;</li>
+<li>nullable borrowed input that can become <code>Option&lt;&amp;T&gt;</code>;</li>
+<li>output parameters that can become return values or tuples;</li>
+<li>return-code-plus-output conventions that can become <code>Result&lt;T, E&gt;</code>;</li>
+<li>ownership with a single clear allocator/deallocator path that can become <code>Box&lt;T&gt;</code>, <code>Vec&lt;T&gt;</code>, or another standard safe owner;</li>
+<li>internal calls whose callees can use compatible safe APIs.</li>
+</ul>
+<p>The label means "no known obstacle after careful screening." It is not a proof of semantic equivalence.</p>
+<h3><code>manual_refactor_required</code></h3>
+<p>Use when safe Rust appears feasible but choosing the correct ownership, API, or architecture requires human judgment or non-local redesign. Typical reasons:</p>
+<ul>
+<li>aliasing or lifetime relationships cannot be recovered locally;</li>
+<li>a pointer may be borrowed, owned, interior, shared, or nullable depending on undocumented caller behavior;</li>
+<li>global or stateful APIs require redesign across multiple functions;</li>
+<li>callbacks can be modeled safely only after selecting an application-specific trait, closure, or ownership boundary;</li>
+<li>error handling, allocation, or mutation semantics require a policy choice;</li>
+<li>macro expansion or build configuration hides behavior needed for a safe API;</li>
+<li>safe translation is possible, but not as a routine mechanical local mapping.</li>
+</ul>
+<h3><code>unsafe_required</code></h3>
+<p>Use only when preserving the function's intended behavior genuinely appears to require operations outside safe Rust at the relevant boundary. Examples can include:</p>
+<ul>
+<li>volatile device or memory-mapped I/O;</li>
+<li>inline assembly;</li>
+<li>foreign-function calls that must remain at the translated boundary;</li>
+<li>pointer/integer address manipulation with observable address semantics;</li>
+<li>dependence on a C ABI or layout that cannot be isolated behind an already safe abstraction;</li>
+<li>deliberate access outside Rust's safe reference and slice rules.</li>
+</ul>
+<p>Do not use this label merely because the C source uses pointers, <code>malloc</code>, unions, callbacks, or casts. Many such cases can instead be <code>manual_refactor_required</code> or, when the ownership is clear, <code>candidate_safe</code>.</p>
+<h3><code>unknown</code></h3>
+<p>Use when the available evidence is insufficient or contradictory. Examples:</p>
+<ul>
+<li>essential declarations, macro definitions, generated headers, or callees are missing;</li>
+<li>intended behavior depends on undocumented undefined behavior;</li>
+<li>the function is truncated or cannot be parsed confidently;</li>
+<li>two labels remain equally plausible after applying the decision tree.</li>
+</ul>
+<p><code>unknown</code> is not a convenient substitute for a difficult decision. State exactly which missing fact prevents a label.</p>
+<h2>Decision tree</h2>
+<p>Apply these questions in order:</p>
+<ol>
+<li><strong>Is the evidence sufficient?</strong> If essential context is missing, choose <code>unknown</code> and identify it.</li>
+<li><strong>Does intended behavior inherently require unsafe operations or an exposed foreign/raw boundary?</strong> If yes, choose <code>unsafe_required</code>.</li>
+<li><strong>Can ownership, lifetimes, aliasing, and API shape be selected by a routine local rule?</strong> If no, but safe Rust still seems feasible, choose <code>manual_refactor_required</code>.</li>
+<li><strong>Otherwise</strong>, choose <code>candidate_safe</code>.</li>
+</ol>
+<p>When uncertain between adjacent labels, choose the more conservative label and record the uncertainty. Do not infer undocumented preconditions merely to make a function eligible.</p>
+<h2>Unit and context rules</h2>
+<ul>
+<li>Label the named function, but inspect its type declarations, macros, globals, direct callees, and documented callers when needed.</li>
+<li>Assume that ordinary Rust-native API changes are allowed. Exact C ABI preservation is not required unless it is part of the function's intended externally visible behavior.</li>
+<li>Do not assume that an entire library has already been translated.</li>
+<li>A safe wrapper around an unavoidable unsafe dependency does not make the implementation itself safe under this study's policy.</li>
+<li>C undefined behavior is not behavior that the Rust translation must preserve. If intended defined behavior cannot be separated from possible undefined behavior, use <code>unknown</code> and explain why.</li>
+<li>Performance differences alone do not determine eligibility unless they are part of observable real-time or hardware behavior.</li>
+</ul>
+<h2>Confidence</h2>
+<p>Use the following five-point scale:</p>
+<ol>
+<li><strong>Very low:</strong> a tentative label; essential context may be missing.</li>
+<li><strong>Low:</strong> plausible, but another label has substantial support.</li>
+<li><strong>Moderate:</strong> the main evidence supports the label with identifiable doubt.</li>
+<li><strong>High:</strong> strong source evidence with only minor uncertainty.</li>
+<li><strong>Very high:</strong> direct and unambiguous source evidence.</li>
+</ol>
+<p>Confidence is not a substitute for rationale. Low-confidence responses remain valid and are especially useful during adjudication.</p>
+<h2>Construct tags</h2>
+<p>Select all that materially influenced the judgment. The generated form offers these normalized tags:</p>
+<ul>
+<li><code>aliasing</code></li>
+<li><code>allocation</code></li>
+<li><code>array_or_slice</code></li>
+<li><code>callback_or_function_pointer</code></li>
+<li><code>c_string</code></li>
+<li><code>custom_allocator</code></li>
+<li><code>error_code</code></li>
+<li><code>extern_or_ffi</code></li>
+<li><code>global_state</code></li>
+<li><code>inline_assembly</code></li>
+<li><code>macro_or_conditional_compilation</code></li>
+<li><code>nullable_pointer</code></li>
+<li><code>output_parameter</code></li>
+<li><code>pointer_arithmetic</code></li>
+<li><code>pointer_integer_cast</code></li>
+<li><code>recursive_or_cyclic_call</code></li>
+<li><code>setjmp_longjmp</code></li>
+<li><code>shared_mutability</code></li>
+<li><code>struct_or_union</code></li>
+<li><code>threading_or_synchronization</code></li>
+<li><code>unknown_pointer_ownership</code></li>
+<li><code>volatile_access</code></li>
+<li><code>other</code></li>
+</ul>
+<p>Do not select a tag merely because the syntax occurs. Select it when it affects the eligibility decision or confidence.</p>
+<h2>Rationale standard</h2>
+<p>Write two to six specific sentences. A useful rationale names:</p>
+<ol>
+<li>the source evidence;</li>
+<li>the likely safe Rust representation or the blocking issue;</li>
+<li>any assumption or missing context; and</li>
+<li>why the chosen label is preferable to the nearest alternative.</li>
+</ol>
+<p>Weak: "Uses pointers, so it needs manual work."</p>
+<p>Strong: "<code>data</code> and <code>length</code> are passed separately, but the function stores <code>data</code> in global parser state that outlives the call. The caller's ownership contract is not documented in the pinned headers. Safe Rust appears possible, but choosing an owner and lifetime requires a library-level API redesign, so I label it <code>manual_refactor_required</code> rather than <code>candidate_safe</code>."</p>
+<h2>Independence and prohibited information</h2>
+<p>During independent review, do not inspect:</p>
+<ul>
+<li>SafeMAP analysis or migration plans;</li>
+<li>generated Rust;</li>
+<li>compiler, sanitizer, differential, or baseline results;</li>
+<li>another reviewer's labels;</li>
+<li>discussions that reveal how a specific function was classified.</li>
+</ul>
+<p>The upstream project documentation and pinned source history may be consulted when necessary, but record any external material that materially affects a label.</p>
+    </section>
+  </main>
+  <footer><p>SafeMAP independent review · Static site hosted with GitHub Pages</p></footer>
+</body>
+</html>

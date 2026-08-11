@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Instructions and browser form for the outcome-blind SafeMAP independent eligibility review.">
+  <title>SafeMAP Independent Eligibility Review</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <a class="identity" href="index.html" aria-label="SafeMAP reviewer home">
+      <span class="mark" aria-hidden="true">SM</span>
+      <span><strong>SafeMAP</strong><small>Independent eligibility review</small></span>
+    </a>
+    <span class="status">Outcome-blind packet · UI2</span>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">University research review</p>
+        <h1>Review 146 C functions for safe-Rust translation eligibility.</h1>
+        <p class="lede">This is a source-code classification task for two experienced,
+          independent C/Rust reviewers. You are judging whether translation appears
+          mechanically feasible in principle—not whether SafeMAP or any other tool
+          succeeds on the function.</p>
+        <div class="actions">
+          <a class="button primary" href="instructions.html">Read the instructions</a>
+          <a class="button secondary" href="codebook.html">Open the codebook</a>
+        </div>
+      </div>
+      <dl class="facts" aria-label="Review facts">
+        <div><dt>Functions</dt><dd>146</dd></div>
+        <div><dt>Projects</dt><dd>3</dd></div>
+        <div><dt>Reviewers</dt><dd>2 independent</dd></div>
+        <div><dt>Uploads</dt><dd>None automatic</dd></div>
+      </dl>
+    </section>
+
+    <section class="trust" aria-labelledby="trust-title">
+      <div>
+        <p class="eyebrow">Why this page is safe to open</p>
+        <h2 id="trust-title">The form runs entirely in your browser.</h2>
+      </div>
+      <ul>
+        <li>No account, extension, installer, executable, or compressed download is required.</li>
+        <li>The study adds no analytics, advertising, cookies, or remote form endpoint.</li>
+        <li>Draft answers are stored in browser local storage on this device.</li>
+        <li>Final CSV and JSON files are created locally and must be returned privately.</li>
+        <li>Normal requests for these static pages are still handled by GitHub Pages.</li>
+      </ul>
+    </section>
+
+    <section>
+      <p class="eyebrow">Required sequence</p>
+      <h2>Before you start</h2>
+      <div class="steps">
+        <article><span>1</span><h3>Confirm participation</h3><p>Complete the private screening and consent record with the coordinator. Do not put contact information in the public form.</p><a href="consent.html">View screening and consent questions</a></article>
+        <article><span>2</span><h3>Read the codebook</h3><p>Use the four labels, decision tree, confidence scale, construct tags, and rationale standard exactly as defined.</p><a href="codebook.html">Read the complete codebook</a></article>
+        <article><span>3</span><h3>Work independently</h3><p>Do not inspect SafeMAP decisions, generated Rust, validation results, or the other reviewer's answers.</p><a href="instructions.html#independence">Review the independence rules</a></article>
+        <article><span>4</span><h3>Complete all functions</h3><p>The form autosaves, supports draft backup/import, and can jump to the next incomplete response.</p><a href="form.html">Start or resume the review</a></article>
+      </div>
+    </section>
+
+    <section class="warning" aria-labelledby="blind-title">
+      <h2 id="blind-title">Protect the independent comparison</h2>
+      <p>Do not search repository branches, issues, reports, or public discussions for
+        held-out SafeMAP outcomes. Do not post function-level judgments on Reddit.
+        Return the two exported files privately to the coordinator.</p>
+    </section>
+
+    <section>
+      <p class="eyebrow">Packet integrity</p>
+      <h2>Fixed source and review definitions</h2>
+      <p>Every reviewer must use this UI2 version. Its source inventory, ordering,
+        codebook, and response schema are fixed. The website contains no SafeMAP
+        decision, generated Rust, baseline output, or aggregate held-out result.</p>
+      <div class="hashes">
+        <p><strong>Packet SHA-256</strong><code>395125387fc42e16c1c07c2bd5d7c0b4c3594acaa396ec7eb8de570724a33540</code></p>
+        <p><strong>Codebook SHA-256</strong><code>2273647a24fe57732a65de1c5caf4aaa6d6f8d2a8ad1cb92a03493ee2bde47de</code></p>
+      </div>
+      <p class="fine-print">If you prefer an offline copy, the exact same materials are
+        available as a <a href="SafeMAP-reviewer-packet-ui2.zip">ZIP fallback</a>
+        (SHA-256 <code>eff6182e080d4a23e73e6c49670c358831905a8f80419edb0533a9e811ad6a03</code>).
+        The website is the recommended option.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>SafeMAP independent review · Static site hosted with GitHub Pages · <a href="packet_manifest.json">Packet manifest</a></p>
+  </footer>
+</body>
+</html>

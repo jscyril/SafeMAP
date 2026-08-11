@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "copied_sha256": "75f39188a5c24ebe3faabbf0249a8732e82544b2158e4af99419cee2b97f8e81",
+      "lines": 545,
+      "path": "libcsv.c",
+      "role": "production_source",
+      "sha256": "75f39188a5c24ebe3faabbf0249a8732e82544b2158e4af99419cee2b97f8e81"
+    },
+    {
+      "copied_sha256": "0b89a06b1052014f75942618aa05e90cb6d2f3bfad69fd2afeac79471f1efd60",
+      "lines": 107,
+      "path": "csv.h",
+      "role": "production_header",
+      "sha256": "0b89a06b1052014f75942618aa05e90cb6d2f3bfad69fd2afeac79471f1efd60"
+    },
+    {
+      "copied_sha256": "2337fbb1cccac9c6cc7303442760d83bbb3ae5d44e11237cda95f83f1ad700ce",
+      "lines": 458,
+      "path": "COPYING",
+      "role": "license",
+      "sha256": "2337fbb1cccac9c6cc7303442760d83bbb3ae5d44e11237cda95f83f1ad700ce"
+    }
+  ],
+  "license": "LGPL-2.1-or-later",
+  "name": "libcsv",
+  "repository": "https://github.com/rgamble/libcsv.git",
+  "revision": "b1d5212831842ee5869d99bc208a21837e4037d5"
+}
