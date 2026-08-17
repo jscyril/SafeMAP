@@ -32,8 +32,10 @@ for institutional submission until every item below is resolved.
 
 - [x] Rebuild and visually inspect the plagiarism-check draft PDF after
       human-review and author changes.
-- [ ] Record its SHA-256 and verify that the institutional upload is exactly
-      `paper/main.pdf`.
+- [x] Record the plagiarism-check draft SHA-256, page count, build time, and
+      source commit in `PLAGIARISM_CHECK_DRAFT.md`.
+- [ ] Verify that the institutional upload is exactly `paper/main.pdf` with the
+      recorded SHA-256.
 - [ ] Review similarity and AI-content flags using
       `SIMILARITY_AI_REPORT_REVIEW.md`; do not edit merely to chase a score.
 - [ ] Obtain all authors' approval for any post-report changes and archive the

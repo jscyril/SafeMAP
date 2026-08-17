@@ -9,8 +9,8 @@ flag in context and keep the original report with the reviewed final draft.
       reviewer packets, or generated-code appendices unless requested.
 - [x] Confirm the PDF opens, text is selectable, fonts are embedded, figures
       are legible, and no comments or hidden draft text remain.
-- [ ] Record the PDF SHA-256, page count, build time, Git commit, and checker
-      settings/exclusions.
+- [x] Record the PDF SHA-256, page count, build time, and source Git commit.
+- [ ] Record the institutional checker settings/exclusions used at upload.
 - [ ] If permitted, exclude the bibliography, quoted material, and small
       matches consistently; record rather than conceal those settings.
 
