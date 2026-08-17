@@ -1,12 +1,12 @@
 # Institutional plagiarism-check draft
 
-- Source commit: `1ad5e636190b1d429094769551a660fb0d51dea0`
+- Source commit: `38245d8aeb438b65c16b2addff4f4d127ea5b591`
 - Canonical file: `paper/main.pdf`
-- SHA-256: `9860882a871c5c862bb481533f814f11563fa375229378fdb3cacc40a6d5187a`
-- Built: `2026-08-17T10:38:20+05:30`
+- SHA-256: `83b2874b56e1d1900474a1c723641482cc7f664c9965929964d40e9990bfc649`
+- Built: `2026-08-17T10:46:22+05:30`
 - Pages: `7`
 - Page size: US Letter (`612 x 792 pt`)
-- File size: `305882` bytes
+- File size: `305822` bytes
 - Build command: `latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex`
 - Verification: complete test suite passed; all pages visually inspected; fonts
   embedded; text selectable; no embedded files or visible placeholders.
