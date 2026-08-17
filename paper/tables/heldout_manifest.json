@@ -86,8 +86,19 @@
     }
   },
   "freeze_git_commit": "b2f455ce1f9e675f800e195f11bbb478fae4194c",
-  "human_review_status": "awaiting_two_independent_reviews_and_adjudication",
+  "human_review": {
+    "cohen_kappa": 0.5879155341835669,
+    "consensus_count": 119,
+    "consensus_only_precision": 0.5094339622641509,
+    "consensus_only_recall": 0.75,
+    "functions_double_labeled": 146,
+    "protocol_deviation": "disagreements_not_adjudicated",
+    "raw_agreement": 0.815068493150685,
+    "unresolved_count": 27
+  },
+  "human_review_status": "consensus_only_without_adjudication",
   "inputs": {
+    "paper/tables/heldout_eligibility_consensus.json": "3a49eb048cdbf7e0f9d0bd7cb62faf4a22db9fd2e2dd55064df17794e31ee701",
     "reports/publication/conference/benchmark_results.csv": "6fea5f767eb2161e8cd997d1db3ac815151d4a99d99216532bafc02c00c70070",
     "reports/publication/conference/reproduction_manifest.json": "46d778c985c55403609fc4240a16e8d7f908151922cbd7696ae3654a39eee1e9",
     "research/results/heldout_characterization.json": "92e23a8f51feef33cdb878cc18152a80859c979ca817d150e41caab5e944cb10"

@@ -7,7 +7,7 @@ flag in context and keep the original report with the reviewed final draft.
 
 - [ ] Upload only the canonical `paper/main.pdf`, not source ZIPs, old PDFs,
       reviewer packets, or generated-code appendices unless requested.
-- [ ] Confirm the PDF opens, text is selectable, fonts are embedded, figures
+- [x] Confirm the PDF opens, text is selectable, fonts are embedded, figures
       are legible, and no comments or hidden draft text remain.
 - [ ] Record the PDF SHA-256, page count, build time, Git commit, and checker
       settings/exclusions.

@@ -116,9 +116,11 @@ venue requires disclosure. Do not rewrite solely to evade an AI detector.
 1. **Run the held-out study once after freeze.** Replace the held-out status
    paragraph with generated corpus, eligibility, outcome-cascade, role,
    module, baseline, and ablation tables.
-2. **Complete two outcome-blind eligibility reviews.** Report raw agreement,
-   Cohen’s kappa, adjudication, false positives, false negatives, construct
-   disagreements, and backend provenance.
+2. **Resolve the human-review deviation.** Two outcome-blind reviews are
+   complete. Obtain research-guide approval for omitting adjudication; report
+   the 27 unresolved disagreements, raw agreement, Cohen’s kappa, consensus-only
+   false positives and false negatives, construct disagreements, backend
+   provenance, and the resulting selection limitation.
 3. **Freeze the competitive baseline.** Replace
    `REPLACE_WITH_FROZEN_BASELINE_MODEL` in
    `research/conference_evaluation.yaml` with the exact model identifier and
@@ -142,4 +144,3 @@ venue requires disclosure. Do not rewrite solely to evade an AI detector.
 - Cross-references and citations: resolved.
 - Overfull boxes: none reported.
 - Held-out corpus: not opened or executed during this audit.
-

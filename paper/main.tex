@@ -8,6 +8,12 @@
 \usepackage{url}
 \usepackage{xspace}
 
+\hypersetup{
+  pdftitle={SafeMAP: Analysis-Guided Planning and Validation for Safe C-to-Rust Translation},
+  pdfauthor={Jacob Sebastian Cyril; Dr. Benita Jaison; Dr. New Begin M},
+  pdfkeywords={C-to-Rust migration, safe Rust, static analysis, program translation, software maintenance, memory safety}
+}
+
 \newcommand{\tool}{SafeMAP\xspace}
 \newif\ifanonymous
 \anonymousfalse % Change only if the eventual venue requires anonymous review.
@@ -26,17 +32,17 @@
 Bangalore, India\\
 jacob.sebastian@mca.christuniversity.in}
 \and
-\IEEEauthorblockN{2\textsuperscript{nd} Benita Jaison}
+\IEEEauthorblockN{2\textsuperscript{nd} Dr. Benita Jaison}
 \IEEEauthorblockA{\textit{Department of Computer Science}\\
 \textit{CHRIST (Deemed to be University)}\\
 Bangalore, India\\
-email address or ORCID}
+benita.jaison@christuniversity.in}
 \and
-\IEEEauthorblockN{3\textsuperscript{rd} New Begin M.}
+\IEEEauthorblockN{3\textsuperscript{rd} Dr. New Begin M}
 \IEEEauthorblockA{\textit{Department of Computer Science}\\
 \textit{CHRIST (Deemed to be University)}\\
 Bangalore, India\\
-email address or ORCID}
+new.begin@christuniversity.in}
 }
 \fi
 
@@ -58,8 +64,11 @@ Dependency grouping produced 142 units; 70 were classified candidate-safe and
 17 produced Rust, but none compiled, so the held-out accepted rate is 0/142.
 Raw C2Rust produced no output in three project-level attempts because of
 toolchain failures. One of three one-shot Gemini requests produced retained
-Rust, which did not compile. The outcome-blind human label audit is still
-pending and its agreement and classification statistics are not reported.
+Rust, which did not compile. Two outcome-blind reviewers agreed on 119/146
+function labels (81.5\% agreement; $\kappa=0.588$). Without adjudication, the
+27 disagreements remain unresolved. On the consensus-only subset, eligibility
+precision is 50.9\% and recall is 75.0\%; these post-hoc estimates do not
+represent the full corpus.
 These results delimit the prototype's current generalization and the baseline
 comparison rather than demonstrating an effectiveness advantage.
 \end{abstract}
@@ -133,8 +142,8 @@ This paper contributes:
   compilation, source-policy checks, differential testing, and recorded
   sanitizer status; and
   \item a frozen function-level study with analyzer provenance, replayable test
-  artifacts, component ablations, and direct safe-output and C2Rust baselines;
-  independent eligibility labels remain a separately reported pending audit.
+  artifacts, component ablations, direct safe-output and C2Rust baselines, and
+  a consensus-only human eligibility audit with unresolved cases retained.
 \end{itemize}
 
 \section{Background and related work}
@@ -377,12 +386,13 @@ source hashes, licenses, and physical line counts. A materialization script
 blocks access until the implementation has a frozen Git commit. This keeps test
 sources out of rule development.
 
-Two reviewers will label each held-out function without seeing the \tool
-decision, then resolve disagreements. The labels use the candidate taxonomy.
-\texttt{unknown} cases are reported separately and excluded from binary
-precision and recall. The study reports raw agreement, Cohen's $\kappa$,
-disagreements by construct, and separate results for libclang and the fallback
-backend.
+Two reviewers labeled each held-out function without seeing the \tool decision.
+The prespecified protocol called for adjudication, but no adjudication was
+performed. We therefore report agreement and Cohen's $\kappa$ over all 146
+functions and compute classification metrics only for functions receiving the
+same label from both reviewers. The 27 disagreements remain unresolved and are
+excluded rather than converted to \texttt{unknown}. This post-hoc exclusion can
+bias the consensus-only estimates.
 
 \subsection{Metrics}
 
@@ -495,10 +505,13 @@ improves accepted held-out translation.
 
 \input{tables/heldout_ablations.tex}
 
-The two independent outcome-blind reviews have not yet been collected.
-Eligibility precision, recall, raw agreement, Cohen's $\kappa$, construct-level
-disagreements, and adjudicated labels are therefore pending and must not be
-inferred from \tool's own classifications.
+The two independent outcome-blind reviewers agreed on 119 of 146 functions
+(81.5\% raw agreement; Cohen's $\kappa=0.588$). The remaining 27 functions were
+not adjudicated and remain unresolved. On the 119-function consensus subset,
+\tool has 27 true positives, 26 false positives, 9 false negatives, and 57 true
+negatives, giving 50.9\% eligibility precision and 75.0\% recall. Because the
+subset was selected post hoc by reviewer agreement, these figures do not
+estimate classification performance over the complete held-out corpus.
 
 \section{Discussion}
 
@@ -533,8 +546,8 @@ regression coverage. In the LLVM development set, 15 of 21 candidate-safe
 functions still lack a synthesis rule. In the held-out run, 53 of 70
 candidate-safe units lack implemented support, and none of the 17 generated
 units compile. Candidate labels, synthesis coverage, and validation must
-therefore remain separate. Held-out human labels are still needed to estimate
-classification error.
+therefore remain separate. The consensus-only human audit estimates
+classification error for 119 functions but leaves 27 functions unresolved.
 
 \section{Threats to validity}
 
@@ -556,10 +569,11 @@ using an undefined C execution as an oracle, but they cannot say whether
 unexecuted inputs are defined.
 
 \textbf{Label subjectivity.} Candidate safety sometimes requires judgment
-about whether an API redesign is automatic or manual. The planned outcome-
-blind reviews retain disagreements, adjudication, confidence scores, and
-$\kappa$, but those reviews are not yet complete. Until they are, the paper
-makes no precision, recall, or agreement claim.
+about whether an API redesign is automatic or manual. The outcome-blind reviews
+retain confidence scores and disagreements and yield $\kappa=0.588$, but the
+planned adjudication was not performed. Excluding the 27 disagreements selects
+cases with reviewer consensus and can bias the reported precision and recall;
+those metrics therefore apply only to the 119-function subset.
 
 \textbf{Toolchain sensitivity.} C2Rust, Clang, Rust, Clippy, and Miri can
 behave differently across host versions and configurations. The artifact
@@ -599,13 +613,13 @@ compiled or passed the acceptance policy. C2Rust emitted no output under the
 frozen toolchain, and Gemini produced no compiling output. The ablations expose
 screening and synthesis dependencies but have identical zero acceptance. The
 study therefore finds that the prototype and frozen validation harness do not
-yet generalize to these production libraries. Independent human eligibility
-review remains necessary before reporting classification accuracy or reviewer
-agreement.
+yet generalize to these production libraries. The human audit found 81.5\%
+reviewer agreement; consensus-only classification estimates remain limited by
+27 unresolved functions and the absence of planned adjudication.
 
 % Balance the final bibliography page for the current seven-page draft.
 % Re-check this trigger after any substantive text or reference change.
-\IEEEtriggeratref{12}
+\IEEEtriggeratref{10}
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 

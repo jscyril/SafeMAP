@@ -18,6 +18,7 @@ DEFAULT_CHARACTERIZATION = (
     REPO_ROOT / "research" / "results" / "heldout_characterization.json"
 )
 DEFAULT_OUTPUT = REPO_ROOT / "paper" / "tables"
+DEFAULT_ELIGIBILITY = DEFAULT_OUTPUT / "heldout_eligibility_consensus.json"
 
 ABLATIONS = (
     ("Full system", "safemap_deterministic"),
@@ -241,10 +242,17 @@ def _write_ablations(path: Path, rows: list[dict[str, str]]) -> list[dict[str, i
     return values
 
 
-def generate(results: Path, characterization_path: Path, output: Path) -> dict[str, Any]:
+def generate(
+    results: Path,
+    characterization_path: Path,
+    output: Path,
+    eligibility_path: Path | None = None,
+) -> dict[str, Any]:
     csv_path = results / "benchmark_results.csv"
     reproduction_path = results / "reproduction_manifest.json"
-    required = (csv_path, reproduction_path, characterization_path)
+    required = (csv_path, reproduction_path, characterization_path) + (
+        (eligibility_path,) if eligibility_path else ()
+    )
     missing = [path for path in required if not path.is_file()]
     if missing:
         raise FileNotFoundError("Missing held-out input(s): " + ", ".join(map(str, missing)))
@@ -258,6 +266,16 @@ def generate(results: Path, characterization_path: Path, output: Path) -> dict[s
     characterization = json.loads(characterization_path.read_text(encoding="utf-8"))
     if characterization.get("function_count") != 146:
         raise ValueError("Frozen characterization no longer has 146 functions")
+    eligibility = (
+        json.loads(eligibility_path.read_text(encoding="utf-8"))
+        if eligibility_path else None
+    )
+    if (
+        eligibility
+        and eligibility.get("reference_label_method")
+        != "reviewer_consensus_only"
+    ):
+        raise ValueError("Held-out human labels are not a consensus-only evaluation")
 
     output.mkdir(parents=True, exist_ok=True)
     corpus_path = output / "heldout_corpus.tex"
@@ -283,7 +301,30 @@ def generate(results: Path, characterization_path: Path, output: Path) -> dict[s
         "c2rust_baseline": c2rust,
         "llm_baseline": llm,
         "ablations": ablations,
-        "human_review_status": "awaiting_two_independent_reviews_and_adjudication",
+        "human_review_status": (
+            "consensus_only_without_adjudication"
+            if eligibility else "awaiting_two_independent_reviews_and_adjudication"
+        ),
+        **({
+            "human_review": {
+                "functions_double_labeled": eligibility[
+                    "reviewer_agreement"
+                ]["functions_double_labeled"],
+                "consensus_count": eligibility["functions_labeled"],
+                "unresolved_count": eligibility["functions_unresolved"],
+                "raw_agreement": eligibility["reviewer_agreement"][
+                    "raw_agreement"
+                ],
+                "cohen_kappa": eligibility["reviewer_agreement"][
+                    "cohen_kappa"
+                ],
+                "consensus_only_precision": eligibility[
+                    "eligibility_precision"
+                ],
+                "consensus_only_recall": eligibility["eligibility_recall"],
+                "protocol_deviation": eligibility["protocol_deviation"],
+            }
+        } if eligibility else {}),
         "outputs": {_display(path): _sha256(path) for path in outputs},
     }
     manifest_path = output / "heldout_manifest.json"
@@ -308,7 +349,23 @@ def generate(results: Path, characterization_path: Path, output: Path) -> dict[s
         f"- Direct Gemini: `{llm['attempts']}` API requests, `{llm['outputs']}` retained output, "
         f"`0` compiled and `0` accepted; raw logs record `{llm['input_tokens']}` input and "
         f"`{llm['output_tokens']}` output tokens.",
-        "- Human eligibility precision, recall, agreement, and adjudication are pending and must not be inferred.",
+        *([
+            "- Human review: "
+            f"`{eligibility['reviewer_agreement']['functions_double_labeled']}` "
+            f"double-labeled, `{eligibility['functions_labeled']}` consensus, "
+            f"`{eligibility['functions_unresolved']}` unresolved; raw agreement "
+            f"`{eligibility['reviewer_agreement']['raw_agreement']:.2%}` and "
+            "Cohen's kappa "
+            f"`{eligibility['reviewer_agreement']['cohen_kappa']:.3f}`.",
+            "- Consensus-only eligibility on "
+            f"`{eligibility['functions_scored']}` functions: "
+            f"precision `{eligibility['eligibility_precision']:.2%}` and recall "
+            f"`{eligibility['eligibility_recall']:.2%}`. No adjudication was performed; "
+            "these estimates do not represent the full corpus.",
+        ] if eligibility else [
+            "- Human eligibility precision, recall, agreement, and "
+            "adjudication are pending and must not be inferred."
+        ]),
         "",
         "Every prompt, response, plan, decision, validation record, seed, environment record, and tool-version file is hashed in `reports/publication/conference/reproduction_manifest.json`.",
         "",
@@ -326,9 +383,11 @@ def main() -> None:
         "--characterization", type=Path, default=DEFAULT_CHARACTERIZATION
     )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--eligibility", type=Path, default=DEFAULT_ELIGIBILITY)
     args = parser.parse_args()
     result = generate(
-        args.results.resolve(), args.characterization.resolve(), args.output.resolve()
+        args.results.resolve(), args.characterization.resolve(), args.output.resolve(),
+        args.eligibility.resolve(),
     )
     print(json.dumps(result, indent=2, sort_keys=True))
 

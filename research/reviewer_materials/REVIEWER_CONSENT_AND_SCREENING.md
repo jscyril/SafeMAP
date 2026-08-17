@@ -7,7 +7,7 @@ public repository.
 ## Identity and experience
 
 1. Preferred name:
-2. Contact address or Reddit handle:
+2. Contact address:
 3. Public reviewer identifier requested for the artifact:
 4. Years of professional, research, or substantial project experience with C:
 5. Years of professional, research, or substantial project experience with Rust:

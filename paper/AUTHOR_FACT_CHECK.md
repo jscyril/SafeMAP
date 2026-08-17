@@ -5,22 +5,22 @@ the named author or the research guide.
 
 ## Author 1 — student
 
-- [ ] Confirm the published name is exactly `Jacob Sebastian Cyril`.
-- [ ] Confirm first-author position and the description “student.”
+- [x] Confirm the published name is exactly `Jacob Sebastian Cyril`.
+- [x] Confirm first-author position and the description “student.”
 - [ ] Confirm `Department of Computer Science` is the official affiliation.
 - [ ] Confirm the institution style is `CHRIST (Deemed to be University)`.
-- [ ] Confirm whether the city should be `Bangalore` or `Bengaluru` for IEEE
+- [x] Confirm whether the city should be `Bangalore` or `Bengaluru` for IEEE
       metadata.
 - [ ] Confirm `jacob.sebastian@mca.christuniversity.in` is current and approved
       for publication, or replace it with an ORCID.
 
 ## Author 2 — research guide
 
-- [ ] Confirm the published name and title style: `Benita Jaison` or
+- [x] Confirm the published name and title style: `Benita Jaison` or
       `Dr. Benita Jaison`.
-- [ ] Confirm second-author position and that this person is the research guide.
+- [x] Confirm second-author position and that this person is the research guide.
 - [ ] Confirm the same department, institution, campus, city, and country.
-- [ ] Replace `email address or ORCID` in `main.tex` with a verified address or
+- [x] Replace `email address or ORCID` in `main.tex` with a verified address or
       ORCID supplied by the author.
 - [ ] Obtain explicit approval of the author list, order, and final manuscript.
 
@@ -31,10 +31,10 @@ the author must confirm the exact affiliation rather than relying on that page.
 
 ## Author 3 — RAC member
 
-- [ ] Confirm the published name and punctuation: `New Begin M.`.
-- [ ] Confirm third-author position and that this person is the RAC member.
+- [x] Confirm the published name and punctuation: `Dr. New Begin M`.
+- [x] Confirm third-author position and that this person is the RAC member.
 - [ ] Confirm the same department, institution, campus, city, and country.
-- [ ] Replace `email address or ORCID` in `main.tex` with a verified address or
+- [x] Replace `email address or ORCID` in `main.tex` with a verified address or
       ORCID supplied by the author.
 - [ ] Obtain explicit approval of the author list, order, and final manuscript.
 

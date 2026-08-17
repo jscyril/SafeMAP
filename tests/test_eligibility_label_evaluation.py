@@ -141,3 +141,34 @@ def test_evaluator_requires_two_labels_for_every_function(
 
     with pytest.raises(ValueError, match="Both reviewers"):
         evaluate_eligibility_labels(labels, [decisions])
+
+
+def test_evaluator_can_score_consensus_without_adjudication(
+    tmp_path: Path,
+) -> None:
+    labels = tmp_path / "labels.csv"
+    decisions = tmp_path / "decisions.json"
+    rows = []
+    cases = [
+        ("true_positive", 1, "candidate_safe", "candidate_safe"),
+        ("false_positive", 10, "unsafe_required", "manual_refactor_required"),
+        ("false_negative", 20, "candidate_safe", "candidate_safe"),
+        ("unknown", 30, "unknown", "unknown"),
+    ]
+    for function, line, left, right in cases:
+        rows.append(_label(function, line, "reviewer_a", left, ""))
+        rows.append(_label(function, line, "reviewer_b", right, ""))
+    _write_labels(labels, rows)
+    _write_decisions(decisions)
+
+    result = evaluate_eligibility_labels(
+        labels, [decisions], consensus_only=True
+    )
+
+    assert result["reference_label_method"] == "reviewer_consensus_only"
+    assert result["functions_labeled"] == 3
+    assert result["functions_unresolved"] == 1
+    assert result["functions_scored"] == 2
+    assert result["reviewer_agreement"]["raw_agreement"] == 0.75
+    assert result["eligibility_precision"] == 1.0
+    assert result["eligibility_recall"] == 0.5

@@ -19,50 +19,66 @@ HUMAN_LABELS = {
 def evaluate_eligibility_labels(
     labels_path: Path,
     decision_paths: list[Path],
+    consensus_only: bool = False,
 ) -> dict[str, Any]:
     """Compare outcome-blind human labels with frozen SafeMAP decisions."""
     label_rows = _read_labels(labels_path)
     decisions = _read_decisions(decision_paths)
     reviewer_metrics = _reviewer_agreement(label_rows)
-    adjudicated = _adjudicated_rows(label_rows)
-    matched = _match_decisions(adjudicated, decisions)
+    reference = (
+        _consensus_rows(label_rows)
+        if consensus_only else _adjudicated_rows(label_rows)
+    )
+    matched = _match_decisions(reference, decisions)
 
     scored = [
         item for item in matched
-        if item["adjudicated_label"] != "unknown"
+        if item["reference_label"] != "unknown"
     ]
     unknown = [
         item for item in matched
-        if item["adjudicated_label"] == "unknown"
+        if item["reference_label"] == "unknown"
     ]
     tp = sum(
         item["candidate_decision"] == "candidate_safe"
-        and item["adjudicated_label"] == "candidate_safe"
+        and item["reference_label"] == "candidate_safe"
         for item in scored
     )
     fp_rows = [
         item for item in scored
         if item["candidate_decision"] == "candidate_safe"
-        and item["adjudicated_label"] != "candidate_safe"
+        and item["reference_label"] != "candidate_safe"
     ]
     fn_rows = [
         item for item in scored
         if item["candidate_decision"] != "candidate_safe"
-        and item["adjudicated_label"] == "candidate_safe"
+        and item["reference_label"] == "candidate_safe"
     ]
     tn = len(scored) - tp - len(fp_rows) - len(fn_rows)
 
     return {
-        "schema_version": "safemap.eligibility_evaluation.v1",
+        "schema_version": (
+            "safemap.eligibility_evaluation.v2"
+            if consensus_only else "safemap.eligibility_evaluation.v1"
+        ),
+        "reference_label_method": (
+            "reviewer_consensus_only"
+            if consensus_only else "independent_adjudication"
+        ),
         "labels_file": str(labels_path),
         "labels_sha256": _sha256(labels_path),
         "decision_files": [
             {"path": str(path), "sha256": _sha256(path)}
             for path in decision_paths
         ],
-        "functions_labeled": len(adjudicated),
+        "functions_labeled": len(reference),
+        "functions_unresolved": (
+            reviewer_metrics["disagreement_count"] if consensus_only else 0
+        ),
         "functions_scored": len(scored),
-        "adjudicated_unknown": len(unknown),
+        (
+            "reference_unknown" if consensus_only else "adjudicated_unknown"
+        ): len(unknown),
         "reviewer_agreement": reviewer_metrics,
         "confusion_matrix": {
             "true_positive": tp,
@@ -77,6 +93,13 @@ def evaluate_eligibility_labels(
         "unknown_cases": unknown,
         "by_construct": _construct_metrics(matched),
         "by_analysis_backend": _backend_metrics(scored),
+        **({
+            "protocol_deviation": "disagreements_not_adjudicated",
+            "selection_warning": (
+                "Precision and recall apply only to reviewer-agreement cases, "
+                "not the full held-out corpus."
+            ),
+        } if consensus_only else {}),
     }
 
 
@@ -84,8 +107,11 @@ def write_eligibility_evaluation(
     labels_path: Path,
     decision_paths: list[Path],
     output_path: Path,
+    consensus_only: bool = False,
 ) -> dict[str, Any]:
-    result = evaluate_eligibility_labels(labels_path, decision_paths)
+    result = evaluate_eligibility_labels(
+        labels_path, decision_paths, consensus_only=consensus_only
+    )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
         json.dumps(result, indent=2, sort_keys=True) + "\n",
@@ -261,7 +287,37 @@ def _adjudicated_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "start_line": key[3],
             "end_line": items[0]["end_line"],
             "construct_tags": tags or ["untagged"],
-            "adjudicated_label": next(iter(labels)),
+            "reference_label": next(iter(labels)),
+        })
+    return sorted(
+        result,
+        key=lambda item: (
+            item["project"], item["source_file"],
+            item["start_line"], item["function"],
+        ),
+    )
+
+
+def _consensus_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[tuple[str, str, str, int], list[dict[str, Any]]] = defaultdict(list)
+    for row in rows:
+        grouped[_function_key(row)].append(row)
+    result = []
+    for key, items in grouped.items():
+        labels = {item["label"] for item in items}
+        if len(labels) != 1:
+            continue
+        tags = sorted({
+            tag for item in items for tag in item["construct_tags"]
+        })
+        result.append({
+            "project": key[0],
+            "function": key[1],
+            "source_file": key[2],
+            "start_line": key[3],
+            "end_line": items[0]["end_line"],
+            "construct_tags": tags or ["untagged"],
+            "reference_label": next(iter(labels)),
         })
     return sorted(
         result,
@@ -316,11 +372,11 @@ def _construct_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
     for tag, items in sorted(tagged.items()):
         scored = [
             item for item in items
-            if item["adjudicated_label"] != "unknown"
+            if item["reference_label"] != "unknown"
         ]
         tp = sum(
             item["candidate_decision"] == "candidate_safe"
-            and item["adjudicated_label"] == "candidate_safe"
+            and item["reference_label"] == "candidate_safe"
             for item in scored
         )
         predicted_positive = sum(
@@ -328,7 +384,7 @@ def _construct_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
             for item in scored
         )
         actual_positive = sum(
-            item["adjudicated_label"] == "candidate_safe"
+            item["reference_label"] == "candidate_safe"
             for item in scored
         )
         result[tag] = {
@@ -337,7 +393,7 @@ def _construct_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
             "precision": _ratio(tp, predicted_positive),
             "recall": _ratio(tp, actual_positive),
             "system_human_disagreements": sum(
-                item["candidate_decision"] != item["adjudicated_label"]
+                item["candidate_decision"] != item["reference_label"]
                 for item in items
             ),
         }
@@ -352,17 +408,17 @@ def _backend_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
     for backend, items in sorted(grouped.items()):
         tp = sum(
             item["candidate_decision"] == "candidate_safe"
-            and item["adjudicated_label"] == "candidate_safe"
+            and item["reference_label"] == "candidate_safe"
             for item in items
         )
         fp = sum(
             item["candidate_decision"] == "candidate_safe"
-            and item["adjudicated_label"] != "candidate_safe"
+            and item["reference_label"] != "candidate_safe"
             for item in items
         )
         fn = sum(
             item["candidate_decision"] != "candidate_safe"
-            and item["adjudicated_label"] == "candidate_safe"
+            and item["reference_label"] == "candidate_safe"
             for item in items
         )
         result[backend] = {

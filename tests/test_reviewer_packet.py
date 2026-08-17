@@ -98,3 +98,23 @@ def test_merge_reviews_rejects_different_packet_hashes(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="different packets"):
         merge_reviews([first, second], tmp_path / "disagreements.csv")
+
+
+def test_merge_reviews_can_export_consensus_only_labels(tmp_path: Path) -> None:
+    first = tmp_path / "a.csv"
+    second = tmp_path / "b.csv"
+    _write_review(first, "reviewer_a", "candidate_safe")
+    _write_review(second, "reviewer_b", "candidate_safe")
+    consensus = tmp_path / "consensus.csv"
+
+    result = merge_reviews(
+        [first, second], tmp_path / "disagreements.csv",
+        consensus_path=consensus,
+    )
+
+    rows = list(csv.DictReader(consensus.open(encoding="utf-8")))
+    assert result["status"] == "consensus_only"
+    assert result["consensus_count"] == 1
+    assert len(rows) == 2
+    assert {row["reviewer"] for row in rows} == {"reviewer_a", "reviewer_b"}
+    assert {row["adjudicated_label"] for row in rows} == {""}

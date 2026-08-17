@@ -1,0 +1,1263 @@
+{
+  "by_analysis_backend": {
+    "libclang": {
+      "candidate_safe_decisions": 53,
+      "functions": 119,
+      "precision": 0.5094339622641509,
+      "recall": 0.75
+    }
+  },
+  "by_construct": {
+    "aliasing": {
+      "functions": 41,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 41,
+      "system_human_disagreements": 18
+    },
+    "allocation": {
+      "functions": 43,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 43,
+      "system_human_disagreements": 26
+    },
+    "array_or_slice": {
+      "functions": 32,
+      "precision": 0.6666666666666666,
+      "recall": 0.6666666666666666,
+      "scored": 32,
+      "system_human_disagreements": 17
+    },
+    "c_string": {
+      "functions": 48,
+      "precision": 0.42105263157894735,
+      "recall": 0.6666666666666666,
+      "scored": 48,
+      "system_human_disagreements": 24
+    },
+    "callback_or_function_pointer": {
+      "functions": 38,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 38,
+      "system_human_disagreements": 29
+    },
+    "custom_allocator": {
+      "functions": 45,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 45,
+      "system_human_disagreements": 24
+    },
+    "error_code": {
+      "functions": 17,
+      "precision": 0.875,
+      "recall": 0.7,
+      "scored": 17,
+      "system_human_disagreements": 7
+    },
+    "extern_or_ffi": {
+      "functions": 4,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 4,
+      "system_human_disagreements": 2
+    },
+    "global_state": {
+      "functions": 28,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 28,
+      "system_human_disagreements": 11
+    },
+    "macro_or_conditional_compilation": {
+      "functions": 6,
+      "precision": 1.0,
+      "recall": 0.5,
+      "scored": 6,
+      "system_human_disagreements": 3
+    },
+    "nullable_pointer": {
+      "functions": 16,
+      "precision": 0.7333333333333333,
+      "recall": 1.0,
+      "scored": 16,
+      "system_human_disagreements": 5
+    },
+    "other": {
+      "functions": 4,
+      "precision": 1.0,
+      "recall": 0.5,
+      "scored": 4,
+      "system_human_disagreements": 2
+    },
+    "output_parameter": {
+      "functions": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "scored": 3,
+      "system_human_disagreements": 2
+    },
+    "pointer_arithmetic": {
+      "functions": 21,
+      "precision": 0.6363636363636364,
+      "recall": 0.5833333333333334,
+      "scored": 21,
+      "system_human_disagreements": 12
+    },
+    "pointer_integer_cast": {
+      "functions": 2,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 2,
+      "system_human_disagreements": 2
+    },
+    "recursive_or_cyclic_call": {
+      "functions": 43,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 43,
+      "system_human_disagreements": 16
+    },
+    "shared_mutability": {
+      "functions": 17,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 17,
+      "system_human_disagreements": 13
+    },
+    "struct_or_union": {
+      "functions": 80,
+      "precision": 0.5428571428571428,
+      "recall": 0.7916666666666666,
+      "scored": 80,
+      "system_human_disagreements": 33
+    },
+    "unknown_pointer_ownership": {
+      "functions": 33,
+      "precision": 0.0,
+      "recall": null,
+      "scored": 33,
+      "system_human_disagreements": 19
+    }
+  },
+  "confusion_matrix": {
+    "false_negative": 9,
+    "false_positive": 26,
+    "true_negative": 57,
+    "true_positive": 27
+  },
+  "decision_files": [
+    {
+      "path": "reports/publication/conference/raw/non-llm/safemap_deterministic/.safemap/runs/20260811T042351Z-conference-heldout-dd8fe51b/analysis/function_decisions.json",
+      "sha256": "4e3f8bd82cd1a177f853b02805969495e7346d8104eeda006272bdf2118c2a9b"
+    },
+    {
+      "path": "reports/publication/conference/raw/non-llm/safemap_deterministic/.safemap/runs/20260811T042604Z-conference-heldout-e81e44ce/analysis/function_decisions.json",
+      "sha256": "e221d04f7a9f6a77fd939603c41d308c132d8aed1b999497cf9f53cc15044d92"
+    },
+    {
+      "path": "reports/publication/conference/raw/non-llm/safemap_deterministic/.safemap/runs/20260811T042606Z-conference-heldout-0a13e52a/analysis/function_decisions.json",
+      "sha256": "a89ad74c8cc5b5c42d6d302d30688cbc4935409ff808a2929d8f7a5bc1345dc1"
+    }
+  ],
+  "eligibility_precision": 0.5094339622641509,
+  "eligibility_recall": 0.75,
+  "false_negatives": [
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "unknown",
+      "candidate_reasons": [
+        "Unsupported C construct detected"
+      ],
+      "construct_tags": [
+        "other",
+        "struct_or_union"
+      ],
+      "end_line": 427,
+      "function": "cJSON_SetNumberHelper",
+      "project": "cjson",
+      "reference_label": "candidate_safe",
+      "source_file": "cJSON.c",
+      "start_line": 411
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "manual_refactor_required",
+      "candidate_reasons": [
+        "Pointer role, ownership, or aliasing could not be resolved statically"
+      ],
+      "construct_tags": [
+        "other",
+        "pointer_arithmetic",
+        "struct_or_union"
+      ],
+      "end_line": 694,
+      "function": "parse_hex4",
+      "project": "cjson",
+      "reference_label": "candidate_safe",
+      "source_file": "cJSON.c",
+      "start_line": 661
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "manual_refactor_required",
+      "candidate_reasons": [
+        "Pointer role, ownership, or aliasing could not be resolved statically"
+      ],
+      "construct_tags": [
+        "array_or_slice",
+        "c_string",
+        "output_parameter",
+        "pointer_arithmetic"
+      ],
+      "end_line": 816,
+      "function": "utf16_literal_to_utf8",
+      "project": "cjson",
+      "reference_label": "candidate_safe",
+      "source_file": "cJSON.c",
+      "start_line": 698
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "manual_refactor_required",
+      "candidate_reasons": [
+        "Pointer role, ownership, or aliasing could not be resolved statically"
+      ],
+      "construct_tags": [
+        "array_or_slice",
+        "c_string",
+        "pointer_arithmetic"
+      ],
+      "end_line": 54,
+      "function": "ini_rstrip",
+      "project": "inih",
+      "reference_label": "candidate_safe",
+      "source_file": "ini.c",
+      "start_line": 49
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "manual_refactor_required",
+      "candidate_reasons": [
+        "Pointer role, ownership, or aliasing could not be resolved statically"
+      ],
+      "construct_tags": [
+        "array_or_slice",
+        "c_string",
+        "pointer_arithmetic"
+      ],
+      "end_line": 62,
+      "function": "ini_lskip",
+      "project": "inih",
+      "reference_label": "candidate_safe",
+      "source_file": "ini.c",
+      "start_line": 57
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "manual_refactor_required",
+      "candidate_reasons": [
+        "Pointer role, ownership, or aliasing could not be resolved statically"
+      ],
+      "construct_tags": [
+        "array_or_slice",
+        "c_string",
+        "macro_or_conditional_compilation",
+        "pointer_arithmetic"
+      ],
+      "end_line": 82,
+      "function": "ini_find_chars_or_comment",
+      "project": "inih",
+      "reference_label": "candidate_safe",
+      "source_file": "ini.c",
+      "start_line": 67
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "manual_refactor_required",
+      "candidate_reasons": [
+        "Pointer role, ownership, or aliasing could not be resolved statically"
+      ],
+      "construct_tags": [
+        "error_code",
+        "struct_or_union"
+      ],
+      "end_line": 210,
+      "function": "csv_set_delim",
+      "project": "libcsv",
+      "reference_label": "candidate_safe",
+      "source_file": "libcsv.c",
+      "start_line": 205
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "manual_refactor_required",
+      "candidate_reasons": [
+        "Pointer role, ownership, or aliasing could not be resolved statically"
+      ],
+      "construct_tags": [
+        "error_code",
+        "struct_or_union"
+      ],
+      "end_line": 217,
+      "function": "csv_set_quote",
+      "project": "libcsv",
+      "reference_label": "candidate_safe",
+      "source_file": "libcsv.c",
+      "start_line": 212
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "manual_refactor_required",
+      "candidate_reasons": [
+        "Pointer role, ownership, or aliasing could not be resolved statically"
+      ],
+      "construct_tags": [
+        "error_code",
+        "struct_or_union"
+      ],
+      "end_line": 270,
+      "function": "csv_set_blk_size",
+      "project": "libcsv",
+      "reference_label": "candidate_safe",
+      "source_file": "libcsv.c",
+      "start_line": 265
+    }
+  ],
+  "false_positives": [
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "No unsupported constructs or unresolved pointer hazards detected"
+      ],
+      "construct_tags": [
+        "global_state",
+        "pointer_arithmetic",
+        "shared_mutability"
+      ],
+      "end_line": 97,
+      "function": "cJSON_GetErrorPtr",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 94
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "allocation",
+        "callback_or_function_pointer",
+        "custom_allocator",
+        "global_state"
+      ],
+      "end_line": 238,
+      "function": "cJSON_InitHooks",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 209
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "allocation",
+        "c_string",
+        "custom_allocator",
+        "global_state",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 471,
+      "function": "cJSON_SetValuestring",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 430
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "callback_or_function_pointer",
+        "global_state",
+        "output_parameter",
+        "pointer_arithmetic",
+        "shared_mutability"
+      ],
+      "end_line": 1219,
+      "function": "cJSON_ParseWithLengthOpts",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1142
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "No unsupported constructs or unresolved pointer hazards detected"
+      ],
+      "construct_tags": [
+        "callback_or_function_pointer",
+        "global_state",
+        "pointer_arithmetic",
+        "shared_mutability"
+      ],
+      "end_line": 1225,
+      "function": "cJSON_Parse",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1222
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "No unsupported constructs or unresolved pointer hazards detected"
+      ],
+      "construct_tags": [
+        "callback_or_function_pointer",
+        "global_state",
+        "pointer_arithmetic",
+        "shared_mutability"
+      ],
+      "end_line": 1230,
+      "function": "cJSON_ParseWithLength",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1227
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "allocation",
+        "array_or_slice",
+        "c_string",
+        "callback_or_function_pointer",
+        "custom_allocator",
+        "global_state"
+      ],
+      "end_line": 1305,
+      "function": "cJSON_Print",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1302
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "allocation",
+        "array_or_slice",
+        "c_string",
+        "callback_or_function_pointer",
+        "custom_allocator",
+        "global_state"
+      ],
+      "end_line": 1310,
+      "function": "cJSON_PrintUnformatted",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1307
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "allocation",
+        "array_or_slice",
+        "c_string",
+        "callback_or_function_pointer",
+        "custom_allocator",
+        "recursive_or_cyclic_call"
+      ],
+      "end_line": 1649,
+      "function": "print_array",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1590
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "allocation",
+        "array_or_slice",
+        "c_string",
+        "custom_allocator",
+        "recursive_or_cyclic_call",
+        "struct_or_union"
+      ],
+      "end_line": 1881,
+      "function": "print_object",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1770
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "nullable_pointer",
+        "recursive_or_cyclic_call",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 1924,
+      "function": "get_array_item",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1907
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "c_string",
+        "nullable_pointer",
+        "recursive_or_cyclic_call",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 1966,
+      "function": "get_object_item",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1936
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "c_string",
+        "nullable_pointer",
+        "recursive_or_cyclic_call",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 1971,
+      "function": "cJSON_GetObjectItem",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1968
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "c_string",
+        "nullable_pointer",
+        "recursive_or_cyclic_call",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 1976,
+      "function": "cJSON_GetObjectItemCaseSensitive",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 1973
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "recursive_or_cyclic_call",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 2043,
+      "function": "add_item_to_array",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 2012
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "No unsupported constructs or unresolved pointer hazards detected"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "c_string",
+        "pointer_integer_cast",
+        "shared_mutability",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 2061,
+      "function": "cast_away_const",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 2058
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "allocation",
+        "c_string",
+        "custom_allocator",
+        "pointer_integer_cast",
+        "recursive_or_cyclic_call",
+        "struct_or_union"
+      ],
+      "end_line": 2102,
+      "function": "add_item_to_object",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 2067
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "recursive_or_cyclic_call",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 2277,
+      "function": "cJSON_DetachItemViaPointer",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 2243
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "recursive_or_cyclic_call",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 2400,
+      "function": "cJSON_ReplaceItemViaPointer",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 2353
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "No unsupported constructs or unresolved pointer hazards detected"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "allocation",
+        "c_string",
+        "shared_mutability",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 2543,
+      "function": "cJSON_CreateStringReference",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 2533
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "allocation",
+        "shared_mutability",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 2554,
+      "function": "cJSON_CreateObjectReference",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 2545
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "aliasing",
+        "allocation",
+        "shared_mutability",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 2564,
+      "function": "cJSON_CreateArrayReference",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 2556
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "No unsupported constructs or unresolved pointer hazards detected"
+      ],
+      "construct_tags": [
+        "allocation",
+        "callback_or_function_pointer",
+        "custom_allocator",
+        "extern_or_ffi",
+        "global_state"
+      ],
+      "end_line": 3185,
+      "function": "cJSON_malloc",
+      "project": "cjson",
+      "reference_label": "manual_refactor_required",
+      "source_file": "cJSON.c",
+      "start_line": 3182
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "allocation",
+        "callback_or_function_pointer",
+        "custom_allocator",
+        "struct_or_union"
+      ],
+      "end_line": 144,
+      "function": "csv_init",
+      "project": "libcsv",
+      "reference_label": "manual_refactor_required",
+      "source_file": "libcsv.c",
+      "start_line": 119
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "allocation",
+        "callback_or_function_pointer",
+        "custom_allocator",
+        "struct_or_union",
+        "unknown_pointer_ownership"
+      ],
+      "end_line": 160,
+      "function": "csv_free",
+      "project": "libcsv",
+      "reference_label": "manual_refactor_required",
+      "source_file": "libcsv.c",
+      "start_line": 146
+    },
+    {
+      "analysis_backend": "libclang",
+      "candidate_decision": "candidate_safe",
+      "candidate_reasons": [
+        "Safe translation is possible with a Rust-native API change"
+      ],
+      "construct_tags": [
+        "allocation",
+        "callback_or_function_pointer",
+        "custom_allocator",
+        "error_code",
+        "struct_or_union"
+      ],
+      "end_line": 316,
+      "function": "csv_increase_buffer",
+      "project": "libcsv",
+      "reference_label": "manual_refactor_required",
+      "source_file": "libcsv.c",
+      "start_line": 281
+    }
+  ],
+  "functions_labeled": 119,
+  "functions_scored": 119,
+  "functions_unresolved": 27,
+  "labels_file": "research/heldout_eligibility_labels.csv",
+  "labels_sha256": "4ebc3f733839de101868bb9705da799f1420450fa27b19e1f25985772428d0e4",
+  "protocol_deviation": "disagreements_not_adjudicated",
+  "reference_label_method": "reviewer_consensus_only",
+  "reference_unknown": 0,
+  "reviewer_agreement": {
+    "cohen_kappa": 0.5879155341835669,
+    "disagreement_count": 27,
+    "disagreements": [
+      {
+        "construct_tags": [
+          "aliasing",
+          "c_string",
+          "recursive_or_cyclic_call",
+          "struct_or_union"
+        ],
+        "function": "cJSON_Compare",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 3057
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateArray",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2583
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateBool",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2479
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "array_or_slice",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateDoubleArray",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2686
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateFalse",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2468
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "array_or_slice",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateFloatArray",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2646
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "array_or_slice",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateIntArray",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2606
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateNull",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2446
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateNumber",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2490
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateObject",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2594
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "c_string",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateRaw",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2566
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "c_string",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateString",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2516
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "array_or_slice",
+          "c_string",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateStringArray",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2726
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "custom_allocator",
+          "struct_or_union"
+        ],
+        "function": "cJSON_CreateTrue",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2457
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "custom_allocator",
+          "recursive_or_cyclic_call",
+          "struct_or_union",
+          "unknown_pointer_ownership"
+        ],
+        "function": "cJSON_Duplicate",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2769
+      },
+      {
+        "construct_tags": [
+          "allocation",
+          "c_string",
+          "custom_allocator",
+          "recursive_or_cyclic_call",
+          "struct_or_union",
+          "unknown_pointer_ownership"
+        ],
+        "function": "cJSON_Duplicate_rec",
+        "project": "cjson",
+        "reviewer_a": "manual_refactor_required",
+        "reviewer_b": "candidate_safe",
+        "source_file": "cJSON.c",
+        "start_line": 2774
+      },
+      {
+        "construct_tags": [
+          "nullable_pointer",
+          "recursive_or_cyclic_call",
+          "struct_or_union"
+        ],
+        "function": "cJSON_GetArraySize",
+        "project": "cjson",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "cJSON.c",
+        "start_line": 1884
+      },
+      {
+        "construct_tags": [
+          "c_string",
+          "nullable_pointer",
+          "recursive_or_cyclic_call",
+          "struct_or_union"
+        ],
+        "function": "cJSON_HasObjectItem",
+        "project": "cjson",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "cJSON.c",
+        "start_line": 1978
+      },
+      {
+        "construct_tags": [
+          "array_or_slice",
+          "c_string",
+          "pointer_arithmetic"
+        ],
+        "function": "cJSON_Minify",
+        "project": "cjson",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "cJSON.c",
+        "start_line": 2909
+      },
+      {
+        "construct_tags": [
+          "c_string",
+          "global_state",
+          "macro_or_conditional_compilation"
+        ],
+        "function": "cJSON_Version",
+        "project": "cjson",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "cJSON.c",
+        "start_line": 124
+      },
+      {
+        "construct_tags": [
+          "c_string",
+          "global_state",
+          "macro_or_conditional_compilation"
+        ],
+        "function": "get_decimal_point",
+        "project": "cjson",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "cJSON.c",
+        "start_line": 279
+      },
+      {
+        "construct_tags": [
+          "array_or_slice",
+          "c_string",
+          "pointer_arithmetic"
+        ],
+        "function": "minify_string",
+        "project": "cjson",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "cJSON.c",
+        "start_line": 2887
+      },
+      {
+        "construct_tags": [
+          "array_or_slice",
+          "callback_or_function_pointer",
+          "output_parameter",
+          "pointer_integer_cast",
+          "struct_or_union"
+        ],
+        "function": "ini_reader_string",
+        "project": "inih",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "ini.c",
+        "start_line": 287
+      },
+      {
+        "construct_tags": [
+          "array_or_slice",
+          "error_code",
+          "extern_or_ffi"
+        ],
+        "function": "csv_fwrite",
+        "project": "libcsv",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "libcsv.c",
+        "start_line": 475
+      },
+      {
+        "construct_tags": [
+          "array_or_slice",
+          "error_code",
+          "extern_or_ffi"
+        ],
+        "function": "csv_fwrite2",
+        "project": "libcsv",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "libcsv.c",
+        "start_line": 518
+      },
+      {
+        "construct_tags": [
+          "array_or_slice",
+          "output_parameter",
+          "pointer_arithmetic"
+        ],
+        "function": "csv_write",
+        "project": "libcsv",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "libcsv.c",
+        "start_line": 469
+      },
+      {
+        "construct_tags": [
+          "array_or_slice",
+          "output_parameter",
+          "pointer_arithmetic"
+        ],
+        "function": "csv_write2",
+        "project": "libcsv",
+        "reviewer_a": "candidate_safe",
+        "reviewer_b": "manual_refactor_required",
+        "source_file": "libcsv.c",
+        "start_line": 481
+      }
+    ],
+    "disagreements_by_construct": {
+      "aliasing": 1,
+      "allocation": 15,
+      "array_or_slice": 11,
+      "c_string": 10,
+      "callback_or_function_pointer": 1,
+      "custom_allocator": 15,
+      "error_code": 2,
+      "extern_or_ffi": 2,
+      "global_state": 2,
+      "macro_or_conditional_compilation": 2,
+      "nullable_pointer": 2,
+      "output_parameter": 3,
+      "pointer_arithmetic": 4,
+      "pointer_integer_cast": 1,
+      "recursive_or_cyclic_call": 5,
+      "struct_or_union": 19,
+      "unknown_pointer_ownership": 2
+    },
+    "functions_double_labeled": 146,
+    "raw_agreement": 0.815068493150685,
+    "reviewers": [
+      "reviewer_a",
+      "reviewer_b"
+    ]
+  },
+  "schema_version": "safemap.eligibility_evaluation.v2",
+  "selection_warning": "Precision and recall apply only to reviewer-agreement cases, not the full held-out corpus.",
+  "unknown_cases": []
+}

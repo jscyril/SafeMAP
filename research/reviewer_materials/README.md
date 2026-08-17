@@ -21,8 +21,6 @@ disagreements without changing either original response.
 - `REVIEWER_CODEBOOK.md`: definitions, decision tree, examples, and edge cases.
 - `REVIEWER_CONSENT_AND_SCREENING.md`: eligibility, conflicts, consent, and
   data-use questions.
-- `REDDIT_RECRUITMENT_DRAFT.md`: recruitment text suitable for a programming or
-  research community.
 - `REVIEWER_HANDOFF.md`: instructions sent privately with a generated packet.
 - `COORDINATOR_PREFLIGHT.md`: ethics, privacy, recruitment, and freeze checks
   that must be completed before contacting volunteers.
@@ -51,8 +49,8 @@ the CSV is the machine-readable function-label input.
 ## Privacy and publication
 
 Use stable pseudonymous identifiers such as `reviewer_a` and `reviewer_b` in
-the research artifact. Keep names, email addresses, Reddit handles, and consent
-records outside the public repository. Tell reviewers before they begin that
+the research artifact. Keep names, email addresses, contact identifiers, and
+consent records outside the public repository. Tell reviewers before they begin that
 their function-level labels, rationales, confidence ratings, and declared
 construct tags will be published under the chosen identifier.
 
@@ -70,9 +68,9 @@ A response is eligible only when the reviewer:
 5. gives a rationale for each judgment; and
 6. agrees that the de-identified response may be published.
 
-Recruitment through Reddit is acceptable only as a way to find volunteers.
-Labels should be returned privately, not posted in comments. Public discussion
-of specific functions before both reviews finish would break independence.
+Recruit reviewers privately using the research-guide-approved process. Labels
+must be returned privately. Public discussion of specific functions before
+both reviews finish would break independence.
 
 Before recruitment, ask the research guide whether the exercise requires an
 institutional research-ethics determination or approved consent language. Do

@@ -25,6 +25,11 @@ def main() -> int:
         default=Path("research/heldout_eligibility_labels.csv"),
     )
     parser.add_argument(
+        "--consensus-only",
+        action="store_true",
+        help="Score only functions where both reviewers chose the same label.",
+    )
+    parser.add_argument(
         "--decisions",
         type=Path,
         nargs="+",
@@ -41,6 +46,7 @@ def main() -> int:
         args.labels,
         args.decisions,
         args.output,
+        consensus_only=args.consensus_only,
     )
     print(
         f"Wrote {args.output}: precision={result['eligibility_precision']}, "

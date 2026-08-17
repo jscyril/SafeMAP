@@ -5,30 +5,33 @@ for institutional submission until every item below is resolved.
 
 ## Human review
 
-- [ ] Obtain the research guide's ethics/consent determination before Reddit
-      recruitment.
-- [ ] Replace the compensation placeholder and add a pilot-based time estimate
-      to `research/reviewer_materials/REDDIT_RECRUITMENT_DRAFT.md`.
-- [ ] Recruit two qualified reviewers and send both the unchanged `ui2` packet.
-- [ ] Receive and hash both independent CSV and JSON exports before either
+- [x] Obtain the research guide's approval for reviewer ethics, consent, and
+      disclosed relationship/conflict handling.
+- [x] Recruit and screen two reviewers privately and send both the unchanged
+      `ui2` packet.
+- [x] Receive and hash both independent CSV and JSON exports before either
       response is shared or adjudication begins.
-- [ ] Run the merge/validation workflow, adjudicate disagreements, regenerate
-      human-label statistics, and replace the manuscript's pending statement.
+- [x] Run the merge/validation and consensus-only workflow, retain 27
+      disagreements as unresolved, regenerate statistics, and replace the
+      manuscript's pending statement.
+- [x] Obtain research-guide approval for omitting planned adjudication and for
+      reporting consensus-only metrics as a disclosed protocol deviation.
 
 ## Authors and venue
 
-- [ ] Confirm each author's name, order, role, affiliation, and city spelling.
-- [ ] Replace both remaining `email address or ORCID` placeholders.
+- [x] Confirm each author's name, order, role, and `Bangalore` city spelling.
+- [ ] Confirm each author's official department, institution, and country.
+- [x] Replace both remaining `email address or ORCID` placeholders.
 - [ ] Obtain explicit manuscript approval from the research guide and RAC
       member.
 - [ ] Fill in venue, category, anonymity, page-limit, paper-size, declaration,
       and generative-AI disclosure requirements in `SUBMISSION_METADATA.md`.
-- [ ] Rebuild and re-check the bibliography balancing trigger after edits.
+- [x] Rebuild and re-check the bibliography balancing trigger after edits.
 
 ## Institutional checker and submission
 
-- [ ] Rebuild and visually inspect the approved PDF after human-review and
-      author changes.
+- [x] Rebuild and visually inspect the plagiarism-check draft PDF after
+      human-review and author changes.
 - [ ] Record its SHA-256 and verify that the institutional upload is exactly
       `paper/main.pdf`.
 - [ ] Review similarity and AI-content flags using

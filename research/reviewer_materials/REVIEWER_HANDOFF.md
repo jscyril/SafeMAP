@@ -12,7 +12,8 @@ Before starting:
 5. Open `review.html` locally in a current browser.
 
 Enter only the pseudonymous reviewer identifier assigned by the coordinator.
-Do not enter your email address or Reddit username into the review form.
+Do not enter your email address or another identifying contact into the review
+form.
 
 For every function, select one label, set confidence from 1 to 5, select the
 construct tags that affected the decision, and write a specific rationale. Use

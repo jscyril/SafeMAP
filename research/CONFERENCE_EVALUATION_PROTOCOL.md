@@ -106,6 +106,17 @@ hashes every label and decision input, and exports individual false positives,
 false negatives, construct-stratified disagreements, and analyzer-backend
 strata.
 
+#### Post-hoc deviation recorded 2026-08-17
+
+The two reviews were completed, but the planned adjudication was not performed.
+The reported analysis therefore uses only functions where both reviewers chose
+the same label. It retains all disagreements, reports raw agreement and Cohen's
+kappa over the full double-labeled corpus, and excludes unresolved functions
+from precision and recall. These consensus-only estimates are not full-corpus
+metrics and may be biased by the post-hoc exclusion. The coordinator reports
+research-guide approval of this disclosed deviation and the reviewer
+relationship/conflict handling on 2026-08-17.
+
 `implemented_support` is deliberately not a human eligibility label. It is a
 separate, mechanically recorded property of the current synthesizer.
 

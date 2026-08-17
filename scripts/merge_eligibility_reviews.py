@@ -27,6 +27,11 @@ FINAL_FIELDS = [
     "construct_tags", "confidence", "rationale", "external_sources",
     "adjudicated_label",
 ]
+CONSENSUS_FIELDS = [
+    "project", "function", "source_file", "start_line", "end_line",
+    "reviewer", "label", "construct_tags", "confidence", "rationale",
+    "adjudicated_label",
+]
 ADJUDICATION_FIELDS = [
     "project", "function", "source_file", "start_line", "end_line",
     "reviewer_a_label", "reviewer_b_label", "adjudicated_label",
@@ -115,6 +120,24 @@ def _write_adjudication_template(
     return len(disagreements)
 
 
+def _write_consensus_labels(
+    path: Path,
+    left: dict[tuple[str, str, str, int, int], dict[str, str]],
+    right: dict[tuple[str, str, str, int, int], dict[str, str]],
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(
+            handle, fieldnames=CONSENSUS_FIELDS, lineterminator="\n"
+        )
+        writer.writeheader()
+        for key in sorted(left):
+            for source in (left[key], right[key]):
+                writer.writerow({
+                    field: source.get(field, "") for field in CONSENSUS_FIELDS
+                } | {"source_file": key[2], "adjudicated_label": ""})
+
+
 def _read_adjudication(
     path: Path,
 ) -> dict[tuple[str, str, str, int, int], dict[str, str]]:
@@ -146,6 +169,7 @@ def merge_reviews(
     output_path: Path | None = None,
     adjudication_path: Path | None = None,
     manifest_path: Path | None = None,
+    consensus_path: Path | None = None,
 ) -> dict[str, Any]:
     if len(review_paths) != 2:
         raise ValueError("Exactly two independent review files are required")
@@ -184,6 +208,16 @@ def merge_reviews(
         "disagreement_template": str(disagreement_path),
         "status": "awaiting_adjudication",
     }
+    if consensus_path is not None:
+        _write_consensus_labels(consensus_path, first, second)
+        result.update({
+            "status": "consensus_only",
+            "consensus_count": agreement_count,
+            "unresolved_count": disagreement_count,
+            "consensus_labels_file": str(consensus_path),
+            "consensus_labels_sha256": _sha256(consensus_path),
+            "protocol_deviation": "disagreements_not_adjudicated",
+        })
     if output_path is not None:
         adjudication = _read_adjudication(adjudication_path) if adjudication_path else {}
         disagreement_keys = {
@@ -231,6 +265,7 @@ def main() -> None:
     parser.add_argument("--adjudication", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--manifest", type=Path)
+    parser.add_argument("--consensus-output", type=Path)
     args = parser.parse_args()
     if bool(args.adjudication) != bool(args.output):
         parser.error("--adjudication and --output must be supplied together")
@@ -240,6 +275,7 @@ def main() -> None:
         args.output.resolve() if args.output else None,
         args.adjudication.resolve() if args.adjudication else None,
         args.manifest.resolve() if args.manifest else None,
+        args.consensus_output.resolve() if args.consensus_output else None,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
 
