@@ -7,7 +7,7 @@ from ..models import (
 )
 from ..analysis.eligibility import classify_analysis
 from .safe_synthesizer import detect_synthesis_rule
-from .signature_generator import generate_signature
+from .signature_generator import plan_signature
 
 SAFE_PATTERNS = {
     "pointer_length_array",
@@ -66,12 +66,19 @@ def create_migration_plans(
             else "rejected"
         )
         reason = None if status == "planned" else "; ".join(eligibility.reasons)
+        signature, signature_issues = plan_signature(
+            function,
+            use_safe_signatures=use_safe_signatures,
+            structs=analysis.structs,
+            functions=functions,
+        )
+        if status == "planned" and signature_issues:
+            status = "rejected"
+            reason = "No safe type mapping: " + "; ".join(signature_issues)
         plan = MigrationPlan(
             unit_id=unit.unit_id,
-            target_signature=generate_signature(
-                function,
-                use_safe_signatures=use_safe_signatures,
-            ),
+            target_signature=signature,
+            signature_issues=signature_issues,
             patterns=patterns,
             constraints=[
                 "Preserve observable C behavior",

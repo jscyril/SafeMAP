@@ -230,6 +230,7 @@ class MigrationPlan(JsonModel):
     synthesis_rule: str | None = None
     analysis_backend: str = "unknown"
     internal_calls: list[str] = field(default_factory=list)
+    signature_issues: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -312,3 +313,5 @@ class RunMetrics(JsonModel):
     migrated_idioms: dict[str, int] = field(default_factory=dict)
     failed_units: list[dict[str, str]] = field(default_factory=list)
     residual_unsafe: list[dict[str, Any]] = field(default_factory=list)
+    compiled_unit_ids: list[str] = field(default_factory=list)
+    unit_outcomes: dict[str, str] = field(default_factory=dict)

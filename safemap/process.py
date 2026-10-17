@@ -49,10 +49,16 @@ def run_command(
             command=command,
             cwd=str(cwd),
             exit_code=None,
-            stdout=error.stdout or "",
-            stderr=error.stderr or "",
+            stdout=_text(error.stdout),
+            stderr=_text(error.stderr),
             duration_seconds=time.monotonic() - start,
             status="failed",
             reason=f"Timed out after {timeout} seconds",
         )
 
+
+def _text(value: str | bytes | None) -> str:
+    # TimeoutExpired carries bytes even when text=True was requested.
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    return value or ""

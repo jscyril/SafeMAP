@@ -102,3 +102,18 @@ def test_escapes_rust_keyword_function_name() -> None:
 
     assert rust_identifier("loop") == "r#loop"
     assert generate_signature(function) == "pub fn r#loop() -> i32"
+
+
+def test_restrict_and_keyword_parameters_are_valid_rust() -> None:
+    function = FunctionInfo(
+        "lower", "void",
+        [
+            ParameterInfo("in", "const unsigned short *restrict", True, True),
+            ParameterInfo("len", "int"),
+        ],
+        "for (int i = 0; i < len; i++) sum += in[i];", "x.c", 1, 1,
+        pointer_facts=[
+            PointerFact("in", "const unsigned short *restrict", "pointer_length_array", "", 0.9),
+        ],
+    )
+    assert generate_signature(function) == "pub fn lower(r#in: &[u16]) -> ()"

@@ -32,6 +32,13 @@ class TranslationConfig:
     max_repair_attempts: int = 5
     direct_llm_max_c_loc: int = 500
     automatic_confidence_threshold: float = 0.75
+    # "unit": per-unit synthesis, compile gating, and per-unit acceptance.
+    # "legacy": project-level paths kept for the C2Rust+LLM and direct-LLM
+    # baselines.
+    engine: str = "legacy"
+    # Withhold analysis facts and the migration plan from LLM prompts (the
+    # target signature is still given so the unit stays testable).
+    prompt_guidance: bool = True
 
 
 @dataclass
@@ -43,6 +50,10 @@ class LLMConfig:
     max_tokens: int = 4096
     timeout_seconds: float = 120.0
     api_key_env: str = "OPENAI_API_KEY"
+    # One-shot whole-file baseline: a full-file reply needs the model's whole
+    # output budget, not the per-function limit.
+    direct_max_tokens: int = 65536
+    direct_timeout_seconds: float = 900.0
 
 
 @dataclass

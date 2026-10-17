@@ -33,26 +33,77 @@ def run_c2rust(project: ProjectInfo, store: ArtifactStore) -> CommandResult:
         )
         store.write_json("logs/c2rust.json", result)
         return result
-    result = run_command(
-        [
-            "c2rust", "transpile", project.compile_commands,
-            "--output-dir", str(output),
-        ],
-        cwd=Path(project.root),
-        timeout=600,
-        env=_c2rust_environment(store),
-    )
+    image = os.getenv("SAFEMAP_C2RUST_DOCKER_IMAGE")
+    command = [
+        "c2rust", "transpile", project.compile_commands,
+        "--output-dir", str(output),
+    ]
+    if image:
+        result = run_command(
+            _docker_command(image, project, store, command),
+            cwd=Path(project.root),
+            timeout=600,
+        )
+    else:
+        result = run_command(
+            command,
+            cwd=Path(project.root),
+            timeout=600,
+            env=_c2rust_environment(),
+        )
     result.reason = result.reason or _diagnose_c2rust_failure(result)
     store.write_json("logs/c2rust.json", result)
     if result.status == "passed":
         ensure_cargo_project(output, project.project_name)
-        check = run_command(["cargo", "check", "--message-format=json"], output, timeout=600)
+        check_command = ["cargo", "check", "--message-format=json"]
+        if image:
+            check_command = [
+                "cargo", f"+{C2RUST_NIGHTLY}", "check",
+                "--message-format=json", "--offline",
+            ]
+            check = run_command(
+                _docker_command(image, project, store, check_command, cwd=output),
+                output,
+                timeout=600,
+            )
+        else:
+            check = run_command(check_command, output, timeout=600)
         check.reason = check.reason or _diagnose_c2rust_compile_failure(check)
         store.write_json("baseline/compile.json", check)
     return result
 
 
-def _c2rust_environment(store: ArtifactStore) -> dict[str, str]:
+# Raw C2Rust output needs nightly feature gates; the pinned image provides
+# this toolchain (see docker/c2rust/Dockerfile).
+C2RUST_NIGHTLY = "nightly-2026-03-01"
+
+
+def _docker_command(
+    image: str,
+    project: ProjectInfo,
+    store: ArtifactStore,
+    command: list[str],
+    cwd: Path | None = None,
+) -> list[str]:
+    """Run inside the pinned image with host paths mounted at the same place.
+
+    Same-path mounts keep compile_commands.json and diagnostics valid, and
+    running as the host user keeps generated files writable.
+    """
+    root = str(Path(project.root).resolve())
+    run_root = str(store.root.resolve())
+    return [
+        "docker", "run", "--rm", "--network=none",
+        "--user", f"{os.getuid()}:{os.getgid()}",
+        "-e", "HOME=/tmp", "-e", "CARGO_HOME=/opt/cargo",
+        "-v", f"{root}:{root}:ro",
+        "-v", f"{run_root}:{run_root}",
+        "-w", str((cwd or Path(project.root)).resolve()),
+        image, *command,
+    ]
+
+
+def _c2rust_environment() -> dict[str, str]:
     env = dict(os.environ)
     candidates = [
         os.getenv("SAFEMAP_C2RUST_LIB_DIR"),
@@ -68,39 +119,11 @@ def _c2rust_environment(store: ArtifactStore) -> dict[str, str]:
     if paths:
         env["LD_LIBRARY_PATH"] = ":".join([*paths, existing] if existing else paths)
     include_paths = [
-        str(_write_c2rust_header_shims(store)),
         _clang_builtin_include_dir(),
         env.get("C_INCLUDE_PATH", ""),
     ]
     env["C_INCLUDE_PATH"] = ":".join(item for item in include_paths if item)
     return env
-
-
-def _write_c2rust_header_shims(store: ArtifactStore) -> Path:
-    shim_dir = store.path("baseline/c2rust_include")
-    shim_dir.mkdir(parents=True, exist_ok=True)
-    (shim_dir / "stdio.h").write_text(
-        "int printf(const char *format, ...);\n",
-        encoding="utf-8",
-    )
-    (shim_dir / "stdlib.h").write_text(
-        "#include <stddef.h>\n"
-        "void *malloc(size_t size);\n"
-        "void *calloc(size_t count, size_t size);\n"
-        "void *realloc(void *ptr, size_t size);\n"
-        "void free(void *ptr);\n"
-        "int atoi(const char *nptr);\n",
-        encoding="utf-8",
-    )
-    (shim_dir / "string.h").write_text(
-        "#include <stddef.h>\n"
-        "size_t strlen(const char *s);\n"
-        "int strcmp(const char *s1, const char *s2);\n"
-        "char *strcpy(char *dest, const char *src);\n"
-        "char *strncpy(char *dest, const char *src, size_t n);\n",
-        encoding="utf-8",
-    )
-    return shim_dir
 
 
 def _clang_builtin_include_dir() -> str | None:
@@ -122,12 +145,18 @@ def _clang_builtin_include_dir() -> str | None:
 def ensure_cargo_project(output: Path, project_name: str) -> None:
     if (output / "Cargo.toml").exists():
         return
-    rs_files = list(output.rglob("*.rs"))
+    rs_files = sorted(output.rglob("*.rs"))
     src = output / "src"
     src.mkdir(exist_ok=True)
-    if rs_files and rs_files[0].parent != src:
+    if (src / "lib.rs").exists():
+        pass
+    elif len(rs_files) == 1 and rs_files[0].parent == src:
+        # C2Rust names the module after the C file (src/cJSON.rs); a crate
+        # without lib.rs has no build target.
+        rs_files[0].rename(src / "lib.rs")
+    elif rs_files:
         shutil.copy2(rs_files[0], src / "lib.rs")
-    elif not rs_files:
+    else:
         (src / "lib.rs").write_text("", encoding="utf-8")
     rust_text = "\n".join(
         file.read_text(encoding="utf-8", errors="replace")

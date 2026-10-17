@@ -128,7 +128,8 @@ def _synthesize_with_rule(
         rendered = _result_output_function(function, signature)
         return ("result_output", rendered) if rendered is not None else None
     if _is_nullable_read(function):
-        return ("nullable_read", _nullable_read_function(body, signature))
+        rendered = _nullable_read_function(function, signature)
+        return ("nullable_read", rendered) if rendered is not None else None
     if _is_c_string_length(function):
         rendered = _c_string_length_function(function, signature)
         return ("c_string_length", rendered) if rendered is not None else None
@@ -183,7 +184,7 @@ def _is_simple_return(function: FunctionInfo) -> bool:
         function.return_type.strip() != "void"
         and not function.pointer_facts
         and not function.calls
-        and re.search(r"\breturn\s+([^;]+);", function.body) is not None
+        and _single_return(function) is not None
     )
 
 
@@ -196,7 +197,7 @@ def _is_internal_call_return(
         and not function.pointer_facts
         and bool(function.calls)
         and set(function.calls) == set(plan.internal_calls)
-        and re.search(r"\breturn\s+([^;]+);", function.body) is not None
+        and _single_return(function) is not None
     )
 
 
@@ -208,7 +209,7 @@ def _is_struct_field_return(function: FunctionInfo) -> bool:
             for idiom in function.idioms
         )
         and not function.calls
-        and re.search(r"\breturn\s+([^;]+);", function.body) is not None
+        and _single_return(function) is not None
     )
 
 
@@ -220,7 +221,9 @@ def _struct_field_return_function(
     if returned is None:
         return None
     expression = _c_expr_to_rust(returned.group(1))
-    if not _is_arithmetic_expression(expression):
+    if not _is_arithmetic_expression(expression) or not _uses_only_parameters(
+        expression, function
+    ):
         return None
     return f"{signature} {{\n    {expression}\n}}"
 
@@ -233,7 +236,9 @@ def _simple_return_function(
     if not returned:
         return None
     expr = _c_expr_to_rust(returned.group(1))
-    if not _is_arithmetic_expression(expr):
+    if not _is_arithmetic_expression(expr) or not _uses_only_parameters(
+        expr, function
+    ):
         return None
     if function.return_type.strip() in {"float", "double", "long double"}:
         expr = re.sub(
@@ -263,7 +268,15 @@ def _is_bit_reverse(function: FunctionInfo) -> bool:
     )
 
 
+C_TYPE_WORDS = re.compile(
+    r"\b(?:const|char|unsigned|signed|struct|union|enum|sizeof|void|int|long"
+    r"|short|float|double|NULL)\b"
+)
+
+
 def _is_arithmetic_expression(expression: str) -> bool:
+    if C_TYPE_WORDS.search(expression):
+        return False
     identifier = r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*"
     number = r"(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+\-]?\d+)?"
     token = rf"(?:{identifier}|{number}|[-+*/%,()]|\s+)"
@@ -271,7 +284,11 @@ def _is_arithmetic_expression(expression: str) -> bool:
 
 
 def _is_boolean_int(function: FunctionInfo) -> bool:
-    return any(item.idiom_type == "boolean_int" for item in function.idioms)
+    return (
+        any(item.idiom_type == "boolean_int" for item in function.idioms)
+        and not function.pointer_facts
+        and _single_return(function) is not None
+    )
 
 
 def _boolean_int_function(body: str, signature: str) -> str | None:
@@ -497,27 +514,52 @@ def _result_output_function(function: FunctionInfo, signature: str) -> str | Non
 
 
 def _is_nullable_read(function: FunctionInfo) -> bool:
-    return any(item.usage_kind == "nullable_pointer" for item in function.pointer_facts)
+    return _nullable_read_shape(function) is not None
 
 
-def _nullable_read_function(body: str, signature: str) -> str:
-    null_return = re.search(r"\bif\s*\([^)]*(?:NULL|0)[^)]*\)\s*return\s*(-?\d+)\s*;", body)
-    fallback = null_return.group(1) if null_return else "0"
-    parameter = signature.split("(", 1)[1].split(":", 1)[0].strip()
+def _nullable_read_shape(function: FunctionInfo) -> tuple[str, str, str] | None:
+    """Match exactly `if (p == NULL) return K; return *p;` (or `p->field`)."""
+    statements = _body_statements(function)
+    nullable = {
+        item.variable for item in function.pointer_facts
+        if item.usage_kind == "nullable_pointer"
+    }
+    if statements is None or len(statements) != 2 or len(function.parameters) != 1:
+        return None
+    guard = re.fullmatch(
+        r"if\s*\(\s*(?:!\s*(\w+)|(\w+)\s*==\s*(?:NULL|0)|(?:NULL|0)\s*==\s*(\w+))\s*\)"
+        r"\s*return\s+(-?\d+)",
+        statements[0],
+    )
+    if guard is None:
+        return None
+    parameter = guard.group(1) or guard.group(2) or guard.group(3)
+    if parameter not in nullable:
+        return None
+    read = re.fullmatch(
+        rf"return\s+(?:\*\s*{re.escape(parameter)}|{re.escape(parameter)}\s*->\s*(\w+))",
+        statements[1],
+    )
+    if read is None:
+        return None
+    value = f"value.{read.group(1)}" if read.group(1) else "*value"
+    return parameter, value, guard.group(4)
+
+
+def _nullable_read_function(function: FunctionInfo, signature: str) -> str | None:
+    shape = _nullable_read_shape(function)
+    if shape is None:
+        return None
+    parameter, value, fallback = shape
     if "Result<" in signature:
-        return (
-            f"{signature} {{\n"
-            f"    match {parameter} {{\n"
-            "        Some(value) => Ok(*value),\n"
-            f"        None => Err({fallback}),\n"
-            "    }\n"
-            "}"
-        )
+        some, none = f"Ok({value})", f"Err({fallback})"
+    else:
+        some, none = value, fallback
     return (
         f"{signature} {{\n"
         f"    match {parameter} {{\n"
-        "        Some(value) => *value,\n"
-        f"        None => {fallback},\n"
+        f"        Some(value) => {some},\n"
+        f"        None => {none},\n"
         "    }\n"
         "}"
     )
@@ -670,6 +712,45 @@ def _c_expr_to_rust(expression: str) -> str:
         if operator == ">" and when_true == right and when_false == left:
             return f"{left}.min({right})"
     return compact
+
+
+def _uses_only_parameters(expression: str, function: FunctionInfo) -> bool:
+    """Every free identifier must be a parameter or a called function."""
+    allowed = {parameter.name for parameter in function.parameters}
+    allowed |= set(function.calls) | {"min", "max"}
+    for match in re.finditer(r"(?<![.\w])([A-Za-z_]\w*)", expression):
+        if match.group(1) not in allowed:
+            return False
+    return True
+
+
+def _body_statements(function: FunctionInfo) -> list[str] | None:
+    """Top-level statements of a brace-free body, or None if it has blocks."""
+    body = function.body
+    opening, closing = body.find("{"), body.rfind("}")
+    if opening < 0 and closing < 0:
+        inner = body
+    elif opening < 0 or closing <= opening:
+        return None
+    else:
+        inner = body[opening + 1:closing]
+    inner = re.sub(r"/\*.*?\*/", " ", inner, flags=re.DOTALL)
+    inner = re.sub(r"//[^\n]*", " ", inner)
+    inner = re.sub(r"\{\s*(return[^;{}]*;)\s*\}", r"\1", inner)
+    if "{" in inner or "}" in inner:
+        return None
+    statements = [
+        " ".join(item.split()) for item in inner.split(";")
+    ]
+    return [item for item in statements if item]
+
+
+def _single_return(function: FunctionInfo) -> str | None:
+    statements = _body_statements(function)
+    if statements is None or len(statements) != 1:
+        return None
+    match = re.fullmatch(r"return\s+(.+)", statements[0])
+    return match.group(1) if match else None
 
 
 def _render_used_structs(

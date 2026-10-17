@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import urllib.error
 import urllib.request
 from abc import ABC, abstractmethod
@@ -17,11 +18,34 @@ class LLMResponse:
     output_tokens: int = 0
     model: str = ""
     raw: dict | None = None
+    retries: int = 0
+
+
+# Transient provider overload is retried with exponential backoff (about 12
+# minutes in total); the retry count is recorded so cost and latency stay
+# auditable. Exhausted retries raise ProviderUnavailable.
+RETRYABLE_STATUS = {429, 500, 502, 503, 504}
+MAX_RETRIES = 10
+
+
+class ProviderUnavailable(RuntimeError):
+    """The provider stayed unavailable after all retries (infrastructure, not method, failure)."""
+
+
+def _backoff(attempt: int) -> float:
+    return min(120.0, 4.0 * 2 ** (attempt - 1))
 
 
 class LLMClient(ABC):
     @abstractmethod
-    def generate(self, prompt: str, system_prompt: str | None = None) -> LLMResponse:
+    def generate(
+        self,
+        prompt: str,
+        system_prompt: str | None = None,
+        *,
+        max_tokens: int | None = None,
+        timeout: float | None = None,
+    ) -> LLMResponse:
         raise NotImplementedError
 
 
@@ -29,7 +53,14 @@ class OpenAICompatibleClient(LLMClient):
     def __init__(self, config: LLMConfig):
         self.config = config
 
-    def generate(self, prompt: str, system_prompt: str | None = None) -> LLMResponse:
+    def generate(
+        self,
+        prompt: str,
+        system_prompt: str | None = None,
+        *,
+        max_tokens: int | None = None,
+        timeout: float | None = None,
+    ) -> LLMResponse:
         key = os.getenv(self.config.api_key_env)
         if not key:
             raise RuntimeError(_missing_key_message(self.config))
@@ -41,7 +72,7 @@ class OpenAICompatibleClient(LLMClient):
             "model": self.config.model,
             "messages": messages,
             "temperature": self.config.temperature,
-            "max_tokens": self.config.max_tokens,
+            "max_tokens": max_tokens or self.config.max_tokens,
         }).encode("utf-8")
         request = urllib.request.Request(
             self.config.base_url.rstrip("/") + "/chat/completions",
@@ -52,29 +83,54 @@ class OpenAICompatibleClient(LLMClient):
             },
             method="POST",
         )
-        try:
-            with urllib.request.urlopen(
-                request, timeout=self.config.timeout_seconds
-            ) as response:
-                data = json.loads(response.read())
-        except urllib.error.HTTPError as error:
-            details = error.read().decode("utf-8", errors="replace")
-            raise RuntimeError(
-                _http_error_message(error.code, details, self.config)
-            ) from error
-        except urllib.error.URLError as error:
-            raise RuntimeError(
-                "LLM request failed before receiving a response. "
-                f"Provider={self.config.provider}, model={self.config.model}, "
-                f"base_url={self.config.base_url}. Underlying error: {error.reason}"
-            ) from error
+        retries = 0
+        while True:
+            try:
+                with urllib.request.urlopen(
+                    request, timeout=timeout or self.config.timeout_seconds
+                ) as response:
+                    data = json.loads(response.read())
+                break
+            except urllib.error.HTTPError as error:
+                details = error.read().decode("utf-8", errors="replace")
+                if error.code in RETRYABLE_STATUS and retries < MAX_RETRIES:
+                    retries += 1
+                    time.sleep(_backoff(retries))
+                    continue
+                if error.code in RETRYABLE_STATUS:
+                    raise ProviderUnavailable(
+                        _http_error_message(error.code, details, self.config)
+                    ) from error
+                raise RuntimeError(
+                    _http_error_message(error.code, details, self.config)
+                ) from error
+            except (urllib.error.URLError, TimeoutError) as error:
+                if retries < MAX_RETRIES:
+                    retries += 1
+                    time.sleep(_backoff(retries))
+                    continue
+                raise ProviderUnavailable(
+                    "LLM request failed before receiving a response. "
+                    f"Provider={self.config.provider}, model={self.config.model}, "
+                    f"base_url={self.config.base_url}. Underlying error: "
+                    f"{getattr(error, 'reason', error)}"
+                ) from error
         usage = data.get("usage", {})
+        choice = (data.get("choices") or [{}])[0]
+        text = (choice.get("message") or {}).get("content")
+        if not text:
+            raise RuntimeError(
+                "Provider returned no content "
+                f"(finish_reason={choice.get('finish_reason')!r}, "
+                f"output_tokens={usage.get('completion_tokens')})"
+            )
         return LLMResponse(
-            text=data["choices"][0]["message"]["content"],
+            text=text,
             input_tokens=usage.get("prompt_tokens", 0),
             output_tokens=usage.get("completion_tokens", 0),
             model=data.get("model", self.config.model),
             raw=data,
+            retries=retries,
         )
 
 
@@ -85,7 +141,14 @@ class StaticLLMClient(LLMClient):
         self.responses = responses
         self.index = 0
 
-    def generate(self, prompt: str, system_prompt: str | None = None) -> LLMResponse:
+    def generate(
+        self,
+        prompt: str,
+        system_prompt: str | None = None,
+        *,
+        max_tokens: int | None = None,
+        timeout: float | None = None,
+    ) -> LLMResponse:
         if isinstance(self.responses, dict):
             for marker, response in self.responses.items():
                 if marker in prompt:

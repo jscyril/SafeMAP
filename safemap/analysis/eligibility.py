@@ -62,14 +62,20 @@ API_CHANGE_IDIOMS = {
 
 
 def classify_analysis(analysis: CAnalysis) -> list[EligibilityResult]:
+    mutable_globals = {item.name for item in analysis.globals if item.mutable}
     return [
-        classify_function(function, f"unit_{index}")
+        classify_function(function, f"unit_{index}", mutable_globals)
         for index, function in enumerate(analysis.functions)
     ]
 
 
-def classify_function(function: FunctionInfo, unit_id: str) -> EligibilityResult:
+def classify_function(
+    function: FunctionInfo,
+    unit_id: str,
+    mutable_globals: set[str] | None = None,
+) -> EligibilityResult:
     unsupported = _unsupported_features(function)
+    touched_globals = _touched_globals(function, mutable_globals or set())
     pointer_roles = _pointer_roles(function)
     reasons: list[str] = []
 
@@ -79,6 +85,12 @@ def classify_function(function: FunctionInfo, unit_id: str) -> EligibilityResult
     elif _requires_unsafe(function):
         category = "unsafe_required"
         reasons.append("Function depends on operations that normally require unsafe Rust or FFI")
+    elif touched_globals:
+        category = "requires_manual_refactor"
+        reasons.append(
+            "Function reads or writes mutable global state: "
+            + ", ".join(touched_globals)
+        )
     elif _has_unknown_pointer(function):
         category = "requires_manual_refactor"
         reasons.append("Pointer role, ownership, or aliasing could not be resolved statically")
@@ -102,6 +114,20 @@ def classify_function(function: FunctionInfo, unit_id: str) -> EligibilityResult
         eligible_for_safe_translation=category in SAFE_CATEGORIES,
         candidate_decision=_candidate_decision(category),
     )
+
+
+def _touched_globals(function: FunctionInfo, names: set[str]) -> list[str]:
+    body = _strip_comments_and_strings(function.body)
+    return sorted(
+        name for name in names
+        if re.search(rf"(?<![\w.>]){re.escape(name)}\b", body)
+    )
+
+
+def _strip_comments_and_strings(source: str) -> str:
+    source = re.sub(r"/\*.*?\*/", " ", source, flags=re.DOTALL)
+    source = re.sub(r"//[^\n]*", " ", source)
+    return re.sub(r'"(?:\\.|[^"\\])*"', '""', source)
 
 
 def _candidate_decision(category: str) -> str:

@@ -55,3 +55,62 @@ Migration plan:
 Compiler errors:
 <<<COMPILER_ERRORS>>>
 """
+
+SYNTHESIS_SYSTEM_PROMPT = (
+    "You translate one C function into one safe Rust function with identical "
+    "observable behavior. You never use unsafe code. You reply with Rust code only."
+)
+
+SYNTHESIS_TEMPLATE = """Translate this C function into safe Rust.
+
+Hard requirements:
+1. Use exactly this signature (same names, types, and parameter order):
+   <<<TARGET_SIGNATURE>>>
+2. Preserve observable behavior for every input on which the C code is defined:
+   the return value and every value written through a mutable parameter.
+   Mirror C integer semantics exactly (use wrapping_* where C unsigned
+   arithmetic wraps; keep the same integer widths; C `char` values are bytes).
+3. A `&str` / `Option<&str>` parameter is the C string up to (not including)
+   its NUL terminator; `None` is NULL. A `&[u8]`/`&mut [u8]` parameter is the
+   whole C buffer, and its length replaces the C length parameter. A returned
+   `Option<String>` is the returned C string (None for NULL). A returned
+   `Result<T, i32>` is `Err(code)` when C returns a nonzero error code and
+   `Ok(...)` otherwise.
+4. No `unsafe`, no raw pointers, no `extern`, no FFI, no external crates, no
+   `todo!`/`unimplemented!`, and no panics on inputs where C is defined.
+5. Declare any constants, lookup tables, or helper functions INSIDE the
+   function body. Only the Rust types and functions listed below exist outside it.
+6. Reply with exactly one Rust function and nothing else (no prose, no
+   Markdown fences, no `use` lines outside the function).
+
+C function:
+<<<C_FUNCTION>>>
+
+C definitions it references (macros, enums, constant tables):
+<<<C_CONTEXT>>>
+
+Rust types already defined in the crate:
+<<<RUST_TYPES>>>
+
+Already-translated Rust functions you may call:
+<<<RUST_CALLEES>>>
+
+Static analysis facts:
+<<<ANALYSIS_FACTS>>>
+
+Migration plan:
+<<<MIGRATION_PLAN>>>
+"""
+
+SYNTHESIS_REPAIR_TEMPLATE = """Your previous answer was rejected. Fix it.
+
+<<<ORIGINAL_PROMPT>>>
+
+Your previous answer:
+<<<PREVIOUS_RUST>>>
+
+Rejection reason (compiler errors or policy violations):
+<<<ERRORS>>>
+
+Reply with the corrected single Rust function only.
+"""

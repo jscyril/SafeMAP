@@ -40,7 +40,10 @@ def _analyze_with_clang(project: ProjectInfo) -> CAnalysis:
         unit = index.parse(file_name, args=args)
         analysis.diagnostics.extend(str(item) for item in unit.diagnostics)
         source = Path(file_name).read_text(encoding="utf-8", errors="replace")
-        _walk_clang(unit.cursor, Path(file_name), source, analysis)
+        _walk_clang(
+            unit.cursor, Path(file_name), source, analysis,
+            project_root=Path(project.root),
+        )
     _enrich_functions(analysis.functions)
     return analysis
 
@@ -64,11 +67,33 @@ def _compile_arguments(project: ProjectInfo) -> dict[str, list[str]]:
     return result
 
 
-def _walk_clang(cursor, file_path: Path, source: str, analysis: CAnalysis) -> None:
+def _walk_clang(
+    cursor,
+    file_path: Path,
+    source: str,
+    analysis: CAnalysis,
+    project_root: Path | None = None,
+) -> None:
     kinds = cindex.CursorKind
+    known_structs = {item.name for item in analysis.structs}
     for child in cursor.get_children():
         location = child.location
-        if not location.file or Path(location.file.name).resolve() != file_path.resolve():
+        if not location.file:
+            continue
+        declared_in = Path(location.file.name).resolve()
+        if declared_in != file_path.resolve():
+            # Struct definitions in the project's own headers (csv.h, cJSON.h)
+            # describe the types the translated functions use.
+            if (
+                child.kind == kinds.STRUCT_DECL
+                and child.is_definition()
+                and child.spelling
+                and child.spelling not in known_structs
+                and project_root is not None
+                and declared_in.is_relative_to(project_root.resolve())
+            ):
+                analysis.structs.append(_clang_struct(child, declared_in))
+                known_structs.add(child.spelling)
             continue
         if child.kind == kinds.FUNCTION_DECL and child.is_definition():
             start, end = child.extent.start, child.extent.end
@@ -91,15 +116,14 @@ def _walk_clang(cursor, file_path: Path, source: str, analysis: CAnalysis) -> No
                 end_line=end.line,
                 calls=calls,
             ))
-        elif child.kind == kinds.STRUCT_DECL and child.is_definition() and child.spelling:
-            fields = [
-                {"name": field.spelling, "type": field.type.spelling}
-                for field in child.get_children()
-                if field.kind == kinds.FIELD_DECL
-            ]
-            analysis.structs.append(StructInfo(
-                child.spelling, fields, str(file_path), location.line
-            ))
+        elif (
+            child.kind == kinds.STRUCT_DECL
+            and child.is_definition()
+            and child.spelling
+            and child.spelling not in known_structs
+        ):
+            analysis.structs.append(_clang_struct(child, file_path))
+            known_structs.add(child.spelling)
         elif child.kind == kinds.VAR_DECL and child.semantic_parent.kind == kinds.TRANSLATION_UNIT:
             analysis.globals.append(GlobalInfo(
                 name=child.spelling,
@@ -108,6 +132,15 @@ def _walk_clang(cursor, file_path: Path, source: str, analysis: CAnalysis) -> No
                 file=str(file_path),
                 line=location.line,
             ))
+
+
+def _clang_struct(cursor, file_path: Path) -> StructInfo:
+    fields = [
+        {"name": field.spelling, "type": field.type.get_canonical().spelling}
+        for field in cursor.get_children()
+        if field.kind == cindex.CursorKind.FIELD_DECL
+    ]
+    return StructInfo(cursor.spelling, fields, str(file_path), cursor.location.line)
 
 
 def _descendants(cursor):

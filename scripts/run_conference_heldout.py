@@ -47,7 +47,21 @@ STAGE_MODES = {
         "safemap_without_validation_feedback",
     ),
     "llm": ("llm_only",),
+    # v2 (research/RESUBMISSION_EVALUATION_PROTOCOL.md): unit engine.
+    "v2-non-llm": ("safemap_deterministic", "c2rust_only"),
+    "v2-llm": (
+        "safemap_guided",
+        "safemap_guided_unguided_prompt",
+        "safemap_guided_without_validation_feedback",
+        "safemap_guided_without_pointer_roles",
+        "safemap_guided_without_safe_signatures",
+        "safemap_guided_without_dependency_grouping",
+        "safemap_guided_without_idiom_plans",
+        "llm_only",
+    ),
 }
+LLM_STAGES = {"llm", "v2-llm"}
+C2RUST_IMAGE_ENV = "SAFEMAP_C2RUST_DOCKER_IMAGE"
 DERIVED_FILES = (
     "benchmark_results.csv",
     "benchmark_results.md",
@@ -115,7 +129,12 @@ def _verify_inputs(
     expected_config_hash = frozen_inputs.get(relative_config)
     if not expected_config_hash or _sha256(config) != expected_config_hash:
         raise ValueError("Conference configuration does not match the freeze")
-    if stage == "llm":
+    if stage == "v2-non-llm" and not os.getenv(C2RUST_IMAGE_ENV):
+        raise ValueError(
+            f"{C2RUST_IMAGE_ENV} is not set; v2 runs C2Rust only in the pinned image "
+            "(docker/c2rust/Dockerfile)."
+        )
+    if stage in LLM_STAGES:
         key_name = _api_key_name(config)
         if not os.getenv(key_name):
             raise ValueError(
@@ -171,8 +190,16 @@ def run_stage(
         "corpus_manifest_sha256": _sha256(corpus / "manifest.json"),
         "config_sha256": _sha256(config),
         "command": command,
-        "llm_requests_per_project": 1 if stage == "llm" else 0,
-        "automatic_retries": 0,
+        "llm_requests_per_project": (
+            1 if stage == "llm"
+            else "per unit; recorded in each run's metrics" if stage in LLM_STAGES
+            else 0
+        ),
+        "automatic_retries": (
+            "HTTP 429/5xx and network errors, at most 10 with exponential backoff"
+            if stage == "v2-llm" else 0
+        ),
+        "c2rust_docker_image": os.getenv(C2RUST_IMAGE_ENV),
         "output": str(output),
     }
     if dry_run:

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import copy
+import os
+import re
 import hashlib
 import shutil
 import time
@@ -29,6 +31,8 @@ from .translation.c2rust_runner import run_c2rust
 from .translation.migration_planner import create_migration_plans
 from .translation.rewriter import rewrite_function
 from .translation.safe_synthesizer import synthesize_safe_crate
+from .translation.unit_synthesis import synthesize_units
+from .validation.unit_harness import validate_units
 from .repair.compiler_repair import repair_function
 from .validation.validator import validate_project
 from .validation.differential_tester import (
@@ -96,129 +100,143 @@ def run_pipeline(
     baseline_metrics = analyze_rust_path(baseline_root) if list(baseline_root.rglob("*.rs")) else None
     if baseline_metrics:
         store.write_json("analysis/baseline_rust.json", baseline_metrics)
-    synthesized_units: list[str] = []
-    synthesized_units = synthesize_safe_crate(
-        project,
-        analysis.functions,
-        plans,
-        final_root,
-        structs=analysis.structs,
-    )
-    if synthesized_units:
-        store.write_json("logs/safe_synthesis.json", {
-            "status": "passed",
-            "generated_units": synthesized_units,
-        })
-    if baseline_result and baseline_result.status == "passed" and config.translation.use_llm:
-        if not (final_root / "Cargo.toml").exists():
-            shutil.copytree(baseline_root, final_root, dirs_exist_ok=True)
-    elif (
-        not synthesized_units
-        and config.translation.use_llm
-        and _project_loc(project) <= config.translation.direct_llm_max_c_loc
-    ):
-        llm = client or OpenAICompatibleClient(config.llm)
-        try:
-            direct_llm_usage = _direct_llm_translation(
-                project,
-                final_root,
-                llm,
-                store,
-                config.llm,
-            )
-            used_direct_translation = True
-        except Exception as error:
-            store.write_json("logs/direct_llm_error.json", {
-                "status": "failed", "reason": str(error),
-            })
-            call_path = store.path("logs/direct_llm_call.json")
-            if call_path.is_file():
-                call_record = json.loads(
-                    call_path.read_text(encoding="utf-8")
-                )
-                call_record["status"] = (
-                    "rejected"
-                    if call_record.get("response_path")
-                    else "failed"
-                )
-                call_record["failure"] = {
-                    "type": type(error).__name__,
-                    "message": str(error),
-                }
-                store.write_json("logs/direct_llm_call.json", call_record)
-    metrics = RunMetrics(
-        project=project.project_name,
-        baseline=baseline_metrics,
-        baseline_compile=_compile_status(store.path("baseline/compile.json")),
-        total_units=len(units),
-    )
-    _apply_eligibility_metrics(metrics, eligibility)
-    _apply_synthesis_metrics(metrics, plans, synthesized_units)
-    _record_synthesized_idioms(metrics, plans, synthesized_units)
-    if direct_llm_usage:
-        metrics.llm_calls += 1
-        metrics.llm_input_tokens += int(direct_llm_usage.get("input_tokens", 0))
-        metrics.llm_output_tokens += int(direct_llm_usage.get("output_tokens", 0))
-    if (
-        config.translation.use_llm
-        and final_root.exists()
-        and not used_direct_translation
-        and not synthesized_units
-    ):
-        llm = client or OpenAICompatibleClient(config.llm)
-        _rewrite_units(
-            analysis, units, plans, final_root, llm, store, metrics,
-            max_repair_attempts=(
-                config.translation.max_repair_attempts
-                if config.translation.use_validation_feedback
-                else 0
-            ),
-            guided=config.translation.use_static_guidance,
+    if config.translation.engine == "unit":
+        metrics = _unit_engine(
+            project, analysis, units, plans, eligibility, store, config, client,
+            baseline_metrics, final_root,
         )
-    if final_root.exists() and (final_root / "Cargo.toml").exists():
-        validation = validate_project(final_root, config.validation)
-        if (
-            config.validation.run_differential_tests
-            and len(project.c_files) == 1
+    else:
+        synthesized_units: list[str] = []
+        synthesized_units = synthesize_safe_crate(
+            project,
+            analysis.functions,
+            plans,
+            final_root,
+            structs=analysis.structs,
+        )
+        if synthesized_units:
+            store.write_json("logs/safe_synthesis.json", {
+                "status": "passed",
+                "generated_units": synthesized_units,
+            })
+        if baseline_result and baseline_result.status == "passed" and config.translation.use_llm:
+            if not (final_root / "Cargo.toml").exists():
+                shutil.copytree(baseline_root, final_root, dirs_exist_ok=True)
+        elif (
+            not synthesized_units
+            and config.translation.use_llm
+            and _project_loc(project) <= config.translation.direct_llm_max_c_loc
         ):
-            if config.validation.run_c_sanitizers:
-                validation.c_sanitizers = validate_c_oracle_sanitizers(
-                    Path(project.c_files[0]),
+            llm = client or OpenAICompatibleClient(config.llm)
+            try:
+                direct_llm_usage = _direct_llm_translation(
+                    project,
+                    final_root,
+                    llm,
+                    store,
+                    config.llm,
+                )
+                used_direct_translation = True
+            except Exception as error:
+                store.write_json("logs/direct_llm_error.json", {
+                    "status": "failed", "reason": str(error),
+                })
+                call_path = store.path("logs/direct_llm_call.json")
+                if call_path.is_file():
+                    call_record = json.loads(
+                        call_path.read_text(encoding="utf-8")
+                    )
+                    call_record["status"] = (
+                        "rejected"
+                        if call_record.get("response_path")
+                        else "failed"
+                    )
+                    call_record["failure"] = {
+                        "type": type(error).__name__,
+                        "message": str(error),
+                    }
+                    store.write_json("logs/direct_llm_call.json", call_record)
+        metrics = RunMetrics(
+            project=project.project_name,
+            baseline=baseline_metrics,
+            baseline_compile=_compile_status(store.path("baseline/compile.json")),
+            total_units=len(units),
+        )
+        _apply_eligibility_metrics(metrics, eligibility)
+        _apply_synthesis_metrics(metrics, plans, synthesized_units)
+        _record_synthesized_idioms(metrics, plans, synthesized_units)
+        if direct_llm_usage:
+            metrics.llm_calls += 1
+            metrics.llm_input_tokens += int(direct_llm_usage.get("input_tokens", 0))
+            metrics.llm_output_tokens += int(direct_llm_usage.get("output_tokens", 0))
+        if (
+            config.translation.use_llm
+            and final_root.exists()
+            and not used_direct_translation
+            and not synthesized_units
+        ):
+            llm = client or OpenAICompatibleClient(config.llm)
+            _rewrite_units(
+                analysis, units, plans, final_root, llm, store, metrics,
+                max_repair_attempts=(
+                    config.translation.max_repair_attempts
+                    if config.translation.use_validation_feedback
+                    else 0
+                ),
+                guided=config.translation.use_static_guidance,
+            )
+        if final_root.exists() and (final_root / "Cargo.toml").exists():
+            validation = validate_project(final_root, config.validation)
+            if (
+                config.validation.run_differential_tests
+                and len(project.c_files) == 1
+            ):
+                # Direct translations are scored per unit, with the sanitized
+                # unit harness (_direct_unit_acceptance); the project-level
+                # sanitizer sweep would only repeat that work, slowly.
+                if config.validation.run_c_sanitizers and not used_direct_translation:
+                    validation.c_sanitizers = validate_c_oracle_sanitizers(
+                        Path(project.c_files[0]),
+                        seed=config.validation.seed,
+                        random_inputs=config.validation.differential_test_inputs,
+                        functions=analysis.functions,
+                        plans=plans,
+                        structs=analysis.structs,
+                        artifact_path=store.path(
+                            "validation/c_sanitizer_cases.json"
+                        ),
+                    )
+                validation.differential = build_and_compare_projects(
+                    Path(project.c_files[0]), final_root,
                     seed=config.validation.seed,
                     random_inputs=config.validation.differential_test_inputs,
                     functions=analysis.functions,
                     plans=plans,
                     structs=analysis.structs,
                     artifact_path=store.path(
-                        "validation/c_sanitizer_cases.json"
+                        "validation/differential_cases.json"
                     ),
                 )
-            validation.differential = build_and_compare_projects(
-                Path(project.c_files[0]), final_root,
-                seed=config.validation.seed,
-                random_inputs=config.validation.differential_test_inputs,
-                functions=analysis.functions,
-                plans=plans,
-                structs=analysis.structs,
-                artifact_path=store.path(
-                    "validation/differential_cases.json"
-                ),
-            )
-        store.write_json("validation/results.json", validation)
-        metrics.safemap_compile = validation.compile.status == "passed"
-        if validation.tests.passed is not None:
-            total = validation.tests.passed + (validation.tests.failed or 0)
-            metrics.test_pass_rate = validation.tests.passed / total if total else None
-        metrics.safemap = analyze_rust_path(final_root)
-        metrics.residual_unsafe = classify_residual_unsafe(final_root)
-        if validation.differential.passed is not None:
-            total = validation.differential.passed + (validation.differential.failed or 0)
-            metrics.differential_pass_rate = (
-                validation.differential.passed / total if total else None
-            )
-        metrics.maintainability = _maintainability(final_root)
-        store.write_json("analysis/final_rust.json", metrics.safemap)
-        _apply_safe_acceptance(metrics, plans, validation, final_root)
+            store.write_json("validation/results.json", validation)
+            metrics.safemap_compile = validation.compile.status == "passed"
+            if validation.tests.passed is not None:
+                total = validation.tests.passed + (validation.tests.failed or 0)
+                metrics.test_pass_rate = validation.tests.passed / total if total else None
+            metrics.safemap = analyze_rust_path(final_root)
+            metrics.residual_unsafe = classify_residual_unsafe(final_root)
+            if validation.differential.passed is not None:
+                total = validation.differential.passed + (validation.differential.failed or 0)
+                metrics.differential_pass_rate = (
+                    validation.differential.passed / total if total else None
+                )
+            metrics.maintainability = _maintainability(final_root)
+            store.write_json("analysis/final_rust.json", metrics.safemap)
+            _apply_safe_acceptance(metrics, plans, validation, final_root)
+            if used_direct_translation:
+                _direct_unit_acceptance(
+                    project, analysis, units, store, config, metrics,
+                    validation, final_root,
+                )
     _apply_research_metric_maps(metrics)
     _write_unit_decisions(
         store,
@@ -416,6 +434,241 @@ def _rewrite_units(
             })
 
 
+# Final per-unit outcome -> failure category reported in the tables.
+UNIT_FAILURE_CATEGORY = {
+    "dependency_missing": "dependency_not_translated",
+    "no_candidate": "no_candidate",
+    "compile_failed": "compile_failed",
+    "rejected_policy": "policy_rejected",
+    "llm_error": "llm_error",
+    "not_harnessable": "behavioral_validation_unavailable",
+    "harness_build_failed": "behavioral_validation_unavailable",
+    "insufficient_defined_inputs": "c_oracle_undefined_behavior",
+    "c_oracle_timeout": "c_oracle_timeout",
+    "failed": "behavior_mismatch",
+    "crate_validation_failed": "validation_failed",
+    "missing": "missing_from_output",
+    "interface_mismatch": "interface_mismatch",
+}
+
+
+def _unit_engine(
+    project: ProjectInfo,
+    analysis: CAnalysis,
+    units: list[TranslationUnit],
+    plans: list[MigrationPlan],
+    eligibility,
+    store: ArtifactStore,
+    config: SafeMapConfig,
+    client: LLMClient | None,
+    baseline_metrics,
+    final_root: Path,
+) -> RunMetrics:
+    """Per-unit synthesis, compile gating, and per-unit acceptance."""
+    llm = None
+    if config.translation.use_llm:
+        llm = client or OpenAICompatibleClient(config.llm)
+    outcomes = synthesize_units(
+        analysis, units, plans, final_root, store,
+        project_name=project.project_name,
+        source_files=[*project.c_files, *project.header_files],
+        client=llm,
+        max_repair_attempts=(
+            config.translation.max_repair_attempts
+            if config.translation.use_validation_feedback else 0
+        ),
+        guided=config.translation.prompt_guidance,
+    )
+    store.write_json("synthesis/summary.json", [item.to_dict() for item in outcomes])
+    metrics = RunMetrics(
+        project=project.project_name,
+        baseline=baseline_metrics,
+        baseline_compile=_compile_status(store.path("baseline/compile.json")),
+        total_units=len(units),
+    )
+    _apply_eligibility_metrics(metrics, eligibility)
+    _apply_synthesis_metrics(metrics, plans, [])
+    plan_by_unit = {plan.unit_id: plan for plan in plans}
+    eligible = {"safe_translatable", "safe_translatable_with_api_change"}
+    for plan in plans:
+        # Ineligible units are already counted by eligibility category; count
+        # only candidates the planner could not give a safe interface.
+        if plan.status != "planned" and plan.eligibility in eligible:
+            category = "type_mapping_unresolved" if plan.signature_issues else "not_planned"
+            metrics.failure_categories[category] = metrics.failure_categories.get(category, 0) + 1
+            metrics.unit_outcomes[plan.unit_id] = category
+    for outcome in outcomes:
+        metrics.llm_calls += outcome.llm_calls
+        metrics.llm_input_tokens += outcome.input_tokens
+        metrics.llm_output_tokens += outcome.output_tokens
+        metrics.repair_attempts += max(0, outcome.llm_calls - 1)
+        if outcome.source.startswith("rule:"):
+            metrics.migrated_idioms[outcome.source] = metrics.migrated_idioms.get(outcome.source, 0) + 1
+    metrics.generated_unit_ids = sorted(
+        item.unit_id for item in outcomes
+        if item.status in {"compiled", "compile_failed", "rejected_policy"}
+    )
+    metrics.generated_units = len(metrics.generated_unit_ids)
+    compiled = [item.unit_id for item in outcomes if item.status == "compiled"]
+    final = {item.unit_id: item.status for item in outcomes}
+    if not (final_root / "Cargo.toml").exists():
+        _count_unit_failures(metrics, final)
+        metrics.unit_outcomes.update(final)
+        return metrics
+    validation = validate_project(final_root, config.validation)
+    metrics.safemap = analyze_rust_path(final_root)
+    metrics.residual_unsafe = classify_residual_unsafe(final_root)
+    metrics.safemap_compile = validation.compile.status == "passed"
+    crate_ok = (
+        metrics.safemap_compile
+        and validation.clippy.status in {"passed", "skipped"}
+        and metrics.safemap.unsafe_blocks == 0
+        and metrics.safemap.unsafe_functions == 0
+        and metrics.safemap.extern_c_blocks == 0
+    )
+    behaviors = {}
+    if crate_ok and compiled and config.validation.run_differential_tests and len(project.c_files) == 1:
+        behaviors = validate_units(
+            Path(project.c_files[0]), final_root, store.path("validation/units"),
+            analysis.functions, plans, analysis.structs, compiled,
+            cases=config.validation.differential_test_inputs,
+            seed=config.validation.seed,
+        )
+    store.write_json("validation/results.json", validation)
+    store.write_json("validation/unit_behavior.json", {key: item.to_dict() for key, item in behaviors.items()})
+    raw_pointer_api = re.compile(r"\*(?:const|mut)\s")
+    for unit_id in compiled:
+        signature = plan_by_unit[unit_id].target_signature
+        if not crate_ok or raw_pointer_api.search(signature):
+            final[unit_id] = "crate_validation_failed"
+            continue
+        metrics.compiled_unit_ids.append(unit_id)
+        metrics.policy_safe_unit_ids.append(unit_id)
+        behavior = behaviors.get(unit_id)
+        if behavior is None:
+            final[unit_id] = "not_harnessable"
+        elif behavior.status == "passed":
+            final[unit_id] = "accepted"
+            metrics.behaviorally_validated_unit_ids.append(unit_id)
+        else:
+            final[unit_id] = behavior.status
+    metrics.compile_success_units = len(metrics.compiled_unit_ids)
+    metrics.policy_safe_units = len(metrics.policy_safe_unit_ids)
+    metrics.behaviorally_validated_units = len(metrics.behaviorally_validated_unit_ids)
+    metrics.differential_pass_units = metrics.behaviorally_validated_units
+    metrics.fully_safe_accepted_unit_ids = list(metrics.behaviorally_validated_unit_ids)
+    metrics.fully_safe_accepted_units = len(metrics.fully_safe_accepted_unit_ids)
+    metrics.fully_safe_translation_unit_acceptance_rate = (
+        metrics.fully_safe_accepted_units / metrics.eligible_units
+        if metrics.eligible_units else 0.0
+    )
+    checked = [item for item in behaviors.values() if item.defined_cases]
+    if checked:
+        matched = sum(item.matched for item in checked)
+        metrics.differential_pass_rate = matched / sum(item.defined_cases for item in checked)
+    _count_unit_failures(metrics, final)
+    metrics.unit_outcomes.update(final)
+    metrics.maintainability = _maintainability(final_root)
+    store.write_json("analysis/final_rust.json", metrics.safemap)
+    return metrics
+
+
+def _direct_unit_acceptance(
+    project: ProjectInfo,
+    analysis: CAnalysis,
+    units: list[TranslationUnit],
+    store: ArtifactStore,
+    config: SafeMapConfig,
+    metrics: RunMetrics,
+    validation,
+    final_root: Path,
+) -> None:
+    """Score a one-shot whole-file translation with the per-unit policy.
+
+    The baseline never sees SafeMAP's plans. Its functions are evaluated
+    against the planned interfaces, which define what the differential
+    harness can call; a function with a different signature is recorded as
+    `interface_mismatch` rather than silently dropped.
+    """
+    lib = final_root / "src" / "lib.rs"
+    contract = [
+        plan for plan in create_migration_plans(
+            analysis, units, config.translation.automatic_confidence_threshold,
+        )
+        if plan.status == "planned"
+    ]
+    source = lib.read_text(encoding="utf-8") if lib.is_file() else ""
+    crate_ok = (
+        validation.compile.status == "passed"
+        and validation.clippy.status in {"passed", "skipped"}
+        and metrics.safemap is not None
+        and metrics.safemap.unsafe_blocks == 0
+        and metrics.safemap.unsafe_functions == 0
+        and metrics.safemap.extern_c_blocks == 0
+    )
+    final: dict[str, str] = {}
+    matching = []
+    for plan in contract:
+        found = re.search(rf"pub\s+fn\s+(?:r#)?{re.escape(plan.function)}\s*\(", source)
+        if found is None:
+            final[plan.unit_id] = "missing"
+        elif _normalize_signature(source[found.start():].split("{", 1)[0]) != _normalize_signature(plan.target_signature):
+            final[plan.unit_id] = "interface_mismatch"
+        elif not crate_ok:
+            final[plan.unit_id] = "crate_validation_failed"
+        else:
+            matching.append(plan.unit_id)
+    behaviors = {}
+    if matching and len(project.c_files) == 1 and config.validation.run_differential_tests:
+        behaviors = validate_units(
+            Path(project.c_files[0]), final_root, store.path("validation/units"),
+            analysis.functions, contract, analysis.structs, matching,
+            cases=config.validation.differential_test_inputs,
+            seed=config.validation.seed,
+        )
+    store.write_json("validation/unit_behavior.json", {key: item.to_dict() for key, item in behaviors.items()})
+    accepted = []
+    for unit_id in matching:
+        behavior = behaviors.get(unit_id)
+        final[unit_id] = (
+            "accepted" if behavior is not None and behavior.status == "passed"
+            else behavior.status if behavior is not None else "not_harnessable"
+        )
+        if final[unit_id] == "accepted":
+            accepted.append(unit_id)
+    metrics.compiled_unit_ids = matching if crate_ok else []
+    metrics.compile_success_units = len(metrics.compiled_unit_ids)
+    metrics.policy_safe_unit_ids = list(metrics.compiled_unit_ids)
+    metrics.policy_safe_units = len(metrics.policy_safe_unit_ids)
+    metrics.behaviorally_validated_unit_ids = accepted
+    metrics.behaviorally_validated_units = len(accepted)
+    metrics.differential_pass_units = len(accepted)
+    metrics.fully_safe_accepted_unit_ids = list(accepted)
+    metrics.fully_safe_accepted_units = len(accepted)
+    metrics.fully_safe_translation_unit_acceptance_rate = (
+        len(accepted) / metrics.eligible_units if metrics.eligible_units else 0.0
+    )
+    metrics.failure_categories.pop("validation_failed", None)
+    metrics.failure_categories.pop("behavioral_validation_missing_or_failed", None)
+    _count_unit_failures(metrics, final)
+    metrics.unit_outcomes.update(final)
+
+
+def _normalize_signature(signature: str) -> str:
+    text = re.sub(r"\s+", " ", signature).strip()
+    text = re.sub(r"\s*([(),:<>&\[\];])\s*", r"\1", text)
+    return text.replace("->()", "")
+
+
+def _count_unit_failures(metrics: RunMetrics, final: dict[str, str]) -> None:
+    for unit_id, status in final.items():
+        if status in {"accepted", "compiled"}:
+            continue
+        category = UNIT_FAILURE_CATEGORY.get(status, status)
+        metrics.failure_categories[category] = metrics.failure_categories.get(category, 0) + 1
+        metrics.failed_units.append({"unit_id": unit_id, "reason": status})
+
+
 def _find_function_file(root: Path, name: str) -> Path | None:
     import re
     pattern = re.compile(
@@ -611,12 +864,16 @@ def _write_unit_decisions(
             "plan_status": plan.status if plan else "missing",
             "generated": unit.unit_id in generated,
             "compile_passed": (
-                unit.unit_id in policy_safe
+                unit.unit_id in set(metrics.compiled_unit_ids)
+                if metrics.unit_outcomes
+                else unit.unit_id in policy_safe
                 or unit.unit_id in set(metrics.generated_unit_ids)
                 and metrics.safemap_compile is True
             ),
             "policy_safe": unit.unit_id in policy_safe,
             "behaviorally_validated": unit.unit_id in behaviorally_validated,
+            "unit_outcome": metrics.unit_outcomes.get(unit.unit_id, plan.status if plan else "missing"),
+            "signature_issues": plan.signature_issues if plan else [],
         })
     store.write_json("analysis/unit_decisions.json", decisions)
 
@@ -726,6 +983,14 @@ def _record_tool_versions(store: ArtifactStore) -> None:
         "cargo": ["cargo", "--version"],
         "rustc": ["rustc", "--version"],
     }
+    image = os.getenv("SAFEMAP_C2RUST_DOCKER_IMAGE")
+    if image:
+        commands["c2rust_docker_image"] = [
+            "docker", "image", "inspect", "--format", "{{.Id}}", image,
+        ]
+        commands["c2rust_in_image"] = [
+            "docker", "run", "--rm", "--network=none", image, "c2rust", "--version",
+        ]
     versions = {}
     for name, command in commands.items():
         result = run_command(command, store.root)
@@ -754,7 +1019,7 @@ def _direct_llm_translation(
     sources = "\n\n".join(
         f"// FILE: {Path(file).name}\n"
         + Path(file).read_text(encoding="utf-8", errors="replace")
-        for file in project.c_files
+        for file in [*project.header_files, *project.c_files]
     )
     prompt = (
         "Translate this small C program into fully safe, idiomatic Rust while preserving "
@@ -771,8 +1036,8 @@ def _direct_llm_translation(
         "requested_model": llm_config.model,
         "base_url": llm_config.base_url,
         "temperature": llm_config.temperature,
-        "max_tokens": llm_config.max_tokens,
-        "timeout_seconds": llm_config.timeout_seconds,
+        "max_tokens": llm_config.direct_max_tokens,
+        "timeout_seconds": llm_config.direct_timeout_seconds,
         "retry_index": 0,
         "total_attempts": 1,
         "system_prompt": None,
@@ -787,7 +1052,11 @@ def _direct_llm_translation(
     }
     store.write_json("logs/direct_llm_call.json", call_record)
     try:
-        response = client.generate(prompt)
+        response = client.generate(
+            prompt,
+            max_tokens=llm_config.direct_max_tokens,
+            timeout=llm_config.direct_timeout_seconds,
+        )
     except Exception as error:
         call_record["status"] = "failed"
         call_record["failure"] = {

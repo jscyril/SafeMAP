@@ -14,7 +14,7 @@ from ..analysis.c_analyzer import analyze_c_project
 from ..config import SafeMapConfig
 from ..analysis.complexity_metrics import cyclomatic_complexity
 from ..analysis.eligibility import classify_analysis
-from ..llm.client import LLMClient
+from ..llm.client import LLMClient, ProviderUnavailable
 from ..models import ProjectInfo
 from ..pipeline import run_pipeline
 from .baseline_runner import BASELINES
@@ -43,6 +43,8 @@ def run_benchmarks(
             mode_config.translation.use_c2rust = mode.use_c2rust
             mode_config.translation.use_llm = mode.use_llm
             mode_config.translation.use_static_guidance = mode.guided
+            mode_config.translation.engine = mode.engine
+            mode_config.translation.prompt_guidance = mode.prompt_guidance
             for component in mode.disabled_components:
                 setattr(mode_config.translation, f"use_{component}", False)
             try:
@@ -151,6 +153,8 @@ def run_benchmarks(
                     "status": row_status,
                     "reason": row_reason,
                 })
+            except ProviderUnavailable:
+                raise
             except Exception as error:
                 rows.append({
                     **metadata,

@@ -241,6 +241,20 @@ export SAFEMAP_C2RUST_RESOURCE_DIR=/opt/llvm-14.0.6/lib/clang/14.0.6
 export SAFEMAP_C2RUST_LIB_DIR=/opt/llvm-14.0.6/lib
 ```
 
+Host installs are fragile: C2Rust 0.22.1's LLVM 14 AST exporter crashes on
+glibc 2.44 headers. Evaluations use the pinned image instead (Ubuntu 22.04,
+LLVM/Clang 14, C2Rust 0.22.1, plus the `nightly-2026-03-01` toolchain that raw
+C2Rust output needs for `#![feature(extern_types)]`):
+
+```bash
+docker build -t safemap-c2rust:0.22.1-llvm14 docker/c2rust
+export SAFEMAP_C2RUST_DOCKER_IMAGE=safemap-c2rust:0.22.1-llvm14
+```
+
+With the variable set, transpilation and the baseline `cargo check` run in the
+container (no network, host user, same-path mounts), and each run records the
+image ID in `tool_versions.json`.
+
 The C2Rust baseline is evaluated separately. It is not counted as a SafeMAP
 success unless it independently satisfies the fully safe acceptance criteria.
 
