@@ -123,9 +123,20 @@ there is no function-level filtering.
 
 ### Selected libraries
 
-To be confirmed by the authors and recorded in
+Confirmed by the authors on 2026-10-17 and recorded in
 `research/resubmission_corpus_manifest.json` (repository, revision, file
-hashes, license) before sealing.
+hashes, license):
+
+| Library | Production file | Lines | License |
+|---------|-----------------|-------|---------|
+| kgabis/parson | `parson.c` | 2,494 | MIT |
+| antirez/sds | `sds.c` | 1,328 | BSD-2-Clause |
+| codeplea/tinyexpr | `tinyexpr.c` | 1,025 | Zlib |
+| rxi/microtar | `src/microtar.c` | 376 | MIT |
+
+Each compiles with `clang -c` against libc. `sds.c` contains a test driver
+under `#ifdef SDS_TEST_MAIN`; it is not compiled by default and is therefore
+not part of the corpus.
 
 ### Sequencing
 
