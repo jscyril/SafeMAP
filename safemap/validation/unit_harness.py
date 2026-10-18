@@ -500,7 +500,8 @@ def _c_struct_print(expr: str, struct: StructInfo) -> list[str]:
 
 
 def _c_unit(index: int, spec: _UnitSpec) -> str:
-    fn = spec.function.name
+    # The harness defines its own main; the original was renamed at #include.
+    fn = "sm_original_main" if spec.function.name == "main" else spec.function.name
     lines = [f"static void sm_unit_{index}(int k) {{", "    switch (k) {"]
     for k, values in enumerate(spec.values):
         body, args, after = [], [], []
@@ -529,15 +530,17 @@ def _c_unit(index: int, spec: _UnitSpec) -> str:
                 else:
                     args.append(_c_literal(value, slot.rust))
             elif slot.kind in {"slice", "array"}:
-                items = ", ".join(_c_literal(item, slot.rust) for item in value) or "0"
-                body.append(f"{slot.c_type} {var}[{len(value) + 1}] = {{{items}}};")
-                body.append(f"{var}[{len(value)}] = 0;")
+                # Exact-size heap buffer: ASan reports any read past the end
+                # (including on an empty slice) as undefined behavior.
+                body.append(f"{slot.c_type} *{var} = malloc(sizeof *{var} * {len(value)});")
+                body.extend(f"{var}[{j}] = {_c_literal(item, slot.rust)};" for j, item in enumerate(value))
                 args.append(var)
                 if slot.mutable:
                     after.append(
                         f"for (int sm_j = 0; sm_j < {len(value)}; sm_j++) "
                         + _c_print(f"{var}[sm_j]", slot.rust)
                     )
+                after.append(f"free({var});")
             elif slot.kind == "struct":
                 body.append(f"struct {slot.rust} {var};")
                 body.append(f"memset(&{var}, 0, sizeof {var});")

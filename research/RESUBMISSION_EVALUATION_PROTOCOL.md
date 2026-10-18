@@ -93,15 +93,32 @@ it only the `.c` file and 8,192 tokens. Its functions are scored with the same
 per-unit harness against SafeMAP's planned interfaces; a function with another
 signature is recorded as `interface_mismatch`.
 
-| Mode | Role |
-|------|------|
-| `safemap_guided` | Primary: rules + plan-guided LLM + repair, unit engine |
-| `safemap_deterministic` | Rules only (no LLM), unit engine |
-| `safemap_guided_unguided_prompt` | Same loop and signatures; analysis facts and plan withheld from prompts |
-| `safemap_guided_without_validation_feedback` | No compiler-feedback repair |
-| `safemap_guided_without_{pointer_roles,safe_signatures,dependency_grouping,idiom_plans}` | Component ablations |
-| `c2rust_only` | Raw C2Rust (pinned image); reported for compile rate and unsafe counts |
-| `llm_only` | One-shot whole-file LLM translation, same acceptance policy |
+| Mode | Role | Corpus |
+|------|------|--------|
+| `safemap_guided` | Primary: rules + plan-guided LLM + repair, unit engine | v2 held-out |
+| `safemap_deterministic` | Rules only (no LLM), unit engine | v2 held-out |
+| `c2rust_only` | Raw C2Rust (pinned image); reported for compile rate and unsafe counts | v2 held-out |
+| `llm_only` | One-shot whole-file LLM translation, same acceptance policy | v2 held-out |
+| `safemap_guided_unguided_prompt` | Same loop and signatures; analysis facts and plan withheld from prompts | development |
+| `safemap_guided_without_validation_feedback` | No compiler-feedback repair | development |
+| `safemap_guided_without_{pointer_roles,safe_signatures,dependency_grouping,idiom_plans}` | Component ablations | development |
+
+The five ablations are not run on the v2 held-out corpus; it is evaluated
+only with the four configurations above, so that the held-out LLM run fits
+the provider's request quota. The ablations are run once with the frozen
+implementation on the v1 corpus (inih, cJSON, libcsv) and reported as
+**development data**, not as held-out results.
+
+### Request quota
+
+The evaluation uses the provider's free tier (500 requests per day for the
+pinned model). When a request is still refused after the client's retries,
+the run stops instead of scoring the unit. The stage then waits for the
+reset time the provider reports and resumes. Each finished (project, mode)
+result is checkpointed and reused, so it is never requested again. An
+interrupted (project, mode) run is discarded and re-run from the start. A
+held-out stage may therefore span several quota windows; each wait is
+recorded in its `stage_manifest.json`.
 
 ## Held-out corpus (v2)
 
@@ -146,11 +163,17 @@ not part of the corpus.
 3. Seal this protocol and the corpus manifest; record the freeze
    (`research/implementation_freeze.json`, new record) with commit, tool
    versions, image ID, model name, and hashes.
-4. Fetch the v2 corpus into a fresh directory and run every configuration
-   once. No implementation change after this point; any later correction is a
-   v3 experiment on another new corpus.
-5. Independent eligibility labels: two reviewers label the v2 functions
-   without seeing SafeMAP's decisions; adjudicate disagreements.
+4. Fetch the v2 corpus into a fresh directory and run each held-out
+   configuration once (`v2-non-llm`, then `v2-llm`; an interrupted stage is
+   continued with `--resume`). Run the ablations on the v1 corpus with the
+   same frozen implementation. No implementation change after this point; any
+   later correction is a v3 experiment on another new corpus.
+
+No independent eligibility labels are collected for v2. The evaluation
+therefore makes no claim about the precision or recall of SafeMAP's
+eligibility decisions; it reports those decisions as counts, and the
+correctness of translations rests only on compilation, the safety policy, and
+the per-unit differential test.
 
 ## Reporting
 

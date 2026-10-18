@@ -741,3 +741,30 @@ def test_no_static_guidance_ablation_reports_zero_synthesis(
     assert row["fully_safe_accepted_units"] == "0"
     assert row["status"] == "no_guided_synthesis"
     assert row["llm_calls"] == "0"
+
+
+def test_run_benchmarks_resumes_after_provider_outage(tmp_path: Path, monkeypatch) -> None:
+    from safemap.benchmarks import benchmark_runner
+    from safemap.benchmarks.benchmark_runner import run_benchmarks
+    from safemap.llm.client import ProviderUnavailable
+
+    corpus = tmp_path / "corpus" / "p"
+    corpus.mkdir(parents=True)
+    (corpus / "main.c").write_text("int f(int a) { return a; }\n", encoding="utf-8")
+    calls = []
+
+    def fake_pipeline(project, output, config, client):
+        calls.append(output.name)
+        if len(calls) == 2:
+            raise ProviderUnavailable("HTTP 429")
+        raise ValueError("scored failure")
+
+    monkeypatch.setattr(benchmark_runner, "run_pipeline", fake_pipeline)
+    csv_path = tmp_path / "out" / "results.csv"
+    modes = ["safemap_deterministic", "c2rust_only"]
+    with pytest.raises(ProviderUnavailable):
+        run_benchmarks(tmp_path / "corpus", csv_path, SafeMapConfig(), modes=modes)
+    rows = run_benchmarks(tmp_path / "corpus", csv_path, SafeMapConfig(), modes=modes)
+    # The finished row is reused; only the outage-aborted mode runs again.
+    assert calls == ["safemap_deterministic", "c2rust_only", "c2rust_only"]
+    assert [row["mode"] for row in rows] == modes

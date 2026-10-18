@@ -37,8 +37,21 @@ def run_benchmarks(
     })
     rows = []
     output_csv.parent.mkdir(parents=True, exist_ok=True)
+    # Finished (project, mode) rows survive an outage abort, so a rerun after
+    # a quota reset resumes instead of repeating paid or rate-limited work.
+    # Delete the checkpoint after changing code: stale rows are reused as-is.
+    checkpoint = output_csv.with_suffix(".rows.jsonl")
+    done = {}
+    if checkpoint.exists():
+        for line in checkpoint.read_text(encoding="utf-8").splitlines():
+            item = json.loads(line)
+            done[tuple(item["key"])] = item["row"]
     for project in projects:
         for mode in selected:
+            key = (str(project.resolve()), mode.name)
+            if key in done:
+                rows.append(done[key])
+                continue
             mode_config = copy.deepcopy(config)
             mode_config.translation.use_c2rust = mode.use_c2rust
             mode_config.translation.use_llm = mode.use_llm
@@ -164,6 +177,8 @@ def run_benchmarks(
                     **_failed_target_result(project),
                     "status": "failed", "reason": str(error),
                 })
+            with checkpoint.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps({"key": list(key), "row": rows[-1]}, default=str) + "\n")
     columns = [
         "result_schema_version", "generated_at_utc", "git_commit", "git_dirty",
         "project", "mode", "status", "reason", "run_dir", "loc_c",

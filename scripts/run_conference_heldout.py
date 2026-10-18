@@ -2,8 +2,10 @@
 """Run and publish the frozen conference held-out evaluation.
 
 The expensive LLM lane is deliberately separate from deterministic and C2Rust
-lanes.  A completed stage is never reused as an output directory, so a quota
-failure cannot silently trigger a second model request.
+lanes.  A completed stage is never reused as an output directory.  An
+interrupted v2 stage may be resumed (--resume): finished (project, mode) rows
+are reused from the benchmark checkpoint and only unfinished work is
+requested again.  A provider quota stop waits for the reset and resumes.
 """
 
 from __future__ import annotations
@@ -14,8 +16,10 @@ import hashlib
 import json
 import os
 import shutil
+import re
 import subprocess
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -49,16 +53,8 @@ STAGE_MODES = {
     "llm": ("llm_only",),
     # v2 (research/RESUBMISSION_EVALUATION_PROTOCOL.md): unit engine.
     "v2-non-llm": ("safemap_deterministic", "c2rust_only"),
-    "v2-llm": (
-        "safemap_guided",
-        "safemap_guided_unguided_prompt",
-        "safemap_guided_without_validation_feedback",
-        "safemap_guided_without_pointer_roles",
-        "safemap_guided_without_safe_signatures",
-        "safemap_guided_without_dependency_grouping",
-        "safemap_guided_without_idiom_plans",
-        "llm_only",
-    ),
+    # Ablations run on development data only (protocol, "Configurations").
+    "v2-llm": ("safemap_guided", "llm_only"),
 }
 LLM_STAGES = {"llm", "v2-llm"}
 C2RUST_IMAGE_ENV = "SAFEMAP_C2RUST_DOCKER_IMAGE"
@@ -172,12 +168,14 @@ def run_stage(
     config: Path,
     freeze_path: Path,
     dry_run: bool = False,
+    resume: bool = False,
 ) -> dict[str, Any]:
     if stage not in STAGE_MODES:
         raise ValueError(f"Unknown stage: {stage}")
     freeze = _verify_inputs(freeze_path, corpus, config, stage)
     output = work_root / stage
-    if output.exists():
+    complete = (output / "stage_manifest.json").exists()
+    if output.exists() and (complete or not resume or not stage.startswith("v2-")):
         raise FileExistsError(
             f"Refusing to reuse held-out stage directory: {output}"
         )
@@ -206,7 +204,20 @@ def run_stage(
         return plan
     output.parent.mkdir(parents=True, exist_ok=True)
     started = datetime.now(timezone.utc)
-    subprocess.run(command, cwd=REPO_ROOT, check=True)
+    waits = []
+    while True:
+        result = subprocess.run(command, cwd=REPO_ROOT, stderr=subprocess.PIPE, text=True)
+        sys.stderr.write(result.stderr)
+        if result.returncode == 0:
+            break
+        if "ProviderUnavailable" not in result.stderr or not stage.startswith("v2-"):
+            raise subprocess.CalledProcessError(result.returncode, command, stderr=result.stderr)
+        delay = quota_wait_seconds(result.stderr)
+        waits.append({"at_utc": datetime.now(timezone.utc).replace(microsecond=0)
+                      .isoformat().replace("+00:00", "Z"), "seconds": round(delay)})
+        print(f"Provider unavailable; resuming in {delay / 3600:.1f} h", flush=True)
+        time.sleep(delay)
+    plan["provider_waits"] = waits
     plan.update({
         "started_at_utc": started.replace(microsecond=0).isoformat()
         .replace("+00:00", "Z"),
@@ -218,6 +229,15 @@ def run_stage(
         json.dumps(plan, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     return plan
+
+
+def quota_wait_seconds(message: str) -> float:
+    """Seconds until the provider's stated quota reset (+2 min), else one hour."""
+    match = re.search(r"retry in (?:(\d+)h)?(?:(\d+)m)?(?:([\d.]+)s)?", message)
+    if not match or not any(match.groups()):
+        return 3600.0
+    hours, minutes, seconds = (float(item or 0) for item in match.groups())
+    return hours * 3600 + minutes * 60 + seconds + 120
 
 
 def _read_csv(path: Path) -> tuple[list[str], list[dict[str, str]]]:
@@ -353,6 +373,8 @@ def main() -> None:
     run_parser = subparsers.add_parser("run")
     run_parser.add_argument("--stage", choices=sorted(STAGE_MODES), required=True)
     run_parser.add_argument("--dry-run", action="store_true")
+    run_parser.add_argument("--resume", action="store_true",
+                            help="continue an interrupted v2 stage from its checkpoint")
     publish_parser = subparsers.add_parser("publish")
     publish_parser.add_argument("--snapshot", type=Path, default=DEFAULT_SNAPSHOT)
     args = parser.parse_args()
@@ -361,6 +383,7 @@ def main() -> None:
         result = run_stage(
             args.stage, args.work_root.resolve(), args.corpus.resolve(),
             args.config.resolve(), args.freeze_record.resolve(), args.dry_run,
+            resume=args.resume,
         )
     else:
         result = publish_snapshot(

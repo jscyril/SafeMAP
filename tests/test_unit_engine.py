@@ -52,10 +52,10 @@ COUNTER_NEXT = """pub fn counter_next(c: Option<&mut counter>) -> Result<i32, i3
 }"""
 
 
-def _plan(tmp_path: Path):
+def _plan(tmp_path: Path, source: str = C_SOURCE):
     project_dir = tmp_path / "proj"
     project_dir.mkdir(parents=True)
-    (project_dir / "lib.c").write_text(C_SOURCE, encoding="utf-8")
+    (project_dir / "lib.c").write_text(source, encoding="utf-8")
     store = ArtifactStore.create(tmp_path / "out", "proj")
     project = ingest_project(project_dir, store)
     analysis = analyze_c_project(project)
@@ -64,8 +64,8 @@ def _plan(tmp_path: Path):
     return project, analysis, units, plans, store
 
 
-def _run(tmp_path: Path, responses: dict[str, str]):
-    project, analysis, units, plans, store = _plan(tmp_path)
+def _run(tmp_path: Path, responses: dict[str, str], source: str = C_SOURCE):
+    project, analysis, units, plans, store = _plan(tmp_path, source)
     crate = store.path("final/rust")
     outcomes = synthesize_units(
         analysis, units, plans, crate, store,
@@ -98,6 +98,22 @@ def test_correct_translation_is_accepted_and_wrong_one_rejected(tmp_path: Path) 
     assert bad_behavior["clamp_add"].first_mismatch is not None
     # One unit's behavioral failure does not affect the other unit.
     assert bad_behavior["counter_next"].status == "passed"
+
+
+def test_out_of_bounds_c_read_is_undefined_and_main_is_the_original(tmp_path: Path) -> None:
+    source = """
+int first(const int *arr, int len) { return arr[0] + len - len; }
+int main(void) { return 7; }
+"""
+    outcomes, behavior, plans = _run(tmp_path, {
+        "int first": "pub fn first(arr: &[i32]) -> i32 { arr[0] }",
+        "int main": "pub fn main() -> i32 { 7 }",
+    }, source)
+    assert {plan.function: plan.target_signature for plan in plans}["first"] == "pub fn first(arr: &[i32]) -> i32"
+    # Reading arr[0] of an empty slice is UB in C: excluded, not a mismatch.
+    assert behavior["first"].status == "passed", behavior["first"].reason
+    assert behavior["first"].undefined_cases > 0
+    assert behavior["main"].status == "passed", behavior["main"].reason
 
 
 def test_signature_mismatch_and_unsafe_are_not_admitted(tmp_path: Path) -> None:

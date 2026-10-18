@@ -62,3 +62,47 @@ def test_merge_stage_results_rejects_schema_drift(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="schemas differ"):
         merge_stage_results([first, second], tmp_path / "combined.csv")
+
+
+def test_quota_wait_uses_provider_hint() -> None:
+    from scripts.run_conference_heldout import quota_wait_seconds
+
+    assert quota_wait_seconds("Please retry in 9h38m2.5s.") == 9 * 3600 + 38 * 60 + 2.5 + 120
+    assert quota_wait_seconds("Please retry in 41s") == 161
+    assert quota_wait_seconds("HTTP 503") == 3600
+
+
+def test_v2_stage_waits_out_quota_and_resumes(tmp_path: Path, monkeypatch) -> None:
+    import subprocess
+    from types import SimpleNamespace
+
+    from scripts import run_conference_heldout as runner
+
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    (corpus / "manifest.json").write_text("{}", encoding="utf-8")
+    config = tmp_path / "c.yaml"
+    config.write_text("", encoding="utf-8")
+    monkeypatch.setattr(runner, "_verify_inputs", lambda *a: {"git_commit": "x"})
+    results = iter([
+        SimpleNamespace(returncode=1, stderr="ProviderUnavailable: HTTP 429 Please retry in 30s"),
+        SimpleNamespace(returncode=0, stderr=""),
+    ])
+    runs, sleeps = [], []
+    monkeypatch.setattr(runner.subprocess, "run", lambda *a, **k: (runs.append(1), next(results))[1])
+    monkeypatch.setattr(runner.time, "sleep", sleeps.append)
+    work = tmp_path / "work"
+    (work / "v2-llm").mkdir(parents=True)  # interrupted earlier
+    with pytest.raises(FileExistsError):
+        runner.run_stage("v2-llm", work, corpus, config, tmp_path / "f.json")
+    plan = runner.run_stage("v2-llm", work, corpus, config, tmp_path / "f.json", resume=True)
+    assert len(runs) == 2 and sleeps == [150]
+    assert plan["modes"] == ["safemap_guided", "llm_only"]
+    assert len(plan["provider_waits"]) == 1
+    # A completed stage is never reused, even with --resume.
+    with pytest.raises(FileExistsError):
+        runner.run_stage("v2-llm", work, corpus, config, tmp_path / "f.json", resume=True)
+
+    monkeypatch.setattr(runner.subprocess, "run", lambda *a, **k: SimpleNamespace(returncode=2, stderr="boom"))
+    with pytest.raises(subprocess.CalledProcessError):
+        runner.run_stage("v2-non-llm", tmp_path / "w2", corpus, config, tmp_path / "f.json")
