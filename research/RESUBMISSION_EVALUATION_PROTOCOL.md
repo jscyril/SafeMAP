@@ -2,8 +2,10 @@
 
 Protocol version: `safemap.resubmission_protocol.v2`
 
-Status: **draft — not sealed.** Seal (date and commit) before any SafeMAP
-execution on the v2 held-out corpus.
+Status: **sealed 2026-10-19**, before any SafeMAP execution on the v2
+held-out corpus. The implementation freeze record
+(`research/implementation_freeze_v2.json`) names the sealed commit and hashes
+this file, the corpus manifest, and the configuration.
 
 ## Why a new experiment
 
@@ -112,7 +114,7 @@ ablation.
 | `safemap_guided_without_validation_feedback` | No compiler-feedback repair | development |
 | `safemap_guided_without_{pointer_roles,safe_signatures,dependency_grouping,idiom_plans}` | Component ablations | development |
 
-The five ablations are not run on the v2 held-out corpus; it is evaluated
+The six ablations are not run on the v2 held-out corpus; it is evaluated
 only with the four configurations above, so that the held-out LLM run fits
 the provider's request quota. The ablations are run once with the frozen
 implementation on the v1 corpus (inih, cJSON, libcsv) and reported as
@@ -175,7 +177,7 @@ not part of the corpus.
 4. Fetch the v2 corpus into a fresh directory and run each held-out
    configuration once (`v2-non-llm`, then `v2-llm`; an interrupted stage is
    continued with `--resume`). Run the ablations on the v1 corpus with the
-   same frozen implementation. No implementation change after this point; any
+   same frozen implementation (stage `v2-ablation`). No implementation change after this point; any
    later correction is a v3 experiment on another new corpus.
 
 No independent eligibility labels are collected for v2. The evaluation

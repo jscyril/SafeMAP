@@ -1,6 +1,6 @@
 {
   "corpus_schema_version": "safemap.heldout_corpus.v2",
-  "execution_status": "selected_not_sealed",
+  "execution_status": "sealed",
   "function_selection": "Retain every function definition in each listed production C source file; do not filter by SafeMAP outcome.",
   "projects": [
     {
@@ -115,5 +115,6 @@
     }
   ],
   "protocol": "safemap.resubmission_protocol.v2",
-  "selection": "Rows 1-4 of the shortlist, confirmed by the authors on 2026-10-17; chosen by the protocol's selection rule before any SafeMAP execution on these libraries."
+  "selection": "Rows 1-4 of the shortlist, confirmed by the authors on 2026-10-17; chosen by the protocol's selection rule before any SafeMAP execution on these libraries.",
+  "sealed_on": "2026-10-19"
 }

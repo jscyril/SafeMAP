@@ -55,8 +55,19 @@ STAGE_MODES = {
     "v2-non-llm": ("safemap_deterministic", "c2rust_only"),
     # Ablations run on development data only (protocol, "Configurations").
     "v2-llm": ("safemap_guided", "llm_only"),
+    # Run on the v1 corpus (inih, cJSON, libcsv) as development data.
+    "v2-ablation": (
+        "safemap_guided_unguided_prompt",
+        "safemap_guided_without_pointer_roles",
+        "safemap_guided_without_safe_signatures",
+        "safemap_guided_without_dependency_grouping",
+        "safemap_guided_without_idiom_plans",
+        "safemap_guided_without_validation_feedback",
+    ),
 }
-LLM_STAGES = {"llm", "v2-llm"}
+LLM_STAGES = {"llm", "v2-llm", "v2-ablation"}
+# Stages on already-inspected development data, prepared under an earlier freeze.
+DEVELOPMENT_STAGES = {"v2-ablation"}
 C2RUST_IMAGE_ENV = "SAFEMAP_C2RUST_DOCKER_IMAGE"
 DERIVED_FILES = (
     "benchmark_results.csv",
@@ -103,6 +114,7 @@ def _verify_inputs(
     corpus: Path,
     config: Path,
     stage: str | None = None,
+    development: bool = False,
 ) -> dict[str, Any]:
     record = _load_and_verify_freeze(freeze_path)
     overrides = [name for name in RUNTIME_OVERRIDES if os.getenv(name)]
@@ -116,7 +128,7 @@ def _verify_inputs(
             f"Prepared held-out corpus is missing: {manifest_path}"
         )
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if manifest.get("freeze_git_commit") != record["git_commit"]:
+    if manifest.get("freeze_git_commit") != record["git_commit"] and not development:
         raise ValueError("Held-out corpus was prepared for a different freeze")
     frozen_inputs = {
         item["path"]: item["sha256"] for item in record.get("frozen_inputs", [])
@@ -172,7 +184,8 @@ def run_stage(
 ) -> dict[str, Any]:
     if stage not in STAGE_MODES:
         raise ValueError(f"Unknown stage: {stage}")
-    freeze = _verify_inputs(freeze_path, corpus, config, stage)
+    freeze = _verify_inputs(freeze_path, corpus, config, stage,
+                            development=stage in DEVELOPMENT_STAGES)
     output = work_root / stage
     complete = (output / "stage_manifest.json").exists()
     if output.exists() and (complete or not resume or not stage.startswith("v2-")):
@@ -195,7 +208,7 @@ def run_stage(
         ),
         "automatic_retries": (
             "HTTP 429/5xx and network errors, at most 10 with exponential backoff"
-            if stage == "v2-llm" else 0
+            if stage in LLM_STAGES - {"llm"} else 0
         ),
         "c2rust_docker_image": os.getenv(C2RUST_IMAGE_ENV),
         "output": str(output),
@@ -298,11 +311,13 @@ def publish_snapshot(
     corpus: Path,
     config: Path,
     freeze_path: Path,
+    stages: tuple[str, ...] = ("non-llm", "llm"),
 ) -> dict[str, Any]:
-    freeze = _verify_inputs(freeze_path, corpus, config)
+    freeze = _verify_inputs(freeze_path, corpus, config,
+                            development=set(stages) <= DEVELOPMENT_STAGES)
     if snapshot.exists():
         raise FileExistsError(f"Refusing to replace publication snapshot: {snapshot}")
-    stage_dirs = [work_root / name for name in ("non-llm", "llm")]
+    stage_dirs = [work_root / name for name in stages]
     for path in stage_dirs:
         stage_manifest = path / "stage_manifest.json"
         if not stage_manifest.is_file():
@@ -347,7 +362,7 @@ def publish_snapshot(
             "corpus_manifest_sha256": _sha256(corpus / "manifest.json"),
             "config_sha256": _sha256(config),
             "result_rows": result_count,
-            "stages": ["non-llm", "llm"],
+            "stages": list(stages),
             "excluded_build_directories": ["target"],
             "derived_artifacts": derived,
             "preserved_raw_artifacts": raw_files,
@@ -379,6 +394,8 @@ def main() -> None:
                             help="continue an interrupted v2 stage from its checkpoint")
     publish_parser = subparsers.add_parser("publish")
     publish_parser.add_argument("--snapshot", type=Path, default=DEFAULT_SNAPSHOT)
+    publish_parser.add_argument("--stages", default="non-llm,llm",
+                                help="comma-separated stage directories to merge")
     args = parser.parse_args()
 
     if args.command == "run":
@@ -391,6 +408,7 @@ def main() -> None:
         result = publish_snapshot(
             args.work_root.resolve(), args.snapshot.resolve(), args.corpus.resolve(),
             args.config.resolve(), args.freeze_record.resolve(),
+            tuple(args.stages.split(",")),
         )
     print(json.dumps(result, indent=2, sort_keys=True))
 

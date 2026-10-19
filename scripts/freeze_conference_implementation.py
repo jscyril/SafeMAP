@@ -53,7 +53,9 @@ def _git_head() -> str:
 
 
 def _assert_clean_worktree() -> None:
-    status = _run(["git", "status", "--porcelain"]).stdout.strip()
+    # Paper sources and build outputs do not affect the evaluation.
+    status = _run(["git", "status", "--porcelain", "--untracked-files=no",
+                   "--", ".", ":!paper"]).stdout.strip()
     if status:
         raise ValueError(
             "Implementation freeze requires a clean committed worktree"
@@ -139,6 +141,7 @@ def freeze(
     config: Path,
     output: Path,
     development_artifacts: list[Path],
+    required_inputs: list[Path] | None = None,
 ) -> dict:
     if output.exists():
         raise FileExistsError(
@@ -148,7 +151,7 @@ def freeze(
     _assert_no_runtime_config_overrides()
     _assert_clean_worktree()
     test = _run(["python", "-m", "pytest", "-q"])
-    artifacts = [config, *REQUIRED_INPUTS, *development_artifacts]
+    artifacts = [config, *(required_inputs or REQUIRED_INPUTS), *development_artifacts]
     missing = [path for path in artifacts if not path.is_file()]
     if missing:
         raise FileNotFoundError(
@@ -176,6 +179,10 @@ def freeze(
             "clippy": _tool_version(["cargo", "clippy", "--version"]),
             "miri": _tool_version(["cargo", "miri", "--version"]),
             "c2rust": _tool_version(["c2rust", "--version"]),
+            "c2rust_docker_image": _tool_version(
+                ["docker", "image", "inspect", "--format", "{{.Id}}",
+                 os.getenv("SAFEMAP_C2RUST_DOCKER_IMAGE", "")]
+            ) if os.getenv("SAFEMAP_C2RUST_DOCKER_IMAGE") else "not set",
         },
         "frozen_inputs": [
             {
@@ -211,6 +218,13 @@ def main() -> None:
         default=DEFAULT_OUTPUT,
     )
     parser.add_argument(
+        "--input",
+        action="append",
+        type=Path,
+        default=[],
+        help="protocol/manifest to hash instead of the v1 defaults",
+    )
+    parser.add_argument(
         "--development-artifact",
         action="append",
         type=Path,
@@ -221,6 +235,7 @@ def main() -> None:
         args.config.resolve(),
         args.output.resolve(),
         [path.resolve() for path in args.development_artifact],
+        [path.resolve() for path in args.input] or None,
     )
     print(
         f"froze {record['git_commit']} in {args.output.resolve()}"

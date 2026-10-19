@@ -83,7 +83,7 @@ def test_v2_stage_waits_out_quota_and_resumes(tmp_path: Path, monkeypatch) -> No
     (corpus / "manifest.json").write_text("{}", encoding="utf-8")
     config = tmp_path / "c.yaml"
     config.write_text("", encoding="utf-8")
-    monkeypatch.setattr(runner, "_verify_inputs", lambda *a: {"git_commit": "x"})
+    monkeypatch.setattr(runner, "_verify_inputs", lambda *a, **k: {"git_commit": "x"})
     results = iter([
         SimpleNamespace(returncode=1, stderr="ProviderUnavailable: HTTP 429 Please retry in 30s"),
         SimpleNamespace(returncode=0, stderr=""),
@@ -106,3 +106,23 @@ def test_v2_stage_waits_out_quota_and_resumes(tmp_path: Path, monkeypatch) -> No
     monkeypatch.setattr(runner.subprocess, "run", lambda *a, **k: SimpleNamespace(returncode=2, stderr="boom"))
     with pytest.raises(subprocess.CalledProcessError):
         runner.run_stage("v2-non-llm", tmp_path / "w2", corpus, config, tmp_path / "f.json")
+
+
+def test_only_development_stages_accept_a_corpus_from_another_freeze(tmp_path: Path, monkeypatch) -> None:
+    import json
+
+    from scripts import run_conference_heldout as runner
+
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    (corpus / "manifest.json").write_text(json.dumps({"freeze_git_commit": "v1"}))
+    config = runner.REPO_ROOT / "research" / "resubmission_evaluation.yaml"
+    freeze = {"git_commit": "v2", "frozen_inputs": [
+        {"path": "research/resubmission_evaluation.yaml", "sha256": runner._sha256(config)}]}
+    monkeypatch.setattr(runner, "_load_and_verify_freeze", lambda path: freeze)
+    for name in runner.RUNTIME_OVERRIDES:
+        monkeypatch.delenv(name, raising=False)
+    with pytest.raises(ValueError, match="different freeze"):
+        runner._verify_inputs(tmp_path / "f.json", corpus, config)
+    assert runner._verify_inputs(tmp_path / "f.json", corpus, config, development=True) is freeze
+    assert set(runner.DEVELOPMENT_STAGES) == {"v2-ablation"}
