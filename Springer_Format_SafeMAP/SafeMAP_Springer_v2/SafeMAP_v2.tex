@@ -45,18 +45,19 @@ on up to 1,000 generated inputs, with the C side run under AddressSanitizer
 and UndefinedBehaviorSanitizer. We froze the implementation and evaluated it
 on ten held-out C libraries (9,456 lines, 356 translation units) selected by
 a sealed protocol. Across three runs, \tool accepted 12--16 units and a
-one-shot LLM given the same planned interfaces 9--15; rules alone accepted 1
-and raw C2Rust none.
+one-shot LLM given \tool's planned interfaces 9--15. The same model given only
+the C sources accepted 1, rules alone 1, and raw C2Rust none.
 Most units were refused before translation: 159 need manual refactoring and
 116 use C types with no safe, testable Rust interface. Mutation analysis shows
 that the per-function check rejects 89\% of compiling single-operator mutants
 of accepted functions. Ablations on development libraries attribute the
 accepted translations mainly to safe-signature planning and idiom plans, not
-to prompt guidance or repair; with the planned interfaces, a single LLM request
-performs within the run-to-run range of the full loop. The results show that per-function,
-oracle-checked acceptance is feasible on production C but that coverage is
-low; the recorded refusals identify what currently blocks automatic safe
-migration.}
+to prompt guidance or repair. Interface planning is therefore what makes LLM
+translations both producible and checkable; once it is in place, a single
+LLM request performs within the run-to-run range of the full loop.
+Per-function, oracle-checked acceptance is feasible on production C, but
+coverage is low; the recorded refusals identify what currently blocks
+automatic safe migration.}
 
 \keywords{C-to-Rust migration, safe Rust, static analysis, large language
 models, differential testing, memory safety}
@@ -92,7 +93,9 @@ when that function, on its own, passes a behavioral check against the
 original C. Everything else is refused with a recorded reason. The question
 is therefore not how much unsafe code remains, but how many functions of real
 C code can be migrated to safe Rust with per-function evidence, and what
-prevents the rest.
+prevents the rest. Our results locate \tool's contribution in the planning
+step: an LLM told the planned safe interface produces checkable translations,
+whereas the same LLM given only the C code almost never does.
 
 An earlier, frozen evaluation of \tool on three C libraries accepted no
 units: defects in interface planning, rule matching, and harness construction
@@ -104,9 +107,9 @@ libraries that were not used during development. We ask:
   \item \textbf{RQ1:} How many translation units of production C libraries
   does \tool accept as safe, behaviorally validated Rust?
   \item \textbf{RQ2:} Why are the remaining units not accepted?
-  \item \textbf{RQ3:} How does \tool compare with a one-shot LLM given the
-  same interfaces, with its own rules alone, and with raw C2Rust, under one
-  acceptance policy?
+  \item \textbf{RQ3:} How does \tool compare with a one-shot LLM, with and
+  without \tool's planned interfaces, with its own rules alone, and with raw
+  C2Rust, under one acceptance policy?
   \item \textbf{RQ4:} Which planning components contribute to acceptance?
   \item \textbf{RQ5:} How reliable is the acceptance decision, in terms of
   the harness's ability to reject wrong code and the variation across LLM
@@ -122,9 +125,10 @@ This paper contributes:
   \item a per-function acceptance procedure that compares each Rust function
   with the original C function under sanitizers, excluding inputs on which the
   C code has undefined behavior;
-  \item a sealed, frozen evaluation on ten held-out libraries with a one-shot
-  LLM baseline that receives the same interfaces, repeated LLM runs, mutation
-  analysis of the acceptance check, and component ablations; and
+  \item a sealed, frozen evaluation on ten held-out libraries showing that
+  planned interfaces raise a one-shot LLM from 1 to 9--15 accepted units,
+  with repeated LLM runs, mutation analysis of the acceptance check, and
+  component ablations; and
   \item a breakdown of 356 held-out units by the reason they could not be
   migrated, together with a public artifact for every decision.
 \end{itemize}
@@ -344,10 +348,12 @@ same task as \tool in a single request: the project's C sources and headers,
 the planned public signatures (C names kept), and the Rust struct definitions
 those signatures use, with private helpers allowed. It receives none of
 \tool's analysis facts, plans, rules, or repair. Its output is scored with the
-same per-unit harness after making top-level functions public. A baseline
-that is not told the interfaces cannot be tested through them, so giving them
-isolates what \tool adds beyond interface planning; the contribution of
-interface planning itself is measured by ablation.
+same per-unit harness after making top-level functions public. Giving the interfaces isolates what \tool adds beyond interface planning.
+The \emph{plain LLM} baseline (amendment 2) measures the planning itself: the
+same request without the planned signatures and struct definitions, so the
+model sees only the C sources and the safety rules. Its output is scored the
+same way; a function with any other signature cannot be called by the
+harness and is recorded as \texttt{interface\_mismatch}.
 
 \section{Evaluation methodology}
 
@@ -382,7 +388,10 @@ more by the same rule (amendment 1): json-parser, tiny-regex-c, tiny-AES-c,
 semver.c, argparse, and printf. Nine candidates qualified in a fresh screen;
 six were chosen for domain diversity before any \tool execution on them. The
 implementation, configuration, and modes were unchanged. We report the two
-rounds separately and pooled. Table~\ref{tab:v2-corpus} characterizes the
+rounds separately and pooled. After all results were seen we added one
+baseline (amendment 2), the plain LLM described above, run once with the
+frozen implementation by a script that refuses to run if the implementation
+or configuration differs from the freeze. Table~\ref{tab:v2-corpus} characterizes the
 corpus.
 
 \input{tables/corpus.tex}
@@ -465,9 +474,15 @@ most inputs.
 \subsection{RQ3: Baselines}
 
 Table~\ref{tab:v2-baselines} compares the configurations. \tool accepted 16
-units in the first run, the one-shot LLM 9, rules alone 1, and C2Rust none.
-Over three runs the ranges overlap (Table~\ref{tab:v2-repeats}), so we do not
-claim that \tool outperforms the one-shot baseline. \tool used 40 LLM
+units in the first run, the one-shot LLM given the planned interfaces 9, the
+plain LLM 1, rules alone 1, and C2Rust none. Over three runs \tool and the
+interface-given baseline overlap (Table~\ref{tab:v2-repeats}), so we do not
+claim that \tool's loop outperforms it. The plain LLM shows what the planned
+interfaces contribute: for four libraries its output used \texttt{unsafe}
+code or raw pointers and was rejected outright, and in the other six, of 43 planned
+functions, 24 were absent from the output and 12 had other signatures, so
+they could not be checked against the C function; 6 were in crates that
+failed compilation or Clippy, and 1, in semver, was accepted. \tool used 40 LLM
 requests and the one-shot baseline 8 (one per library with planned
 interfaces). The one-shot baseline benefits from \tool's interface planning:
 without the planned signatures, its output could not be tested function by
@@ -532,9 +547,11 @@ alone; a migration would need to change the library's interface, for example
 by turning global state into an explicit context or an \texttt{sds} string
 into an owned type, before \tool's checks apply.
 
-\textbf{Interfaces matter more than prompts.} Given the planned interfaces, a
-single LLM request performs within the run-to-run range of \tool's guided loop;
-without them, the guided loop collapses (2 of 142 units). Withholding analysis
+\textbf{Interfaces matter more than prompts.} On the held-out libraries the
+same model accepted 1 unit from the C code alone and 9--15 when told the
+planned interfaces, within the run-to-run range of \tool's guided loop. On the
+development libraries, removing signature planning from the guided loop
+reduces it from 22 to 2 units. Withholding analysis
 facts from the prompt changed nothing on the v1 libraries. This suggests that LLM translators benefit most from being
 told the target interface, which is consistent with CRUST-Bench's use of
 hand-written interfaces \cite{khatry2025crustbench}.
@@ -553,7 +570,8 @@ and we report both rounds separately.
 
 \textbf{Model and variance.} One low-cost model was used, and three runs
 are too few to estimate run-to-run variance precisely; the guided and one-shot
-ranges overlap, so their difference is not established. A stronger model may translate
+ranges overlap, so their difference is not established. The plain LLM
+baseline was run once and added after the other results were seen. A stronger model may translate
 more of the planned units, although it cannot change the units refused before
 translation, which are most of the losses.
 
@@ -582,10 +600,11 @@ generalization, and the ablations are run on them.
 
 \tool translates C functions to safe Rust only when it finds a safe interface
 and accepts them only when they match the original C under sanitizers. On ten
-held-out libraries it accepted 12--16 of 356 units across three runs, against
-9--15 for a one-shot LLM given the same planned interfaces, 1 for its rules
-alone, and 0 for raw C2Rust. The interface planning, not the LLM guidance, is
-what makes these translations possible to produce and check. Most units
+held-out libraries it accepted 12--16 of 356 units across three runs. The
+same LLM accepted 1 unit from the C code alone and 9--15 when given \tool's
+planned interfaces; rules alone accepted 1 and raw C2Rust 0. The interface
+planning, not the LLM guidance, is what makes these translations possible to
+produce and check. Most units
 are refused before translation because of global state, opaque or aliasing
 pointer types, or unsafe memory operations. Per-function, oracle-checked
 migration is therefore feasible but narrow: its reach is set by how much of a

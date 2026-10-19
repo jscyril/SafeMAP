@@ -191,6 +191,23 @@ results:
 | cofyc/argparse | `argparse.c` | 395 | MIT |
 | mpaland/printf | `printf.c` | 914 | MIT |
 
+### Amendment 2: plain one-shot baseline (2026-10-20)
+
+Decided **after** all v2 results were seen, because the `llm_only` baseline
+receives SafeMAP's planned interfaces and so does not show what an LLM
+achieves without them. One configuration is added, run once on all ten
+held-out libraries by `scripts/run_plain_llm_baseline.py`:
+
+- `llm_only` with the planned signatures and struct definitions removed from
+  the prompt (the frozen code's own no-interface prompt: C sources and the
+  safety rules only). Scoring is unchanged: functions are tested through the
+  planned interfaces, and one with any other signature is
+  `interface_mismatch`.
+- The script refuses to run unless `safemap/` and the configuration are
+  identical to the freeze commit. No other mode, input, or setting changes.
+- The result is reported as an added baseline, marked as decided after the
+  results were seen.
+
 ### Repeated LLM runs
 
 LLM output can vary across requests even at temperature 0. The `v2-llm` stage

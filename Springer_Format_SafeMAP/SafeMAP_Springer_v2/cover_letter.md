@@ -18,9 +18,9 @@ we did not reuse them as test data. Instead we:
   units), chosen by a fixed rule before any execution on them. The addition of
   six libraries after the first four results were seen is disclosed and
   reported separately;
-- replaced the earlier baselines with a one-shot LLM baseline that receives the
-  same planned interfaces as SafeMAP, a rules-only configuration, and C2Rust
-  in a pinned container;
+- replaced the earlier baselines with one-shot LLM baselines with and without
+  SafeMAP's planned interfaces, a rules-only configuration, and C2Rust in a
+  pinned container;
 - added per-function differential testing against the original C function
   under AddressSanitizer and UndefinedBehaviorSanitizer, mutation analysis of
   that check, three repeated LLM runs, and component ablations; and
@@ -28,9 +28,10 @@ we did not reuse them as test data. Instead we:
 
 The revised results are modest and reported as such. Across three runs SafeMAP
 accepted 12-16 of 356 held-out units and the one-shot baseline, given the same
-planned interfaces, 9-15; rules alone accepted 1 and C2Rust 0. We do not claim
-that the guided loop beats the one-shot baseline; the ablations attribute the
-result to interface planning. Most units are refused before translation, for recorded reasons
+planned interfaces, 9-15; rules alone accepted 1 and C2Rust 0. The same model given
+only the C sources accepted 1. We do not claim that the guided loop beats the
+interface-given baseline; the contribution is the interface planning, which
+the plain baseline and the ablations isolate. Most units are refused before translation, for recorded reasons
 (global state, C types without a safe interface, unsafe memory operations).
 We believe the contribution is a conservative migration method whose every
 acceptance is checked against the original C, and an empirical account of

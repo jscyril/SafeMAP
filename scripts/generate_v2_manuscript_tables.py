@@ -95,7 +95,7 @@ def _failures(row: dict) -> dict:
 
 
 def baseline_table(rows: dict) -> str:
-    modes = ("safemap_guided", "llm_only", "safemap_deterministic", "c2rust_only")
+    modes = ("safemap_guided", "llm_only", "llm_plain", "safemap_deterministic", "c2rust_only")
     body, total = [], Counter()
     for name in ORIG + EXT:
         if (name, "safemap_guided") not in rows:
@@ -106,18 +106,19 @@ def baseline_table(rows: dict) -> str:
         if str(c2r.get("c2rust_compile")) != "True":
             vals[-1] = f"{vals[-1]}$^\\dagger$"
         calls = [n(rows.get((name, m)), "llm_calls") for m in modes[:2]]
-        total.update({"u": units, **{m: v for m, v in zip(modes[:3], vals)},
+        total.update({"u": units, **{m: v for m, v in zip(modes[:4], vals)},
                       "cg": calls[0], "cl": calls[1]})
         body.append([name, units, *vals, f"{calls[0]} / {calls[1]}"])
         if name == ORIG[-1]:
             body.append("---")
-    body += ["---", ["Total", total["u"], *(total[m] for m in modes[:3]), 0,
+    body += ["---", ["Total", total["u"], *(total[m] for m in modes[:4]), 0,
                      f"{total['cg']} / {total['cl']}"]]
     return table("Accepted units per configuration on the held-out libraries (first run). "
+                 "One-shot: given the planned signatures; plain: C sources only (amendment 2). "
                  "LLM calls: guided / one-shot. $^\\dagger$C2Rust output did not compile.",
                  "tab:v2-baselines",
-                 ["Library", "Units", "Guided", "One-shot", "Rules", "C2Rust", "LLM calls"],
-                 body, "lrrrrrr")
+                 ["Library", "Units", "Guided", "One-shot", "Plain", "Rules", "C2Rust", "LLM calls"],
+                 body, "lrrrrrrr")
 
 
 def refusal_table(rows: dict) -> str:
@@ -200,6 +201,9 @@ def main() -> None:
     held, dev, out = (Path(arg) for arg in sys.argv[1:4])
     out.mkdir(parents=True, exist_ok=True)
     first = load(held / "v2-non-llm", held / "v2-llm", held / "ext/v2-non-llm", held / "ext/v2-llm")
+    # Amendment 2: the plain one-shot baseline is recorded as llm_only in its own directories.
+    first.update({(lib, "llm_plain"): row for (lib, _), row in
+                  load(held / "plain-orig", held / "plain-ext").items()})
     repeats = [("Run 1", first)] + [
         (f"Run {i}", load(held / f"rep{i}-orig/v2-llm", held / f"rep{i}-ext/v2-llm")) for i in (2, 3)]
     ablation = load(held / "v2-ablation", held / "ablation-full")
