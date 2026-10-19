@@ -166,6 +166,38 @@ Each compiles with `clang -c` against libc. `sds.c` contains a test driver
 under `#ifdef SDS_TEST_MAIN`; it is not compiled by default and is therefore
 not part of the corpus.
 
+### Amendment 1: held-out extension (2026-10-19)
+
+Decided **after** results on microtar, parson, and sds were seen, because four
+libraries are a small sample. To keep the extension independent of those
+results:
+
+- The same selection rule was applied to a fresh candidate screen; every
+  qualifying candidate is listed in
+  `research/resubmission_corpus_extension_manifest.json`, and the authors chose
+  six of the nine for domain diversity before any SafeMAP execution on them.
+- The implementation, configuration, and modes are unchanged (no file under
+  `safemap/` or `research/resubmission_evaluation.yaml` differs from the sealed
+  freeze commit); only the corpus is added.
+- Results are reported for the original four libraries and for the extension
+  separately, and then pooled.
+
+| Library | Production file | Lines | License |
+|---------|-----------------|-------|---------|
+| udp/json-parser | `json.c` | 1,186 | BSD-2-Clause |
+| kokke/tiny-regex-c | `re.c` | 528 | Unlicense |
+| kokke/tiny-AES-c | `aes.c` | 572 | Unlicense |
+| h2non/semver.c | `semver.c` | 638 | MIT |
+| cofyc/argparse | `argparse.c` | 395 | MIT |
+| mpaland/printf | `printf.c` | 914 | MIT |
+
+### Repeated LLM runs
+
+LLM output can vary across requests even at temperature 0. The `v2-llm` stage
+(`safemap_guided`, `llm_only`) is therefore run three times on every held-out
+library with identical inputs, each into its own output directory; results
+report the run-to-run range. The first run is the primary result.
+
 ### Sequencing
 
 1. Commit all implementation changes; full unit test suite green.

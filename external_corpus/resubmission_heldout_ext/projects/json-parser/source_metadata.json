@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "copied_sha256": "cdfa1316dd55a8696f414352529ef065c15bdf3a6ca93981eddfeff4a579c7a6",
+      "lines": 1186,
+      "path": "json.c",
+      "role": "production_source",
+      "sha256": "cdfa1316dd55a8696f414352529ef065c15bdf3a6ca93981eddfeff4a579c7a6"
+    },
+    {
+      "copied_sha256": "d1cb89f43c4913fb5332272c4ea3307608399c054693d44c09e2b23c0ceee681",
+      "lines": 288,
+      "path": "json.h",
+      "role": "production_header",
+      "sha256": "d1cb89f43c4913fb5332272c4ea3307608399c054693d44c09e2b23c0ceee681"
+    },
+    {
+      "copied_sha256": "298d84f63ba08c3c4b2939d4ddad815741c4905fbe3544505cda0f3b2b0759bb",
+      "lines": 25,
+      "path": "LICENSE",
+      "role": "license",
+      "sha256": "298d84f63ba08c3c4b2939d4ddad815741c4905fbe3544505cda0f3b2b0759bb"
+    }
+  ],
+  "license": "BSD-2-Clause",
+  "name": "json-parser",
+  "repository": "https://github.com/udp/json-parser.git",
+  "revision": "9d50ae5ea2cdeef3b75146c621ec7b26e2e3642f"
+}

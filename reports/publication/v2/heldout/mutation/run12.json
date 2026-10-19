@@ -1,0 +1,98 @@
+{
+  "run": "/mnt/data/college/research/safemap_v2_heldout/ext/v2-llm/safemap_guided/.safemap/runs/20261019T132641Z-resubmission-heldout-629c204a",
+  "cases": 300,
+  "units": [
+    {
+      "unit_id": "unit_7",
+      "function": "has_valid_length",
+      "mutants": [
+        {
+          "mutant": "relational:<=-><@46",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:255->256@29",
+          "result": "survived",
+          "status": "passed"
+        }
+      ],
+      "killed": 0,
+      "compiled_mutants": 2
+    },
+    {
+      "unit_id": "unit_1",
+      "function": "contains",
+      "mutants": [
+        {
+          "mutant": "literal:0->1@188",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:1->2@134",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:<-><=@65",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:1->2@174",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:==->!=@103",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:0->1@50",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 6,
+      "compiled_mutants": 6
+    },
+    {
+      "unit_id": "unit_0",
+      "function": "binary_comparison",
+      "mutants": [
+        {
+          "mutant": "literal:1->2@81",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:==->!=@10",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:1->2@57",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:0->1@25",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:>->>=@43",
+          "result": "survived",
+          "status": "passed"
+        }
+      ],
+      "killed": 4,
+      "compiled_mutants": 5
+    }
+  ],
+  "killed": 10,
+  "compiled_mutants": 13,
+  "mutation_score": 0.7692307692307693
+}

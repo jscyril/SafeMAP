@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "copied_sha256": "071820d3ce126069f39c0b7d17f14f55c74a554ba70dbbdf792f3019afe2402e",
+      "lines": 1328,
+      "path": "sds.c",
+      "role": "production_source",
+      "sha256": "071820d3ce126069f39c0b7d17f14f55c74a554ba70dbbdf792f3019afe2402e"
+    },
+    {
+      "copied_sha256": "1fca79237a549bff08c8e31d10007b48f7a290ce872af35863a8332d689c2ca1",
+      "lines": 274,
+      "path": "sds.h",
+      "role": "production_header",
+      "sha256": "1fca79237a549bff08c8e31d10007b48f7a290ce872af35863a8332d689c2ca1"
+    },
+    {
+      "copied_sha256": "3f99fdb0bfc77ca6f68a513555c85a8a34a81eefa051efff1d005b5333e60da0",
+      "lines": 42,
+      "path": "sdsalloc.h",
+      "role": "production_header",
+      "sha256": "3f99fdb0bfc77ca6f68a513555c85a8a34a81eefa051efff1d005b5333e60da0"
+    },
+    {
+      "copied_sha256": "bb0d0d505009fdf584b0f44dbb62562eebada497d53d726cd2e940ada512dc16",
+      "lines": 24,
+      "path": "LICENSE",
+      "role": "license",
+      "sha256": "bb0d0d505009fdf584b0f44dbb62562eebada497d53d726cd2e940ada512dc16"
+    }
+  ],
+  "license": "BSD-2-Clause",
+  "name": "sds",
+  "repository": "https://github.com/antirez/sds.git",
+  "revision": "5347739b1581fcba74fd5cab1fc21d2aef317d71"
+}

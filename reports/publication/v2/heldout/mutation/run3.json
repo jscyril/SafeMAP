@@ -1,0 +1,105 @@
+{
+  "run": "/mnt/data/college/research/safemap_v2_heldout/v2-llm/safemap_guided/.safemap/runs/20261019T124009Z-resubmission-heldout-ef15a6d0",
+  "cases": 300,
+  "units": [
+    {
+      "unit_id": "unit_1",
+      "function": "is_hex_digit",
+      "mutants": [
+        {
+          "mutant": "logical:&&->||@99",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:<=-><@75",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "relational:<=-><@45",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:&&->||@39",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:>=->>@31",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:>=->>@91",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:>=->>@61",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:||->&&@54",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 7,
+      "compiled_mutants": 8
+    },
+    {
+      "unit_id": "unit_0",
+      "function": "hex_digit_to_int",
+      "mutants": [
+        {
+          "mutant": "literal:4->5@110",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:15->16@355",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:7->8@164",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:3->4@98",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:14->15@330",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:2->3@74",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:7->8@170",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:8->9@182",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 2,
+      "compiled_mutants": 8
+    }
+  ],
+  "killed": 9,
+  "compiled_mutants": 16,
+  "mutation_score": 0.5625
+}

@@ -185,6 +185,49 @@ errors in direct C-to-safe-Rust translation and in LLM repair of C2Rust output
 \cite{valenzuela2026llmcompile}. RustMap combines program analysis and LLM
 support at project scale \cite{cai2025rustmap}.
 
+Several recent systems also validate LLM translations against the C program.
+Syzygy translates units in dependency order and tests each one against its C
+counterpart with LLM-generated inputs \cite{shetty2024syzygy}. SACTOR first
+produces interface-preserving Rust that may use \texttt{unsafe}, then refines
+it to idiomatic safe Rust, and checks both stages with end-to-end tests linked
+to the C code through the FFI \cite{zhou2025sactor}. VERT checks a readable
+LLM translation against a WebAssembly-derived oracle with bounded model
+checking or property-based testing \cite{yang2025vert}. ENCRUST wraps LLM
+translations in ABI-preserving shims and removes the remaining unsafe code
+with an agent \cite{sim2026encrust}, and Reboot translates whole interpreters
+to safe Rust through feature milestones with occasional user intervention
+\cite{wang2026reboot}. CRUST-Bench supplies 100 C repositories with
+hand-written safe-Rust interfaces and tests \cite{khatry2025crustbench}; its
+interfaces play the role that \tool's planned signatures play here.
+
+Table~\ref{tab:related} places \tool among these systems. \tool differs in
+three ways. It decides per function, before any translation, whether a safe
+interface exists, and records a reason when it does not instead of emitting
+\texttt{unsafe} code. Its oracle is the original C function itself, executed
+under ASan and UBSan, and inputs on which C has undefined behavior are
+excluded rather than used as expected outputs. And acceptance is per
+function: one failing unit does not hide the others. The cost of this
+conservatism is coverage, which Section~\ref{sec:results} reports.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Validation and scope of recent C-to-Rust systems (as described by their authors).}
+\label{tab:related}
+\begin{tabular}{@{}llll@{}}
+\toprule
+System & Output & Behavioral oracle & Untranslatable code \\
+\midrule
+C2Rust \cite{c2rust} & unsafe Rust & none & translated unsafely \\
+Syzygy \cite{shetty2024syzygy} & safe Rust & C, LLM-generated inputs & repaired by LLM \\
+SACTOR \cite{zhou2025sactor} & safe Rust & end-to-end tests via FFI & unsafe first stage \\
+VERT \cite{yang2025vert} & safe Rust & Wasm-derived Rust oracle & regenerated \\
+ENCRUST \cite{sim2026encrust} & safe Rust & project test vectors & shims, then agent \\
+\tool & safe Rust & C under ASan/UBSan, per function & refused with reason \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Safe-Rust translation for C subsets}
 
 Scylla translates an applicative C subset to safe Rust and shows how source
@@ -416,7 +459,7 @@ code, prompts and responses, random seeds, sanitizer status, timing, and
 failures. The direct-LLM baseline fixed its model and sampling settings before
 execution. The pre-freeze test count is not a held-out outcome.
 
-\section{Results}
+\section{Results}\label{sec:results}
 
 \subsection{Development evidence}
 

@@ -1,0 +1,32 @@
+{
+  "run": "/mnt/data/college/research/safemap_v2_heldout/ext/v2-llm/safemap_guided/.safemap/runs/20261019T133353Z-resubmission-heldout-053b0de5",
+  "cases": 300,
+  "units": [
+    {
+      "unit_id": "unit_3",
+      "function": "xtime",
+      "mutants": [
+        {
+          "mutant": "literal:1->2@84",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:7->8@78",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:1->2@39",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 3,
+      "compiled_mutants": 3
+    }
+  ],
+  "killed": 3,
+  "compiled_mutants": 3,
+  "mutation_score": 1.0
+}

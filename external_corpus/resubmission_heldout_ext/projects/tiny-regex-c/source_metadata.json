@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "copied_sha256": "846f87cd2527d7e1cdacddbcfed973cf953e50ba5d3ef50b69f592ed8622a34e",
+      "lines": 528,
+      "path": "re.c",
+      "role": "production_source",
+      "sha256": "846f87cd2527d7e1cdacddbcfed973cf953e50ba5d3ef50b69f592ed8622a34e"
+    },
+    {
+      "copied_sha256": "8ba52081ac279e7e8cf9a60165e5ca9ff84f417f49c921dda7dd8635c2f720bd",
+      "lines": 65,
+      "path": "re.h",
+      "role": "production_header",
+      "sha256": "8ba52081ac279e7e8cf9a60165e5ca9ff84f417f49c921dda7dd8635c2f720bd"
+    },
+    {
+      "copied_sha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+      "lines": 24,
+      "path": "LICENSE",
+      "role": "license",
+      "sha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd"
+    }
+  ],
+  "license": "Unlicense",
+  "name": "tiny-regex-c",
+  "repository": "https://github.com/kokke/tiny-regex-c.git",
+  "revision": "f2632c6d9ed25272987471cdb8b70395c2460bdb"
+}

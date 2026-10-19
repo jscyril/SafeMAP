@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "copied_sha256": "5045a20562e22363339c11692cda0cbf641c8921f22babfbf119ec068a21244d",
+      "lines": 395,
+      "path": "argparse.c",
+      "role": "production_source",
+      "sha256": "5045a20562e22363339c11692cda0cbf641c8921f22babfbf119ec068a21244d"
+    },
+    {
+      "copied_sha256": "9fc67e55d911f51b5d82a969f0796ed44699695905bbda2e3a1047cda8160025",
+      "lines": 133,
+      "path": "argparse.h",
+      "role": "production_header",
+      "sha256": "9fc67e55d911f51b5d82a969f0796ed44699695905bbda2e3a1047cda8160025"
+    },
+    {
+      "copied_sha256": "b0d8a0bf3f08168138be5b10746acf1d7e2d82661ae043b8e1142b0696415cee",
+      "lines": 21,
+      "path": "LICENSE",
+      "role": "license",
+      "sha256": "b0d8a0bf3f08168138be5b10746acf1d7e2d82661ae043b8e1142b0696415cee"
+    }
+  ],
+  "license": "MIT",
+  "name": "argparse",
+  "repository": "https://github.com/cofyc/argparse.git",
+  "revision": "4e30aba50340af7f2d3932492c4bffdef7669db8"
+}

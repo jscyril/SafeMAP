@@ -1,0 +1,57 @@
+{
+  "run": "/mnt/data/college/research/safemap_dev_v2/v1diag/safemap_guided/.safemap/runs/20261018T162421Z-resubmission-heldout-6787a8b4",
+  "cases": 300,
+  "units": [
+    {
+      "unit_id": "unit_3",
+      "function": "ini_strncpy0",
+      "mutants": [
+        {
+          "mutant": "literal:0->1@111",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:1->2@236",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:!=->==@318",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:&&->||@305",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:0->1@321",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "logical:&&->||@149",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:<-><=@298",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "relational:!=->==@176",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 6,
+      "compiled_mutants": 8
+    }
+  ],
+  "killed": 6,
+  "compiled_mutants": 8,
+  "mutation_score": 0.75
+}

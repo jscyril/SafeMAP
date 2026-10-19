@@ -1,0 +1,40 @@
+{
+  "freeze_schema_version": "safemap.implementation_freeze.v1",
+  "frozen_at_utc": "2026-10-19T12:39:01Z",
+  "frozen_inputs": [
+    {
+      "path": "research/resubmission_evaluation.yaml",
+      "sha256": "b259648e1cabb0bb4c733d13f10212a7d7d6727f1a2c32166b474b280e7be164"
+    },
+    {
+      "path": "research/RESUBMISSION_EVALUATION_PROTOCOL.md",
+      "sha256": "35e001de2d0248c1c5a3dd47804ca0d2098b129778904017192bd5358466f675"
+    },
+    {
+      "path": "research/resubmission_corpus_manifest.json",
+      "sha256": "fdf48718f90ad96cfb59368d27a91d8129b6f01b346dcf72f5d1646f1cf67b71"
+    }
+  ],
+  "git_commit": "62cf4303ad8060555c7c2d4d6760c8570b489544",
+  "git_worktree": "clean",
+  "python": "3.14.8",
+  "runtime_config_overrides": "none",
+  "status": "frozen",
+  "test_command": [
+    "python",
+    "-m",
+    "pytest",
+    "-q"
+  ],
+  "test_output": "........................................................................ [ 41%]\n........................................................................ [ 82%]\n..............................                                           [100%]",
+  "test_status": "passed",
+  "tools": {
+    "c2rust": "C2Rust 0.22.1",
+    "c2rust_docker_image": "sha256:a1e9c355e2acf5aa10698a6a6279c9baff51c3e0efcbd6d7332955c18854fdaf",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "clang": "clang version 23.1.3",
+    "clippy": "clippy 0.1.99 (58cf8f9c35 2026-10-13)",
+    "miri": "error: the 'miri' component which provides the command 'cargo-miri' is not available for the 'stable-x86_64-unknown-linux-gnu' toolchain",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "corpus_schema_version": "safemap.heldout_corpus.v2",
+  "execution_status": "prepared_after_implementation_freeze",
+  "freeze_git_commit": "62cf4303ad8060555c7c2d4d6760c8570b489544",
+  "function_selection": "Retain every function definition in each listed production C source file; do not filter by SafeMAP outcome.",
+  "prepared_projects": [
+    "parson",
+    "sds",
+    "tinyexpr",
+    "microtar"
+  ],
+  "projects": [
+    {
+      "files": [
+        {
+          "lines": 2494,
+          "path": "parson.c",
+          "role": "production_source",
+          "sha256": "a61370722e98609342278591c755a1632bf52281b0a054f2ef8a550ef456e799"
+        },
+        {
+          "lines": 274,
+          "path": "parson.h",
+          "role": "production_header",
+          "sha256": "1909de7cdfa3b4383f2779ea6677b48a8a916ef975ca20c303ec5943459bb0f8"
+        },
+        {
+          "lines": 21,
+          "path": "LICENSE",
+          "role": "license",
+          "sha256": "ea4347d6cdbf46b37f436d02150fc7c4167280e8d0c3269b5d61ef1d0a002542"
+        }
+      ],
+      "license": "MIT",
+      "name": "parson",
+      "repository": "https://github.com/kgabis/parson.git",
+      "revision": "ec53fb6528b45811df9db0db22cab96a94a96a11"
+    },
+    {
+      "files": [
+        {
+          "lines": 1328,
+          "path": "sds.c",
+          "role": "production_source",
+          "sha256": "071820d3ce126069f39c0b7d17f14f55c74a554ba70dbbdf792f3019afe2402e"
+        },
+        {
+          "lines": 274,
+          "path": "sds.h",
+          "role": "production_header",
+          "sha256": "1fca79237a549bff08c8e31d10007b48f7a290ce872af35863a8332d689c2ca1"
+        },
+        {
+          "lines": 42,
+          "path": "sdsalloc.h",
+          "role": "production_header",
+          "sha256": "3f99fdb0bfc77ca6f68a513555c85a8a34a81eefa051efff1d005b5333e60da0"
+        },
+        {
+          "lines": 24,
+          "path": "LICENSE",
+          "role": "license",
+          "sha256": "bb0d0d505009fdf584b0f44dbb62562eebada497d53d726cd2e940ada512dc16"
+        }
+      ],
+      "license": "BSD-2-Clause",
+      "name": "sds",
+      "repository": "https://github.com/antirez/sds.git",
+      "revision": "5347739b1581fcba74fd5cab1fc21d2aef317d71"
+    },
+    {
+      "files": [
+        {
+          "lines": 1025,
+          "path": "tinyexpr.c",
+          "role": "production_source",
+          "sha256": "ae8a179cf65f9ea1c6ce050b867f370f236a12b263677578ead802d143eab7ac"
+        },
+        {
+          "lines": 91,
+          "path": "tinyexpr.h",
+          "role": "production_header",
+          "sha256": "6644032507c078167a7ec6e134b6f5bd2147f4d96d955923285dac8c6feb16d8"
+        },
+        {
+          "lines": 20,
+          "path": "LICENSE",
+          "role": "license",
+          "sha256": "aceec33bbb71b99e691681f24fb92f61de7ac6240ca81075863c58ad76d882c9"
+        }
+      ],
+      "license": "Zlib",
+      "name": "tinyexpr",
+      "repository": "https://github.com/codeplea/tinyexpr.git",
+      "revision": "7ab30db449a359e8af77fbb062ab2ec7ee686d62"
+    },
+    {
+      "files": [
+        {
+          "lines": 376,
+          "path": "src/microtar.c",
+          "role": "production_source",
+          "sha256": "3bb3ab9bbbf2a3a5720fcbf391f7214ee2ee76ebcd9fe0e6380d1f0b744b0a5b"
+        },
+        {
+          "lines": 90,
+          "path": "src/microtar.h",
+          "role": "production_header",
+          "sha256": "cbba3488d2671a16e9281d3f0c8d8d44e504429955fdcc224a469779feebcb42"
+        },
+        {
+          "lines": 19,
+          "path": "LICENSE",
+          "role": "license",
+          "sha256": "235ac8c3e43c67ced4a89fad8af65dc9f92a7627e5ce3e0016627b7505ead0ae"
+        }
+      ],
+      "license": "MIT",
+      "name": "microtar",
+      "repository": "https://github.com/rxi/microtar.git",
+      "revision": "27076e1b9290e9c7842bb7890a54fcf172406c84"
+    }
+  ],
+  "protocol": "safemap.resubmission_protocol.v2",
+  "sealed_on": "2026-10-19",
+  "selection": "Rows 1-4 of the shortlist, confirmed by the authors on 2026-10-17; chosen by the protocol's selection rule before any SafeMAP execution on these libraries."
+}

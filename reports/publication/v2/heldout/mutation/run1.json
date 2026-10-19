@@ -1,0 +1,75 @@
+{
+  "run": "/mnt/data/college/research/safemap_v2_heldout/v2-llm/safemap_guided/.safemap/runs/20261019T123937Z-resubmission-heldout-0c551d8c",
+  "cases": 300,
+  "units": [
+    {
+      "unit_id": "unit_12",
+      "function": "round_up",
+      "mutants": [
+        {
+          "mutant": "arithmetic:-->+@15",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "arithmetic:+->-@7",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 2,
+      "compiled_mutants": 2
+    },
+    {
+      "unit_id": "unit_20",
+      "function": "mtar_strerror",
+      "mutants": [
+        {
+          "mutant": "literal:3->4@139",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:==->!=@710",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:0->1@32",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:5->6@212",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:7->8@287",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:==->!=@456",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:6->7@249",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:==->!=@519",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 7,
+      "compiled_mutants": 8
+    }
+  ],
+  "killed": 9,
+  "compiled_mutants": 10,
+  "mutation_score": 0.9
+}

@@ -1,0 +1,140 @@
+{
+  "run": "/mnt/data/college/research/safemap_v2_heldout/ext/v2-llm/safemap_guided/.safemap/runs/20261019T133400Z-resubmission-heldout-c14b616b",
+  "cases": 300,
+  "units": [
+    {
+      "unit_id": "unit_0",
+      "function": "ismetachar",
+      "mutants": [
+        {
+          "mutant": "logical:||->&&@78",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:==->!=@102",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:==->!=@7",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:||->&&@59",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:==->!=@83",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:||->&&@40",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:||->&&@97",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "relational:==->!=@64",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 7,
+      "compiled_mutants": 8
+    },
+    {
+      "unit_id": "unit_8",
+      "function": "matchdot",
+      "mutants": [
+        {
+          "mutant": "boolean:true->false@20",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_2",
+      "function": "matchdigit",
+      "mutants": [
+        {
+          "mutant": "literal:0->1@92",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:0->1@32",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:9->10@39",
+          "result": "stillborn"
+        },
+        {
+          "mutant": "literal:2048->2049@66",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 3,
+      "compiled_mutants": 3
+    },
+    {
+      "unit_id": "unit_3",
+      "function": "matchalphanum",
+      "mutants": [
+        {
+          "mutant": "literal:0->1@68",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:!=->==@41",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:||->&&@47",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:||->&&@23",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:0->1@44",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:!=->==@65",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:==->!=@8",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 7,
+      "compiled_mutants": 7
+    }
+  ],
+  "killed": 18,
+  "compiled_mutants": 19,
+  "mutation_score": 0.9473684210526315
+}

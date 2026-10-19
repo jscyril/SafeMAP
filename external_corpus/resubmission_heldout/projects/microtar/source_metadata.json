@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "copied_sha256": "3bb3ab9bbbf2a3a5720fcbf391f7214ee2ee76ebcd9fe0e6380d1f0b744b0a5b",
+      "lines": 376,
+      "path": "src/microtar.c",
+      "role": "production_source",
+      "sha256": "3bb3ab9bbbf2a3a5720fcbf391f7214ee2ee76ebcd9fe0e6380d1f0b744b0a5b"
+    },
+    {
+      "copied_sha256": "cbba3488d2671a16e9281d3f0c8d8d44e504429955fdcc224a469779feebcb42",
+      "lines": 90,
+      "path": "src/microtar.h",
+      "role": "production_header",
+      "sha256": "cbba3488d2671a16e9281d3f0c8d8d44e504429955fdcc224a469779feebcb42"
+    },
+    {
+      "copied_sha256": "235ac8c3e43c67ced4a89fad8af65dc9f92a7627e5ce3e0016627b7505ead0ae",
+      "lines": 19,
+      "path": "LICENSE",
+      "role": "license",
+      "sha256": "235ac8c3e43c67ced4a89fad8af65dc9f92a7627e5ce3e0016627b7505ead0ae"
+    }
+  ],
+  "license": "MIT",
+  "name": "microtar",
+  "repository": "https://github.com/rxi/microtar.git",
+  "revision": "27076e1b9290e9c7842bb7890a54fcf172406c84"
+}

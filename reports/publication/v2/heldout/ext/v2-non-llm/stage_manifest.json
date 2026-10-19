@@ -1,0 +1,35 @@
+{
+  "automatic_retries": 0,
+  "c2rust_docker_image": "safemap-c2rust:0.22.1-llvm14",
+  "command": [
+    "/usr/bin/python3",
+    "-m",
+    "safemap.cli",
+    "final-eval",
+    "--benchmarks",
+    "/mnt/data/college/research/SafeMAP/external_corpus/resubmission_heldout_ext/projects",
+    "--output",
+    "/mnt/data/college/research/safemap_v2_heldout/ext/v2-non-llm",
+    "--config",
+    "/mnt/data/college/research/SafeMAP/research/resubmission_evaluation.yaml",
+    "--mode",
+    "safemap_deterministic",
+    "--mode",
+    "c2rust_only"
+  ],
+  "completed_at_utc": "2026-10-19T13:25:04Z",
+  "config_sha256": "b259648e1cabb0bb4c733d13f10212a7d7d6727f1a2c32166b474b280e7be164",
+  "corpus_manifest_sha256": "8f222f2d73d78de13275833c987a5c52f5e6950b5d4fe8bf991d58ec2a159519",
+  "freeze_git_commit": "62cf4303ad8060555c7c2d4d6760c8570b489544",
+  "llm_requests_per_project": 0,
+  "modes": [
+    "safemap_deterministic",
+    "c2rust_only"
+  ],
+  "output": "/mnt/data/college/research/safemap_v2_heldout/ext/v2-non-llm",
+  "provider_waits": [],
+  "schema_version": "safemap.heldout_stage.v1",
+  "stage": "v2-non-llm",
+  "started_at_utc": "2026-10-19T13:24:46Z",
+  "status": "complete"
+}

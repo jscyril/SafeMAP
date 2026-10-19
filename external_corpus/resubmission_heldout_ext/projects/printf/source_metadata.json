@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "copied_sha256": "d724a61385687a383c3d8b9cc56f314aa31a065375ad53242bfe398edbfeb1f5",
+      "lines": 914,
+      "path": "printf.c",
+      "role": "production_source",
+      "sha256": "d724a61385687a383c3d8b9cc56f314aa31a065375ad53242bfe398edbfeb1f5"
+    },
+    {
+      "copied_sha256": "164acb9dd6e92c590413b4961970e9c0affef75703fe37b2bb22438b52808963",
+      "lines": 117,
+      "path": "printf.h",
+      "role": "production_header",
+      "sha256": "164acb9dd6e92c590413b4961970e9c0affef75703fe37b2bb22438b52808963"
+    },
+    {
+      "copied_sha256": "3fd3a80a06465d0b4affa1d1a16e18a8d2ef42a52eb52060109ae12f1f878f72",
+      "lines": 22,
+      "path": "LICENSE",
+      "role": "license",
+      "sha256": "3fd3a80a06465d0b4affa1d1a16e18a8d2ef42a52eb52060109ae12f1f878f72"
+    }
+  ],
+  "license": "MIT",
+  "name": "printf",
+  "repository": "https://github.com/mpaland/printf.git",
+  "revision": "d3b984684bb8a8bdc48cc7a1abecb93ce59bbe3e"
+}

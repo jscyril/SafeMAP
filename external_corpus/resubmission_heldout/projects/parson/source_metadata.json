@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "copied_sha256": "a61370722e98609342278591c755a1632bf52281b0a054f2ef8a550ef456e799",
+      "lines": 2494,
+      "path": "parson.c",
+      "role": "production_source",
+      "sha256": "a61370722e98609342278591c755a1632bf52281b0a054f2ef8a550ef456e799"
+    },
+    {
+      "copied_sha256": "1909de7cdfa3b4383f2779ea6677b48a8a916ef975ca20c303ec5943459bb0f8",
+      "lines": 274,
+      "path": "parson.h",
+      "role": "production_header",
+      "sha256": "1909de7cdfa3b4383f2779ea6677b48a8a916ef975ca20c303ec5943459bb0f8"
+    },
+    {
+      "copied_sha256": "ea4347d6cdbf46b37f436d02150fc7c4167280e8d0c3269b5d61ef1d0a002542",
+      "lines": 21,
+      "path": "LICENSE",
+      "role": "license",
+      "sha256": "ea4347d6cdbf46b37f436d02150fc7c4167280e8d0c3269b5d61ef1d0a002542"
+    }
+  ],
+  "license": "MIT",
+  "name": "parson",
+  "repository": "https://github.com/kgabis/parson.git",
+  "revision": "ec53fb6528b45811df9db0db22cab96a94a96a11"
+}

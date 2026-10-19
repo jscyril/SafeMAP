@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "copied_sha256": "250a71e40b56e8cf84acb361b5848b933a07b7435aa932e77765ce1659be3371",
+      "lines": 638,
+      "path": "semver.c",
+      "role": "production_source",
+      "sha256": "250a71e40b56e8cf84acb361b5848b933a07b7435aa932e77765ce1659be3371"
+    },
+    {
+      "copied_sha256": "bb8132b6f52725407a9e5b580fb726816b83d2e8d544cce11a7e0e8a1b41f0ef",
+      "lines": 105,
+      "path": "semver.h",
+      "role": "production_header",
+      "sha256": "bb8132b6f52725407a9e5b580fb726816b83d2e8d544cce11a7e0e8a1b41f0ef"
+    },
+    {
+      "copied_sha256": "c02f4445fc8a7722aab9357346d0afb261a18d249c3c36fb483e89d01d5a9600",
+      "lines": 24,
+      "path": "LICENSE",
+      "role": "license",
+      "sha256": "c02f4445fc8a7722aab9357346d0afb261a18d249c3c36fb483e89d01d5a9600"
+    }
+  ],
+  "license": "MIT",
+  "name": "semver",
+  "repository": "https://github.com/h2non/semver.c.git",
+  "revision": "bd1db234a68f305ed10268bd023df1ad672061d7"
+}

@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "copied_sha256": "ae8a179cf65f9ea1c6ce050b867f370f236a12b263677578ead802d143eab7ac",
+      "lines": 1025,
+      "path": "tinyexpr.c",
+      "role": "production_source",
+      "sha256": "ae8a179cf65f9ea1c6ce050b867f370f236a12b263677578ead802d143eab7ac"
+    },
+    {
+      "copied_sha256": "6644032507c078167a7ec6e134b6f5bd2147f4d96d955923285dac8c6feb16d8",
+      "lines": 91,
+      "path": "tinyexpr.h",
+      "role": "production_header",
+      "sha256": "6644032507c078167a7ec6e134b6f5bd2147f4d96d955923285dac8c6feb16d8"
+    },
+    {
+      "copied_sha256": "aceec33bbb71b99e691681f24fb92f61de7ac6240ca81075863c58ad76d882c9",
+      "lines": 20,
+      "path": "LICENSE",
+      "role": "license",
+      "sha256": "aceec33bbb71b99e691681f24fb92f61de7ac6240ca81075863c58ad76d882c9"
+    }
+  ],
+  "license": "Zlib",
+  "name": "tinyexpr",
+  "repository": "https://github.com/codeplea/tinyexpr.git",
+  "revision": "7ab30db449a359e8af77fbb062ab2ec7ee686d62"
+}
