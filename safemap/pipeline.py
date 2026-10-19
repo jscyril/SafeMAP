@@ -19,7 +19,7 @@ from .analysis.rust_analyzer import analyze_rust_path
 from .artifacts import ArtifactStore
 from .config import LLMConfig, SafeMapConfig
 from .ingestion.project_loader import ingest_project
-from .llm.client import LLMClient, OpenAICompatibleClient
+from .llm.client import LLMClient, OpenAICompatibleClient, ProviderUnavailable
 from .metrics.report_generator import comparison_csv, generate_markdown
 from .metrics.residual_unsafe import classify_residual_unsafe
 from .models import (
@@ -31,7 +31,7 @@ from .translation.c2rust_runner import run_c2rust
 from .translation.migration_planner import create_migration_plans
 from .translation.rewriter import rewrite_function
 from .translation.safe_synthesizer import synthesize_safe_crate
-from .translation.unit_synthesis import synthesize_units
+from .translation.unit_synthesis import render_struct_prelude, synthesize_units
 from .validation.unit_harness import validate_units
 from .repair.compiler_repair import repair_function
 from .validation.validator import validate_project
@@ -135,8 +135,12 @@ def run_pipeline(
                     llm,
                     store,
                     config.llm,
+                    _direct_contract(analysis, units, config),
+                    analysis.structs,
                 )
                 used_direct_translation = True
+            except ProviderUnavailable:
+                raise  # an outage must stop the run, not score the baseline 0
             except Exception as error:
                 store.write_json("logs/direct_llm_error.json", {
                     "status": "failed", "reason": str(error),
@@ -427,6 +431,8 @@ def _rewrite_units(
                         "unit_id": unit.unit_id,
                         "reason": "Compiler repair budget exhausted; rewrite rolled back",
                     })
+        except ProviderUnavailable:
+            raise
         except Exception as error:
             metrics.failed_units.append({
                 "unit_id": unit.unit_id,
@@ -590,14 +596,16 @@ def _direct_unit_acceptance(
     harness can call; a function with a different signature is recorded as
     `interface_mismatch` rather than silently dropped.
     """
-    lib = final_root / "src" / "lib.rs"
-    contract = [
-        plan for plan in create_migration_plans(
-            analysis, units, config.translation.automatic_confidence_threshold,
-        )
-        if plan.status == "planned"
-    ]
-    source = lib.read_text(encoding="utf-8") if lib.is_file() else ""
+    src = final_root / "src"
+    written = next((src / name for name in ("lib.rs", "main.rs") if (src / name).is_file()), None)
+    contract = _direct_contract(analysis, units, config)
+    # A one-shot translation of a C program is a binary (main.rs) whose
+    # functions are private. Score it as a library: the same code, with
+    # top-level functions made public so the harness can call them.
+    source = (
+        re.sub(r"(?m)^fn\s", "pub fn ", written.read_text(encoding="utf-8"))
+        if written else ""
+    )
     crate_ok = (
         validation.compile.status == "passed"
         and validation.clippy.status in {"passed", "skipped"}
@@ -620,8 +628,12 @@ def _direct_unit_acceptance(
             matching.append(plan.unit_id)
     behaviors = {}
     if matching and len(project.c_files) == 1 and config.validation.run_differential_tests:
+        scoring = store.path("validation/direct_lib")
+        shutil.copytree(final_root, scoring, ignore=shutil.ignore_patterns("target"), dirs_exist_ok=True)
+        (scoring / "src" / "main.rs").unlink(missing_ok=True)
+        (scoring / "src" / "lib.rs").write_text(source, encoding="utf-8")
         behaviors = validate_units(
-            Path(project.c_files[0]), final_root, store.path("validation/units"),
+            Path(project.c_files[0]), scoring, store.path("validation/units"),
             analysis.functions, contract, analysis.structs, matching,
             cases=config.validation.differential_test_inputs,
             seed=config.validation.seed,
@@ -652,6 +664,16 @@ def _direct_unit_acceptance(
     metrics.failure_categories.pop("behavioral_validation_missing_or_failed", None)
     _count_unit_failures(metrics, final)
     metrics.unit_outcomes.update(final)
+
+
+def _direct_contract(analysis, units, config) -> list:
+    """The planned interfaces both SafeMAP and the one-shot baseline must meet."""
+    return [
+        plan for plan in create_migration_plans(
+            analysis, units, config.translation.automatic_confidence_threshold,
+        )
+        if plan.status == "planned"
+    ]
 
 
 def _normalize_signature(signature: str) -> str:
@@ -1015,19 +1037,43 @@ def _direct_llm_translation(
     client: LLMClient,
     store: ArtifactStore,
     llm_config: LLMConfig,
+    contract: list | None = None,
+    structs: list | None = None,
 ) -> dict[str, int | str]:
+    # The baseline gets the same interfaces SafeMAP is tested through, and
+    # nothing else of SafeMAP's analysis, plans, rules, or repair loop.
+    # main keeps Rust's entry-point signature in a binary, so it is not listed.
+    interfaces = "".join(
+        f"{plan.target_signature}\n" for plan in contract or [] if plan.function != "main"
+    )
+    # Types those signatures mention, exactly as the harness constructs them.
+    types = render_struct_prelude(structs or [], contract or [])
     sources = "\n\n".join(
         f"// FILE: {Path(file).name}\n"
         + Path(file).read_text(encoding="utf-8", errors="replace")
         for file in [*project.header_files, *project.c_files]
     )
-    prompt = (
-        "Translate this small C program into fully safe, idiomatic Rust while preserving "
-        "its observable behavior. Return only one complete Rust source file, without "
-        "Markdown fences or prose. The crate must compile with #![forbid(unsafe_code)]. "
-        "Do not use unsafe, unsafe fn, unsafe impl, extern \"C\", *const, or *mut. "
-        "Avoid external crates.\n\n" + sources
+    rules = (
+        "Return only one complete Rust source file, without Markdown fences or prose. "
+        "The crate must compile with #![forbid(unsafe_code)]. Do not use unsafe, "
+        "unsafe fn, unsafe impl, extern \"C\", *const, or *mut. Avoid external crates."
     )
+    if interfaces:
+        # Same task as SafeMAP: the planned functions, interfaces, and types.
+        prompt = (
+            "Translate the following C functions into fully safe, idiomatic Rust, "
+            "preserving their observable behavior. " + rules
+            + " Give the functions exactly these public signatures (same names as in C):\n\n"
+            + interfaces
+            + ("\nDefine these types exactly as written:\n\n" + types + "\n" if types else "")
+            + "\nYou may add private helper functions. You do not need to translate any "
+            "other C function.\n\n" + sources
+        )
+    else:
+        prompt = (
+            "Translate this small C program into fully safe, idiomatic Rust while "
+            "preserving its observable behavior. " + rules + "\n\n" + sources
+        )
     store.write_text("prompts/direct_translation.txt", prompt)
     call_record = {
         "schema_version": "safemap.llm_call.v1",

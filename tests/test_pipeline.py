@@ -1,7 +1,8 @@
 from pathlib import Path
+import pytest
 
 from safemap.config import SafeMapConfig
-from safemap.llm.client import StaticLLMClient
+from safemap.llm.client import ProviderUnavailable, StaticLLMClient
 from safemap.pipeline import run_pipeline
 
 
@@ -48,6 +49,61 @@ def test_direct_llm_pipeline_compiles_and_compares(tmp_path: Path) -> None:
     assert call["response_model"] == "static"
     assert call["retry_index"] == 0
     assert call["response_path"] == "responses/direct_translation.txt"
+
+
+def test_direct_llm_program_with_private_functions_is_scored(tmp_path: Path) -> None:
+    project = tmp_path / "direct_unit"
+    project.mkdir()
+    (project / "main.c").write_text(
+        "#include <stdio.h>\n"
+        "int add(int a, int b) { return a + b; }\n"
+        'int main(void) { printf("%d\\n", add(2, 2)); return 0; }\n'
+    )
+    config = SafeMapConfig()
+    config.translation.use_c2rust = False
+    config.translation.use_llm = True
+    config.validation.run_clippy = False
+    config.validation.differential_test_inputs = 50
+    config.translation.use_static_guidance = False  # the llm_only baseline
+    # A binary with a private function, as one-shot models usually write it.
+    client = StaticLLMClient([
+        "fn add(a: i32, b: i32) -> i32 { a.wrapping_add(b) }\n"
+        'fn main() { println!("{}", add(2, 2)); }'
+    ])
+
+    store = run_pipeline(project, tmp_path / "results", config, client)
+    metrics = store.read_json("reports/metrics.json")
+    outcomes = {
+        store.read_json(f"plans/{unit}.json")["function"]: outcome
+        for unit, outcome in metrics["unit_outcomes"].items()
+    }
+    assert outcomes["add"] == "accepted", outcomes
+    # The baseline is told the interfaces it is tested through, nothing more.
+    prompt = store.path("prompts/direct_translation.txt").read_text()
+    assert "pub fn add(a: i32, b: i32) -> i32" in prompt
+    assert "pub fn main()" not in prompt  # a binary's main must stay fn main()
+    assert "Migration plan" not in prompt and "pointer role" not in prompt.lower()
+    # Only the scoring copy is made public; the baseline's own output is untouched.
+    written = [f.read_text() for f in store.path("final/rust/src").glob("*.rs")]
+    assert any("\nfn add(" in "\n" + text for text in written)
+
+
+def test_direct_llm_provider_outage_stops_the_run(tmp_path: Path) -> None:
+    project = tmp_path / "outage"
+    project.mkdir()
+    (project / "main.c").write_text("int add(int a, int b) { return a + b; }\n")
+    config = SafeMapConfig()
+    config.translation.use_c2rust = False
+    config.translation.use_llm = True
+    config.translation.use_static_guidance = False
+
+    class DownClient(StaticLLMClient):
+        def generate(self, *args, **kwargs):
+            raise ProviderUnavailable("HTTP 429")
+
+    # A quota stop must abort (and later resume), never be scored as a failure.
+    with pytest.raises(ProviderUnavailable):
+        run_pipeline(project, tmp_path / "results", config, DownClient([]))
 
 
 def test_direct_llm_rejects_forbidden_constructs(tmp_path: Path) -> None:

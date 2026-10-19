@@ -67,7 +67,7 @@ def test_merge_stage_results_rejects_schema_drift(tmp_path: Path) -> None:
 def test_quota_wait_uses_provider_hint() -> None:
     from scripts.run_conference_heldout import quota_wait_seconds
 
-    assert quota_wait_seconds("Please retry in 9h38m2.5s.") == 9 * 3600 + 38 * 60 + 2.5 + 120
+    assert quota_wait_seconds("Please retry in 9h38m2.5s.") == 3600  # capped
     assert quota_wait_seconds("Please retry in 41s") == 161
     assert quota_wait_seconds("HTTP 503") == 3600
 

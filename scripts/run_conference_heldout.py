@@ -232,12 +232,14 @@ def run_stage(
 
 
 def quota_wait_seconds(message: str) -> float:
-    """Seconds until the provider's stated quota reset (+2 min), else one hour."""
+    """Seconds until the provider's stated reset (+2 min), at most one hour."""
     match = re.search(r"retry in (?:(\d+)h)?(?:(\d+)m)?(?:([\d.]+)s)?", message)
     if not match or not any(match.groups()):
         return 3600.0
     hours, minutes, seconds = (float(item or 0) for item in match.groups())
-    return hours * 3600 + minutes * 60 + seconds + 120
+    # Gemini's free-tier "retry in" hint overstates the wait (a 23h45m hint
+    # was followed by a successful request 4 min later), so re-check hourly.
+    return min(3600.0, hours * 3600 + minutes * 60 + seconds + 120)
 
 
 def _read_csv(path: Path) -> tuple[list[str], list[dict[str, str]]]:

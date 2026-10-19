@@ -116,6 +116,35 @@ int main(void) { return 7; }
     assert behavior["main"].status == "passed", behavior["main"].reason
 
 
+def test_harness_stays_aligned_when_a_rust_unit_is_dropped(tmp_path: Path) -> None:
+    # pair_total's Rust interface does not build in the harness; the units after
+    # it must still be compared with their own C outputs, not a neighbour's.
+    source = """
+struct Pair { int left; int right; };
+int pair_total(const struct Pair *pair) { return pair->left + pair->right; }
+int square(int value) { return value * value; }
+"""
+    project, analysis, units, plans, store = _plan(tmp_path, source)
+    crate = store.path("final/rust")
+    synthesize_units(
+        analysis, units, plans, crate, store, project_name="proj", source_files=project.c_files,
+        client=StaticLLMClient({
+            "int pair_total": "pub fn pair_total(pair: &Pair) -> i32 { pair.left + pair.right }",
+            "int square": "pub fn square(value: i32) -> i32 { value * value }",
+        }), max_repair_attempts=0,
+    )
+    lib = crate / "src" / "lib.rs"
+    # Simulate a translation whose interface the harness cannot call.
+    lib.write_text(lib.read_text().replace("pub fn pair_total(pair: &Pair)", "pub fn pair_total(pair: &mut Pair)"))
+    ids = [plan.unit_id for plan in plans if plan.status == "planned"]
+    behavior = {item.function: item for item in validate_units(
+        Path(project.c_files[0]), crate, store.path("validation/units"),
+        analysis.functions, plans, analysis.structs, ids, cases=100, seed=3,
+    ).values()}
+    assert behavior["pair_total"].status == "harness_build_failed"
+    assert behavior["square"].status == "passed", behavior["square"].reason
+
+
 def test_signature_mismatch_and_unsafe_are_not_admitted(tmp_path: Path) -> None:
     outcomes, _, _ = _run(tmp_path, {
         "int clamp_add": "pub fn clamp_add(a: i64, b: i64) -> i64 { a + b }",

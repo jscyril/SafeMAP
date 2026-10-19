@@ -111,11 +111,20 @@ def validate_units(
         spec.constants = _mined_constants(
             spec.function.body + "\n" + _referenced_macros(spec.function.body, macros)
         )
-        spec.values = [_case_values(spec, rng) for _ in range(cases)]
+        # Without parameters every input is identical, so one case is the
+        # whole input space (repeating a benchmark-style main only times out).
+        count = cases if spec.function.parameters else 1
+        spec.values = [_case_values(spec, rng) for _ in range(count)]
         specs.append(spec)
     work.mkdir(parents=True, exist_ok=True)
-    c_binary, specs = _build_c(c_source, work, specs, results, include_dirs or [], seed)
-    rust_binary, specs = _build_rust(rust_root, work, specs, results, seed)
+    # Both harnesses address units by position, so they must hold the same
+    # units: a unit dropped from the Rust side means rebuilding the C side.
+    while True:
+        c_binary, specs = _build_c(c_source, work, specs, results, include_dirs or [], seed)
+        rust_binary, kept = _build_rust(rust_root, work, specs, results, seed)
+        if len(kept) == len(specs):
+            break
+        specs = kept
     for index, spec in enumerate(specs):
         results[spec.plan.unit_id] = _compare(index, spec, c_binary, rust_binary, work, seed)
     return results

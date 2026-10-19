@@ -89,9 +89,18 @@ provider outage aborts the run instead of being scored as a unit failure.
 
 The one-shot `llm_only` baseline receives the project headers as well as the
 `.c` file, and the model's full output budget (65,536 tokens, 900 s); v1 gave
-it only the `.c` file and 8,192 tokens. Its functions are scored with the same
-per-unit harness against SafeMAP's planned interfaces; a function with another
-signature is recorded as `interface_mismatch`.
+it only the `.c` file and 8,192 tokens. Because every translation is tested
+through the planned Rust interfaces, the baseline is given the same task as
+SafeMAP in a single request: translate the planned functions, with the
+planned public signatures (C names kept; a program's `main` keeps Rust's
+entry-point signature and is not listed) and the Rust struct definitions
+those signatures use, private helpers allowed. It receives none of SafeMAP's
+analysis facts, migration plans, rules, or repair loop. Its output
+is scored as a library (top-level functions made public; the code is not
+otherwise changed) with the same per-unit harness. A function that still has
+another signature is recorded as `interface_mismatch`. The contribution of
+signature planning itself is measured by the `without_safe_signatures`
+ablation.
 
 | Mode | Role | Corpus |
 |------|------|--------|
