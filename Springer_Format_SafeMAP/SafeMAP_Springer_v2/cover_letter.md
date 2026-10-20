@@ -1,13 +1,15 @@
-Dear Editor,
+Dear Professor Menzies,
 
 We submit "SafeMAP: Analysis-Guided Planning and Per-Function Validation for
 Safe C-to-Rust Translation" for consideration in *Automated Software
 Engineering*.
 
-An earlier version of this work was submitted to the journal [manuscript ID,
-date] and declined before review. Its frozen evaluation accepted 0 of 142
-translation units, and its baselines produced no usable output, so it could
-not support any conclusion. We traced that outcome to six implementation
+An earlier version of this work, "SafeMAP: Analysis-Guided Planning and
+Validation for Safe C-to-Rust Translation" (Submission ID
+14965da7-a640-4f12-8bb4-a5bd01577695), was desk rejected. The decision noted
+that no generated Rust compiled in the held-out evaluation (0 of 142 units)
+and that the baseline comparisons were inconclusive because of toolchain
+failures. We agree with both points. We traced that outcome to six implementation
 defects, each of which independently forced the result to zero (Section 4.1).
 Because we inspected the earlier test libraries while finding these defects,
 we did not reuse them as test data. Instead we:
@@ -19,8 +21,11 @@ we did not reuse them as test data. Instead we:
   six libraries after the first four results were seen is disclosed and
   reported separately;
 - replaced the earlier baselines with one-shot LLM baselines with and without
-  SafeMAP's planned interfaces, a rules-only configuration, and C2Rust in a
-  pinned container;
+  SafeMAP's planned interfaces and a rules-only configuration, and fixed the
+  C2Rust setup: it now runs in a pinned container (C2Rust 0.22.1, LLVM 14),
+  and its output compiles for seven of ten libraries. On the other three, the
+  compile errors are in C2Rust's own output (`va_list` handling and packed
+  structs), not in our setup;
 - added per-function differential testing against the original C function
   under AddressSanitizer and UndefinedBehaviorSanitizer, mutation analysis of
   that check, three repeated LLM runs, and component ablations; and
