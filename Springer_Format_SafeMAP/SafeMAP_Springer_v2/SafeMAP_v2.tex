@@ -9,6 +9,7 @@
 \usepackage{manyfoot}
 \usepackage{listings}
 \usepackage{xspace}
+\usepackage{rotating}
 \hypersetup{
   pdftitle={SafeMAP: Analysis-Guided Planning and Per-Function Validation for Safe C-to-Rust Translation},
   pdfauthor={Jacob Sebastian Cyril; Benita Jose Chalissery; NewBegin M},
@@ -271,17 +272,18 @@ Figure~\ref{fig:safemap-pipeline} shows the pipeline. For each C project,
   \item validates the crate and each unit against the acceptance policy.
 \end{enumerate}
 
-\begin{figure*}[t]
+\begin{sidewaysfigure}
   \centering
-  \includegraphics[width=\textwidth]{figures/Fig1}
-  \caption{\tool conversion and acceptance pipeline. Static analysis records
-  eligibility separately from synthesis support. Where no deterministic rule
-  matches a planned unit, the generation step issues a plan-guided LLM request
-  with compiler-feedback repair (not drawn). C2Rust runs in a separate
-  reference lane. The same policy applies to every output, and reports retain
-  refused units, failed checks, and their reasons}
+  \includegraphics[width=\textheight,height=0.85\textwidth,keepaspectratio]{figures/Fig1}
+  \caption{\tool pipeline. Units are refused at screening or at signature
+  planning when no safe, testable interface exists. A planned unit is
+  synthesized by an exact rule or, when none applies, by a plan-guided LLM
+  request with compiler-feedback repair, and is accepted only if it passes
+  every per-unit check, including a differential test against the original C
+  function under sanitizers. Raw C2Rust is scored under the same policy. Every
+  refusal and failed check is recorded with its reason}
   \label{fig:safemap-pipeline}
-\end{figure*}
+\end{sidewaysfigure}
 
 \subsection{Deterministic rules and plan-guided synthesis}
 

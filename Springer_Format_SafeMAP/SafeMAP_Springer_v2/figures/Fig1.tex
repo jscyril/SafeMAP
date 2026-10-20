@@ -1,0 +1,112 @@
+% SafeMAP v2 pipeline (Fig. 1). Build: pdflatex Fig1.tex
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage[scaled]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[none]{hyphenat}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,backgrounds}
+\definecolor{ink}{HTML}{1F3A56}
+\definecolor{step}{HTML}{EAF1F7}
+\definecolor{dec}{HTML}{FFF4DE}
+\definecolor{decb}{HTML}{B07D1A}
+\definecolor{llm}{HTML}{EFE9F7}
+\definecolor{llmb}{HTML}{6A4C93}
+\definecolor{rej}{HTML}{B5432F}
+\definecolor{rejf}{HTML}{FBECE8}
+\definecolor{acc}{HTML}{2E7D4F}
+\definecolor{accf}{HTML}{E6F4EA}
+\definecolor{lane}{HTML}{F5F7FA}
+\begin{document}
+\begin{tikzpicture}[
+  font=\footnotesize, node distance=4mm and 5mm,
+  >={Stealth[length=2.2mm]}, line width=0.6pt,
+  box/.style={draw=ink, fill=step, rounded corners=2pt, align=left,
+    text width=#1, inner sep=4pt},
+  box/.default=27mm,
+  dec/.style={draw=decb, fill=dec, rounded corners=2pt, align=left,
+    text width=#1, inner sep=4pt},
+  dec/.default=27mm,
+  out/.style={draw=rej, fill=rejf, rounded corners=2pt, align=left,
+    text width=#1, inner sep=3pt, font=\scriptsize},
+  out/.default=27mm,
+  hd/.style={font=\footnotesize\bfseries},
+  flow/.style={->, draw=ink},
+  no/.style={->, draw=rej},
+  lbl/.style={font=\scriptsize\bfseries, text=#1},
+]
+% ---- Row 1: analysis and planning -----------------------------------------
+\node[box=17mm] (in) {{\hd C project}\\[1pt]\scriptsize sources, headers,\\ build flags};
+\node[box, right=of in] (an) {{\hd 1\,\textperiodcentered\,Analyze} (libclang)\\[1pt]
+  \scriptsize signatures, pointer roles (read, write, index, length, nullable),
+  allocation, calls, globals, unsupported constructs};
+\node[box=24mm, right=of an] (gr) {{\hd 2\,\textperiodcentered\,Group \& order}\\[1pt]
+  \scriptsize mutually recursive functions form one unit; units in dependency order};
+\node[dec, right=of gr] (sc) {{\hd Screen}\\[1pt]
+  \scriptsize can the unit be expressed in safe Rust in principle?};
+\node[dec=31mm, right=of sc] (pl) {{\hd 3\,\textperiodcentered\,Plan safe signature}\\[1pt]
+  \scriptsize every C type mapped to a safe, testable Rust type? No signature
+  is fabricated.};
+\draw[flow] (in) -- (an); \draw[flow] (an) -- (gr); \draw[flow] (gr) -- (sc);
+\draw[flow] (sc) -- node[lbl=acc, above]{yes} (pl);
+
+\node[out, below=6mm of sc] (r1) {\textbf{Refused}: manual refactor (global
+  state, I/O, allocation protocols), unsafe required, unsupported construct};
+\node[out=31mm, below=6mm of pl] (r2) {\textbf{Refused}: no safe interface
+  (\texttt{void *}, \texttt{FILE *}, \texttt{T **}, aliasing returns, unresolved
+  pointer fields)};
+\draw[no] (sc) -- node[lbl=rej, right]{no} (r1);
+\draw[no] (pl) -- node[lbl=rej, right]{no} (r2);
+
+% ---- Row 2: synthesis and acceptance --------------------------------------
+\node[box=27mm, below=24mm of an.south west, anchor=north west] (ru) {{\hd 4a\,\textperiodcentered\,Exact rule}\\[1pt]
+  \scriptsize applies only if the whole body matches (scalar expressions,
+  slices, output parameters, \texttt{Result}, \ldots)};
+\node[draw=llmb, fill=llm, rounded corners=2pt, align=left, text width=34mm,
+  inner sep=4pt, below=3mm of ru] (lm) {{\hd 4b\,\textperiodcentered\,Plan-guided LLM}\\[1pt]
+  \scriptsize C function, referenced macros and types, planned signature,
+  accepted callees, analysis facts, plan; up to 3 compiler-feedback repairs};
+\node[dec=30mm, right=9mm of $(ru.east)!0.5!(lm.east)$] (ad) {{\hd Admit to crate?}\\[1pt]
+  \scriptsize planned signature; no \texttt{unsafe}, raw pointers,
+  \texttt{extern}, placeholders; compiles with admitted units};
+\node[box=46mm, right=8mm of ad] (va) {{\hd 5\,\textperiodcentered\,Per-unit acceptance} (all required)\\[2pt]
+  \scriptsize
+  \textbullet\ crate compiles under \texttt{\#![forbid(unsafe\_code)]}; tests and Clippy pass\\
+  \textbullet\ public interface has no raw pointers\\
+  \textbullet\ differential test against the original C function: 1,000 seeded
+  inputs, C run under ASan\,+\,UBSan, inputs with undefined C behavior excluded
+  ($\geq$50\% must be defined), outputs compared exactly};
+\node[draw=acc, fill=accf, rounded corners=2pt, font=\footnotesize\bfseries,
+  text=acc, inner sep=4pt, right=7mm of va.north east, anchor=north west] (ok) {ACCEPT};
+\node[out=17mm, right=7mm of va.south east, anchor=south west] (bad) {\textbf{Reject}\\ with failed check};
+
+% planned unit goes to synthesis: rule first, LLM otherwise
+\coordinate (drop) at ($(pl.south east)+(4mm,0)$);
+\draw[flow] (pl.east) -- ++(4mm,0) |- ($(r2.south)+(0,-4mm)$) -| ($(ru.west)+(-4mm,0)$)
+  node[pos=0.75, lbl=acc, left]{planned} -- (ru.west);
+\draw[flow] (ru.south) -- node[lbl=llmb, right]{no rule applies} (lm.north);
+\draw[flow] (ru.east) -| ($(ad.west)+(-4mm,0)$) -- (ad.west);
+\draw[flow] (lm.east) -| ($(ad.west)+(-4mm,0)$);
+\draw[flow] (ad) -- node[lbl=acc, above]{yes} (va);
+\draw[flow] (va.east) -- ++(3mm,0) |- (ok.west);
+\draw[no] (va.east) ++(3mm,0) |- (bad.west);
+\node[out=30mm, below=5mm of ad] (r3) {\textbf{Not admitted}: still fails after
+  repairs, or a callee was not admitted};
+\draw[no] (ad) -- node[lbl=rej, right]{no} (r3);
+
+% ---- C2Rust reference lane -------------------------------------------------
+\node[draw=llmb!60, fill=lane, rounded corners=2pt, align=left, text width=60mm,
+  inner sep=4pt, below=8mm of lm.south west, anchor=north west] (c2) {{\hd Baseline lane: raw C2Rust}
+  \scriptsize (0.22.1, pinned container)\\[1pt]\scriptsize whole-project translation, scored
+  under the same acceptance policy};
+\draw[flow, dashed] (in.south) |- (c2.west);
+\draw[flow, dashed] (c2.east) -| (va.south);
+
+% ---- Recording -------------------------------------------------------------
+\node[fill=ink, text=white, rounded corners=2pt, inner sep=4pt, align=left,
+  font=\scriptsize, minimum width=172mm, anchor=north west]
+  at ($(c2.south west -| in.west)+(0,-4mm)$) (rec)
+  {\textbf{EVERY OUTCOME IS RECORDED}\quad plans and refusal reasons
+  \textperiodcentered\ prompts and responses \textperiodcentered\ compiler and
+  Clippy output \textperiodcentered\ per-input differential results \textperiodcentered\
+  unsafe and raw-pointer counts};
+\end{tikzpicture}
+\end{document}
