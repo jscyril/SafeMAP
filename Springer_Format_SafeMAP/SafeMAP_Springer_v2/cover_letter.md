@@ -38,7 +38,7 @@ acceptance is checked against the original C, and an empirical account of
 what currently blocks safe automatic migration of production C.
 
 All code, protocols, manifests, raw results, and table-generation scripts are
-public. The manuscript is not under consideration elsewhere. All authors
+public (https://doi.org/10.5281/zenodo.23494717). The manuscript is not under consideration elsewhere. All authors
 approved the submission.
 
 Sincerely,
