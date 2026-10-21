@@ -207,6 +207,20 @@ held-out libraries by `scripts/run_plain_llm_baseline.py`:
   identical to the freeze commit. No other mode, input, or setting changes.
 - The result is reported as an added baseline, marked as decided after the
   results were seen.
+- Like the other LLM configurations, it is run three times (output
+  directories `plain-*`, `plain-rep2-*`, `plain-rep3-*`); the repeats were
+  added on 2026-10-21, after the first run was seen.
+
+### Post-hoc analyses (not part of the sealed evaluation)
+
+These analyses do not change any reported held-out result. They are labeled
+post-hoc wherever they appear.
+
+- **Lint sensitivity** (`scripts/posthoc_lint_sensitivity.py`): re-scores
+  the frozen tinyexpr crate with only `clippy::approx_constant` allowed, using
+  the unchanged crate checks and per-unit harness on a copy of the run.
+- **Survivor classification**: every surviving mutant is classified by hand
+  as equivalent, input gap, or observation gap.
 
 ### Repeated LLM runs
 

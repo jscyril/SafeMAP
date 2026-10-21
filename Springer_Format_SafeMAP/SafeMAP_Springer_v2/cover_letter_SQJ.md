@@ -20,11 +20,14 @@ C libraries (9,456 lines, 356 translation units):
 
 - Across three runs, SafeMAP accepted 12-16 units. A one-shot LLM given
   SafeMAP's planned interfaces accepted 9-15; the same model given only the C
-  sources accepted 1. Raw C2Rust accepted none.
-- Mutation analysis shows that the per-function check rejects 89% of compiling
-  single-operator mutants of accepted functions.
-- Most units are refused before translation, mainly because of mutable global
-  state and C types with no safe Rust interface. The paper reports these
+  sources accepted 1-2. Raw C2Rust accepted none.
+- Mutation analysis shows that the per-function check rejects 91% of
+  non-equivalent compiling mutants of accepted functions.
+- A post-hoc analysis shows that 23 further units were lost only to a
+  crate-wide lint check; checked per unit, the held-out result would be 39.
+- Most units are refused before translation, mainly because they need manual
+  refactoring (for example, to remove global state) or use C types with no
+  safe Rust interface. The paper reports these
   reasons as a breakdown of what currently blocks safe automatic migration.
 
 The results are modest and reported as such. We do not claim that SafeMAP's

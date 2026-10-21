@@ -36,29 +36,24 @@
 
 \abstract{Automatic C-to-Rust translators either keep C's pointer conventions
 in unsafe Rust or rely on a large language model (LLM) whose output is hard to
-check. \tool is a conservative alternative. For each C function it first
-decides, by static analysis, whether a safe Rust interface exists; if not, it
-refuses the function and records why. For the remaining functions it emits
-Rust from exact rules or from a plan-guided LLM request with compiler-feedback
-repair, and it accepts a function only if the code contains no
+trust. \tool translates a C function only when static analysis finds a safe,
+testable Rust interface for it, and refuses the rest with a recorded reason.
+Planned functions are synthesized by exact rules or a plan-guided LLM request
+with compiler-feedback repair. A translation is accepted only if it contains no
 \texttt{unsafe}, exposes no raw pointers, and matches the original C function
-on up to 1,000 generated inputs, with the C side run under AddressSanitizer
-and UndefinedBehaviorSanitizer. We froze the implementation and evaluated it
-on ten held-out C libraries (9,456 lines, 356 translation units) selected by
-a sealed protocol. Across three runs, \tool accepted 12--16 units and a
-one-shot LLM given \tool's planned interfaces 9--15. The same model given only
-the C sources accepted 1, rules alone 1, and raw C2Rust none.
-Most units were refused before translation: 159 need manual refactoring and
-116 use C types with no safe, testable Rust interface. Mutation analysis shows
-that the per-function check rejects 89\% of compiling single-operator mutants
-of accepted functions. Ablations on development libraries attribute the
-accepted translations mainly to safe-signature planning and idiom plans, not
-to prompt guidance or repair. Interface planning is therefore what makes LLM
-translations both producible and checkable; once it is in place, a single
-LLM request performs within the run-to-run range of the full loop.
-Per-function, oracle-checked acceptance is feasible on production C, but
-coverage is low; the recorded refusals identify what currently blocks
-automatic safe migration.}
+on up to 1,000 generated inputs, with the C side run under AddressSanitizer and
+UndefinedBehaviorSanitizer. On ten held-out C libraries (356 translation units)
+selected under a sealed protocol, \tool accepted 12--16 units across three runs.
+The same LLM accepted 9--15 when given \tool's planned interfaces and 1--2 when
+given only the C sources; raw C2Rust accepted none. Most units were refused
+before translation because they need manual refactoring, such as removing
+global state (159), or use C types with no safe interface (116). The acceptance check rejected 91\% of non-equivalent
+compiling mutants of accepted functions. Ablations attribute the accepted
+translations to interface planning rather than to prompt guidance or repair. A
+post-hoc analysis shows that per-unit lint checking would raise the held-out
+result to 39 units. Per-function, oracle-checked acceptance is thus feasible on
+production C but narrow, and the recorded refusals show what currently blocks
+safe automatic migration.}
 
 \keywords{C-to-Rust migration, safe Rust, static analysis, large language
 models, differential testing, memory safety}
@@ -84,7 +79,8 @@ nitin2026c2saferrust,mohapatra2026cp2srust}. A second line asks LLMs to
 translate directly to safe Rust and checks the result with tests, fuzzing, or
 verification
 \cite{hong2025typemigrating,zhou2025c2rusttv,eniser2025fluorine,
-shetty2024syzygy,zhou2025sactor,yang2025vert,sim2026encrust}. These systems
+shetty2024syzygy,zhou2025sactor,yang2025vert,sim2026encrust,
+shiraishi2026smartc2rust,farrukh2026safetrans,li2025actor}. These systems
 generally aim to translate everything and then measure how much of the result
 is safe or correct.
 
@@ -92,9 +88,9 @@ is safe or correct.
 analysis finds a safe Rust interface for it, and it accepts a translation only
 when that function, on its own, passes a behavioral check against the
 original C. Everything else is refused with a recorded reason. The question
-is therefore not how much unsafe code remains, but how many functions of real
-C code can be migrated to safe Rust with per-function evidence, and what
-prevents the rest. Our results locate \tool's contribution in the planning
+is therefore not how much unsafe code remains, but which translated functions
+can be trusted: how many functions of real C code can be migrated to safe Rust
+with per-function evidence of equivalence, and what prevents the rest. Our results locate \tool's contribution in the planning
 step: an LLM told the planned safe interface produces checkable translations,
 whereas the same LLM given only the C code almost never does.
 
@@ -125,9 +121,10 @@ This paper contributes:
   a reason when it does not;
   \item a per-function acceptance procedure that compares each Rust function
   with the original C function under sanitizers, excluding inputs on which the
-  C code has undefined behavior;
+  C code has undefined behavior, and whose strength we measure by mutation
+  analysis;
   \item a sealed, frozen evaluation on ten held-out libraries showing that
-  planned interfaces raise a one-shot LLM from 1 to 9--15 accepted units,
+  planned interfaces raise a one-shot LLM from 1--2 to 9--15 accepted units,
   with repeated LLM runs, mutation analysis of the acceptance check, and
   component ablations; and
   \item a breakdown of 356 held-out units by the reason they could not be
@@ -142,7 +139,12 @@ C2Rust translates C through a mostly syntactic process and is often used as a
 baseline or a migration starting point \cite{c2rust}. It preserves many C
 constructs with raw pointers and unsafe operations, so much of its output falls
 outside Rust's safe subset. Emre et al.\ found that raw pointers cause much of
-this unsafety \cite{emre2021safer}. Hong used static analysis to replace
+this unsafety \cite{emre2021safer} and later showed that Rust's borrow checker
+rejects many pointer uses that are in fact safe, which limits how far
+ownership inference can go \cite{emre2023aliasing}. Studies of hand-written
+Rust find that even experienced developers use \texttt{unsafe} widely,
+mostly for interoperation and aliasing data structures
+\cite{astrauskas2020unsafe}. Hong used static analysis to replace
 selected unsafe constructs in C2Rust output, including lock APIs and output
 parameters \cite{hong2023static}. C2SaferRust combines C2Rust, static
 analysis, and LLM rewriting to reduce unsafe code in translated real-world
@@ -166,9 +168,20 @@ on more complex real-world samples \cite{eniser2025fluorine}. RustFlow studies
 prompting and iterative repair \cite{zhang2026rustflow}. Valenzuela et al.\
 examine compiler errors in direct C-to-safe-Rust translation
 \cite{valenzuela2026llmcompile}. RustMap combines program analysis and LLM
-support at project scale \cite{cai2025rustmap}.
+support at project scale \cite{cai2025rustmap}. Pointer knowledge graphs
+annotate code dependency graphs with ownership, mutability, and nullability
+facts to guide LLM translation of whole projects \cite{yuan2026pkg}, and
+His2Trans mines interfaces and idioms from earlier migrations of the same
+codebase \cite{wang2026his2trans}. Both supply the LLM with interface
+knowledge, which our results identify as the decisive input.
 
 Several recent systems validate LLM translations against the C program.
+SmartC2Rust and SafeTrans repair translations iteratively from compiler errors
+and observed behavioral differences \cite{shiraishi2026smartc2rust,
+farrukh2026safetrans}. ACToR pairs a translator agent with an agent that
+builds differential fuzzers between the C and Rust binaries
+\cite{li2025actor}, and TRAIL refines translation insights against executable
+counterexamples \cite{wang2026trail}.
 Syzygy translates units in dependency order and tests each one against its C
 counterpart with LLM-generated inputs \cite{shetty2024syzygy}. SACTOR first
 produces interface-preserving Rust that may use \texttt{unsafe}, then refines
@@ -214,7 +227,9 @@ ENCRUST \cite{sim2026encrust} & safe Rust & project test vectors & shims, then a
 
 \subsection{Undefined behavior and the C oracle}
 
-Differential testing needs a trustworthy oracle. A C execution with undefined
+Differential testing compares two implementations on the same inputs and
+treats any disagreement as a defect \cite{mckeeman1998differential}. It needs
+a trustworthy oracle. A C execution with undefined
 behavior does not define an expected output. ASan and UBSan detect many such
 executions \cite{serebryany2012asan,clangubsan}; \tool runs every C oracle
 execution under both and discards inputs on which either reports an error.
@@ -391,7 +406,7 @@ semver.c, argparse, and printf. Nine candidates qualified in a fresh screen;
 six were chosen for domain diversity before any \tool execution on them. The
 implementation, configuration, and modes were unchanged. We report the two
 rounds separately and pooled. After all results were seen we added one
-baseline (amendment 2), the plain LLM described above, run once with the
+baseline (amendment 2), the plain LLM described above, run three times with the
 frozen implementation by a script that refuses to run if the implementation
 or configuration differs from the freeze. Table~\ref{tab:v2-corpus} characterizes the
 corpus.
@@ -407,7 +422,7 @@ inputs per unit, and seed 20260728. The evaluation used the provider's free
 tier. A request still refused after the client's retries stops the run rather
 than being scored as a failure; the run resumes after the quota resets, reusing
 every finished (project, configuration) result. Because LLM output can vary
-even at temperature zero, the LLM configurations were run three times on every
+even at temperature zero \cite{ouyang2025nondeterminism}, the LLM configurations were run three times on every
 held-out library with identical inputs; the first run is the primary result.
 Tool versions: rustc and Clippy 1.99.1, Clang 23.1.3; C2Rust 0.22.1 with LLVM
 14 in a pinned container.
@@ -424,11 +439,14 @@ provider's quota.
 
 \subsection{Mutation analysis}
 
-To test whether the per-unit check rejects wrong code, we applied
-single-operator mutations (relational, arithmetic, logical, boolean, and
+To test whether the per-unit check rejects wrong code, we used mutation
+analysis \cite{jia2011mutation}. We applied single-operator mutations (relational, arithmetic, logical, boolean, and
 integer-literal changes) to every accepted function of \tool's held-out runs and
 of its v1-library run, kept the mutants that compile, and re-ran each unit's
-differential test with 300 inputs.
+differential test with 300 inputs from a different seed. We classified every
+surviving mutant by hand as equivalent (no input can distinguish it), an
+input gap (a distinguishing input exists but was not generated), or an
+observation gap (the harness does not compare the differing output).
 
 \section{Results}
 \label{sec:results}
@@ -452,6 +470,16 @@ but the crate failed Clippy: two translated constants, \texttt{pi} and
 this rejected every unit in the crate. We report the outcome as frozen; it is
 a limitation of crate-level checks within a per-unit policy
 (Section~\ref{sec:threats}).
+
+\textbf{Post-hoc sensitivity.} To measure that limitation, we re-scored the
+frozen tinyexpr crate with only \texttt{approx\_constant} allowed, using the
+unchanged crate checks and differential harness
+(\texttt{scripts/posthoc\_lint\_sensitivity.py}). The crate then passed
+compilation and Clippy, and 23 of the 24 units matched the C functions on every
+defined input; the remaining unit, \texttt{negate\_logical\_not}, disagreed
+with C. Per-unit lint checking would therefore have accepted 39 units in the
+first run instead of 16. This analysis was not part of the sealed protocol and
+the primary result remains 16.
 
 \subsection{RQ2: Why units are not accepted}
 
@@ -520,16 +548,24 @@ accepted translations.
 
 \subsection{RQ5: Reliability of acceptance}
 
-\textbf{Mutation analysis.} Of 304 compiling mutants of accepted functions
+\textbf{Mutation analysis.} Of 152 compiling mutants of accepted functions
 (all ten held-out libraries and the v1 libraries), the per-unit check rejected
-270 (88.8\%). Survivors concentrate in functions whose behavior depends on
-narrow input ranges: six of the 34 are in sds's hexadecimal-digit converter whose branches are reached only by the few
-generated inputs that are hexadecimal characters. Some survivors may be
-equivalent mutants; we did not classify them.
+135 (88.8\%). Of the 17 survivors, 4 are equivalent: \texttt{>} replaced by
+\texttt{>=} directly after an equality test, the same change where both
+branches yield the same value on ties, a loop bound that a terminator written
+just before already guarantees, and an unreachable \texttt{else}. Excluding them, the check rejected 135 of 148
+non-equivalent mutants (91.2\%). Twelve survivors are input gaps: they change
+behavior only on a few specific values, such as one or two digits in sds's
+hexadecimal converter (six mutants), a string of exactly 255 or 256 bytes, or one
+error code, which uniformly generated inputs rarely hit. One is an observation
+gap: a copy routine's output differs only after the string terminator, which
+the harness, like a C caller, does not read. Targeted inputs from the C
+function's literals and comparison bounds would close most input gaps.
 
 \textbf{Repeated runs.} Table~\ref{tab:v2-repeats} reports accepted units in
 three runs of the LLM configurations with identical inputs. \tool accepted 16,
-15, and 12 units, the one-shot baseline 9, 15, and 14. Eight of the ten
+15, and 12 units, the one-shot baseline 9, 15, and 14, and the plain LLM 1, 1,
+and 2. Eight of the ten
 libraries gave the same \tool result in every run. Most of the variation comes
 from semver: in one run of each configuration, one generated function failed a
 crate-level check and so rejected all four planned units of that crate, the
@@ -550,7 +586,7 @@ by turning global state into an explicit context or an \texttt{sds} string
 into an owned type, before \tool's checks apply.
 
 \textbf{Interfaces matter more than prompts.} On the held-out libraries the
-same model accepted 1 unit from the C code alone and 9--15 when told the
+same model accepted 1--2 units from the C code alone and 9--15 when told the
 planned interfaces, within the run-to-run range of \tool's guided loop. On the
 development libraries, removing signature planning from the guided loop
 reduces it from 22 to 2 units. Withholding analysis
@@ -573,18 +609,19 @@ and we report both rounds separately.
 \textbf{Model and variance.} One low-cost model was used, and three runs
 are too few to estimate run-to-run variance precisely; the guided and one-shot
 ranges overlap, so their difference is not established. The plain LLM
-baseline was run once and added after the other results were seen. A stronger model may translate
+baseline was added after the other results were seen. A stronger model may translate
 more of the planned units, although it cannot change the units refused before
 translation, which are most of the losses.
 
 \textbf{Oracle.} Differential testing on generated inputs is evidence, not
-proof. Mutation analysis shows that 11.2\% of compiling mutants survive,
-mainly where inputs rarely reach a branch. Excluding inputs with undefined C
+proof. Mutation analysis shows that 8.8\% of non-equivalent compiling mutants
+survive, mainly where only a few specific inputs reach a branch. Excluding inputs with undefined C
 behavior removes inputs the sanitizers detect, not all undefined behavior.
 
 \textbf{Crate-level checks.} Clippy runs on the whole crate, so one lint error
-rejects every unit in it (tinyexpr). This makes the reported numbers
-conservative.
+rejects every unit in it (tinyexpr, and semver in one repeated run). This makes
+the reported numbers conservative; the post-hoc analysis in
+Section~\ref{sec:results} puts the cost at 23 units in the first run.
 
 \textbf{No eligibility labels.} We did not collect independent labels of
 which functions could be migrated safely, so we make no claim about the
@@ -601,18 +638,22 @@ generalization, and the ablations are run on them.
 \section{Conclusion}
 
 \tool translates C functions to safe Rust only when it finds a safe interface
-and accepts them only when they match the original C under sanitizers. On ten
+and accepts them only when they match the original C under sanitizers, so
+every accepted function carries its own evidence of equivalence. On ten
 held-out libraries it accepted 12--16 of 356 units across three runs. The
-same LLM accepted 1 unit from the C code alone and 9--15 when given \tool's
+same LLM accepted 1--2 units from the C code alone and 9--15 when given \tool's
 planned interfaces; rules alone accepted 1 and raw C2Rust 0. The interface
 planning, not the LLM guidance, is what makes these translations possible to
 produce and check. Most units
 are refused before translation because of global state, opaque or aliasing
 pointer types, or unsafe memory operations. Per-function, oracle-checked
 migration is therefore feasible but narrow: its reach is set by how much of a
-C library's interface already has a safe Rust counterpart. Future work should
-plan such interface changes explicitly, generate inputs that target narrow
-branches, and run lint checks per unit.
+C library's interface already has a safe Rust counterpart. Two limits of the
+acceptance check itself are measurable and fixable: crate-level lint checks
+cost 23 units in the first run, and most surviving mutants need inputs that
+target specific values. Future work should run lint checks per unit, generate
+inputs from the C function's literals and bounds, and plan interface changes
+such as explicit contexts for global state.
 
 \section*{Statements and Declarations}
 

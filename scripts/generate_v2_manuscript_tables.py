@@ -156,10 +156,12 @@ def repeat_table(runs: list[tuple[str, dict]]) -> str:
     for label, rows in runs:
         g = sum(n(rows.get((x, "safemap_guided")), ACCEPTED) for x in ORIG + EXT)
         o = sum(n(rows.get((x, "llm_only")), ACCEPTED) for x in ORIG + EXT)
+        plain = sum(n(rows.get((x, "llm_plain")), ACCEPTED) for x in ORIG + EXT)
         libs = sum(1 for x in ORIG + EXT if (x, "safemap_guided") in rows)
-        body.append([label, libs, g, o])
-    return table("Accepted units across repeated LLM runs (identical inputs and configuration).",
-                 "tab:v2-repeats", ["Run", "Libraries", "Guided", "One-shot LLM"], body, "lrrr")
+        body.append([label, libs, g, o, plain])
+    return table("Accepted units across repeated LLM runs (identical inputs and configuration). "
+                 "One-shot: given the planned signatures; plain: C sources only.",
+                 "tab:v2-repeats", ["Run", "Libraries", "Guided", "One-shot", "Plain"], body, "lrrrr")
 
 
 def ablation_table(rows: dict) -> str:
@@ -200,12 +202,16 @@ def development_table(dev: Path) -> str:
 def main() -> None:
     held, dev, out = (Path(arg) for arg in sys.argv[1:4])
     out.mkdir(parents=True, exist_ok=True)
+    def plain(*dirs: Path) -> dict:
+        # Amendment 2: the plain baseline is recorded as llm_only in its own directories.
+        return {(lib, "llm_plain"): row for (lib, _), row in load(*dirs).items()}
+
     first = load(held / "v2-non-llm", held / "v2-llm", held / "ext/v2-non-llm", held / "ext/v2-llm")
-    # Amendment 2: the plain one-shot baseline is recorded as llm_only in its own directories.
-    first.update({(lib, "llm_plain"): row for (lib, _), row in
-                  load(held / "plain-orig", held / "plain-ext").items()})
+    first.update(plain(held / "plain-orig", held / "plain-ext"))
     repeats = [("Run 1", first)] + [
-        (f"Run {i}", load(held / f"rep{i}-orig/v2-llm", held / f"rep{i}-ext/v2-llm")) for i in (2, 3)]
+        (f"Run {i}", {**load(held / f"rep{i}-orig/v2-llm", held / f"rep{i}-ext/v2-llm"),
+                      **plain(held / f"plain-rep{i}-orig", held / f"plain-rep{i}-ext")})
+        for i in (2, 3)]
     ablation = load(held / "v2-ablation", held / "ablation-full")
     outputs = {
         "corpus.tex": corpus_table(first),

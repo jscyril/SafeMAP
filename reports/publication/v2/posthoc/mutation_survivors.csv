@@ -1,0 +1,18 @@
+file,function,mutant,class,reason
+run1.json,mtar_strerror,literal:5->6@212,input_gap,MTAR_ESEEKFAIL becomes -6; differs only for err -5 or -6
+run12.json,has_valid_length,relational:<=-><@46,input_gap,differs only for a string of exactly 255 bytes
+run12.json,has_valid_length,literal:255->256@29,input_gap,differs only for a string of exactly 256 bytes
+run12.json,binary_comparison,relational:>->>=@43,equivalent,x == y is handled by the preceding branch
+run14.json,ismetachar,logical:||->&&@97,input_gap,drops two metacharacters; differs only for those characters
+run2.json,hash_string,literal:0->1@70,input_gap,differs only for inputs containing byte 0 or 1 before the end
+run2.json,num_bytes_in_utf8_sequence,literal:0->1@302,equivalent,final else is unreachable for every u8
+run3.json,is_hex_digit,relational:<=-><@75,input_gap,differs only for the character '9'
+run3.json,hex_digit_to_int,literal:4->5@110,input_gap,match pattern '4' becomes '5'; differs only for '4' and '5'
+run3.json,hex_digit_to_int,literal:15->16@355,input_gap,differs only for 'f' or 'F'
+run3.json,hex_digit_to_int,literal:7->8@164,input_gap,match pattern '7' becomes '8'; differs only for '7' and '8'
+run3.json,hex_digit_to_int,literal:3->4@98,input_gap,differs only for the character '3'
+run3.json,hex_digit_to_int,literal:14->15@330,input_gap,differs only for 'e' or 'E'
+run3.json,hex_digit_to_int,literal:7->8@170,input_gap,return value for '7' becomes 8; differs only for '7'
+run4.json,compare_double,relational:>->>=@30,equivalent,both branches yield the same value when |a| == |b|
+run5.json,ini_strncpy0,literal:0->1@321,observation_gap,output differs only after the NUL terminator
+run5.json,ini_strncpy0,relational:<-><=@298,equivalent,dest[i] = 0 guarantees the loop stops before size
