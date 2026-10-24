@@ -211,6 +211,35 @@ held-out libraries by `scripts/run_plain_llm_baseline.py`:
   directories `plain-*`, `plain-rep2-*`, `plain-rep3-*`); the repeats were
   added on 2026-10-21, after the first run was seen.
 
+### Amendment 3: per-unit Clippy (2026-10-23)
+
+Decided **after** all v2 results were seen, because the sealed policy runs
+Clippy once per crate: two `clippy::approx_constant` errors in tinyexpr's
+`pi` and `e` rejected all 24 of its units, and a single error in semver did
+the same in one repeated run of each LLM configuration.
+
+- Each Clippy error is mapped to the function that contains it. Only that
+  unit and the units that (transitively) call it are rejected
+  (`clippy_failed`). An error that lies outside every unit's function, or
+  that has no source location, still rejects the whole crate.
+- The rule is implemented behind `validation.per_unit_clippy` (default off)
+  and applies to `safemap_guided`, `safemap_deterministic`, and both
+  `llm_only` baselines alike.
+- No output is regenerated and no LLM is called.
+  `scripts/rescore_per_unit_clippy.py` copies every archived held-out run and
+  scores its saved crate twice with the current acceptance code: once with
+  the flag off, which must reproduce the archived result exactly (the script
+  stops otherwise), and once with it on. Results are in
+  `reports/publication/v2/heldout/amendment3/`.
+- This is an exception to the rule above that later corrections become a v3
+  experiment. It is allowed only because it changes how existing outputs are
+  scored, not what is generated. The sealed numbers stay reported beside the
+  amended ones, and the change is marked as decided after the results were
+  seen. Development data and ablations are not re-scored.
+- The functions accepted only under this amendment were given the same
+  mutation analysis (`amendment3/mutation_tinyexpr.json`), and their
+  survivors were classified by hand (`amendment3/mutation_survivors_tinyexpr.csv`).
+
 ### Post-hoc analyses (not part of the sealed evaluation)
 
 These analyses do not change any reported held-out result. They are labeled
