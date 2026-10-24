@@ -68,13 +68,17 @@ def n(row: dict | None, key: str) -> int:
     return int((row or {}).get(key) or 0)
 
 
-def table(caption: str, label: str, header: list[str], body: list[list], align: str) -> str:
+def table(caption: str, label: str, header: list[str], body: list[list], align: str,
+          notes: tuple[str, ...] = ()) -> str:
     lines = [r"\begin{table}[t]", r"\centering", rf"\caption{{{caption}}}", rf"\label{{{label}}}",
              r"\scriptsize", rf"\begin{{tabular}}{{{align}}}", r"\toprule", " & ".join(header) + r" \\",
              r"\midrule"]
     for row in body:
         lines.append(r"\midrule" if row == "---" else " & ".join(str(c) for c in row) + r" \\")
-    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    # Table notes are marked a, b, ... as the journal asks.
+    lines += [rf"\footnotetext{{$^{{\mathrm{{{chr(97 + i)}}}}}${note}}}" for i, note in enumerate(notes)]
+    lines += [r"\end{table}", ""]
     return "\n".join(lines)
 
 
@@ -91,7 +95,8 @@ def corpus_table(rows: dict) -> str:
             body.append([name, group, *vals])
         body.append("---")
     body.append(["Total", "", *(total[k] for k in "abcde")])
-    return table("Held-out corpus: ten libraries from two selection rounds.", "tab:v2-corpus",
+    return table("Held-out corpus: ten libraries from two selection rounds. LOC: lines of code; "
+                 "Ptr. params: pointer parameters; Complexity: total cyclomatic complexity.", "tab:v2-corpus",
                  ["Library", "Round", "C LOC", "Functions", "Units", "Ptr. params", "Complexity"],
                  body, "llrrrrr")
 
@@ -140,7 +145,7 @@ def baseline_table(rows: dict, a3: dict) -> str:
         vals = [cell(v, o) for v, o in zip(new, sealed)] + [n(rows.get((name, "c2rust_only")), ACCEPTED)]
         c2r = rows.get((name, "c2rust_only")) or {}
         if str(c2r.get("c2rust_compile")) != "True":
-            vals[-1] = f"{vals[-1]}$^\\dagger$"
+            vals[-1] = f"{vals[-1]}$^{{\\mathrm{{a}}}}$"
         calls = [n(rows.get((name, m)), "llm_calls") for m in modes[:2]]
         total.update({"u": units, **dict(zip(modes[:4], new)), "cg": calls[0], "cl": calls[1]})
         old.update(dict(zip(modes[:4], sealed)))
@@ -152,10 +157,10 @@ def baseline_table(rows: dict, a3: dict) -> str:
     return table("Accepted units per configuration on the held-out libraries (first run, per-unit "
                  "Clippy, amendment 3; sealed result in parentheses where it differs). "
                  "One-shot: given the planned signatures; plain: C sources only (amendment 2). "
-                 "LLM calls: guided / one-shot. $^\\dagger$C2Rust output did not compile.",
+                 "LLM calls: guided / one-shot.",
                  "tab:v2-baselines",
                  ["Library", "Units", "Guided", "One-shot", "Plain", "Rules", "C2Rust", "LLM calls"],
-                 body, "lrrrrrrr")
+                 body, "lrrrrrrr", notes=("C2Rust output did not compile.",))
 
 
 def refusal_table(rows: dict, a3: dict, reasons: dict) -> str:

@@ -42,17 +42,15 @@ with compiler-feedback repair. A translation is accepted only if it contains no
 \texttt{unsafe}, exposes no raw pointers, and matches the original C function
 on up to 1,000 generated inputs, with the C side run under AddressSanitizer and
 UndefinedBehaviorSanitizer. On ten held-out C libraries (356 translation units)
-selected under a sealed protocol, \tool accepted 12--16 units across three runs
-under the sealed crate-level lint check. A declared amendment that applies the
-lint check per unit, re-scoring the same outputs, raised this to 36--37 units
-(10\%). Under the amendment, the same LLM accepted 28--31 units when given
+selected under a sealed protocol, \tool accepted 12--16 units across three runs.
+A declared amendment that re-scores the same outputs with the lint check
+applied per unit rather than per crate raised this to 36--37 (10\%). Under the amendment, the same LLM accepted 28--31 units when given
 \tool's planned interfaces and 1--2 when given only the C sources; raw C2Rust
 accepted none. Most units were refused before translation because pointer
 ownership or aliasing could not be resolved statically (127) or because they
 use C types with no safe interface (116). The acceptance check rejected 93\% of
-non-equivalent compiling mutants of accepted functions. Ablations attribute the
-accepted translations mainly to interface planning rather than to prompt
-guidance or repair. Per-function, oracle-checked acceptance is thus feasible on
+non-equivalent compiling mutants of accepted functions. Ablations credit interface
+planning, not prompt guidance or repair. Per-function, oracle-checked acceptance is thus feasible on
 production C but covers about a tenth of it, and the recorded refusals show
 what currently blocks safe automatic migration.}
 
@@ -99,7 +97,8 @@ An earlier, frozen evaluation of \tool on three C libraries accepted no
 units: defects in interface planning, rule matching, and harness construction
 each forced the outcome to zero (Section~\ref{sec:history}). This paper
 reports the corrected system, evaluated under a new sealed protocol on ten
-libraries that were not used during development. We ask:
+libraries that were not used during development. We ask five research
+questions (RQs):
 
 \begin{itemize}
   \item \textbf{RQ1:} How many translation units of production C libraries
@@ -188,10 +187,10 @@ Syzygy translates units in dependency order and tests each one against its C
 counterpart with LLM-generated inputs \citep{shetty2024syzygy}. SACTOR first
 produces interface-preserving Rust that may use \texttt{unsafe}, then refines
 it to idiomatic safe Rust, and checks both stages with end-to-end tests linked
-to the C code through the foreign-function interface \citep{zhou2025sactor}.
-VERT checks a readable LLM translation against a WebAssembly-derived oracle
+to the C code through the foreign-function interface (FFI) \citep{zhou2025sactor}.
+VERT checks a readable LLM translation against a WebAssembly (Wasm)-derived oracle
 with bounded model checking or property-based testing \citep{yang2025vert}.
-ENCRUST wraps LLM translations in ABI-preserving shims and removes the
+ENCRUST wraps LLM translations in shims that preserve the application binary interface (ABI) and removes the
 remaining unsafe code with an agent \citep{sim2026encrust}, and Reboot
 translates whole interpreters to safe Rust through feature milestones with
 occasional user intervention \citep{wang2026reboot}. CRUST-Bench supplies 100
@@ -203,7 +202,7 @@ Table~\ref{tab:related} places \tool among these systems. \tool differs in
 three ways. It decides per function, before translation, whether a safe
 interface exists, and records a reason when it does not instead of emitting
 \texttt{unsafe} code. Its oracle is the original C function itself, run under
-ASan and UBSan, and inputs on which C has undefined behavior are excluded
+AddressSanitizer (ASan) and UndefinedBehaviorSanitizer (UBSan), and inputs on which C has undefined behavior are excluded
 rather than used as expected outputs. And acceptance is per function, so one
 failing unit does not hide the others. The cost of this conservatism is
 coverage, which Section~\ref{sec:results} reports.
@@ -398,7 +397,7 @@ libraries under a new protocol.
 
 The v2 protocol fixed the selection rule, configurations, model, acceptance
 policy, and reporting before any \tool execution on the held-out corpus. A
-library qualifies if it is a public Git repository with an OSI-approved
+library qualifies if it is a public Git repository with an Open Source Initiative (OSI)-approved
 license, its production code is one \texttt{.c} file plus headers that
 compiles against libc alone, the file has 150--3,500 lines, and it was not
 used during development. All functions in the file are retained. The protocol
@@ -437,7 +436,7 @@ Table~\ref{tab:v2-corpus} characterizes the corpus.
 
 All LLM configurations, \tool and baseline alike, use Google's
 \texttt{gemini-3.5-flash-lite} at temperature zero through its
-OpenAI-compatible API, with at most three repairs per unit, 1,000 generated
+OpenAI-compatible application programming interface (API), with at most three repairs per unit, 1,000 generated
 inputs per unit, and seed 20260728. The evaluation used the provider's free
 tier. A request still refused after the client's retries stops the run rather
 than being scored as a failure; the run resumes after the quota resets, reusing
