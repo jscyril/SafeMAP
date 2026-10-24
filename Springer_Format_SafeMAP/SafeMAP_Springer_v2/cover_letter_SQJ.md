@@ -42,7 +42,7 @@ decision is checked against the original program, and an empirical account of
 its reach and its failure modes.
 
 All code, protocols, manifests, raw results, and table-generation scripts are
-public (https://doi.org/10.5281/zenodo.23494717). The manuscript is not under
+public (https://doi.org/10.5281/zenodo.23619725). The manuscript is not under
 consideration elsewhere. All authors approved the submission.
 
 Sincerely,
