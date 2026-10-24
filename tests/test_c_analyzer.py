@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from safemap.analysis.c_analyzer import _analyze_fallback
+from safemap.analysis.c_analyzer import _analyze_fallback, _fallback_structs
 from safemap.models import ProjectInfo
 
 
@@ -37,3 +37,13 @@ def test_fallback_records_fixed_parameter_array_extent(
     parameter = analysis.functions[0].parameters[0]
     assert parameter.array_length == 4
     assert analysis.functions[0].pointer_facts[0].usage_kind == "fixed_size_array"
+
+
+def test_fallback_keeps_pointer_and_array_struct_fields() -> None:
+    source = "struct s { int count; char *label; char name[16]; };"
+    fields = _fallback_structs(Path("a.c"), source)[0].fields
+    assert fields == [
+        {"name": "count", "type": "int"},
+        {"name": "label", "type": "char *"},
+        {"name": "name", "type": "char[16]"},
+    ]

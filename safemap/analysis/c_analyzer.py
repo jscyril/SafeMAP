@@ -313,9 +313,15 @@ def _fallback_structs(path: Path, source: str) -> list[StructInfo]:
     for match in re.finditer(r"\bstruct\s+([A-Za-z_]\w*)\s*\{([^}]*)\}", source, re.DOTALL):
         fields = []
         for declaration in match.group(2).split(";"):
-            field = re.search(r"(.+?)\s+([A-Za-z_]\w*)\s*$", declaration.strip())
+            # The name may follow `*` (pointer fields) and carry an array suffix.
+            field = re.search(
+                r"(.+?[\s*])([A-Za-z_]\w*)\s*(\[[^\]]*\])?$", declaration.strip(),
+            )
             if field:
-                fields.append({"name": field.group(2), "type": field.group(1).strip()})
+                fields.append({
+                    "name": field.group(2),
+                    "type": field.group(1).strip() + (field.group(3) or "").replace(" ", ""),
+                })
         structs.append(StructInfo(
             match.group(1), fields, str(path),
             source.count("\n", 0, match.start()) + 1,
