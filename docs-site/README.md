@@ -22,17 +22,18 @@ http://localhost:8000
 
 No build step is required.
 
-Current documentation snapshot:
+Current documentation snapshot (v2 evaluation, with amendment 3):
 
-- test suite: `111 passed`
-- benchmark examples: `40`
-- SafeMAP-only final eval: `37 / 76` accepted eligible units
-- case studies: `5` modules, `15 / 20` accepted eligible units
-- external corpus: `10` pinned LLVM programs, `1 / 22` deterministic acceptance
-- C2Rust baseline: `0 / 72` accepted eligible units in the canonical snapshot
-- paper-table workflow: `make paper-artifacts`
-- external-corpus workflow: `make external-corpus-artifacts`
-- preflight workflow: `python -m safemap.cli final-eval --benchmarks examples --output reports/final --mode safemap_full --dry-run`
+- test suite: `179 passed`
+- held-out corpus: `10` C libraries, `356` translation units, sealed protocol
+- SafeMAP (guided): `36-37 / 356` accepted units across three runs (sealed: `12-16`)
+- one-shot LLM given the planned interfaces: `28-31`; plain LLM: `1-2`; raw C2Rust: `0`
+- acceptance check: `92.7%` of non-equivalent compiling mutants rejected
+- table generation: `python3 scripts/generate_v2_manuscript_tables.py reports/publication/v2/heldout reports/publication/v2/development out/`
+- replication package: https://doi.org/10.5281/zenodo.23619725
+
+When results change, update the numbers in `index.html` (hero tiles and the
+Evaluation Results section) and here together.
 
 ## GitHub Pages
 

@@ -6,7 +6,7 @@
     <title>SafeMAP Documentation</title>
     <meta
       name="description"
-      content="Book-style documentation for the SafeMAP safe-first C-to-Rust migration research prototype."
+      content="Documentation for SafeMAP, an analysis-guided C-to-safe-Rust translator that accepts a function only when it matches the original C under sanitizers."
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -41,19 +41,21 @@
           <nav class="nav" aria-label="Documentation">
             <a href="#start">Start Here</a>
             <a href="#claim">Research Claim</a>
+            <a href="#results">Evaluation Results</a>
             <a href="#architecture">Architecture</a>
             <a href="#pipeline">Pipeline</a>
-            <a href="#eligibility">Eligibility</a>
+            <a href="#acceptance">Acceptance Policy</a>
+            <a href="#eligibility">Screening</a>
             <a href="#idioms">Supported Idioms</a>
             <a href="#installation">Installation</a>
             <a href="#configuration">Configuration</a>
             <a href="#running">Running SafeMAP</a>
             <a href="#artifacts">Artifacts</a>
-            <a href="#metrics">Metrics</a>
+            <a href="#metrics">Outcomes and Metrics</a>
             <a href="#c2rust">C2Rust Baseline</a>
-            <a href="#llm">LLM Rewrite</a>
+            <a href="#llm">LLM Synthesis</a>
             <a href="#examples">Examples</a>
-            <a href="#paper">Paper Workflow</a>
+            <a href="#paper">Reproducing the Paper</a>
             <a href="#limitations">Limitations</a>
             <a href="#troubleshooting">Troubleshooting</a>
             <a href="#glossary">Glossary</a>
@@ -65,31 +67,33 @@
         <section id="start" class="chapter hero" data-title="start here">
           <div class="hero-copy">
             <p class="eyebrow">Research Prototype Documentation</p>
-            <h1>SafeMAP translates only what can be accepted as fully safe Rust.</h1>
+            <h1>SafeMAP translates a C function only when it can prove the Rust matches.</h1>
             <p>
-              SafeMAP is a safe-first C-to-Rust migration prototype. It analyzes C
-              code, classifies what is statically eligible for safe migration, plans
-              Rust-native APIs, generates or rewrites Rust, validates the result, and
-              reports what was accepted or rejected.
+              SafeMAP is a research prototype for migrating C to safe Rust. It plans a
+              safe, testable Rust interface for each C function, synthesizes the
+              function by an exact rule or a plan-guided LLM request, and accepts it
+              only if it contains no <code>unsafe</code> and matches the original C
+              function under AddressSanitizer and UndefinedBehaviorSanitizer. Every
+              other function is refused with a recorded reason.
             </p>
           </div>
 
           <div class="hero-panel" aria-label="SafeMAP quick facts">
             <div>
-              <span class="metric-value">111</span>
+              <span class="metric-value">36–37</span>
+              <span class="metric-label">of 356 held-out units accepted per run</span>
+            </div>
+            <div>
+              <span class="metric-value">10</span>
+              <span class="metric-label">held-out C libraries, sealed protocol</span>
+            </div>
+            <div>
+              <span class="metric-value">93%</span>
+              <span class="metric-label">non-equivalent mutants rejected by the check</span>
+            </div>
+            <div>
+              <span class="metric-value">179</span>
               <span class="metric-label">passing tests</span>
-            </div>
-            <div>
-              <span class="metric-value">37/76</span>
-              <span class="metric-label">SafeMAP-only accepted eligible units</span>
-            </div>
-            <div>
-              <span class="metric-value">40</span>
-              <span class="metric-label">MVP benchmark examples</span>
-            </div>
-            <div>
-              <span class="metric-value">5</span>
-              <span class="metric-label">module case studies</span>
             </div>
           </div>
         </section>
@@ -98,31 +102,32 @@
           <h2>What SafeMAP Is</h2>
           <p>
             SafeMAP stands for <strong>Safe Migration through Analysis-Guided Planning</strong>.
-            It is built for research, not production deployment. Its job is to show
-            that a subset of C can be migrated to idiomatic, fully safe Rust when the
-            tool is strict about eligibility, APIs, validation, and failure reporting.
+            It is built for research, not production deployment. It asks a narrow
+            question: which C functions can be migrated to safe Rust with
+            per-function evidence that the Rust behaves like the C, and what stops
+            the rest?
           </p>
 
           <div class="split">
             <div class="panel">
               <h3>SafeMAP does</h3>
               <ul>
-                <li>analyze C functions and pointer usage;</li>
-                <li>detect common migration idioms;</li>
-                <li>classify unsupported code honestly;</li>
-                <li>generate migration plans as research artifacts;</li>
-                <li>accept Rust only under strict safety rules;</li>
-                <li>compare against C2Rust baseline output.</li>
+                <li>analyze every C function with libclang (pointer roles, allocation, calls, globals);</li>
+                <li>refuse a function before translation when no safe, testable Rust interface exists;</li>
+                <li>synthesize planned functions by exact rules, or by a plan-guided LLM request with compiler-feedback repair;</li>
+                <li>test each accepted function against the original C on up to 1,000 generated inputs, with the C side under ASan and UBSan;</li>
+                <li>record a reason for every function it does not accept;</li>
+                <li>score C2Rust and LLM baselines under the same acceptance policy.</li>
               </ul>
             </div>
 
             <div class="panel">
               <h3>SafeMAP does not</h3>
               <ul>
-                <li>translate arbitrary C projects completely;</li>
-                <li>treat unsafe reduction as full success;</li>
-                <li>hide unsupported constructs;</li>
-                <li>claim formal semantic equivalence;</li>
+                <li>translate whole C projects;</li>
+                <li>count reduced <code>unsafe</code> as success;</li>
+                <li>emit <code>unsafe</code> Rust for functions it cannot translate safely;</li>
+                <li>claim formal equivalence (differential testing is evidence, not proof);</li>
                 <li>replace manual review for complex systems code.</li>
               </ul>
             </div>
@@ -132,87 +137,224 @@
         <section id="claim" class="chapter" data-title="research claim">
           <h2>Research Claim</h2>
           <p>
-            The current MVP supports this conservative claim:
+            The v2 evaluation supports this claim:
           </p>
           <blockquote>
-            SafeMAP is a safe-first C-to-Rust migration prototype that generates
-            fully safe Rust for a restricted set of statically eligible C functions.
-            Unsupported units are rejected or reported, final Rust is evaluated under
-            <code>#![forbid(unsafe_code)]</code>, and results are compared against a
-            C2Rust baseline using explicit safety and validation metrics.
+            Per-function, oracle-checked migration of C to safe Rust is feasible on
+            production C libraries but covers about a tenth of their functions. The
+            planned interfaces are what make LLM translations checkable: the same
+            model produced 1–2 checkable units from the C sources alone and 28–31
+            when told the planned interfaces. Most functions are refused before
+            translation because pointer ownership or aliasing cannot be resolved
+            statically or because a C type has no safe Rust interface.
           </blockquote>
 
-          <h3>What “fully safe accepted” means</h3>
-          <ol>
-            <li>The generated crate or module compiles with <code>#![forbid(unsafe_code)]</code>.</li>
-            <li>The accepted Rust contains no <code>unsafe</code>, <code>unsafe fn</code>, or <code>unsafe impl</code>.</li>
-            <li>The accepted public API exposes no raw pointers such as <code>*const T</code> or <code>*mut T</code>.</li>
-            <li>Available validation passes.</li>
-            <li>Repair steps do not introduce unsafe Rust.</li>
-          </ol>
+          <h3>What SafeMAP does not claim</h3>
+          <ul>
+            <li>full automatic C-to-Rust migration;</li>
+            <li>formal equivalence of accepted functions;</li>
+            <li>that SafeMAP's repair loop is the source of the gain (ablations credit interface planning);</li>
+            <li>results on large or multi-file projects, or with other LLMs.</li>
+          </ul>
+        </section>
+
+        <section id="results" class="chapter" data-title="evaluation results v2 held-out amendment">
+          <h2>Evaluation Results (v2)</h2>
+          <p>
+            These are the results reported in the manuscript <em>SafeMAP: Analysis-Guided
+            Planning and Per-Function Validation for Safe C-to-Rust Translation</em>.
+            Every number below is regenerated from the archived run outputs by
+            <code>scripts/generate_v2_manuscript_tables.py</code>.
+          </p>
+
+          <h3>Corpus and protocol</h3>
+          <ul>
+            <li><strong>Ten held-out C libraries</strong>, none used during development:
+              microtar, parson, sds, and tinyexpr (first round); argparse, json-parser,
+              printf, semver.c, tiny-AES-c, and tiny-regex-c (extension). Together:
+              9,456 lines of C, 390 functions, 356 translation units.</li>
+            <li><strong>Sealed protocol.</strong> The selection rule, configurations,
+              model, acceptance policy, and reporting were fixed before any run; the
+              implementation was frozen at commit <code>62cf430</code>.</li>
+            <li><strong>Declared amendments</strong>, all made after results were seen
+              and reported as such: (1) six more libraries by the same rule; (2) a
+              plain one-shot LLM baseline without the planned interfaces; (3)
+              per-unit Clippy, which re-scored the archived outputs without new LLM
+              calls. With amendment 3 switched off, the re-scoring reproduces every
+              sealed result.</li>
+            <li><strong>Model:</strong> <code>gemini-3.5-flash-lite</code> at temperature 0,
+              three runs per LLM configuration.</li>
+          </ul>
+
+          <h3>Accepted units out of 356</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Configuration</th>
+                <th>Run 1</th>
+                <th>Three runs</th>
+                <th>Sealed (crate-level Clippy)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>SafeMAP (guided)</strong></td>
+                <td><strong>37</strong></td>
+                <td><strong>36–37</strong></td>
+                <td>12–16</td>
+              </tr>
+              <tr>
+                <td>One-shot LLM, given SafeMAP's planned interfaces</td>
+                <td>28</td>
+                <td>28–31</td>
+                <td>9–15</td>
+              </tr>
+              <tr>
+                <td>Plain LLM, C sources only</td>
+                <td>1</td>
+                <td>1–2</td>
+                <td>1–2</td>
+              </tr>
+              <tr>
+                <td>SafeMAP rules only (no LLM)</td>
+                <td>6</td>
+                <td>—</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Raw C2Rust</td>
+                <td>0</td>
+                <td>—</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            In run 1, of 356 units the screen marked 183 as candidates, SafeMAP
+            generated Rust for 47, 45 passed the crate checks, and 37 matched the C
+            functions on every defined input. SafeMAP accepted more than the
+            interface-given one-shot baseline in every run, but most of the margin
+            comes from one library (tinyexpr: 21 against 16).
+          </p>
+
+          <h3>Why functions are not accepted (run 1)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Reason</th>
+                <th>Functions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Manual refactor: pointer ownership or aliasing unresolved</td><td>127</td></tr>
+              <tr><td>No safe, testable interface for a C type</td><td>116</td></tr>
+              <tr><td>Requires unsafe (raw memory, casts)</td><td>36</td></tr>
+              <tr><td>Manual refactor: mutable global state (30 of them in parson)</td><td>32</td></tr>
+              <tr><td>Unsupported construct (union, function pointer, asm)</td><td>12</td></tr>
+              <tr><td>Differential test failed</td><td>4</td></tr>
+              <tr><td>C undefined on most test inputs</td><td>4</td></tr>
+              <tr><td>Callee not translated</td><td>3</td></tr>
+              <tr><td>No synthesis plan</td><td>3</td></tr>
+              <tr><td>Clippy error in the unit or a callee</td><td>2</td></tr>
+            </tbody>
+          </table>
+          <p>
+            Of the 116 type-interface refusals, 48 are functions that return a pointer
+            into caller-owned data, whose lifetime the planner does not yet model.
+          </p>
+
+          <h3>How strong is the acceptance check?</h3>
+          <p>
+            Single-operator mutants of every accepted function were re-tested with
+            300 inputs from a new seed. The check rejected 164 of 177 non-equivalent
+            compiling mutants (92.7%). The 13 survivors are 12 input gaps (the bug is
+            reachable only on a few specific values) and 1 observation gap.
+          </p>
+
+          <h3>Ablations (development data)</h3>
+          <p>
+            On the three v1 libraries (142 units), the full system accepted 22.
+            Removing safe-signature planning dropped this to 2 and removing idiom
+            plans to 3; withholding analysis facts from the prompt or removing
+            compiler-feedback repair changed nothing.
+          </p>
+
+          <div class="callout">
+            <strong>History:</strong> the first frozen evaluation (v1, on inih, cJSON,
+            and libcsv) accepted 0 of 142 units because of six implementation defects.
+            Those libraries became development data, and v2 was run on newly
+            selected libraries under a new protocol.
+          </div>
+
+          <h3>Data and code</h3>
+          <ul>
+            <li>Replication package (Zenodo): <a href="https://doi.org/10.5281/zenodo.23619725">doi.org/10.5281/zenodo.23619725</a></li>
+            <li>Source: <a href="https://github.com/jscyril/SafeMAP">github.com/jscyril/SafeMAP</a></li>
+            <li>Protocol and amendments: <code>research/RESUBMISSION_EVALUATION_PROTOCOL.md</code></li>
+          </ul>
         </section>
 
         <section id="architecture" class="chapter" data-title="architecture">
           <h2>Architecture</h2>
           <p>
-            SafeMAP has a safe-first main lane and a C2Rust baseline lane. The lanes
-            are intentionally separate so baseline output cannot be mistaken for a
-            SafeMAP success.
+            Every configuration, SafeMAP and baselines alike, is scored by the same
+            per-unit acceptance policy. Baseline output is never counted as a SafeMAP
+            success.
           </p>
 
           <figure class="diagram">
             <svg viewBox="0 0 960 390" role="img" aria-labelledby="architecture-title">
-              <title id="architecture-title">SafeMAP architecture with safe-first and baseline lanes</title>
+              <title id="architecture-title">SafeMAP pipeline and baselines, all scored by one acceptance policy</title>
               <defs>
                 <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
                   <path d="M0,0 L0,6 L9,3 z" />
                 </marker>
               </defs>
               <rect class="svg-bg" x="0" y="0" width="960" height="390" rx="8" />
-              <text class="svg-title" x="36" y="48">Safe-first lane</text>
+              <text class="svg-title" x="36" y="48">SafeMAP</text>
               <g class="flow">
                 <rect x="36" y="78" width="126" height="54" rx="6" />
                 <text x="99" y="111">C input</text>
                 <rect x="204" y="78" width="126" height="54" rx="6" />
-                <text x="267" y="101">Static</text>
+                <text x="267" y="101">libclang</text>
                 <text x="267" y="119">analysis</text>
                 <rect x="372" y="78" width="126" height="54" rx="6" />
-                <text x="435" y="101">Eligibility</text>
-                <text x="435" y="119">classification</text>
+                <text x="435" y="101">Screen and</text>
+                <text x="435" y="119">plan interface</text>
                 <rect x="540" y="78" width="126" height="54" rx="6" />
-                <text x="603" y="101">Migration</text>
-                <text x="603" y="119">plan</text>
+                <text x="603" y="101">Rule, or LLM</text>
+                <text x="603" y="119">with repair</text>
                 <rect x="708" y="78" width="126" height="54" rx="6" />
-                <text x="771" y="101">Safe Rust</text>
-                <text x="771" y="119">final</text>
+                <text x="771" y="101">Per-unit</text>
+                <text x="771" y="119">acceptance</text>
                 <path d="M162 105 H204" />
                 <path d="M330 105 H372" />
                 <path d="M498 105 H540" />
                 <path d="M666 105 H708" />
               </g>
-              <text class="svg-title" x="36" y="210">Baseline/reference lane</text>
+              <text class="svg-title" x="36" y="210">Baselines</text>
               <g class="flow muted">
                 <rect x="36" y="240" width="126" height="54" rx="6" />
                 <text x="99" y="273">C input</text>
                 <rect x="204" y="240" width="126" height="54" rx="6" />
-                <text x="267" y="263">C2Rust</text>
-                <text x="267" y="281">baseline</text>
+                <text x="267" y="263">C2Rust or</text>
+                <text x="267" y="281">one-shot LLM</text>
                 <rect x="372" y="240" width="126" height="54" rx="6" />
-                <text x="435" y="263">Unsafe and</text>
-                <text x="435" y="281">raw metrics</text>
+                <text x="435" y="263">Whole-file</text>
+                <text x="435" y="281">Rust output</text>
                 <rect x="540" y="240" width="126" height="54" rx="6" />
-                <text x="603" y="263">Comparison</text>
-                <text x="603" y="281">report</text>
+                <text x="603" y="263">Same policy,</text>
+                <text x="603" y="281">per unit</text>
                 <path d="M162 267 H204" />
                 <path d="M330 267 H372" />
                 <path d="M498 267 H540" />
               </g>
               <path class="compare-line" d="M771 132 C771 185 650 198 626 240" />
-              <text class="svg-note" x="706" y="188">compared, not merged</text>
+              <text class="svg-note" x="706" y="188">scored alike, not merged</text>
             </svg>
             <figcaption>
-              C2Rust is useful for comparison and reference, but SafeMAP final success
-              comes from the safe-first lane.
+              Planned units that fail screening or planning are refused with a reason.
+              Accepted units carry their own differential-test evidence.
             </figcaption>
           </figure>
         </section>
@@ -222,42 +364,68 @@
           <div class="timeline">
             <article>
               <span>1</span>
-              <h3>Ingestion</h3>
-              <p>Discovers C files, headers, build files, tests, entrypoints, and compile database information.</p>
+              <h3>Analysis</h3>
+              <p>Recovers compile information and analyzes every function with libclang: signatures, pointer roles (read, write, index, length pairing, nullability), allocation, calls, globals, and unsupported constructs.</p>
             </article>
             <article>
               <span>2</span>
-              <h3>C Analysis</h3>
-              <p>Extracts functions, signatures, calls, pointer facts, structs, globals, and idioms.</p>
+              <h3>Translation units</h3>
+              <p>Groups mutually recursive functions into units and orders units by dependency.</p>
             </article>
             <article>
               <span>3</span>
-              <h3>Eligibility</h3>
-              <p>Classifies each translation unit before attempting safe migration.</p>
+              <h3>Screening</h3>
+              <p>Classifies each unit; mutable global state or unresolved pointer ownership makes a unit <code>requires_manual_refactor</code>.</p>
             </article>
             <article>
               <span>4</span>
-              <h3>Planning</h3>
-              <p>Writes JSON migration plans with target signatures, idioms, constraints, and validation rules.</p>
+              <h3>Interface planning</h3>
+              <p>Plans a safe Rust signature for each candidate. Any C type with no safe, testable mapping refuses the unit; no signature is fabricated.</p>
             </article>
             <article>
               <span>5</span>
-              <h3>Synthesis or Rewrite</h3>
-              <p>Uses deterministic MVP synthesis or an LLM client to generate safe Rust candidates.</p>
+              <h3>Synthesis</h3>
+              <p>In dependency order: an exact deterministic rule when one applies, otherwise a plan-guided LLM request with up to three compiler-feedback repairs.</p>
             </article>
             <article>
               <span>6</span>
-              <h3>Validation and Reporting</h3>
-              <p>Runs Cargo tools, collects metrics, and writes research reports.</p>
+              <h3>Validation</h3>
+              <p>Checks the crate, then runs a differential test per unit against the original C under ASan and UBSan, and records an outcome for every unit.</p>
             </article>
           </div>
         </section>
 
-        <section id="eligibility" class="chapter" data-title="eligibility categories">
-          <h2>Eligibility Categories</h2>
+        <section id="acceptance" class="chapter" data-title="acceptance policy accepted">
+          <h2>Acceptance Policy</h2>
           <p>
-            Eligibility classification prevents unsupported C from being counted as
-            successful safe migration.
+            A translation unit is a C function, or a group of mutually recursive
+            functions. SafeMAP accepts a unit if and only if all of the following hold:
+          </p>
+          <ol>
+            <li>it was admitted to the crate: it has the planned signature, contains no <code>unsafe</code>, raw pointers, <code>extern</code> blocks, or placeholders, and compiles together with the units already admitted;</li>
+            <li>the final crate compiles under <code>#![forbid(unsafe_code)]</code> and its tests pass, and Clippy reports no error in the unit or in a unit it calls (with <code>per_unit_clippy</code>; otherwise Clippy must pass for the whole crate);</li>
+            <li>its public interface exposes no raw pointer types; and</li>
+            <li>its per-unit differential test passes.</li>
+          </ol>
+          <p>A skipped or inapplicable check never counts as a pass.</p>
+
+          <h3>The per-unit differential harness</h3>
+          <ul>
+            <li>Inputs come from a fixed seed and include integer literals mined from the C body and their neighbors.</li>
+            <li>Slice and array arguments are exact-size heap buffers, so an out-of-bounds read in C is caught by ASan.</li>
+            <li>The C side runs under ASan and UBSan with <code>-fno-sanitize-recover=all</code>; the Rust side is built with overflow checks.</li>
+            <li>Return values and every value written through a mutable parameter are compared exactly (floating point by bit pattern).</li>
+            <li>An input on which C has undefined behavior is excluded, not used as an expected output. A unit needs at least 50% defined inputs.</li>
+            <li>A defined C <code>abort</code> or <code>exit</code> must be matched by a Rust panic.</li>
+          </ul>
+        </section>
+
+        <section id="eligibility" class="chapter" data-title="screening eligibility categories">
+          <h2>Screening Categories</h2>
+          <p>
+            Screening decides, before any translation, whether SafeMAP should try a
+            unit. Units outside the first two categories are refused with the
+            recorded reason.
           </p>
 
           <table>
@@ -265,58 +433,64 @@
               <tr>
                 <th>Category</th>
                 <th>Meaning</th>
-                <th>Counts as eligible?</th>
+                <th>Translated?</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><code>safe_translatable</code></td>
                 <td>Can be translated without major API change.</td>
-                <td>Yes</td>
+                <td>Yes, if an interface is planned</td>
               </tr>
               <tr>
                 <td><code>safe_translatable_with_api_change</code></td>
                 <td>Can be translated safely with Rust-native API changes.</td>
-                <td>Yes</td>
+                <td>Yes, if an interface is planned</td>
               </tr>
               <tr>
                 <td><code>requires_safe_wrapper</code></td>
-                <td>May need unsafe internals hidden behind a safe wrapper.</td>
-                <td>No for strict SafeMAP acceptance</td>
+                <td>Would need unsafe internals hidden behind a safe wrapper.</td>
+                <td>No</td>
               </tr>
               <tr>
                 <td><code>requires_manual_refactor</code></td>
-                <td>Needs restructuring before safe Rust can be generated.</td>
+                <td>Unresolved pointer ownership or aliasing, or mutable global state.</td>
                 <td>No</td>
               </tr>
               <tr>
                 <td><code>unsafe_required</code></td>
-                <td>Operation inherently requires unsafe Rust or FFI.</td>
+                <td>Needs raw memory operations, pointer casts, or FFI.</td>
                 <td>No</td>
               </tr>
               <tr>
                 <td><code>unsupported</code></td>
-                <td>Current prototype does not handle the construct.</td>
+                <td>Unions, function pointers, inline assembly, and other unhandled constructs.</td>
                 <td>No</td>
               </tr>
             </tbody>
           </table>
+          <p>
+            A candidate can still be refused at planning (<code>type_mapping_unresolved</code>)
+            when a type has no safe, testable mapping: opaque <code>void *</code> or
+            <code>FILE *</code>, pointer-to-pointer, returned aliasing pointers, or
+            structs whose pointer fields have unresolved ownership.
+          </p>
         </section>
 
-        <section id="idioms" class="chapter" data-title="supported c idioms">
+        <section id="idioms" class="chapter" data-title="supported c idioms rules">
           <h2>Supported C Idioms</h2>
+          <p>
+            The planner maps these C patterns to safe Rust interfaces. Deterministic
+            rules synthesize the simplest cases; others go to the plan-guided LLM.
+          </p>
           <div class="cards">
             <article>
               <h3>Pointer-length arrays</h3>
-              <p><code>int *arr, int len</code> becomes <code>&[i32]</code> or <code>&mut [i32]</code>.</p>
+              <p><code>int *arr, int len</code> becomes <code>&amp;[i32]</code> or <code>&amp;mut [i32]</code>.</p>
             </article>
             <article>
               <h3>Output parameters</h3>
               <p><code>void get(int *out)</code> becomes a returned value or tuple.</p>
-            </article>
-            <article>
-              <h3>Multiple outputs</h3>
-              <p>Multiple direct output pointers can become Rust tuple returns.</p>
             </article>
             <article>
               <h3>Error code plus output</h3>
@@ -324,19 +498,23 @@
             </article>
             <article>
               <h3>Nullable pointers</h3>
-              <p><code>if (p == NULL)</code> patterns become <code>Option&lt;&T&gt;</code>.</p>
+              <p><code>if (p == NULL)</code> patterns become <code>Option&lt;&amp;T&gt;</code>.</p>
+            </article>
+            <article>
+              <h3>Scalar structs</h3>
+              <p>A struct pointer used only for scalar-field access becomes a Rust struct of those fields.</p>
             </article>
             <article>
               <h3>Manual allocation</h3>
-              <p>Simple owned allocations synthesize <code>Box&lt;T&gt;</code>; simple allocation buffers synthesize <code>Vec&lt;T&gt;</code>.</p>
+              <p>Simple owned allocations become <code>Box&lt;T&gt;</code>; simple buffers become <code>Vec&lt;T&gt;</code>.</p>
             </article>
             <article>
               <h3>C strings</h3>
               <p>Simple <code>const char *</code> inputs used with <code>strlen</code> become <code>&amp;str</code>.</p>
             </article>
             <article>
-              <h3>Boolean integers</h3>
-              <p>Integer returns from comparisons can become Rust <code>bool</code>.</p>
+              <h3>Scalars and booleans</h3>
+              <p>Scalar expressions, reductions, bit idioms, and integer comparison returns as <code>bool</code>.</p>
             </article>
           </div>
         </section>
@@ -353,35 +531,54 @@ pip install -e ".[dev,rust-analysis]"</code></pre>
           <pre><code>python -m safemap.cli --help
 pytest</code></pre>
 
-          <h3>Optional External Tools</h3>
+          <h3>External tools</h3>
           <ul>
-            <li><code>cargo</code>, <code>rustc</code>, and <code>clippy</code> for Rust validation;</li>
-            <li><code>clang</code> and libclang for C analysis;</li>
-            <li><code>c2rust</code> for baseline generation;</li>
+            <li><code>cargo</code>, <code>rustc</code>, and <code>clippy</code> for Rust validation (the paper uses 1.99.1);</li>
+            <li><code>clang</code> with AddressSanitizer and UndefinedBehaviorSanitizer, and libclang, for analysis and the C oracle (the paper uses Clang 23.1.3);</li>
+            <li>Docker, for the pinned C2Rust baseline image (<code>docker/c2rust/Dockerfile</code>: C2Rust 0.22.1 with LLVM 14);</li>
             <li><code>bear</code> for Make-based compile database capture;</li>
-            <li>Miri for optional undefined-behavior checks.</li>
+            <li>Miri (optional; not used in the v2 evaluation, since accepted code contains no <code>unsafe</code>).</li>
           </ul>
         </section>
 
         <section id="configuration" class="chapter" data-title="configuration">
           <h2>Configuration</h2>
           <p>
-            Start from <code>safemap.example.yaml</code>. Do not commit real API keys.
+            Start from <code>safemap.example.yaml</code>, or from the evaluation
+            configuration <code>research/resubmission_evaluation.yaml</code>. Do not
+            commit real API keys.
           </p>
           <pre><code>cp safemap.example.yaml safemap.local.yaml</code></pre>
 
-          <h3>Gemini OpenAI-compatible setup</h3>
-          <pre><code>export GEMINI_API_KEY="your_key"</code></pre>
-          <pre><code>llm:
-  provider: openai_compatible
-  model: gemini-3.5-flash
-  base_url: https://generativelanguage.googleapis.com/v1beta/openai/
-  temperature: 0.1
-  max_tokens: 4096
-  timeout_seconds: 120
-  api_key_env: GEMINI_API_KEY</code></pre>
+          <h3>Configuration used in the paper</h3>
+          <pre><code>translation:
+  mode: safemap_guided
+  engine: unit              # per-unit synthesis and acceptance
+  max_repair_attempts: 3
 
-          <h3>C2Rust LLVM overrides</h3>
+llm:
+  provider: openai_compatible
+  model: gemini-3.5-flash-lite
+  base_url: https://generativelanguage.googleapis.com/v1beta/openai/
+  temperature: 0.0
+  max_tokens: 8192
+  timeout_seconds: 180
+  api_key_env: GEMINI_API_KEY
+
+validation:
+  run_clippy: true
+  per_unit_clippy: false    # true = amendment 3; false reproduces the sealed v2 results
+  run_differential_tests: true
+  run_c_sanitizers: true
+  differential_test_inputs: 1000
+  seed: 20260728</code></pre>
+          <pre><code>export GEMINI_API_KEY="your_key"</code></pre>
+
+          <h3>C2Rust image</h3>
+          <pre><code>export SAFEMAP_C2RUST_DOCKER_IMAGE=safemap-c2rust:0.22.1-llvm14</code></pre>
+          <p>
+            Without Docker, point SafeMAP at a local LLVM 14 instead:
+          </p>
           <pre><code>export SAFEMAP_C2RUST_CLANG=/opt/llvm-14.0.6/bin/clang
 export SAFEMAP_C2RUST_RESOURCE_DIR=/opt/llvm-14.0.6/lib/clang/14.0.6
 export SAFEMAP_C2RUST_LIB_DIR=/opt/llvm-14.0.6/lib</code></pre>
@@ -389,13 +586,25 @@ export SAFEMAP_C2RUST_LIB_DIR=/opt/llvm-14.0.6/lib</code></pre>
 
         <section id="running" class="chapter" data-title="running safemap">
           <h2>Running SafeMAP</h2>
-          <h3>Full run</h3>
+          <h3>One project</h3>
           <pre><code>python -m safemap.cli run \
-  --input examples/output_parameter \
+  --input path/to/c_project \
   --output results \
-  --config safemap.example.yaml</code></pre>
+  --config research/resubmission_evaluation.yaml</code></pre>
 
-          <h3>Stage-by-stage run</h3>
+          <h3>Held-out evaluation stages</h3>
+          <pre><code>python scripts/run_conference_heldout.py \
+  --work-root ../safemap_v2_heldout \
+  --config research/resubmission_evaluation.yaml \
+  --freeze-record research/implementation_freeze_v2.json \
+  --corpus external_corpus/resubmission_heldout \
+  run --stage v2-llm          # or v2-non-llm; add --resume after an interruption</code></pre>
+          <p>
+            A provider quota stop waits for the reset and resumes; finished
+            (project, configuration) results are reused.
+          </p>
+
+          <h3>Stage-by-stage run (legacy engine)</h3>
           <pre><code>python -m safemap.cli ingest --input examples/output_parameter --output work
 python -m safemap.cli analyze-c --workdir work
 python -m safemap.cli translate-baseline --workdir work
@@ -428,310 +637,224 @@ python -m safemap.cli report --workdir work</code></pre>
               </tr>
               <tr>
                 <td><code>analysis/c_analysis.json</code></td>
-                <td>Extracted C facts, functions, pointers, and idioms.</td>
+                <td>Extracted C facts: functions, pointer roles, structs, globals, idioms.</td>
+              </tr>
+              <tr>
+                <td><code>analysis/translation_units.json</code></td>
+                <td>Units, their member functions, and dependencies.</td>
               </tr>
               <tr>
                 <td><code>analysis/eligibility.json</code></td>
-                <td>Safe translation category for each unit.</td>
+                <td>Screening category and reasons for each unit.</td>
               </tr>
               <tr>
                 <td><code>plans/*.json</code></td>
-                <td>Migration plans with target signatures and safety constraints.</td>
+                <td>Planned safe signature, idioms, and any signature issues that refused the unit.</td>
               </tr>
               <tr>
-                <td><code>baseline/rust/</code></td>
-                <td>C2Rust reference output.</td>
+                <td><code>prompts/</code>, <code>responses/</code>, <code>repair/</code></td>
+                <td>Every LLM request and response, including repairs.</td>
+              </tr>
+              <tr>
+                <td><code>synthesis/summary.json</code></td>
+                <td>How each unit was synthesized (rule or LLM) and whether it was admitted.</td>
               </tr>
               <tr>
                 <td><code>final/rust/</code></td>
-                <td>SafeMAP final Rust candidate.</td>
+                <td>The generated crate.</td>
               </tr>
               <tr>
                 <td><code>validation/results.json</code></td>
-                <td>Compile, test, clippy, Miri, and differential status.</td>
+                <td>Cargo check, tests, and Clippy, with full compiler output.</td>
+              </tr>
+              <tr>
+                <td><code>validation/unit_behavior.json</code>, <code>validation/units/</code></td>
+                <td>Per-unit differential results and the generated C and Rust harnesses.</td>
               </tr>
               <tr>
                 <td><code>reports/metrics.json</code></td>
-                <td>Machine-readable metrics for paper tables.</td>
-              </tr>
-              <tr>
-                <td><code>reports/report.md</code></td>
-                <td>Human-readable run report.</td>
+                <td>Machine-readable metrics, including each unit's outcome.</td>
               </tr>
             </tbody>
           </table>
         </section>
 
-        <section id="metrics" class="chapter" data-title="metrics reports">
-          <h2>Metrics</h2>
+        <section id="metrics" class="chapter" data-title="outcomes metrics reports">
+          <h2>Outcomes and Metrics</h2>
           <p>
-            SafeMAP reports success through strict safe acceptance, not just reduction
-            in unsafe code.
+            The primary metric is the number of fully safe accepted units
+            (<code>fully_safe_accepted_units</code>). Every other unit gets one
+            recorded outcome.
           </p>
 
-          <div class="metric-grid">
-            <div>
-              <strong>Primary</strong>
-              <span><code>fully_safe_translation_unit_acceptance_rate</code></span>
-            </div>
-            <div>
-              <strong>Safety</strong>
-              <span>unsafe blocks, unsafe functions, raw pointers, public raw-pointer APIs</span>
-            </div>
-            <div>
-              <strong>Validation</strong>
-              <span>compile, tests, clippy, Miri, differential testing</span>
-            </div>
-            <div>
-              <strong>Failure</strong>
-              <span>unsupported, unsafe required, manual refactor, repair failed, validation failed</span>
-            </div>
-          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Outcome</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>accepted</code></td><td>Passed every check of the acceptance policy.</td></tr>
+              <tr><td><code>type_mapping_unresolved</code></td><td>A candidate with a C type that has no safe, testable interface.</td></tr>
+              <tr><td><code>failed</code></td><td>The differential test found an input on which Rust and C disagree.</td></tr>
+              <tr><td><code>insufficient_defined_inputs</code></td><td>C had undefined behavior on more than half of the generated inputs.</td></tr>
+              <tr><td><code>clippy_failed</code></td><td>Clippy reported an error in the unit or a unit it calls (per-unit Clippy).</td></tr>
+              <tr><td><code>crate_validation_failed</code></td><td>A crate-level check failed, rejecting every unit in the crate.</td></tr>
+              <tr><td><code>dependency_missing</code></td><td>A callee of the unit was not admitted.</td></tr>
+              <tr><td><code>compile_failed</code>, <code>rejected_policy</code></td><td>Synthesis output did not compile or broke the safety policy after all repairs.</td></tr>
+              <tr><td><code>missing</code>, <code>interface_mismatch</code></td><td>Baselines only: the function is absent or has another signature, so it cannot be tested.</td></tr>
+            </tbody>
+          </table>
         </section>
 
         <section id="c2rust" class="chapter" data-title="c2rust baseline">
           <h2>C2Rust Baseline</h2>
           <p>
-            C2Rust is valuable as a baseline and reference artifact. It often emits
-            unsafe Rust and C-style APIs, which is exactly why SafeMAP reports it
-            separately.
+            C2Rust 0.22.1 runs in a pinned Docker container with LLVM 14 and is scored
+            under the same acceptance policy. Its output keeps C's raw pointers and
+            <code>unsafe</code> operations, so no C2Rust unit met the policy on the
+            held-out libraries.
           </p>
 
           <div class="callout">
-            <strong>Important:</strong>
-            C2Rust output is not counted as a SafeMAP success unless it independently
-            compiles under <code>#![forbid(unsafe_code)]</code> and passes the same
-            acceptance rules.
+            <strong>Known issue:</strong>
+            on parson, sds, and printf, C2Rust's output does not compile with the
+            pinned rustc, because its <code>va_list</code> handling and packed-struct
+            field references are rejected by current Rust. SafeMAP records this as a
+            baseline failure.
           </div>
-
-          <h3>Common local issue</h3>
-          <p>
-            C2Rust 0.22 can require older LLVM runtime libraries. If the binary cannot
-            find <code>libclang-cpp.so.14</code>, set the local LLVM path variables shown
-            in the configuration section.
-          </p>
         </section>
 
-        <section id="llm" class="chapter" data-title="llm rewrite">
-          <h2>LLM Rewrite and Repair</h2>
+        <section id="llm" class="chapter" data-title="llm synthesis repair baselines">
+          <h2>LLM Synthesis and Repair</h2>
           <p>
-            The LLM stage is optional and provider-abstracted. SafeMAP currently uses an
-            OpenAI-compatible client, so Gemini can be used through Gemini's
-            OpenAI-compatible endpoint.
+            When no deterministic rule applies, SafeMAP sends the LLM one request per
+            unit, through an OpenAI-compatible client. The request contains the C
+            function, the macros, enums, and constant tables it references, the Rust
+            definitions of planned structs, the signatures of already-accepted
+            callees, the analysis facts, and the migration plan, and asks for exactly
+            the planned signature.
           </p>
 
-          <h3>Prompt constraints</h3>
+          <h3>Admission</h3>
           <ul>
-            <li>No <code>unsafe</code>.</li>
-            <li>No raw pointer public API.</li>
-            <li>No <code>extern "C"</code> in safe translated logic.</li>
-            <li>No placeholders such as <code>todo!()</code> or <code>unimplemented!()</code>.</li>
-            <li>Preserve the target signature from the migration plan.</li>
+            <li>No <code>unsafe</code>, raw pointers, <code>extern</code> blocks, or placeholders such as <code>todo!()</code>.</li>
+            <li>The planned signature, unchanged.</li>
+            <li>Compiles with the units already admitted; otherwise the compiler diagnostics are returned for up to three repairs.</li>
           </ul>
 
+          <h3>LLM baselines</h3>
+          <ul>
+            <li><strong>One-shot LLM</strong> (<code>llm_only</code>): one request per project with the C sources, the planned public signatures, and the planned struct definitions. No analysis facts, plans, rules, or repair.</li>
+            <li><strong>Plain LLM</strong> (amendment 2): the same request without the planned signatures and structs (<code>scripts/run_plain_llm_baseline.py</code>).</li>
+          </ul>
           <p>
-            Responses that introduce forbidden unsafe constructs are rejected before
-            being patched into source files.
+            A provider outage stops the run instead of being scored as a failure.
           </p>
         </section>
 
-        <section id="examples" class="chapter" data-title="examples">
+        <section id="examples" class="chapter" data-title="examples development">
           <h2>Examples</h2>
-          <p>Current examples live under <code>examples/</code>.</p>
+          <p>
+            The 40 microbenchmarks under <code>examples/</code> are development data:
+            the deterministic rules were written for them, so results on them are not
+            evidence of generalization (guided SafeMAP accepts 72 of their 81 units).
+          </p>
 
           <table>
             <thead>
               <tr>
-                <th>Example</th>
+                <th>Example family</th>
                 <th>Primary behavior</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><code>boolean_int</code></td>
-                <td>Translates integer comparison returns to Rust <code>bool</code>.</td>
+                <td><code>boolean_*</code></td>
+                <td>Integer comparison and nonzero tests returned as Rust <code>bool</code>.</td>
               </tr>
               <tr>
-                <td><code>simple_sum</code></td>
-                <td>Translates a scalar arithmetic function to safe Rust.</td>
+                <td><code>simple_sum</code>, <code>simple_subtract</code>, <code>simple_multiply</code>, <code>simple_divide</code>, <code>simple_modulo</code></td>
+                <td>Scalar arithmetic.</td>
               </tr>
               <tr>
-                <td><code>pointer_length_array</code></td>
-                <td>Translates indexed array plus length to a slice.</td>
+                <td><code>pointer_length_array</code>, <code>array_max</code>, <code>array_total</code></td>
+                <td>Read-only pointer-length arrays to slices.</td>
               </tr>
               <tr>
-                <td><code>mutable_buffer</code></td>
-                <td>Translates mutable pointer-length buffers to mutable slices.</td>
+                <td><code>mutable_buffer*</code></td>
+                <td>Mutable pointer-length buffers to mutable slices.</td>
               </tr>
               <tr>
-                <td><code>multiple_outputs</code></td>
-                <td>Translates multiple output parameters to a tuple return.</td>
+                <td><code>output_parameter</code>, <code>output_square</code>, <code>output_double</code>, <code>multiple_outputs</code>, <code>min_max_outputs</code>, <code>sum_diff_outputs</code></td>
+                <td>Output parameters to returned values and tuples.</td>
               </tr>
               <tr>
-                <td><code>output_parameter</code></td>
-                <td>Translates max-output pattern to a safe return value.</td>
+                <td><code>simple_pointer*</code></td>
+                <td>Scalar pointer updates to <code>&amp;mut</code> references.</td>
               </tr>
               <tr>
-                <td><code>nullable_pointer</code></td>
-                <td>Translates null checks to <code>Option</code>.</td>
+                <td><code>nullable_pointer*</code></td>
+                <td>Null checks to <code>Option</code>.</td>
               </tr>
               <tr>
-                <td><code>error_code</code></td>
-                <td>Translates status-code output pattern to <code>Result</code>.</td>
+                <td><code>error_code*</code></td>
+                <td>Status code plus output parameter to <code>Result</code>.</td>
               </tr>
               <tr>
-                <td><code>malloc_free</code></td>
-                <td>Translates a simple owned allocation to <code>Box&lt;i32&gt;</code>.</td>
+                <td><code>malloc_free*</code>, <code>malloc_vec</code></td>
+                <td>Simple allocations to <code>Box&lt;T&gt;</code> and <code>Vec&lt;T&gt;</code>.</td>
               </tr>
               <tr>
-                <td><code>malloc_vec</code></td>
-                <td>Translates a simple allocated sequence buffer to <code>Vec&lt;i32&gt;</code>.</td>
-              </tr>
-              <tr>
-                <td><code>simple_subtract</code></td>
-                <td>Adds a second scalar arithmetic shape.</td>
-              </tr>
-              <tr>
-                <td><code>simple_multiply</code></td>
-                <td>Adds a third scalar arithmetic shape.</td>
-              </tr>
-              <tr>
-                <td><code>simple_divide</code>, <code>simple_modulo</code></td>
-                <td>Add division and remainder scalar arithmetic shapes over defined nonzero divisors.</td>
-              </tr>
-              <tr>
-                <td><code>boolean_negative</code></td>
-                <td>Adds a second integer-to-<code>bool</code> comparison shape.</td>
-              </tr>
-              <tr>
-                <td><code>boolean_nonzero</code></td>
-                <td>Adds nonzero integer testing as a <code>bool</code> migration shape.</td>
-              </tr>
-              <tr>
-                <td><code>boolean_greater_equal</code>, <code>boolean_less_equal</code></td>
-                <td>Add threshold comparisons to the integer-to-<code>bool</code> benchmark family.</td>
-              </tr>
-              <tr>
-                <td><code>array_max</code></td>
-                <td>Translates a read-only pointer-length max scan to slice iteration.</td>
-              </tr>
-              <tr>
-                <td><code>array_total</code></td>
-                <td>Adds a second pointer-length sum accumulator shape.</td>
-              </tr>
-              <tr>
-                <td><code>mutable_buffer_decrement</code></td>
-                <td>Translates a mutable pointer-length decrement to mutable slice iteration.</td>
-              </tr>
-              <tr>
-                <td><code>mutable_buffer_add_two</code>, <code>mutable_buffer_subtract_two</code></td>
-                <td>Add constant-offset mutable buffer updates.</td>
-              </tr>
-              <tr>
-                <td><code>min_max_outputs</code></td>
-                <td>Translates paired output parameters and C ternary min/max expressions to a tuple return.</td>
-              </tr>
-              <tr>
-                <td><code>sum_diff_outputs</code></td>
-                <td>Translates arithmetic output parameters to a tuple return.</td>
-              </tr>
-              <tr>
-                <td><code>output_square</code>, <code>output_double</code></td>
-                <td>Add direct output-parameter returns for scalar arithmetic expressions.</td>
-              </tr>
-              <tr>
-                <td><code>simple_pointer_decrement</code></td>
-                <td>Translates scalar pointer decrement to a mutable reference update.</td>
-              </tr>
-              <tr>
-                <td><code>simple_pointer_double</code></td>
-                <td>Adds scalar pointer multiplication assignment.</td>
-              </tr>
-              <tr>
-                <td><code>nullable_pointer_zero</code></td>
-                <td>Translates a nullable input pointer with zero fallback to <code>Option</code>.</td>
-              </tr>
-              <tr>
-                <td><code>string_length_size_t</code></td>
-                <td>Translates a <code>size_t</code> C string length return to <code>usize</code>.</td>
-              </tr>
-              <tr>
-                <td><code>string_length_long</code></td>
-                <td>Translates a C string length returned as <code>long</code> to <code>i64</code>.</td>
-              </tr>
-              <tr>
-                <td><code>error_code_product</code></td>
-                <td>Adds an error-code plus output-parameter multiplication case.</td>
-              </tr>
-              <tr>
-                <td><code>malloc_free_constant</code></td>
-                <td>Adds a constant owned-allocation case to the <code>Box&lt;T&gt;</code> family.</td>
-              </tr>
-              <tr>
-                <td><code>simple_pointer</code></td>
-                <td>Translates a scalar mutable pointer update to <code>&amp;mut i32</code>.</td>
-              </tr>
-              <tr>
-                <td><code>string_length</code></td>
-                <td>Translates simple C string input to <code>&amp;str</code>.</td>
+                <td><code>string_length*</code></td>
+                <td>C string inputs to <code>&amp;str</code>, with <code>size_t</code> and <code>long</code> returns.</td>
               </tr>
               <tr>
                 <td><code>unsupported_*</code></td>
-                <td>Documents rejection/reporting for unions, function pointers, volatile access, and inline assembly.</td>
+                <td>Rejection and reporting for unions, function pointers, volatile access, and inline assembly.</td>
               </tr>
             </tbody>
           </table>
         </section>
 
-        <section id="paper" class="chapter" data-title="paper workflow">
-          <h2>Research Paper Workflow</h2>
+        <section id="paper" class="chapter" data-title="reproducing the paper workflow">
+          <h2>Reproducing the Paper</h2>
           <ol>
-            <li>Freeze the benchmark set.</li>
-            <li>Run <code>python -m safemap.cli final-eval --benchmarks examples --output reports/final --mode safemap_full --dry-run</code> to check tools, LLM key status, and output reuse.</li>
-            <li>Run <code>make paper-artifacts</code>.</li>
-            <li>Use <code>benchmark_results.csv</code>, <code>benchmark_results.md</code>, <code>paper_tables.md</code>, and <code>manifest.json</code>.</li>
-            <li>Use <code>reports/publication/reproduction_manifest.json</code> and <code>reports/publication/artifact_metadata.json</code> for command lines, tool versions, worktree provenance, and checksums.</li>
-            <li>Run <code>python -m safemap.cli metric-summary</code> for concise paper-facing metric sentences.</li>
-            <li>Report validation statuses separately for Cargo check, Cargo test, Clippy, Miri, and differential testing.</li>
-            <li>Describe unsupported cases as results, not as tool crashes.</li>
-            <li>Report C2Rust baseline separately from SafeMAP final output.</li>
-            <li>Include threats to validity around benchmark size, LLM nondeterminism, and partial C support.</li>
+            <li>Download the replication package from <a href="https://doi.org/10.5281/zenodo.23619725">Zenodo</a> (source zip and raw results).</li>
+            <li>Regenerate every manuscript table from the archived result rows:
+              <pre><code>python3 scripts/generate_v2_manuscript_tables.py \
+    reports/publication/v2/heldout reports/publication/v2/development out/</code></pre></li>
+            <li>Re-score the archived held-out runs under amendment 3 (no API key needed; with the flag off it must reproduce every archived result):
+              <pre><code>python3 scripts/rescore_per_unit_clippy.py OUT_DIR</code></pre></li>
+            <li>Measure the acceptance check on a completed run:
+              <pre><code>python3 scripts/harness_mutation_check.py RUN_DIR</code></pre></li>
+            <li>Re-run the evaluation from scratch with the commands in <a href="#running">Running SafeMAP</a> (needs a Gemini API key). LLM output can differ between runs; the paper reports three.</li>
           </ol>
 
-          <h3>Current SafeMAP-only snapshot</h3>
+          <h3>Where the numbers live</h3>
           <ul>
-            <li><code>40</code> benchmark rows.</li>
-            <li><code>37 / 76</code> eligible units accepted.</li>
-            <li><code>36</code> supported examples pass differential testing.</li>
-            <li><code>5</code> authored case-study modules with <code>15 / 20</code> accepted units; all pass differential testing.</li>
-            <li><code>10</code> outcome-blind LLVM external-corpus programs with <code>1 / 22</code> eligible units accepted in deterministic mode; differential validation was not applicable to the generated project.</li>
-            <li><code>c2rust_only</code> baseline: <code>0 / 72</code> fully safe accepted units in the canonical snapshot because two baseline rows did not produce complete metrics.</li>
-            <li><code>llm_only</code> Ollama smoke test on <code>simple_sum</code>: compile passed and differential testing passed; full LLM baseline remains latency dependent.</li>
-            <li>Accepted units contain no unsafe blocks/functions and expose no raw-pointer public API.</li>
-          </ul>
-
-          <h3>Do not claim</h3>
-          <ul>
-            <li>full automatic C-to-Rust migration;</li>
-            <li>formal equivalence;</li>
-            <li>safe migration of arbitrary C;</li>
-            <li>success based only on fewer unsafe blocks.</li>
+            <li><code>reports/publication/v2/heldout/</code>: result rows of every held-out stage and repeated run.</li>
+            <li><code>reports/publication/v2/heldout/amendment3/</code>: per-unit Clippy re-scoring, refusal breakdown, and added mutation analysis.</li>
+            <li><code>reports/publication/v2/development/</code>: development corpora.</li>
+            <li><code>research/RESUBMISSION_EVALUATION_PROTOCOL.md</code>: the sealed protocol and its three amendments.</li>
           </ul>
         </section>
 
-        <section id="limitations" class="chapter" data-title="limitations">
+        <section id="limitations" class="chapter" data-title="limitations threats">
           <h2>Limitations</h2>
           <p>
-            SafeMAP is intentionally conservative. Rejection is a valid outcome when
+            SafeMAP is intentionally conservative. Refusal is a valid outcome when
             static evidence is insufficient.
           </p>
           <ul>
-            <li>Fallback C parsing is limited compared with libclang.</li>
-            <li>Complex ownership and aliasing are not fully modeled.</li>
-            <li>Current deterministic synthesis covers only a small MVP set.</li>
-            <li>Differential testing is not always applicable.</li>
-            <li>LLM output may vary by model and prompt.</li>
-            <li>C2Rust depends on local LLVM and Rust compiler compatibility.</li>
+            <li>Ten small libraries with one production file each do not represent large or multi-file projects.</li>
+            <li>One low-cost model and three runs were used; the size of SafeMAP's margin over the one-shot baseline is not established.</li>
+            <li>Differential testing on generated inputs is evidence, not proof; about 7% of non-equivalent mutants survive, mostly where only a few specific inputs reach a branch.</li>
+            <li>Excluding inputs with undefined C behavior removes only what the sanitizers detect.</li>
+            <li>The planner does not yet model borrowed returns, owned types for opaque handles, or explicit contexts for global state.</li>
+            <li>Amendments 1–3 were decided after results were seen; the sealed numbers are reported beside them.</li>
+            <li>Planner changes informed by the current corpus must be evaluated on newly selected libraries.</li>
           </ul>
         </section>
 
@@ -748,6 +871,14 @@ python -m safemap.cli report --workdir work</code></pre>
   --output results \
   --config safemap.example.yaml</code></pre>
 
+          <h3>One lint error rejects a whole crate</h3>
+          <p>
+            With <code>per_unit_clippy: false</code>, any Clippy error fails every unit
+            in the crate (<code>crate_validation_failed</code>). Set
+            <code>validation.per_unit_clippy: true</code> to reject only the unit that
+            contains the error and its callers.
+          </p>
+
           <h3>Missing LLM API key</h3>
           <p>
             Set the environment variable named by <code>llm.api_key_env</code>.
@@ -758,51 +889,46 @@ python -m safemap.cli report --workdir work</code></pre>
 
           <h3>LLM quota or authentication failures</h3>
           <p>
-            SafeMAP reports provider, model, base URL, and the HTTP failure class.
-            For quota failures, reduce benchmark modes, wait for the provider quota
-            window, or switch to a local model.
+            Transient provider errors are retried with backoff. A request still
+            refused after the retries stops the run rather than scoring a failure;
+            resume with <code>--resume</code> after the quota resets.
           </p>
 
           <h3>C2Rust cannot find <code>libclang-cpp.so.14</code></h3>
           <p>
-            Set <code>SAFEMAP_C2RUST_LIB_DIR</code> or <code>LIBCLANG_PATH</code>
-            to the LLVM library directory used by C2Rust. If headers fail to
-            resolve, also set <code>SAFEMAP_C2RUST_RESOURCE_DIR</code>.
+            Use the Docker image, or set <code>SAFEMAP_C2RUST_LIB_DIR</code> or
+            <code>LIBCLANG_PATH</code> to the LLVM 14 library directory. If headers
+            fail to resolve, also set <code>SAFEMAP_C2RUST_RESOURCE_DIR</code>.
           </p>
 
-          <h3>C2Rust baseline fails to compile on stable Rust</h3>
-          <p>
-            This can happen when C2Rust emits obsolete nightly feature gates. SafeMAP
-            records that as a baseline failure and still evaluates the safe-first final output.
-          </p>
-
-          <h3>Miri unavailable</h3>
-          <p>
-            Missing <code>cargo miri</code> is reported as unsupported with guidance
-            to run <code>rustup component add miri</code> or disable
-            <code>validation.run_miri</code>. When Miri runs, SafeMAP records
-            pass/fail counts and concise diagnostics in <code>validation/results.json</code>
-            and benchmark exports.
-          </p>
-
-          <h3>Inspecting final evaluation runs</h3>
-          <pre><code>python -m safemap.cli latest-run --output reports/final
-python -m safemap.cli summarize-runs --output reports/final</code></pre>
+          <h3>Inspecting runs</h3>
+          <pre><code>python -m safemap.cli latest-run --output results
+python -m safemap.cli summarize-runs --output results</code></pre>
         </section>
 
         <section id="glossary" class="chapter" data-title="glossary">
           <h2>Glossary</h2>
           <dl>
+            <dt>Translation unit</dt>
+            <dd>A C function, or a group of mutually recursive functions, translated and accepted as one.</dd>
             <dt>Fully safe accepted unit</dt>
-            <dd>A generated Rust unit that passes strict safe acceptance and validation.</dd>
+            <dd>A unit that meets every condition of the acceptance policy, including the per-unit differential test.</dd>
             <dt>Migration plan</dt>
-            <dd>A JSON artifact describing the target Rust API, idioms, constraints, and validation rules.</dd>
-            <dt>C2Rust baseline</dt>
-            <dd>Reference translation used for comparison, usually unsafe and not SafeMAP final output.</dd>
-            <dt>Eligibility</dt>
-            <dd>The pre-translation classification that determines whether SafeMAP should attempt safe migration.</dd>
+            <dd>A JSON artifact with the planned safe Rust signature, idioms, and constraints for a unit.</dd>
+            <dt>Refusal</dt>
+            <dd>A unit SafeMAP declines to translate or accept, recorded with its reason.</dd>
             <dt>Differential testing</dt>
-            <dd>Comparing original C behavior and generated Rust behavior on the same inputs when practical.</dd>
+            <dd>Running the original C and the generated Rust on the same inputs and comparing every output.</dd>
+            <dt>C oracle</dt>
+            <dd>The original C function, run under ASan and UBSan; inputs with undefined behavior are excluded.</dd>
+            <dt>Sealed protocol</dt>
+            <dd>An evaluation plan fixed, with the implementation frozen, before any run on the held-out corpus.</dd>
+            <dt>Amendment</dt>
+            <dd>A change to the evaluation decided after results were seen, reported beside the sealed results.</dd>
+            <dt>Per-unit Clippy</dt>
+            <dd>Amendment 3: a Clippy error rejects only the unit containing it and its callers, not the whole crate.</dd>
+            <dt>One-shot and plain LLM</dt>
+            <dd>Baselines that translate a whole file in one request, with or without SafeMAP's planned interfaces.</dd>
           </dl>
         </section>
       </main>
