@@ -42,17 +42,19 @@ with compiler-feedback repair. A translation is accepted only if it contains no
 \texttt{unsafe}, exposes no raw pointers, and matches the original C function
 on up to 1,000 generated inputs, with the C side run under AddressSanitizer and
 UndefinedBehaviorSanitizer. On ten held-out C libraries (356 translation units)
-selected under a sealed protocol, \tool accepted 12--16 units across three runs.
-The same LLM accepted 9--15 when given \tool's planned interfaces and 1--2 when
-given only the C sources; raw C2Rust accepted none. Most units were refused
-before translation because they need manual refactoring, such as removing
-global state (159), or use C types with no safe interface (116). The acceptance check rejected 91\% of non-equivalent
-compiling mutants of accepted functions. Ablations attribute the accepted
-translations to interface planning rather than to prompt guidance or repair. A
-post-hoc analysis shows that per-unit lint checking would raise the held-out
-result to 39 units. Per-function, oracle-checked acceptance is thus feasible on
-production C but narrow, and the recorded refusals show what currently blocks
-safe automatic migration.}
+selected under a sealed protocol, \tool accepted 12--16 units across three runs
+under the sealed crate-level lint check. A declared amendment that applies the
+lint check per unit, re-scoring the same outputs, raised this to 36--37 units
+(10\%). Under the amendment, the same LLM accepted 28--31 units when given
+\tool's planned interfaces and 1--2 when given only the C sources; raw C2Rust
+accepted none. Most units were refused before translation because pointer
+ownership or aliasing could not be resolved statically (127) or because they
+use C types with no safe interface (116). The acceptance check rejected 93\% of
+non-equivalent compiling mutants of accepted functions. Ablations attribute the
+accepted translations mainly to interface planning rather than to prompt
+guidance or repair. Per-function, oracle-checked acceptance is thus feasible on
+production C but covers about a tenth of it, and the recorded refusals show
+what currently blocks safe automatic migration.}
 
 \keywords{C-to-Rust migration, safe Rust, static analysis, large language
 models, differential testing, memory safety}
@@ -123,9 +125,10 @@ This paper contributes:
   C code has undefined behavior, and whose strength we measure by mutation
   analysis;
   \item a sealed, frozen evaluation on ten held-out libraries showing that
-  planned interfaces raise a one-shot LLM from 1--2 to 9--15 accepted units,
-  with repeated LLM runs, mutation analysis of the acceptance check, and
-  component ablations; and
+  planned interfaces raise a one-shot LLM from 1--2 to 28--31 accepted units
+  and that \tool's per-unit loop accepts 36--37 (under per-unit lint checking,
+  a declared amendment), with repeated LLM runs, mutation analysis of the
+  acceptance check, and component ablations; and
   \item a breakdown of 356 held-out units by the reason they could not be
   migrated, together with a public artifact for every decision.
 \end{itemize}
@@ -249,7 +252,9 @@ functions. \tool accepts a unit if and only if all of the following hold:
   no \texttt{unsafe}, raw pointers, \texttt{extern} blocks, or placeholders,
   and compiles together with the units already admitted;
   \item the final crate compiles under \texttt{\#![forbid(unsafe\_code)]},
-  and its tests and Clippy pass;
+  and its tests and Clippy pass (under amendment 3,
+  Section~\ref{sec:protocol}, Clippy must report no error in the unit or in a
+  unit it calls);
   \item its public interface exposes no raw pointer types; and
   \item its per-unit differential test passes (Section~\ref{sec:harness}).
 \end{enumerate}
@@ -357,14 +362,16 @@ unit needs at least 50\% defined inputs; otherwise it is recorded as
 
 \subsection{Baselines}
 
-\emph{Rules only} runs the same pipeline without the LLM. \emph{Raw C2Rust}
-translates each project in a pinned container (C2Rust 0.22.1, LLVM 14) and is
-measured under the same policy. The \emph{one-shot LLM} baseline is given the
-same task as \tool in a single request: the project's C sources and headers,
-the planned public signatures (C names kept), and the Rust struct definitions
-those signatures use, with private helpers allowed. It receives none of
-\tool's analysis facts, plans, rules, or repair. Its output is scored with the
-same per-unit harness after making top-level functions public. Giving the interfaces isolates what \tool adds beyond interface planning.
+\emph{Raw C2Rust} translates every project in a pinned container 
+(C2Rust 0.22.1, LLVM 14) and is measured under the same policy. 
+\emph{Rules only} runs the same pipeline without the LLM. 
+In a single request, the \emph{one-shot LLM} baseline receives 
+the same work as \tool: the C sources and headers of the project, 
+the planned public signatures (with C names preserved), and the Rust struct 
+definitions used by those signatures, with private helpers permitted. It does not 
+receive any of \tool's analysis facts, plans, rules, or repairs. Once top-level functions 
+are made public, its output is scored using the same per-unit harness.
+Giving the interfaces isolates what \tool adds beyond interface planning.
 The \emph{plain LLM} baseline (amendment 2) measures the planning itself: the
 same request without the planned signatures and struct definitions, so the
 model sees only the C sources and the safety rules. Its output is scored the
@@ -387,6 +394,7 @@ as development data, and the corrected system was evaluated on newly selected
 libraries under a new protocol.
 
 \subsection{Protocol}
+\label{sec:protocol}
 
 The v2 protocol fixed the selection rule, configurations, model, acceptance
 policy, and reporting before any \tool execution on the held-out corpus. A
@@ -407,8 +415,21 @@ implementation, configuration, and modes were unchanged. We report the two
 rounds separately and pooled. After all results were seen we added one
 baseline (amendment 2), the plain LLM described above, run three times with the
 frozen implementation by a script that refuses to run if the implementation
-or configuration differs from the freeze. Table~\ref{tab:v2-corpus} characterizes the
-corpus.
+or configuration differs from the freeze.
+
+Finally, after all results were seen, we changed how Clippy is applied
+(amendment 3). The sealed policy runs Clippy once per crate, so a single lint
+error rejects every unit in the crate (Section~\ref{sec:rq1}). Under amendment
+3, each Clippy error is mapped to the function that contains it, and only that
+unit and the units that call it are rejected; an error outside every unit's
+function still rejects the crate. The same rule applies to \tool and to the
+LLM baselines. No output was regenerated and no LLM was called: the archived
+crate of every held-out run was re-scored with the frozen checks and
+differential harness (\texttt{scripts/rescore\_per\_unit\_clippy.py}). With the
+change switched off, the re-scoring reproduced the archived result of every
+run. Tables report the amended numbers, with the sealed number in parentheses
+wherever it differs. The development data and ablations were not re-scored.
+Table~\ref{tab:v2-corpus} characterizes the corpus.
 
 \input{tables/corpus.tex}
 
@@ -448,61 +469,61 @@ provider's quota.
 
 \subsection{Mutation analysis}
 
-To test whether the per-unit check rejects wrong code, we used mutation
-analysis \citep{jia2011mutation}. We applied single-operator mutations (relational, arithmetic, logical, boolean, and
-integer-literal changes) to every accepted function of \tool's held-out runs and
-of its v1-library run, kept the mutants that compile, and re-ran each unit's
-differential test with 300 inputs from a different seed. We classified every
-surviving mutant by hand as equivalent (no input can distinguish it), an
-input gap (a distinguishing input exists but was not generated), or an
-observation gap (the harness does not compare the differing output).
+We performed mutation analysis \citep{jia2011mutation} to see if the per-unit 
+check rejects incorrect code. Every accepted function of \tool's held-out 
+runs and of its v1-library run, including the functions accepted only under 
+amendment 3, was subjected to single-operator mutations (relational, arithmetic, 
+logical, boolean, and integer-literal changes). We retained the mutants that compile 
+and reran each unit's differential test with 300 inputs from a different seed. 
+Each surviving mutant was manually categorized as either an observation gap (the 
+harness does not compare the differing output), an input gap (a distinguishing input 
+exists but was not generated), or equivalent (no input can distinguish it).
 
 \section{Results}
 \label{sec:results}
 
 \subsection{RQ1: Accepted units}
+\label{sec:rq1}
 
 Table~\ref{tab:v2-cascade} follows each held-out unit through the pipeline.
-In the first run, of 356 units, the screen marked 183 as candidates, \tool generated Rust for 47,
-and accepted 16 (4.5\% of all units; 8.7\% of candidates). The original four
-libraries contributed 7 accepted units and the extension 9. Accepted units
-are small leaf functions: a string hash, hexadecimal and UTF-8 helpers,
-rounding, error strings, version-string checks, regular-expression character
-classes, and the AES \texttt{xtime} step.
+In the first run, of 356 units, the screen marked 183 as candidates, \tool
+generated Rust for 47, and accepted 37 (10.4\% of all units; 20.2\% of
+candidates). Under the sealed crate-level check it accepted 16 (4.5\%). The
+original four libraries contributed 28 accepted units and the extension 9.
+Accepted units are small leaf functions: tinyexpr's arithmetic, comparison,
+and logical operators and its factorial and combinatorics helpers, a string
+hash, hexadecimal and UTF-8 helpers, rounding, error strings, version-string
+checks, regular-expression character classes, and the AES \texttt{xtime} step.
 
 \input{tables/cascade.tex}
 
-Of the 31 generated units not accepted, 24 are from tinyexpr. They compiled,
-but the crate failed Clippy: two translated constants, \texttt{pi} and
-\texttt{e}, keep C's literal digits, which Clippy's default-deny
-\texttt{approx\_constant} lint rejects. Because Clippy runs once per crate,
-this rejected every unit in the crate. We report the outcome as frozen; it is
-a limitation of crate-level checks within a per-unit policy
-(Section~\ref{sec:threats}).
-
-\textbf{Post-hoc sensitivity.} To measure that limitation, we re-scored the
-frozen tinyexpr crate with only \texttt{approx\_constant} allowed, using the
-unchanged crate checks and differential harness
-(\texttt{scripts/posthoc\_lint\_sensitivity.py}). The crate then passed
-compilation and Clippy, and 23 of the 24 units matched the C functions on every
-defined input; the remaining unit, \texttt{negate\_logical\_not}, disagreed
-with C. Per-unit lint checking would therefore have accepted 39 units in the
-first run instead of 16. This analysis was not part of the sealed protocol and
-the primary result remains 16.
+The whole difference between the sealed and amended results comes from
+tinyexpr. Its 24 generated units compiled, but two translated constants,
+\texttt{pi} and \texttt{e}, keep C's literal digits, which Clippy's
+default-deny \texttt{approx\_constant} lint rejects. Under the sealed check,
+Clippy runs once per crate, so these two errors rejected all 24 units. Under
+amendment 3 they reject only \texttt{pi} and \texttt{e}. Of the other 22
+units, 21 matched the C functions on every defined input, and one,
+\texttt{negate\_logical\_not}, disagreed with C.
 
 \subsection{RQ2: Why units are not accepted}
 
 Table~\ref{tab:v2-refusals} lists the recorded reasons. Most units never
-reach translation. 159 functions require manual refactoring, mainly because
-they read or write mutable global state, perform I/O, or follow allocation
-protocols that cross function boundaries. 116 use a C type for which the
-planner finds no safe, testable interface: in parson and sds the central types
-(\texttt{JSON\_Value *}, \texttt{sds}) are opaque handles or point into the
-middle of an allocation, and \texttt{void *} and \texttt{char **} parameters
-are common. 36 require unsafe operations such as pointer arithmetic beyond a
-known length or casts between pointer types. Only a small fraction of losses
-occur after translation: 3 differential-test failures, and 4 units whose C
-oracle had undefined behavior on most generated inputs. Two of these show a
+reach translation. The screen marked 159 functions as needing manual
+refactoring. For 127 of them, the analysis could not resolve pointer
+ownership or aliasing statically. The other 32 read or write mutable global
+state; 30 of these are in parson, whose allocator hooks
+\texttt{parson\_malloc} and \texttt{parson\_free} are global function
+pointers. 116 functions use a C type for which the planner finds no safe,
+testable interface. The most common case (48 functions) is a returned pointer
+that aliases caller-owned data, whose lifetime the planner does not model. In
+parson and sds the central types (\texttt{JSON\_Value *}, \texttt{sds}) are
+opaque handles or point into the middle of an allocation, and \texttt{void *}
+and \texttt{char **} parameters are common. 36 functions require unsafe
+operations such as pointer arithmetic beyond a known length or casts between
+pointer types. Only a small fraction of losses occur after translation: 4
+differential-test failures, 4 units whose C oracle had undefined behavior on
+most generated inputs, and 2 units with Clippy errors. Two of the undefined-behavior cases show a
 limit of signature-level planning: sds's \texttt{sdsll2str} writes up to 21
 bytes into a caller buffer, a requirement its signature does not express, so
 every generated buffer overflowed. The other two overflow signed arithmetic on
@@ -512,11 +533,15 @@ most inputs.
 
 \subsection{RQ3: Baselines}
 
-Table~\ref{tab:v2-baselines} compares the configurations. \tool accepted 16
-units in the first run, the one-shot LLM given the planned interfaces 9, the
-plain LLM 1, rules alone 1, and C2Rust none. Over three runs \tool and the
-interface-given baseline overlap (Section~\ref{sec:rq5}), so we do not
-claim that \tool's loop outperforms it. The plain LLM shows what the planned
+Table~\ref{tab:v2-baselines} compares the configurations. In the first run
+\tool accepted 37 units, the one-shot LLM given the planned interfaces 28, the
+plain LLM 1, rules alone 6, and C2Rust none (sealed: 16, 9, 1, 1, and 0).
+\tool accepted more units than the interface-given baseline in each of the
+three runs, 36--37 against 28--31 (Section~\ref{sec:rq5}). Under the sealed
+check the two ranges overlapped (12--16 against 9--15). In the first run the
+difference is concentrated in three libraries: tinyexpr (21 against 16), sds,
+and tiny-regex-c. Only tinyexpr's gap recurs in all three runs. On the other seven the two configurations are within one unit
+of each other, and on parson the baseline is one unit ahead. The plain LLM shows what the planned
 interfaces contribute: for four libraries its output used \texttt{unsafe}
 code or raw pointers and was rejected outright, and in the other six, of 43 planned
 functions, 24 were absent from the output and 12 had other signatures, so
@@ -533,8 +558,9 @@ interfaces throughout, so no unit met the policy.
 
 \input{tables/baselines.tex}
 
-Development data show the same pattern (Table~\ref{tab:v2-development}): on
-the v1 libraries the two accepted 22 and 21 units. Only on the authored
+Development data, scored with the sealed crate-level check, show a similar
+pattern (Table~\ref{tab:v2-development}): on the v1 libraries the two
+accepted 22 and 21 units. Only on the authored
 microbenchmarks, which the rules were written for, is \tool clearly ahead
 (72 of 81 units against 35).
 
@@ -558,13 +584,21 @@ accepted translations.
 \subsection{RQ5: Reliability of acceptance}
 \label{sec:rq5}
 
-\textbf{Mutation analysis.} Of 152 compiling mutants of accepted functions
-(all ten held-out libraries and the v1 libraries), the per-unit check rejected
-135 (88.8\%). Of the 17 survivors, 4 are equivalent: \texttt{>} replaced by
-\texttt{>=} directly after an equality test, the same change where both
-branches yield the same value on ties, a loop bound that a terminator written
-just before already guarantees, and an unreachable \texttt{else}. Excluding them, the check rejected 135 of 148
-non-equivalent mutants (91.2\%). Twelve survivors are input gaps: they change
+\textbf{Mutation analysis.} We first mutated the functions accepted under the
+sealed check (first run of all ten held-out libraries, and the v1 libraries).
+Of 152 compiling mutants, the per-unit check rejected 135 (88.8\%). Of the 17
+survivors, 4 are equivalent: \texttt{>} replaced by \texttt{>=} directly
+after an equality test, the same change where both branches yield the same
+value on ties, a loop bound that a terminator written just before already
+guarantees, and an unreachable \texttt{else}. We then mutated the 21 tinyexpr
+functions accepted only under amendment 3, in the same way. The check rejected
+29 of their 34 compiling mutants. The 5 survivors, in \texttt{fac} and
+\texttt{ncr}, are equivalent: exhaustive checks over the reachable inputs show
+that each changes a comparison or starting value without changing any result.
+Over both sets, excluding the 9 equivalent mutants, the check rejected 164 of
+177 non-equivalent mutants (92.7\%); all 13 non-equivalent survivors are
+from the first set.
+Twelve survivors are input gaps: they change
 behavior only on a few specific values, such as one or two digits in sds's
 hexadecimal converter (six mutants), a string of exactly 255 or 256 bytes, or one
 error code, which uniformly generated inputs rarely hit. One is an observation
@@ -573,14 +607,16 @@ the harness, like a C caller, does not read. Targeted inputs from the C
 function's literals and comparison bounds would close most input gaps.
 
 \textbf{Repeated runs.} Table~\ref{tab:v2-repeats} reports accepted units in
-three runs of the LLM configurations with identical inputs. \tool accepted 16,
-15, and 12 units, the one-shot baseline 9, 15, and 14, and the plain LLM 1, 1,
-and 2. Eight of the ten
-libraries gave the same \tool result in every run. Most of the variation comes
-from semver: in one run of each configuration, one generated function failed a
-crate-level check and so rejected all four planned units of that crate, the
-same mechanism as tinyexpr. The accepted sets are therefore stable at the
-function level but sensitive to crate-level failures.
+three runs of the LLM configurations with identical inputs. \tool accepted 37,
+36, and 36 units, the one-shot baseline 28, 31, and 30, and the plain LLM 1, 1,
+and 2 (sealed: 16, 15, and 12 for \tool; 9, 15, and 14 for the one-shot
+baseline). Nine of the ten libraries gave the same \tool result in every run,
+against six for the one-shot baseline. Under the sealed check most of the
+variation came from semver: in one run of each configuration, one generated
+function failed a crate-level Clippy check and so rejected every planned unit
+of that crate, the same mechanism as tinyexpr. Per-unit Clippy removes this
+effect. The accepted sets are therefore stable at the function level, and the
+sealed results were sensitive to crate-level failures.
 
 \input{tables/repeats.tex}
 
@@ -588,16 +624,21 @@ function level but sensitive to crate-level failures.
 
 \textbf{Coverage is the limiting factor.} The per-function acceptance check is
 feasible on production C and rejects most wrong code, but few functions reach
-it. Table~\ref{tab:v2-refusals} is the main finding: the obstacles are global
-state, opaque and aliasing pointer types, and raw memory manipulation. These
-are API design questions that a function-local translator cannot answer
-alone; a migration would need to change the library's interface, for example
-by turning global state into an explicit context or an \texttt{sds} string
-into an owned type, before \tool's checks apply.
+it. Table~\ref{tab:v2-refusals} is the main finding. The obstacles are
+pointer ownership and aliasing that static analysis cannot resolve, returned
+pointers into caller-owned data, opaque pointer types, raw memory
+manipulation, and, in parson, global allocator hooks. Some of these could be
+planned: a pointer returned into an argument corresponds to a borrowed Rust
+return such as \texttt{fn f<'a>(s: \&'a str) -> \&'a str}. Others are API
+design questions that a function-local translator cannot answer alone. There,
+a migration would need to change the library's interface before \tool's
+checks apply, for example by turning an \texttt{sds} string into an owned
+type.
 
 \textbf{Interfaces matter more than prompts.} On the held-out libraries the
-same model accepted 1--2 units from the C code alone and 9--15 when told the
-planned interfaces, within the run-to-run range of \tool's guided loop. On the
+same model accepted 1--2 units from the C code alone and 28--31 when told the
+planned interfaces. \tool's per-unit loop added a further 6--9 units in each
+run, most of them in one library. On the
 development libraries, removing signature planning from the guided loop
 reduces it from 22 to 2 units. Withholding analysis
 facts from the prompt changed nothing on the v1 libraries. This suggests that LLM translators benefit most from being
@@ -611,27 +652,32 @@ migrated mechanically and which need design work.
 \section{Threats to validity}
 \label{sec:threats}
 
-\textbf{Sample.} Ten small libraries with one production file each do not
-represent large applications or multi-file projects. The extension was decided
-after the first four results were seen; it used the same rule and frozen code,
-and we report both rounds separately.
+\textbf{Sample.} Large applications or multi-file projects are not represented 
+by ten small libraries with one production file each. The extension, which 
+employed the same rule and frozen code, was chosen after the first four results 
+were seen. We report the two rounds separately.
 
-\textbf{Model and variance.} One low-cost model was used, and three runs
-are too few to estimate run-to-run variance precisely; the guided and one-shot
-ranges overlap, so their difference is not established. The plain LLM
-baseline was added after the other results were seen. A stronger model may translate
-more of the planned units, although it cannot change the units refused before
-translation, which are most of the losses.
+\textbf{Model and variance.} Three runs are insufficient to accurately quantify 
+run-to-run variance, and just one inexpensive model was employed. The guided 
+loop under per-unit Clippy accepted more than the one-shot baseline in each run, 
+but its size is not established because the majority of the margin originates from a 
+single library. Following the observation of the other outcomes, the plain LLM baseline 
+and amendment 3 were added. Although it cannot alter the units rejected before translation, 
+which account for the majority of losses, a stronger model might translate more of the planned 
+units. 
 
 \textbf{Oracle.} Differential testing on generated inputs is evidence, not
-proof. Mutation analysis shows that 8.8\% of non-equivalent compiling mutants
+proof. Mutation analysis shows that 7.3\% of non-equivalent compiling mutants
 survive, mainly where only a few specific inputs reach a branch. Excluding inputs with undefined C
 behavior removes inputs the sanitizers detect, not all undefined behavior.
 
-\textbf{Crate-level checks.} Clippy runs on the whole crate, so one lint error
-rejects every unit in it (tinyexpr, and semver in one repeated run). This makes
-the reported numbers conservative; the post-hoc analysis in
-Section~\ref{sec:results} puts the cost at 23 units in the first run.
+\textbf{Post-hoc amendment.} The sealed policy ran Clippy on the whole crate,
+so one lint error rejected every unit in it (tinyexpr, and semver in one
+repeated run). Amendment 3 removes this, but it was decided after the results
+were seen. It changes only how the archived outputs are scored, applies the
+same rule to every configuration, and reproduces the sealed results when
+switched off. We report the sealed numbers beside the amended ones. A lint
+error outside every unit's function still rejects the whole crate.
 
 \textbf{No eligibility labels.} We did not collect independent labels of
 which functions could be migrated safely, so we make no claim about the
@@ -650,20 +696,22 @@ generalization, and the ablations are run on them.
 \tool translates C functions to safe Rust only when it finds a safe interface
 and accepts them only when they match the original C under sanitizers, so
 every accepted function carries its own evidence of equivalence. On ten
-held-out libraries it accepted 12--16 of 356 units across three runs. The
-same LLM accepted 1--2 units from the C code alone and 9--15 when given \tool's
-planned interfaces; rules alone accepted 1 and raw C2Rust 0. The interface
-planning, not the LLM guidance, is what makes these translations possible to
-produce and check. Most units
-are refused before translation because of global state, opaque or aliasing
-pointer types, or unsafe memory operations. Per-function, oracle-checked
-migration is therefore feasible but narrow: its reach is set by how much of a
-C library's interface already has a safe Rust counterpart. Two limits of the
-acceptance check itself are measurable and fixable: crate-level lint checks
-cost 23 units in the first run, and most surviving mutants need inputs that
-target specific values. Future work should run lint checks per unit, generate
-inputs from the C function's literals and bounds, and plan interface changes
-such as explicit contexts for global state.
+held-out libraries it accepted 12--16 of 356 units across three runs under
+the sealed crate-level lint check, and 36--37 when the same outputs were
+re-scored with the lint check applied per unit. Under that check, the same LLM
+accepted 1--2 units from the C code alone and 28--31 when given \tool's
+planned interfaces; rules alone accepted 6 and raw C2Rust 0. These translations can 
+be produced and verified thanks to the interface planning, and a minor further gain 
+is added by \tool's per-unit loop. The majority of units are rejected prior to translation 
+because the function requires unsafe memory accesses, a C type lacks a safe interface, or pointer ownership or 
+aliasing cannot be resolved statically. Oracle-checked, per-function migration is therefore possible, 
+but it only covers around 10\% of these libraries; its scope is determined by the extent to which a 
+C library's interface already has a safe Rust equivalent. Future work should plan borrowed returns for functions that
+return pointers into their arguments, generate inputs from the C function's
+literals and bounds to close the remaining input gaps, and plan interface
+changes such as owned types for opaque handles. These changes should be
+evaluated on newly selected libraries, since the present corpus has now
+informed the analysis.
 
 \section*{Statements and Declarations}
 
@@ -681,9 +729,12 @@ archived on Zenodo \citep{cyril2026safemapdata} and
 available in the SafeMAP repository
 (\url{https://github.com/jscyril/SafeMAP}); the implementation evaluated here
 is commit \texttt{62cf430}. The result rows of every run are in
-\texttt{reports/publication/v2}, and
+\texttt{reports/publication/v2}; the amendment-3 re-scoring, its
+reproduction check, and the added mutation analysis are in
+\texttt{reports/publication/v2/heldout/amendment3}, produced by
+\texttt{scripts/rescore\_per\_unit\_clippy.py}. The script
 \texttt{scripts/generate\_v2\_manuscript\_tables.py} regenerates every table
-from them. The held-out libraries are public repositories
+from these files. The held-out libraries are public repositories
 pinned to the revisions recorded in the manifests.
 
 \subsection*{Ethics approval}

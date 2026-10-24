@@ -1,0 +1,6 @@
+file,function,mutant,class,reason
+mutation_tinyexpr.json,fac,relational:>->>=@105,equivalent,at a == UINT_MAX the loop overflows and also returns infinity
+mutation_tinyexpr.json,fac,literal:1->2@227,equivalent,starting the product at 2 skips only a multiplication by 1
+mutation_tinyexpr.json,fac,relational:>->>=@270,equivalent,no i equals ULLONG_MAX / (i-1)! for any reachable i
+mutation_tinyexpr.json,ncr,relational:>->>=@301,equivalent,C(n k) == C(n n-k) and overflow occurs iff the final value overflows
+mutation_tinyexpr.json,ncr,relational:>->>=@545,equivalent,no intermediate C(N i) with N <= UINT_MAX lies within N of ULLONG_MAX

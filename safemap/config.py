@@ -61,6 +61,9 @@ class ValidationConfig:
     run_cargo_check: bool = True
     run_tests: bool = True
     run_clippy: bool = True
+    # Reject only the units a Clippy error falls in (and their callers), not
+    # the whole crate. Off by default so the frozen v2 protocol reproduces.
+    per_unit_clippy: bool = False
     run_miri: bool = False
     run_differential_tests: bool = True
     run_c_sanitizers: bool = True

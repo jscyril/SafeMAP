@@ -1,0 +1,342 @@
+{
+  "run": "/tmp/claude-1000/-mnt-data-college-research-SafeMAP/232b5f17-a2b7-4d68-89f9-d6372b12c532/scratchpad/mut-tinyexpr",
+  "cases": 300,
+  "units": [
+    {
+      "unit_id": "unit_0",
+      "function": "add",
+      "mutants": [
+        {
+          "mutant": "arithmetic:+->-@7",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_11",
+      "function": "equal",
+      "mutants": [
+        {
+          "mutant": "relational:==->!=@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_12",
+      "function": "fac",
+      "mutants": [
+        {
+          "mutant": "relational:>->>=@105",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "relational:<=-><@242",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "literal:1->2@227",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:1->2@203",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:>=->>@12",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:>->>=@270",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "literal:1->2@404",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 4,
+      "compiled_mutants": 7
+    },
+    {
+      "unit_id": "unit_13",
+      "function": "gcd",
+      "mutants": [
+        {
+          "mutant": "literal:0->1@78",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:!=->==@75",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 2,
+      "compiled_mutants": 2
+    },
+    {
+      "unit_id": "unit_14",
+      "function": "greater",
+      "mutants": [
+        {
+          "mutant": "relational:>->>=@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_15",
+      "function": "greater_eq",
+      "mutants": [
+        {
+          "mutant": "relational:>=->>@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_16",
+      "function": "logical_and",
+      "mutants": [
+        {
+          "mutant": "relational:!=->==@22",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:!=->==@10",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:&&->||@17",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 3,
+      "compiled_mutants": 3
+    },
+    {
+      "unit_id": "unit_17",
+      "function": "logical_not",
+      "mutants": [
+        {
+          "mutant": "relational:==->!=@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_18",
+      "function": "logical_notnot",
+      "mutants": [
+        {
+          "mutant": "relational:!=->==@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_19",
+      "function": "logical_or",
+      "mutants": [
+        {
+          "mutant": "relational:!=->==@22",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "logical:||->&&@17",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:!=->==@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 3,
+      "compiled_mutants": 3
+    },
+    {
+      "unit_id": "unit_20",
+      "function": "lower",
+      "mutants": [
+        {
+          "mutant": "relational:<-><=@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_21",
+      "function": "lower_eq",
+      "mutants": [
+        {
+          "mutant": "relational:<=-><@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_22",
+      "function": "mul",
+      "mutants": [],
+      "killed": 0,
+      "compiled_mutants": 0
+    },
+    {
+      "unit_id": "unit_23",
+      "function": "ncr",
+      "mutants": [
+        {
+          "mutant": "literal:1->2@288",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "arithmetic:-->+@402",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:<-><=@40",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:<=-><@375",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:>->>=@301",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "relational:>->>=@545",
+          "result": "survived",
+          "status": "passed"
+        },
+        {
+          "mutant": "logical:||->&&@35",
+          "result": "killed",
+          "status": "failed"
+        },
+        {
+          "mutant": "relational:>=->>@12",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 6,
+      "compiled_mutants": 8
+    },
+    {
+      "unit_id": "unit_24",
+      "function": "negate",
+      "mutants": [],
+      "killed": 0,
+      "compiled_mutants": 0
+    },
+    {
+      "unit_id": "unit_26",
+      "function": "negate_logical_notnot",
+      "mutants": [
+        {
+          "mutant": "relational:!=->==@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_27",
+      "function": "not_equal",
+      "mutants": [
+        {
+          "mutant": "relational:!=->==@10",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_28",
+      "function": "npr",
+      "mutants": [],
+      "killed": 0,
+      "compiled_mutants": 0
+    },
+    {
+      "unit_id": "unit_33",
+      "function": "sub",
+      "mutants": [
+        {
+          "mutant": "arithmetic:-->+@7",
+          "result": "killed",
+          "status": "failed"
+        }
+      ],
+      "killed": 1,
+      "compiled_mutants": 1
+    },
+    {
+      "unit_id": "unit_8",
+      "function": "comma",
+      "mutants": [],
+      "killed": 0,
+      "compiled_mutants": 0
+    },
+    {
+      "unit_id": "unit_9",
+      "function": "divide",
+      "mutants": [],
+      "killed": 0,
+      "compiled_mutants": 0
+    }
+  ],
+  "killed": 29,
+  "compiled_mutants": 34,
+  "mutation_score": 0.8529411764705882
+}

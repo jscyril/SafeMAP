@@ -5,7 +5,10 @@ Usage: scripts/generate_v2_manuscript_tables.py HELDOUT_ROOT DEV_ROOT OUT_DIR
 
 HELDOUT_ROOT holds the v2 stage directories (v2-non-llm, v2-llm, v2-ablation,
 ext/..., rep2-orig/..., ...); DEV_ROOT holds the development corpora.
-Every number in the tables is read from benchmark_results.rows.jsonl files.
+Every number in the tables is read from benchmark_results.rows.jsonl files,
+and the amendment-3 (per-unit Clippy) numbers from HELDOUT_ROOT/amendment3
+(scripts/rescore_per_unit_clippy.py). Where amendment 3 changes a number, the
+sealed number follows in parentheses.
 """
 from __future__ import annotations
 
@@ -14,9 +17,33 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from safemap.pipeline import UNIT_FAILURE_CATEGORY  # noqa: E402
+
 ORIG = ("microtar", "parson", "sds", "tinyexpr")
 EXT = ("argparse", "json-parser", "printf", "semver", "tiny-AES-c", "tiny-regex-c")
 ACCEPTED = "fully_safe_accepted_units"
+# Unit statuses that mean the unit passed every crate-level check.
+PAST_CRATE = {"accepted", "failed", "insufficient_defined_inputs", "not_harnessable",
+              "harness_build_failed", "c_oracle_timeout"}
+RUN_STAGES = {1: ("v2-llm", "ext/v2-llm", "v2-non-llm", "ext/v2-non-llm", "plain-orig", "plain-ext")}
+RUN_STAGES.update({i: (f"rep{i}-orig/v2-llm", f"rep{i}-ext/v2-llm", f"plain-rep{i}-orig",
+                       f"plain-rep{i}-ext") for i in (2, 3)})
+
+
+def amendment3(held: Path) -> dict[int, dict[tuple[str, str], dict]]:
+    """Per-unit Clippy results, keyed like load(): run -> (library, mode) -> result."""
+    runs: dict[int, dict] = {i: {} for i in RUN_STAGES}
+    for item in json.loads((held / "amendment3/rescore.json").read_text(encoding="utf-8")):
+        run = next(i for i, stages in RUN_STAGES.items() if item["stage"] in stages)
+        mode = "llm_plain" if item["stage"].startswith("plain") else item["mode"]
+        name = "microtar" if item["project"] == "src" else item["project"]
+        runs[run][(name, mode)] = item
+    return runs
+
+
+def cell(new: int, old: int) -> str:
+    return str(new) if new == old else f"{new} ({old})"
 
 
 def _name(row: dict) -> str:
@@ -69,22 +96,29 @@ def corpus_table(rows: dict) -> str:
                  body, "llrrrrr")
 
 
-def cascade_table(rows: dict) -> str:
+def cascade_table(rows: dict, a3: dict) -> str:
     keys = ("total_units", "candidate_safe_units", "generated_units", "compile_success_units",
             "policy_safe_units", ACCEPTED)
-    body, total = [], Counter()
+    body, total, old = [], Counter(), Counter()
     for name in ORIG + EXT:
         r = rows.get((name, "safemap_guided"))
         if not r:
             continue
-        vals = [n(r, k) for k in keys]
+        sealed = [n(r, k) for k in keys]
+        outcomes = a3[(name, "safemap_guided")]["outcomes"].values()
+        crate = sum(status in PAST_CRATE for status in outcomes)
+        vals = [*sealed[:3], crate, crate, a3[(name, "safemap_guided")]["per_unit_clippy_accepted"]]
+        if sealed[3] != 0 and sealed[3] != crate:
+            raise SystemExit(f"{name}: derived crate count {crate} != archived {sealed[3]}")
         total.update(dict(enumerate(vals)))
-        body.append([name, *vals])
+        old.update(dict(enumerate(sealed)))
+        body.append([name, *(cell(v, o) for v, o in zip(vals, sealed))])
         if name == ORIG[-1]:
             body.append("---")
-    body += ["---", ["Total", *(total[i] for i in range(6))]]
-    return table(r"\tool (guided) outcome cascade per library (first run). \emph{Crate}: the unit "
-                 r"is in a crate that passed \texttt{cargo check}, tests, and Clippy.", "tab:v2-cascade",
+    body += ["---", ["Total", *(cell(total[i], old[i]) for i in range(6))]]
+    return table(r"\tool (guided) outcome cascade per library (first run, per-unit Clippy; sealed "
+                 r"result in parentheses where it differs). \emph{Crate}: the unit passed \texttt{cargo "
+                 r"check} and tests, and Clippy found no error in it or in its callees.", "tab:v2-cascade",
                  ["Library", "Units", "Candidate", "Generated", "Crate", "Policy", "Accepted"],
                  body, "lrrrrrr")
 
@@ -94,26 +128,29 @@ def _failures(row: dict) -> dict:
     return json.loads(value) if isinstance(value, str) else value
 
 
-def baseline_table(rows: dict) -> str:
+def baseline_table(rows: dict, a3: dict) -> str:
     modes = ("safemap_guided", "llm_only", "llm_plain", "safemap_deterministic", "c2rust_only")
-    body, total = [], Counter()
+    body, total, old = [], Counter(), Counter()
     for name in ORIG + EXT:
         if (name, "safemap_guided") not in rows:
             continue
         units = n(rows.get((name, "safemap_guided")), "total_units")
-        vals = [n(rows.get((name, m)), ACCEPTED) for m in modes]
+        sealed = [n(rows.get((name, m)), ACCEPTED) for m in modes[:4]]
+        new = [a3[(name, m)]["per_unit_clippy_accepted"] for m in modes[:4]]
+        vals = [cell(v, o) for v, o in zip(new, sealed)] + [n(rows.get((name, "c2rust_only")), ACCEPTED)]
         c2r = rows.get((name, "c2rust_only")) or {}
         if str(c2r.get("c2rust_compile")) != "True":
             vals[-1] = f"{vals[-1]}$^\\dagger$"
         calls = [n(rows.get((name, m)), "llm_calls") for m in modes[:2]]
-        total.update({"u": units, **{m: v for m, v in zip(modes[:4], vals)},
-                      "cg": calls[0], "cl": calls[1]})
+        total.update({"u": units, **dict(zip(modes[:4], new)), "cg": calls[0], "cl": calls[1]})
+        old.update(dict(zip(modes[:4], sealed)))
         body.append([name, units, *vals, f"{calls[0]} / {calls[1]}"])
         if name == ORIG[-1]:
             body.append("---")
-    body += ["---", ["Total", total["u"], *(total[m] for m in modes[:4]), 0,
+    body += ["---", ["Total", total["u"], *(cell(total[m], old[m]) for m in modes[:4]), 0,
                      f"{total['cg']} / {total['cl']}"]]
-    return table("Accepted units per configuration on the held-out libraries (first run). "
+    return table("Accepted units per configuration on the held-out libraries (first run, per-unit "
+                 "Clippy, amendment 3; sealed result in parentheses where it differs). "
                  "One-shot: given the planned signatures; plain: C sources only (amendment 2). "
                  "LLM calls: guided / one-shot. $^\\dagger$C2Rust output did not compile.",
                  "tab:v2-baselines",
@@ -121,14 +158,27 @@ def baseline_table(rows: dict) -> str:
                  body, "lrrrrrrr")
 
 
-def refusal_table(rows: dict) -> str:
-    counts = Counter()
+def refusal_table(rows: dict, a3: dict, reasons: dict) -> str:
+    # Screening decisions are unchanged by amendment 3; later outcomes come from it.
+    counts = Counter({k: reasons[k] for k in ("unresolved_pointer_ownership", "global_state")})
+    sealed_total, gained = 0, 0
     for name in ORIG + EXT:
         r = rows.get((name, "safemap_guided"))
-        if r:
-            counts.update(_failures(r))
+        if not r:
+            continue
+        failures = _failures(r)
+        counts.update({k: failures.get(k, 0) for k in ("unsafe_required", "unsupported")})
+        item = a3[(name, "safemap_guided")]
+        counts.update(UNIT_FAILURE_CATEGORY.get(s, s) for s in item["outcomes"].values() if s != "accepted")
+        sealed_total += sum(failures.values())
+        gained += item["per_unit_clippy_accepted"] - n(r, ACCEPTED)
+    # Every newly accepted unit must leave exactly one refusal behind.
+    if sum(counts.values()) != sealed_total - gained:
+        raise SystemExit(f"refusals sum to {sum(counts.values())}, expected {sealed_total - gained}")
     labels = {
-        "requires_manual_refactor": "Manual refactor (global state, I/O, allocation protocols)",
+        "unresolved_pointer_ownership": "Manual refactor: pointer ownership or aliasing unresolved",
+        "global_state": "Manual refactor: mutable global state",
+        "clippy_failed": "Clippy error in the unit or a callee",
         "type_mapping_unresolved": "No safe, testable interface for a C type",
         "unsafe_required": "Requires unsafe (raw memory, casts)",
         "unsupported": "Unsupported construct (union, function pointer, asm)",
@@ -147,19 +197,22 @@ def refusal_table(rows: dict) -> str:
         merged[labels.get(key, key.replace("_", " "))] += value
     body = [[label, value] for label, value in merged.most_common()]
     return table(r"Recorded reasons for functions not accepted by \tool (guided), all ten held-out "
-                 r"libraries (first run).",
+                 r"libraries (first run, per-unit Clippy).",
                  "tab:v2-refusals", ["Reason", "Functions"], body, "lr")
 
 
-def repeat_table(runs: list[tuple[str, dict]]) -> str:
+def repeat_table(runs: list[tuple[str, dict]], a3: dict) -> str:
     body = []
-    for label, rows in runs:
-        g = sum(n(rows.get((x, "safemap_guided")), ACCEPTED) for x in ORIG + EXT)
-        o = sum(n(rows.get((x, "llm_only")), ACCEPTED) for x in ORIG + EXT)
-        plain = sum(n(rows.get((x, "llm_plain")), ACCEPTED) for x in ORIG + EXT)
+    for i, (label, rows) in enumerate(runs, start=1):
+        cells = []
+        for mode in ("safemap_guided", "llm_only", "llm_plain"):
+            sealed = sum(n(rows.get((x, mode)), ACCEPTED) for x in ORIG + EXT)
+            new = sum(r["per_unit_clippy_accepted"] for (x, m), r in a3[i].items() if m == mode)
+            cells.append(cell(new, sealed))
         libs = sum(1 for x in ORIG + EXT if (x, "safemap_guided") in rows)
-        body.append([label, libs, g, o, plain])
-    return table("Accepted units across repeated LLM runs (identical inputs and configuration). "
+        body.append([label, libs, *cells])
+    return table("Accepted units across repeated LLM runs (identical inputs and configuration), with "
+                 "per-unit Clippy; sealed result in parentheses where it differs. "
                  "One-shot: given the planned signatures; plain: C sources only.",
                  "tab:v2-repeats", ["Run", "Libraries", "Guided", "One-shot", "Plain"], body, "lrrrr")
 
@@ -213,12 +266,14 @@ def main() -> None:
                       **plain(held / f"plain-rep{i}-orig", held / f"plain-rep{i}-ext")})
         for i in (2, 3)]
     ablation = load(held / "v2-ablation", held / "ablation-full")
+    a3 = amendment3(held)
+    reasons = json.loads((held / "amendment3/refactor_reasons.json").read_text(encoding="utf-8"))
     outputs = {
         "corpus.tex": corpus_table(first),
-        "cascade.tex": cascade_table(first),
-        "baselines.tex": baseline_table(first),
-        "refusals.tex": refusal_table(first),
-        "repeats.tex": repeat_table(repeats),
+        "cascade.tex": cascade_table(first, a3[1]),
+        "baselines.tex": baseline_table(first, a3[1]),
+        "refusals.tex": refusal_table(first, a3[1], reasons),
+        "repeats.tex": repeat_table(repeats, a3),
         "ablations.tex": ablation_table(ablation),
         "development.tex": development_table(dev),
     }

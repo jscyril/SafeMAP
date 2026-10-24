@@ -1,0 +1,2413 @@
+[
+  {
+    "stage": "v2-llm",
+    "mode": "safemap_guided",
+    "project": "src",
+    "run": "20261019T123937Z-resubmission-heldout-0c551d8c",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_12",
+      "unit_20"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_12": "accepted",
+      "unit_20": "accepted"
+    }
+  },
+  {
+    "stage": "v2-llm",
+    "mode": "llm_only",
+    "project": "src",
+    "run": "20261019T123942Z-resubmission-heldout-32f002be",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_12"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_12": "accepted",
+      "unit_20": "failed"
+    }
+  },
+  {
+    "stage": "v2-llm",
+    "mode": "safemap_guided",
+    "project": "parson",
+    "run": "20261019T123946Z-resubmission-heldout-4e4080c3",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_1",
+      "unit_6",
+      "unit_8"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_1": "accepted",
+      "unit_104": "type_mapping_unresolved",
+      "unit_105": "type_mapping_unresolved",
+      "unit_106": "type_mapping_unresolved",
+      "unit_109": "type_mapping_unresolved",
+      "unit_11": "type_mapping_unresolved",
+      "unit_110": "type_mapping_unresolved",
+      "unit_119": "type_mapping_unresolved",
+      "unit_12": "type_mapping_unresolved",
+      "unit_120": "type_mapping_unresolved",
+      "unit_13": "type_mapping_unresolved",
+      "unit_131": "type_mapping_unresolved",
+      "unit_132": "type_mapping_unresolved",
+      "unit_133": "type_mapping_unresolved",
+      "unit_134": "type_mapping_unresolved",
+      "unit_136": "type_mapping_unresolved",
+      "unit_137": "type_mapping_unresolved",
+      "unit_15": "type_mapping_unresolved",
+      "unit_19": "type_mapping_unresolved",
+      "unit_28": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_31": "type_mapping_unresolved",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "type_mapping_unresolved",
+      "unit_34": "type_mapping_unresolved",
+      "unit_35": "type_mapping_unresolved",
+      "unit_36": "type_mapping_unresolved",
+      "unit_37": "type_mapping_unresolved",
+      "unit_38": "type_mapping_unresolved",
+      "unit_39": "type_mapping_unresolved",
+      "unit_40": "type_mapping_unresolved",
+      "unit_41": "type_mapping_unresolved",
+      "unit_42": "type_mapping_unresolved",
+      "unit_43": "type_mapping_unresolved",
+      "unit_44": "type_mapping_unresolved",
+      "unit_45": "type_mapping_unresolved",
+      "unit_48": "type_mapping_unresolved",
+      "unit_54": "type_mapping_unresolved",
+      "unit_56": "type_mapping_unresolved",
+      "unit_57": "type_mapping_unresolved",
+      "unit_58": "type_mapping_unresolved",
+      "unit_59": "type_mapping_unresolved",
+      "unit_6": "accepted",
+      "unit_61": "type_mapping_unresolved",
+      "unit_62": "type_mapping_unresolved",
+      "unit_64": "type_mapping_unresolved",
+      "unit_65": "type_mapping_unresolved",
+      "unit_66": "type_mapping_unresolved",
+      "unit_67": "type_mapping_unresolved",
+      "unit_68": "type_mapping_unresolved",
+      "unit_69": "type_mapping_unresolved",
+      "unit_7": "failed",
+      "unit_70": "type_mapping_unresolved",
+      "unit_71": "type_mapping_unresolved",
+      "unit_72": "type_mapping_unresolved",
+      "unit_73": "type_mapping_unresolved",
+      "unit_74": "type_mapping_unresolved",
+      "unit_8": "accepted",
+      "unit_80": "dependency_missing",
+      "unit_81": "type_mapping_unresolved",
+      "unit_88": "type_mapping_unresolved",
+      "unit_89": "type_mapping_unresolved",
+      "unit_90": "type_mapping_unresolved",
+      "unit_91": "type_mapping_unresolved",
+      "unit_92": "type_mapping_unresolved",
+      "unit_93": "type_mapping_unresolved",
+      "unit_94": "type_mapping_unresolved",
+      "unit_95": "type_mapping_unresolved",
+      "unit_96": "type_mapping_unresolved",
+      "unit_97": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "v2-llm",
+    "mode": "llm_only",
+    "project": "parson",
+    "run": "20261019T123958Z-resubmission-heldout-3f344a1e",
+    "archived_accepted": 4,
+    "per_unit_clippy_accepted": 4,
+    "accepted_units": [
+      "unit_1",
+      "unit_6",
+      "unit_8",
+      "unit_80"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_1": "accepted",
+      "unit_6": "accepted",
+      "unit_7": "failed",
+      "unit_8": "accepted",
+      "unit_80": "accepted"
+    }
+  },
+  {
+    "stage": "v2-llm",
+    "mode": "safemap_guided",
+    "project": "sds",
+    "run": "20261019T124009Z-resubmission-heldout-ef15a6d0",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_0",
+      "unit_1"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_13": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_15": "insufficient_defined_inputs",
+      "unit_16": "insufficient_defined_inputs",
+      "unit_18": "type_mapping_unresolved",
+      "unit_2": "type_mapping_unresolved",
+      "unit_20": "type_mapping_unresolved",
+      "unit_21": "type_mapping_unresolved",
+      "unit_22": "type_mapping_unresolved",
+      "unit_23": "type_mapping_unresolved",
+      "unit_25": "dependency_missing",
+      "unit_26": "type_mapping_unresolved",
+      "unit_27": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_30": "type_mapping_unresolved",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "type_mapping_unresolved",
+      "unit_34": "dependency_missing",
+      "unit_35": "type_mapping_unresolved",
+      "unit_38": "type_mapping_unresolved",
+      "unit_39": "type_mapping_unresolved",
+      "unit_4": "type_mapping_unresolved",
+      "unit_40": "type_mapping_unresolved",
+      "unit_41": "type_mapping_unresolved",
+      "unit_42": "type_mapping_unresolved",
+      "unit_43": "type_mapping_unresolved",
+      "unit_44": "type_mapping_unresolved",
+      "unit_8": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "v2-llm",
+    "mode": "llm_only",
+    "project": "sds",
+    "run": "20261019T125829Z-resubmission-heldout-10e0c490",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "crate_validation_failed",
+      "unit_1": "crate_validation_failed",
+      "unit_15": "crate_validation_failed",
+      "unit_16": "crate_validation_failed",
+      "unit_25": "missing",
+      "unit_34": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "v2-llm",
+    "mode": "safemap_guided",
+    "project": "tinyexpr",
+    "run": "20261019T125832Z-resubmission-heldout-23dad1ee",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 21,
+    "accepted_units": [
+      "unit_0",
+      "unit_11",
+      "unit_12",
+      "unit_13",
+      "unit_14",
+      "unit_15",
+      "unit_16",
+      "unit_17",
+      "unit_18",
+      "unit_19",
+      "unit_20",
+      "unit_21",
+      "unit_22",
+      "unit_23",
+      "unit_24",
+      "unit_26",
+      "unit_27",
+      "unit_28",
+      "unit_33",
+      "unit_8",
+      "unit_9"
+    ],
+    "clippy_rejected_units": [
+      "unit_10",
+      "unit_31"
+    ],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "type_mapping_unresolved",
+      "unit_10": "clippy_failed",
+      "unit_11": "accepted",
+      "unit_12": "accepted",
+      "unit_13": "accepted",
+      "unit_14": "accepted",
+      "unit_15": "accepted",
+      "unit_16": "accepted",
+      "unit_17": "accepted",
+      "unit_18": "accepted",
+      "unit_19": "accepted",
+      "unit_20": "accepted",
+      "unit_21": "accepted",
+      "unit_22": "accepted",
+      "unit_23": "accepted",
+      "unit_24": "accepted",
+      "unit_25": "failed",
+      "unit_26": "accepted",
+      "unit_27": "accepted",
+      "unit_28": "accepted",
+      "unit_29": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_31": "clippy_failed",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "accepted",
+      "unit_34": "type_mapping_unresolved",
+      "unit_36": "type_mapping_unresolved",
+      "unit_5": "type_mapping_unresolved",
+      "unit_8": "accepted",
+      "unit_9": "accepted"
+    }
+  },
+  {
+    "stage": "v2-llm",
+    "mode": "llm_only",
+    "project": "tinyexpr",
+    "run": "20261019T125952Z-resubmission-heldout-41532633",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 16,
+    "accepted_units": [
+      "unit_0",
+      "unit_11",
+      "unit_12",
+      "unit_14",
+      "unit_15",
+      "unit_16",
+      "unit_19",
+      "unit_20",
+      "unit_21",
+      "unit_22",
+      "unit_23",
+      "unit_27",
+      "unit_28",
+      "unit_33",
+      "unit_8",
+      "unit_9"
+    ],
+    "clippy_rejected_units": [
+      "unit_10",
+      "unit_31"
+    ],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_10": "clippy_failed",
+      "unit_11": "accepted",
+      "unit_12": "accepted",
+      "unit_13": "interface_mismatch",
+      "unit_14": "accepted",
+      "unit_15": "accepted",
+      "unit_16": "accepted",
+      "unit_17": "interface_mismatch",
+      "unit_18": "interface_mismatch",
+      "unit_19": "accepted",
+      "unit_20": "accepted",
+      "unit_21": "accepted",
+      "unit_22": "accepted",
+      "unit_23": "accepted",
+      "unit_24": "interface_mismatch",
+      "unit_25": "interface_mismatch",
+      "unit_26": "interface_mismatch",
+      "unit_27": "accepted",
+      "unit_28": "accepted",
+      "unit_31": "clippy_failed",
+      "unit_33": "accepted",
+      "unit_8": "accepted",
+      "unit_9": "accepted"
+    }
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "argparse",
+    "run": "20261019T132504Z-resubmission-heldout-5f2b27e9",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "llm_only",
+    "project": "argparse",
+    "run": "20261019T132505Z-resubmission-heldout-199e7b1c",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "json-parser",
+    "run": "20261019T132524Z-resubmission-heldout-ed253928",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_2"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "accepted",
+      "unit_6": "insufficient_defined_inputs",
+      "unit_8": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "llm_only",
+    "project": "json-parser",
+    "run": "20261019T132553Z-resubmission-heldout-786ce68f",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_2"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "accepted",
+      "unit_6": "insufficient_defined_inputs"
+    }
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "printf",
+    "run": "20261019T132611Z-resubmission-heldout-4f9eba8e",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_1": "type_mapping_unresolved",
+      "unit_11": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_15": "not_planned",
+      "unit_18": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "llm_only",
+    "project": "printf",
+    "run": "20261019T132611Z-resubmission-heldout-3ef6b315",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "semver",
+    "run": "20261019T132641Z-resubmission-heldout-629c204a",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_0",
+      "unit_1",
+      "unit_7"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_15": "type_mapping_unresolved",
+      "unit_16": "type_mapping_unresolved",
+      "unit_17": "type_mapping_unresolved",
+      "unit_18": "type_mapping_unresolved",
+      "unit_20": "type_mapping_unresolved",
+      "unit_21": "type_mapping_unresolved",
+      "unit_22": "not_planned",
+      "unit_23": "type_mapping_unresolved",
+      "unit_24": "type_mapping_unresolved",
+      "unit_25": "type_mapping_unresolved",
+      "unit_3": "insufficient_defined_inputs",
+      "unit_30": "type_mapping_unresolved",
+      "unit_31": "type_mapping_unresolved",
+      "unit_7": "accepted",
+      "unit_8": "not_planned"
+    }
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "llm_only",
+    "project": "semver",
+    "run": "20261019T133350Z-resubmission-heldout-95c1e1e6",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_0",
+      "unit_1",
+      "unit_7"
+    ],
+    "clippy_rejected_units": [
+      "unit_3"
+    ],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_3": "clippy_failed",
+      "unit_7": "accepted"
+    }
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "tiny-AES-c",
+    "run": "20261019T133353Z-resubmission-heldout-053b0de5",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_3"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_3": "accepted"
+    }
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "llm_only",
+    "project": "tiny-AES-c",
+    "run": "20261019T133356Z-resubmission-heldout-3db8b772",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_3"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_3": "accepted"
+    }
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "tiny-regex-c",
+    "run": "20261019T133400Z-resubmission-heldout-c14b616b",
+    "archived_accepted": 4,
+    "per_unit_clippy_accepted": 4,
+    "accepted_units": [
+      "unit_0",
+      "unit_2",
+      "unit_3",
+      "unit_8"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "failed",
+      "unit_2": "accepted",
+      "unit_3": "accepted",
+      "unit_5": "failed",
+      "unit_8": "accepted",
+      "unit_9": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "ext/v2-llm",
+    "mode": "llm_only",
+    "project": "tiny-regex-c",
+    "run": "20261019T133414Z-resubmission-heldout-7f7944e8",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_0",
+      "unit_3"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "failed",
+      "unit_2": "failed",
+      "unit_3": "accepted",
+      "unit_5": "failed",
+      "unit_8": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "rep2-orig/v2-llm",
+    "mode": "safemap_guided",
+    "project": "src",
+    "run": "20261019T133419Z-resubmission-heldout-3ab86ad7",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_15",
+      "unit_20"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_15": "accepted",
+      "unit_20": "accepted"
+    }
+  },
+  {
+    "stage": "rep2-orig/v2-llm",
+    "mode": "llm_only",
+    "project": "src",
+    "run": "20261019T133424Z-resubmission-heldout-f26eb84c",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_15"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_15": "accepted",
+      "unit_20": "failed"
+    }
+  },
+  {
+    "stage": "rep2-orig/v2-llm",
+    "mode": "safemap_guided",
+    "project": "parson",
+    "run": "20261019T133429Z-resubmission-heldout-6fdd5688",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_1",
+      "unit_6",
+      "unit_8"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_1": "accepted",
+      "unit_104": "type_mapping_unresolved",
+      "unit_105": "type_mapping_unresolved",
+      "unit_107": "type_mapping_unresolved",
+      "unit_109": "type_mapping_unresolved",
+      "unit_11": "type_mapping_unresolved",
+      "unit_110": "type_mapping_unresolved",
+      "unit_119": "type_mapping_unresolved",
+      "unit_12": "type_mapping_unresolved",
+      "unit_120": "type_mapping_unresolved",
+      "unit_13": "type_mapping_unresolved",
+      "unit_131": "type_mapping_unresolved",
+      "unit_132": "type_mapping_unresolved",
+      "unit_133": "type_mapping_unresolved",
+      "unit_134": "type_mapping_unresolved",
+      "unit_136": "type_mapping_unresolved",
+      "unit_137": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_19": "type_mapping_unresolved",
+      "unit_28": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_31": "type_mapping_unresolved",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "type_mapping_unresolved",
+      "unit_34": "type_mapping_unresolved",
+      "unit_35": "type_mapping_unresolved",
+      "unit_36": "type_mapping_unresolved",
+      "unit_37": "type_mapping_unresolved",
+      "unit_38": "type_mapping_unresolved",
+      "unit_39": "type_mapping_unresolved",
+      "unit_40": "type_mapping_unresolved",
+      "unit_41": "type_mapping_unresolved",
+      "unit_42": "type_mapping_unresolved",
+      "unit_43": "type_mapping_unresolved",
+      "unit_44": "type_mapping_unresolved",
+      "unit_45": "type_mapping_unresolved",
+      "unit_48": "type_mapping_unresolved",
+      "unit_54": "type_mapping_unresolved",
+      "unit_56": "type_mapping_unresolved",
+      "unit_57": "type_mapping_unresolved",
+      "unit_59": "type_mapping_unresolved",
+      "unit_6": "accepted",
+      "unit_60": "type_mapping_unresolved",
+      "unit_61": "type_mapping_unresolved",
+      "unit_62": "type_mapping_unresolved",
+      "unit_64": "type_mapping_unresolved",
+      "unit_65": "type_mapping_unresolved",
+      "unit_66": "type_mapping_unresolved",
+      "unit_67": "type_mapping_unresolved",
+      "unit_68": "type_mapping_unresolved",
+      "unit_69": "type_mapping_unresolved",
+      "unit_7": "failed",
+      "unit_70": "type_mapping_unresolved",
+      "unit_71": "type_mapping_unresolved",
+      "unit_72": "type_mapping_unresolved",
+      "unit_73": "type_mapping_unresolved",
+      "unit_74": "type_mapping_unresolved",
+      "unit_78": "dependency_missing",
+      "unit_79": "type_mapping_unresolved",
+      "unit_8": "accepted",
+      "unit_88": "type_mapping_unresolved",
+      "unit_89": "type_mapping_unresolved",
+      "unit_90": "type_mapping_unresolved",
+      "unit_91": "type_mapping_unresolved",
+      "unit_92": "type_mapping_unresolved",
+      "unit_93": "type_mapping_unresolved",
+      "unit_94": "type_mapping_unresolved",
+      "unit_95": "type_mapping_unresolved",
+      "unit_96": "type_mapping_unresolved",
+      "unit_97": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep2-orig/v2-llm",
+    "mode": "llm_only",
+    "project": "parson",
+    "run": "20261019T133443Z-resubmission-heldout-fc51f575",
+    "archived_accepted": 4,
+    "per_unit_clippy_accepted": 4,
+    "accepted_units": [
+      "unit_1",
+      "unit_6",
+      "unit_78",
+      "unit_8"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_1": "accepted",
+      "unit_6": "accepted",
+      "unit_7": "failed",
+      "unit_78": "accepted",
+      "unit_8": "accepted"
+    }
+  },
+  {
+    "stage": "rep2-orig/v2-llm",
+    "mode": "safemap_guided",
+    "project": "sds",
+    "run": "20261019T133508Z-resubmission-heldout-00047ae4",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_0",
+      "unit_1"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_10": "type_mapping_unresolved",
+      "unit_12": "type_mapping_unresolved",
+      "unit_16": "type_mapping_unresolved",
+      "unit_17": "type_mapping_unresolved",
+      "unit_18": "type_mapping_unresolved",
+      "unit_2": "type_mapping_unresolved",
+      "unit_20": "type_mapping_unresolved",
+      "unit_21": "insufficient_defined_inputs",
+      "unit_22": "insufficient_defined_inputs",
+      "unit_25": "dependency_missing",
+      "unit_26": "type_mapping_unresolved",
+      "unit_27": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_30": "type_mapping_unresolved",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "type_mapping_unresolved",
+      "unit_34": "dependency_missing",
+      "unit_35": "type_mapping_unresolved",
+      "unit_38": "type_mapping_unresolved",
+      "unit_39": "type_mapping_unresolved",
+      "unit_40": "type_mapping_unresolved",
+      "unit_41": "type_mapping_unresolved",
+      "unit_42": "type_mapping_unresolved",
+      "unit_43": "type_mapping_unresolved",
+      "unit_44": "type_mapping_unresolved",
+      "unit_5": "type_mapping_unresolved",
+      "unit_6": "type_mapping_unresolved",
+      "unit_9": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep2-orig/v2-llm",
+    "mode": "llm_only",
+    "project": "sds",
+    "run": "20261019T135312Z-resubmission-heldout-16a84345",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_0",
+      "unit_1"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_21": "insufficient_defined_inputs",
+      "unit_22": "insufficient_defined_inputs",
+      "unit_25": "missing",
+      "unit_34": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "rep2-orig/v2-llm",
+    "mode": "safemap_guided",
+    "project": "tinyexpr",
+    "run": "20261019T141138Z-resubmission-heldout-a14b2a3e",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 21,
+    "accepted_units": [
+      "unit_0",
+      "unit_11",
+      "unit_12",
+      "unit_13",
+      "unit_14",
+      "unit_15",
+      "unit_16",
+      "unit_17",
+      "unit_18",
+      "unit_19",
+      "unit_20",
+      "unit_21",
+      "unit_22",
+      "unit_23",
+      "unit_24",
+      "unit_26",
+      "unit_27",
+      "unit_28",
+      "unit_33",
+      "unit_8",
+      "unit_9"
+    ],
+    "clippy_rejected_units": [
+      "unit_10",
+      "unit_31"
+    ],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_10": "clippy_failed",
+      "unit_11": "accepted",
+      "unit_12": "accepted",
+      "unit_13": "accepted",
+      "unit_14": "accepted",
+      "unit_15": "accepted",
+      "unit_16": "accepted",
+      "unit_17": "accepted",
+      "unit_18": "accepted",
+      "unit_19": "accepted",
+      "unit_2": "type_mapping_unresolved",
+      "unit_20": "accepted",
+      "unit_21": "accepted",
+      "unit_22": "accepted",
+      "unit_23": "accepted",
+      "unit_24": "accepted",
+      "unit_25": "failed",
+      "unit_26": "accepted",
+      "unit_27": "accepted",
+      "unit_28": "accepted",
+      "unit_29": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_31": "clippy_failed",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "accepted",
+      "unit_34": "type_mapping_unresolved",
+      "unit_36": "type_mapping_unresolved",
+      "unit_4": "type_mapping_unresolved",
+      "unit_8": "accepted",
+      "unit_9": "accepted"
+    }
+  },
+  {
+    "stage": "rep2-orig/v2-llm",
+    "mode": "llm_only",
+    "project": "tinyexpr",
+    "run": "20261019T141302Z-resubmission-heldout-26d2e6cd",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 16,
+    "accepted_units": [
+      "unit_0",
+      "unit_11",
+      "unit_12",
+      "unit_14",
+      "unit_15",
+      "unit_16",
+      "unit_19",
+      "unit_20",
+      "unit_21",
+      "unit_22",
+      "unit_23",
+      "unit_27",
+      "unit_28",
+      "unit_33",
+      "unit_8",
+      "unit_9"
+    ],
+    "clippy_rejected_units": [
+      "unit_10",
+      "unit_31"
+    ],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_10": "clippy_failed",
+      "unit_11": "accepted",
+      "unit_12": "accepted",
+      "unit_13": "interface_mismatch",
+      "unit_14": "accepted",
+      "unit_15": "accepted",
+      "unit_16": "accepted",
+      "unit_17": "interface_mismatch",
+      "unit_18": "interface_mismatch",
+      "unit_19": "accepted",
+      "unit_20": "accepted",
+      "unit_21": "accepted",
+      "unit_22": "accepted",
+      "unit_23": "accepted",
+      "unit_24": "interface_mismatch",
+      "unit_25": "interface_mismatch",
+      "unit_26": "interface_mismatch",
+      "unit_27": "accepted",
+      "unit_28": "accepted",
+      "unit_31": "clippy_failed",
+      "unit_33": "accepted",
+      "unit_8": "accepted",
+      "unit_9": "accepted"
+    }
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "argparse",
+    "run": "20261019T141308Z-resubmission-heldout-c46e043a",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "argparse",
+    "run": "20261019T141309Z-resubmission-heldout-57530725",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "json-parser",
+    "run": "20261019T141320Z-resubmission-heldout-29ba396d",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_2"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "accepted",
+      "unit_5": "insufficient_defined_inputs",
+      "unit_8": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "json-parser",
+    "run": "20261019T141331Z-resubmission-heldout-65dc4611",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_2"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "accepted",
+      "unit_5": "insufficient_defined_inputs"
+    }
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "printf",
+    "run": "20261019T141340Z-resubmission-heldout-0cd4f691",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_1": "type_mapping_unresolved",
+      "unit_11": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_15": "not_planned",
+      "unit_18": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "printf",
+    "run": "20261019T141341Z-resubmission-heldout-a3c002f8",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "semver",
+    "run": "20261019T141402Z-resubmission-heldout-dcf9045b",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_0",
+      "unit_1",
+      "unit_7"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_15": "type_mapping_unresolved",
+      "unit_16": "type_mapping_unresolved",
+      "unit_17": "type_mapping_unresolved",
+      "unit_18": "type_mapping_unresolved",
+      "unit_20": "type_mapping_unresolved",
+      "unit_21": "type_mapping_unresolved",
+      "unit_22": "not_planned",
+      "unit_23": "type_mapping_unresolved",
+      "unit_24": "type_mapping_unresolved",
+      "unit_25": "type_mapping_unresolved",
+      "unit_3": "insufficient_defined_inputs",
+      "unit_30": "type_mapping_unresolved",
+      "unit_31": "type_mapping_unresolved",
+      "unit_7": "accepted",
+      "unit_8": "not_planned"
+    }
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "semver",
+    "run": "20261019T142027Z-resubmission-heldout-cf505ee3",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_0",
+      "unit_1",
+      "unit_7"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_3": "insufficient_defined_inputs",
+      "unit_7": "accepted"
+    }
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "tiny-AES-c",
+    "run": "20261019T142639Z-resubmission-heldout-81756315",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_1"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_1": "accepted"
+    }
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "tiny-AES-c",
+    "run": "20261019T142641Z-resubmission-heldout-41e68700",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_1"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_1": "accepted"
+    }
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "tiny-regex-c",
+    "run": "20261019T142649Z-resubmission-heldout-5e67476f",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_0",
+      "unit_3",
+      "unit_8"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "failed",
+      "unit_2": "failed",
+      "unit_3": "accepted",
+      "unit_4": "failed",
+      "unit_8": "accepted",
+      "unit_9": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep2-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "tiny-regex-c",
+    "run": "20261019T142706Z-resubmission-heldout-942ba9da",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_0",
+      "unit_3",
+      "unit_8"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "failed",
+      "unit_2": "failed",
+      "unit_3": "accepted",
+      "unit_4": "failed",
+      "unit_8": "accepted"
+    }
+  },
+  {
+    "stage": "rep3-orig/v2-llm",
+    "mode": "safemap_guided",
+    "project": "src",
+    "run": "20261019T142716Z-resubmission-heldout-79ee3a75",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_14",
+      "unit_20"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_14": "accepted",
+      "unit_20": "accepted"
+    }
+  },
+  {
+    "stage": "rep3-orig/v2-llm",
+    "mode": "llm_only",
+    "project": "src",
+    "run": "20261019T142720Z-resubmission-heldout-666d4694",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_14",
+      "unit_20"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_14": "accepted",
+      "unit_20": "accepted"
+    }
+  },
+  {
+    "stage": "rep3-orig/v2-llm",
+    "mode": "safemap_guided",
+    "project": "parson",
+    "run": "20261019T142725Z-resubmission-heldout-52f8bcc4",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_1",
+      "unit_6",
+      "unit_8"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_1": "accepted",
+      "unit_106": "type_mapping_unresolved",
+      "unit_107": "type_mapping_unresolved",
+      "unit_108": "type_mapping_unresolved",
+      "unit_11": "type_mapping_unresolved",
+      "unit_110": "type_mapping_unresolved",
+      "unit_111": "type_mapping_unresolved",
+      "unit_119": "type_mapping_unresolved",
+      "unit_12": "type_mapping_unresolved",
+      "unit_120": "type_mapping_unresolved",
+      "unit_13": "type_mapping_unresolved",
+      "unit_131": "type_mapping_unresolved",
+      "unit_132": "type_mapping_unresolved",
+      "unit_133": "type_mapping_unresolved",
+      "unit_134": "type_mapping_unresolved",
+      "unit_136": "type_mapping_unresolved",
+      "unit_137": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_17": "type_mapping_unresolved",
+      "unit_28": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_31": "type_mapping_unresolved",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "type_mapping_unresolved",
+      "unit_34": "type_mapping_unresolved",
+      "unit_35": "type_mapping_unresolved",
+      "unit_36": "type_mapping_unresolved",
+      "unit_37": "type_mapping_unresolved",
+      "unit_38": "type_mapping_unresolved",
+      "unit_39": "type_mapping_unresolved",
+      "unit_40": "type_mapping_unresolved",
+      "unit_41": "type_mapping_unresolved",
+      "unit_42": "type_mapping_unresolved",
+      "unit_43": "type_mapping_unresolved",
+      "unit_44": "type_mapping_unresolved",
+      "unit_45": "type_mapping_unresolved",
+      "unit_48": "type_mapping_unresolved",
+      "unit_54": "type_mapping_unresolved",
+      "unit_56": "type_mapping_unresolved",
+      "unit_57": "type_mapping_unresolved",
+      "unit_59": "type_mapping_unresolved",
+      "unit_6": "accepted",
+      "unit_60": "type_mapping_unresolved",
+      "unit_61": "type_mapping_unresolved",
+      "unit_62": "type_mapping_unresolved",
+      "unit_64": "type_mapping_unresolved",
+      "unit_65": "type_mapping_unresolved",
+      "unit_66": "type_mapping_unresolved",
+      "unit_67": "type_mapping_unresolved",
+      "unit_68": "type_mapping_unresolved",
+      "unit_69": "type_mapping_unresolved",
+      "unit_7": "failed",
+      "unit_70": "type_mapping_unresolved",
+      "unit_71": "type_mapping_unresolved",
+      "unit_72": "type_mapping_unresolved",
+      "unit_73": "type_mapping_unresolved",
+      "unit_74": "type_mapping_unresolved",
+      "unit_8": "accepted",
+      "unit_80": "dependency_missing",
+      "unit_81": "type_mapping_unresolved",
+      "unit_88": "type_mapping_unresolved",
+      "unit_89": "type_mapping_unresolved",
+      "unit_90": "type_mapping_unresolved",
+      "unit_91": "type_mapping_unresolved",
+      "unit_92": "type_mapping_unresolved",
+      "unit_93": "type_mapping_unresolved",
+      "unit_94": "type_mapping_unresolved",
+      "unit_95": "type_mapping_unresolved",
+      "unit_96": "type_mapping_unresolved",
+      "unit_97": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep3-orig/v2-llm",
+    "mode": "llm_only",
+    "project": "parson",
+    "run": "20261019T142743Z-resubmission-heldout-e745bf9a",
+    "archived_accepted": 4,
+    "per_unit_clippy_accepted": 4,
+    "accepted_units": [
+      "unit_1",
+      "unit_6",
+      "unit_8",
+      "unit_80"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_1": "accepted",
+      "unit_6": "accepted",
+      "unit_7": "failed",
+      "unit_8": "accepted",
+      "unit_80": "accepted"
+    }
+  },
+  {
+    "stage": "rep3-orig/v2-llm",
+    "mode": "safemap_guided",
+    "project": "sds",
+    "run": "20261019T142754Z-resubmission-heldout-57c53499",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_0",
+      "unit_1"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_11": "type_mapping_unresolved",
+      "unit_12": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_15": "type_mapping_unresolved",
+      "unit_16": "insufficient_defined_inputs",
+      "unit_17": "insufficient_defined_inputs",
+      "unit_19": "type_mapping_unresolved",
+      "unit_2": "type_mapping_unresolved",
+      "unit_21": "type_mapping_unresolved",
+      "unit_23": "type_mapping_unresolved",
+      "unit_25": "dependency_missing",
+      "unit_26": "type_mapping_unresolved",
+      "unit_27": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_30": "type_mapping_unresolved",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "type_mapping_unresolved",
+      "unit_34": "dependency_missing",
+      "unit_35": "type_mapping_unresolved",
+      "unit_38": "type_mapping_unresolved",
+      "unit_39": "type_mapping_unresolved",
+      "unit_40": "type_mapping_unresolved",
+      "unit_41": "type_mapping_unresolved",
+      "unit_42": "type_mapping_unresolved",
+      "unit_43": "type_mapping_unresolved",
+      "unit_44": "type_mapping_unresolved",
+      "unit_5": "type_mapping_unresolved",
+      "unit_9": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep3-orig/v2-llm",
+    "mode": "llm_only",
+    "project": "sds",
+    "run": "20261019T144636Z-resubmission-heldout-1e694adf",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_0",
+      "unit_1"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_16": "insufficient_defined_inputs",
+      "unit_17": "insufficient_defined_inputs",
+      "unit_25": "missing",
+      "unit_34": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "rep3-orig/v2-llm",
+    "mode": "safemap_guided",
+    "project": "tinyexpr",
+    "run": "20261019T150457Z-resubmission-heldout-e8f7ee45",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 21,
+    "accepted_units": [
+      "unit_0",
+      "unit_11",
+      "unit_12",
+      "unit_13",
+      "unit_14",
+      "unit_15",
+      "unit_16",
+      "unit_17",
+      "unit_18",
+      "unit_19",
+      "unit_20",
+      "unit_21",
+      "unit_22",
+      "unit_23",
+      "unit_24",
+      "unit_26",
+      "unit_27",
+      "unit_28",
+      "unit_33",
+      "unit_8",
+      "unit_9"
+    ],
+    "clippy_rejected_units": [
+      "unit_10",
+      "unit_31"
+    ],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "type_mapping_unresolved",
+      "unit_10": "clippy_failed",
+      "unit_11": "accepted",
+      "unit_12": "accepted",
+      "unit_13": "accepted",
+      "unit_14": "accepted",
+      "unit_15": "accepted",
+      "unit_16": "accepted",
+      "unit_17": "accepted",
+      "unit_18": "accepted",
+      "unit_19": "accepted",
+      "unit_20": "accepted",
+      "unit_21": "accepted",
+      "unit_22": "accepted",
+      "unit_23": "accepted",
+      "unit_24": "accepted",
+      "unit_25": "failed",
+      "unit_26": "accepted",
+      "unit_27": "accepted",
+      "unit_28": "accepted",
+      "unit_29": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_31": "clippy_failed",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "accepted",
+      "unit_34": "type_mapping_unresolved",
+      "unit_36": "type_mapping_unresolved",
+      "unit_6": "type_mapping_unresolved",
+      "unit_8": "accepted",
+      "unit_9": "accepted"
+    }
+  },
+  {
+    "stage": "rep3-orig/v2-llm",
+    "mode": "llm_only",
+    "project": "tinyexpr",
+    "run": "20261019T150843Z-resubmission-heldout-78b474e7",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 16,
+    "accepted_units": [
+      "unit_0",
+      "unit_11",
+      "unit_12",
+      "unit_14",
+      "unit_15",
+      "unit_16",
+      "unit_19",
+      "unit_20",
+      "unit_21",
+      "unit_22",
+      "unit_23",
+      "unit_27",
+      "unit_28",
+      "unit_33",
+      "unit_8",
+      "unit_9"
+    ],
+    "clippy_rejected_units": [
+      "unit_10",
+      "unit_31"
+    ],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_10": "clippy_failed",
+      "unit_11": "accepted",
+      "unit_12": "accepted",
+      "unit_13": "interface_mismatch",
+      "unit_14": "accepted",
+      "unit_15": "accepted",
+      "unit_16": "accepted",
+      "unit_17": "interface_mismatch",
+      "unit_18": "interface_mismatch",
+      "unit_19": "accepted",
+      "unit_20": "accepted",
+      "unit_21": "accepted",
+      "unit_22": "accepted",
+      "unit_23": "accepted",
+      "unit_24": "interface_mismatch",
+      "unit_25": "interface_mismatch",
+      "unit_26": "interface_mismatch",
+      "unit_27": "accepted",
+      "unit_28": "accepted",
+      "unit_31": "clippy_failed",
+      "unit_33": "accepted",
+      "unit_8": "accepted",
+      "unit_9": "accepted"
+    }
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "argparse",
+    "run": "20261019T150849Z-resubmission-heldout-79b64465",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "argparse",
+    "run": "20261019T150850Z-resubmission-heldout-c2bc88e6",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "json-parser",
+    "run": "20261019T150902Z-resubmission-heldout-8bb7019e",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_2"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "accepted",
+      "unit_6": "insufficient_defined_inputs",
+      "unit_8": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "json-parser",
+    "run": "20261019T150913Z-resubmission-heldout-1ab6bfb1",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "crate_validation_failed",
+      "unit_6": "crate_validation_failed"
+    }
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "printf",
+    "run": "20261019T150916Z-resubmission-heldout-f1f56354",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_1": "type_mapping_unresolved",
+      "unit_11": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_15": "not_planned",
+      "unit_18": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "printf",
+    "run": "20261019T150917Z-resubmission-heldout-b54622cc",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "semver",
+    "run": "20261019T150938Z-resubmission-heldout-bf3eb08e",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_0",
+      "unit_1",
+      "unit_7"
+    ],
+    "clippy_rejected_units": [
+      "unit_3"
+    ],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_15": "type_mapping_unresolved",
+      "unit_16": "type_mapping_unresolved",
+      "unit_17": "type_mapping_unresolved",
+      "unit_18": "type_mapping_unresolved",
+      "unit_20": "type_mapping_unresolved",
+      "unit_21": "type_mapping_unresolved",
+      "unit_22": "not_planned",
+      "unit_23": "type_mapping_unresolved",
+      "unit_24": "type_mapping_unresolved",
+      "unit_25": "type_mapping_unresolved",
+      "unit_3": "clippy_failed",
+      "unit_30": "type_mapping_unresolved",
+      "unit_31": "type_mapping_unresolved",
+      "unit_7": "accepted",
+      "unit_8": "not_planned"
+    }
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "semver",
+    "run": "20261019T151000Z-resubmission-heldout-eaa4633c",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_0",
+      "unit_1",
+      "unit_7"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "accepted",
+      "unit_3": "insufficient_defined_inputs",
+      "unit_7": "accepted"
+    }
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "tiny-AES-c",
+    "run": "20261019T151640Z-resubmission-heldout-c11f5cf8",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_3"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_3": "accepted"
+    }
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "tiny-AES-c",
+    "run": "20261019T151647Z-resubmission-heldout-be3ebfaa",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_3"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_3": "accepted"
+    }
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "safemap_guided",
+    "project": "tiny-regex-c",
+    "run": "20261019T151651Z-resubmission-heldout-6eea52d0",
+    "archived_accepted": 3,
+    "per_unit_clippy_accepted": 3,
+    "accepted_units": [
+      "unit_0",
+      "unit_3",
+      "unit_8"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "failed",
+      "unit_2": "failed",
+      "unit_3": "accepted",
+      "unit_4": "failed",
+      "unit_8": "accepted",
+      "unit_9": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "rep3-ext/v2-llm",
+    "mode": "llm_only",
+    "project": "tiny-regex-c",
+    "run": "20261019T151714Z-resubmission-heldout-340d1ffe",
+    "archived_accepted": 2,
+    "per_unit_clippy_accepted": 2,
+    "accepted_units": [
+      "unit_0",
+      "unit_3"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "failed",
+      "unit_2": "failed",
+      "unit_3": "accepted",
+      "unit_4": "failed",
+      "unit_8": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "src",
+    "run": "20261019T123923Z-resubmission-heldout-f052ba52",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_14"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_14": "accepted",
+      "unit_20": "no_candidate"
+    }
+  },
+  {
+    "stage": "v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "parson",
+    "run": "20261019T123927Z-resubmission-heldout-13ca7e25",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "no_candidate",
+      "unit_106": "type_mapping_unresolved",
+      "unit_107": "type_mapping_unresolved",
+      "unit_108": "type_mapping_unresolved",
+      "unit_11": "type_mapping_unresolved",
+      "unit_110": "type_mapping_unresolved",
+      "unit_111": "type_mapping_unresolved",
+      "unit_119": "type_mapping_unresolved",
+      "unit_12": "type_mapping_unresolved",
+      "unit_120": "type_mapping_unresolved",
+      "unit_13": "type_mapping_unresolved",
+      "unit_131": "type_mapping_unresolved",
+      "unit_132": "type_mapping_unresolved",
+      "unit_133": "type_mapping_unresolved",
+      "unit_134": "type_mapping_unresolved",
+      "unit_136": "type_mapping_unresolved",
+      "unit_137": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_19": "type_mapping_unresolved",
+      "unit_2": "type_mapping_unresolved",
+      "unit_28": "type_mapping_unresolved",
+      "unit_31": "type_mapping_unresolved",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "type_mapping_unresolved",
+      "unit_34": "type_mapping_unresolved",
+      "unit_35": "type_mapping_unresolved",
+      "unit_36": "type_mapping_unresolved",
+      "unit_37": "type_mapping_unresolved",
+      "unit_38": "type_mapping_unresolved",
+      "unit_39": "type_mapping_unresolved",
+      "unit_4": "type_mapping_unresolved",
+      "unit_40": "type_mapping_unresolved",
+      "unit_41": "type_mapping_unresolved",
+      "unit_42": "type_mapping_unresolved",
+      "unit_43": "type_mapping_unresolved",
+      "unit_44": "type_mapping_unresolved",
+      "unit_45": "type_mapping_unresolved",
+      "unit_48": "type_mapping_unresolved",
+      "unit_54": "type_mapping_unresolved",
+      "unit_56": "type_mapping_unresolved",
+      "unit_57": "type_mapping_unresolved",
+      "unit_58": "type_mapping_unresolved",
+      "unit_6": "no_candidate",
+      "unit_60": "type_mapping_unresolved",
+      "unit_61": "type_mapping_unresolved",
+      "unit_62": "type_mapping_unresolved",
+      "unit_64": "type_mapping_unresolved",
+      "unit_65": "type_mapping_unresolved",
+      "unit_66": "type_mapping_unresolved",
+      "unit_67": "type_mapping_unresolved",
+      "unit_68": "type_mapping_unresolved",
+      "unit_69": "type_mapping_unresolved",
+      "unit_7": "no_candidate",
+      "unit_70": "type_mapping_unresolved",
+      "unit_71": "type_mapping_unresolved",
+      "unit_72": "type_mapping_unresolved",
+      "unit_73": "type_mapping_unresolved",
+      "unit_74": "type_mapping_unresolved",
+      "unit_8": "no_candidate",
+      "unit_80": "dependency_missing",
+      "unit_81": "type_mapping_unresolved",
+      "unit_88": "type_mapping_unresolved",
+      "unit_89": "type_mapping_unresolved",
+      "unit_90": "type_mapping_unresolved",
+      "unit_91": "type_mapping_unresolved",
+      "unit_92": "type_mapping_unresolved",
+      "unit_93": "type_mapping_unresolved",
+      "unit_94": "type_mapping_unresolved",
+      "unit_95": "type_mapping_unresolved",
+      "unit_96": "type_mapping_unresolved",
+      "unit_97": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "sds",
+    "run": "20261019T123931Z-resubmission-heldout-c7e4a1cb",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "no_candidate",
+      "unit_1": "no_candidate",
+      "unit_11": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_16": "type_mapping_unresolved",
+      "unit_17": "type_mapping_unresolved",
+      "unit_18": "type_mapping_unresolved",
+      "unit_19": "type_mapping_unresolved",
+      "unit_2": "type_mapping_unresolved",
+      "unit_22": "type_mapping_unresolved",
+      "unit_23": "type_mapping_unresolved",
+      "unit_25": "dependency_missing",
+      "unit_26": "type_mapping_unresolved",
+      "unit_27": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_30": "type_mapping_unresolved",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "type_mapping_unresolved",
+      "unit_34": "dependency_missing",
+      "unit_35": "type_mapping_unresolved",
+      "unit_38": "type_mapping_unresolved",
+      "unit_39": "type_mapping_unresolved",
+      "unit_40": "type_mapping_unresolved",
+      "unit_41": "type_mapping_unresolved",
+      "unit_42": "type_mapping_unresolved",
+      "unit_43": "type_mapping_unresolved",
+      "unit_44": "type_mapping_unresolved",
+      "unit_5": "compile_failed",
+      "unit_6": "compile_failed",
+      "unit_8": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "tinyexpr",
+    "run": "20261019T123934Z-resubmission-heldout-36c3e02c",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 5,
+    "accepted_units": [
+      "unit_0",
+      "unit_22",
+      "unit_24",
+      "unit_33",
+      "unit_9"
+    ],
+    "clippy_rejected_units": [
+      "unit_10",
+      "unit_31"
+    ],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "type_mapping_unresolved",
+      "unit_10": "clippy_failed",
+      "unit_11": "no_candidate",
+      "unit_12": "no_candidate",
+      "unit_13": "no_candidate",
+      "unit_14": "no_candidate",
+      "unit_15": "no_candidate",
+      "unit_16": "no_candidate",
+      "unit_17": "no_candidate",
+      "unit_18": "no_candidate",
+      "unit_19": "no_candidate",
+      "unit_20": "no_candidate",
+      "unit_21": "no_candidate",
+      "unit_22": "accepted",
+      "unit_23": "dependency_missing",
+      "unit_24": "accepted",
+      "unit_25": "no_candidate",
+      "unit_26": "no_candidate",
+      "unit_27": "no_candidate",
+      "unit_28": "dependency_missing",
+      "unit_29": "type_mapping_unresolved",
+      "unit_3": "type_mapping_unresolved",
+      "unit_31": "clippy_failed",
+      "unit_32": "type_mapping_unresolved",
+      "unit_33": "accepted",
+      "unit_34": "type_mapping_unresolved",
+      "unit_36": "type_mapping_unresolved",
+      "unit_5": "type_mapping_unresolved",
+      "unit_8": "no_candidate",
+      "unit_9": "accepted"
+    }
+  },
+  {
+    "stage": "ext/v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "argparse",
+    "run": "20261019T132447Z-resubmission-heldout-e664c9af",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "ext/v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "json-parser",
+    "run": "20261019T132450Z-resubmission-heldout-aaceb7c9",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "no_candidate",
+      "unit_5": "no_candidate",
+      "unit_8": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "ext/v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "printf",
+    "run": "20261019T132453Z-resubmission-heldout-88f34ea0",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "type_mapping_unresolved",
+      "unit_1": "type_mapping_unresolved",
+      "unit_11": "type_mapping_unresolved",
+      "unit_14": "type_mapping_unresolved",
+      "unit_15": "not_planned",
+      "unit_18": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "ext/v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "semver",
+    "run": "20261019T132456Z-resubmission-heldout-db72197f",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "no_candidate",
+      "unit_1": "no_candidate",
+      "unit_15": "type_mapping_unresolved",
+      "unit_16": "type_mapping_unresolved",
+      "unit_17": "type_mapping_unresolved",
+      "unit_18": "type_mapping_unresolved",
+      "unit_20": "type_mapping_unresolved",
+      "unit_21": "type_mapping_unresolved",
+      "unit_22": "not_planned",
+      "unit_23": "type_mapping_unresolved",
+      "unit_24": "type_mapping_unresolved",
+      "unit_25": "type_mapping_unresolved",
+      "unit_3": "no_candidate",
+      "unit_30": "type_mapping_unresolved",
+      "unit_31": "type_mapping_unresolved",
+      "unit_7": "no_candidate",
+      "unit_8": "not_planned"
+    }
+  },
+  {
+    "stage": "ext/v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "tiny-AES-c",
+    "run": "20261019T132459Z-resubmission-heldout-72c5bf90",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_3": "no_candidate"
+    }
+  },
+  {
+    "stage": "ext/v2-non-llm",
+    "mode": "safemap_deterministic",
+    "project": "tiny-regex-c",
+    "run": "20261019T132501Z-resubmission-heldout-2138e0ac",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "no_candidate",
+      "unit_1": "no_candidate",
+      "unit_2": "no_candidate",
+      "unit_3": "dependency_missing",
+      "unit_4": "no_candidate",
+      "unit_8": "no_candidate",
+      "unit_9": "type_mapping_unresolved"
+    }
+  },
+  {
+    "stage": "plain-orig",
+    "mode": "llm_only",
+    "project": "src",
+    "run": "20261019T183903Z-resubmission-heldout-0ee69127",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "plain-orig",
+    "mode": "llm_only",
+    "project": "parson",
+    "run": "20261019T183914Z-resubmission-heldout-941f5b1a",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "plain-orig",
+    "mode": "llm_only",
+    "project": "sds",
+    "run": "20261019T183945Z-resubmission-heldout-7019b8a7",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "missing",
+      "unit_1": "missing",
+      "unit_14": "missing",
+      "unit_15": "missing",
+      "unit_25": "interface_mismatch",
+      "unit_34": "missing"
+    }
+  },
+  {
+    "stage": "plain-orig",
+    "mode": "llm_only",
+    "project": "tinyexpr",
+    "run": "20261019T183956Z-resubmission-heldout-6debbf92",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "missing",
+      "unit_10": "crate_validation_failed",
+      "unit_11": "missing",
+      "unit_12": "crate_validation_failed",
+      "unit_13": "interface_mismatch",
+      "unit_14": "missing",
+      "unit_15": "missing",
+      "unit_16": "missing",
+      "unit_17": "missing",
+      "unit_18": "missing",
+      "unit_19": "missing",
+      "unit_20": "missing",
+      "unit_21": "missing",
+      "unit_22": "missing",
+      "unit_23": "crate_validation_failed",
+      "unit_24": "missing",
+      "unit_25": "missing",
+      "unit_26": "missing",
+      "unit_27": "missing",
+      "unit_28": "crate_validation_failed",
+      "unit_31": "crate_validation_failed",
+      "unit_33": "missing",
+      "unit_8": "missing",
+      "unit_9": "missing"
+    }
+  },
+  {
+    "stage": "plain-ext",
+    "mode": "llm_only",
+    "project": "argparse",
+    "run": "20261019T184018Z-resubmission-heldout-6bec0bab",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "plain-ext",
+    "mode": "llm_only",
+    "project": "json-parser",
+    "run": "20261019T184030Z-resubmission-heldout-f3e18c89",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "interface_mismatch",
+      "unit_4": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "plain-ext",
+    "mode": "llm_only",
+    "project": "printf",
+    "run": "20261019T184045Z-resubmission-heldout-707e000b",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "plain-ext",
+    "mode": "llm_only",
+    "project": "semver",
+    "run": "20261019T184105Z-resubmission-heldout-ef2c3f16",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_0"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "interface_mismatch",
+      "unit_3": "interface_mismatch",
+      "unit_7": "missing"
+    }
+  },
+  {
+    "stage": "plain-ext",
+    "mode": "llm_only",
+    "project": "tiny-AES-c",
+    "run": "20261019T184117Z-resubmission-heldout-b2004e1b",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "crate_validation_failed"
+    }
+  },
+  {
+    "stage": "plain-ext",
+    "mode": "llm_only",
+    "project": "tiny-regex-c",
+    "run": "20261019T184132Z-resubmission-heldout-c92206f1",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "interface_mismatch",
+      "unit_1": "interface_mismatch",
+      "unit_2": "interface_mismatch",
+      "unit_3": "interface_mismatch",
+      "unit_5": "interface_mismatch",
+      "unit_8": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "plain-rep2-orig",
+    "mode": "llm_only",
+    "project": "src",
+    "run": "20261021T154631Z-resubmission-heldout-545fb2f2",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_11": "crate_validation_failed",
+      "unit_20": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "plain-rep2-orig",
+    "mode": "llm_only",
+    "project": "parson",
+    "run": "20261021T154650Z-resubmission-heldout-f82b718e",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_1": "missing",
+      "unit_6": "missing",
+      "unit_7": "missing",
+      "unit_8": "missing",
+      "unit_80": "missing"
+    }
+  },
+  {
+    "stage": "plain-rep2-orig",
+    "mode": "llm_only",
+    "project": "sds",
+    "run": "20261021T154733Z-resubmission-heldout-4e40b0c4",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "missing",
+      "unit_1": "missing",
+      "unit_18": "missing",
+      "unit_19": "missing",
+      "unit_25": "interface_mismatch",
+      "unit_34": "missing"
+    }
+  },
+  {
+    "stage": "plain-rep2-orig",
+    "mode": "llm_only",
+    "project": "tinyexpr",
+    "run": "20261021T154739Z-resubmission-heldout-f3eeeb59",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "crate_validation_failed",
+      "unit_10": "missing",
+      "unit_11": "crate_validation_failed",
+      "unit_12": "crate_validation_failed",
+      "unit_13": "interface_mismatch",
+      "unit_14": "crate_validation_failed",
+      "unit_15": "crate_validation_failed",
+      "unit_16": "crate_validation_failed",
+      "unit_17": "crate_validation_failed",
+      "unit_18": "crate_validation_failed",
+      "unit_19": "crate_validation_failed",
+      "unit_20": "crate_validation_failed",
+      "unit_21": "crate_validation_failed",
+      "unit_22": "crate_validation_failed",
+      "unit_23": "crate_validation_failed",
+      "unit_24": "crate_validation_failed",
+      "unit_25": "crate_validation_failed",
+      "unit_26": "crate_validation_failed",
+      "unit_27": "crate_validation_failed",
+      "unit_28": "crate_validation_failed",
+      "unit_31": "missing",
+      "unit_33": "crate_validation_failed",
+      "unit_8": "interface_mismatch",
+      "unit_9": "crate_validation_failed"
+    }
+  },
+  {
+    "stage": "plain-rep2-ext",
+    "mode": "llm_only",
+    "project": "argparse",
+    "run": "20261021T154807Z-resubmission-heldout-c1710f15",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "plain-rep2-ext",
+    "mode": "llm_only",
+    "project": "json-parser",
+    "run": "20261021T154822Z-resubmission-heldout-b50fbe96",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "interface_mismatch",
+      "unit_6": "missing"
+    }
+  },
+  {
+    "stage": "plain-rep2-ext",
+    "mode": "llm_only",
+    "project": "printf",
+    "run": "20261021T154841Z-resubmission-heldout-6f4cc4f6",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "plain-rep2-ext",
+    "mode": "llm_only",
+    "project": "semver",
+    "run": "20261021T154903Z-resubmission-heldout-a7ceb60e",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "crate_validation_failed",
+      "unit_1": "interface_mismatch",
+      "unit_3": "interface_mismatch",
+      "unit_7": "crate_validation_failed"
+    }
+  },
+  {
+    "stage": "plain-rep2-ext",
+    "mode": "llm_only",
+    "project": "tiny-AES-c",
+    "run": "20261021T154912Z-resubmission-heldout-a94ced30",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_0"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted"
+    }
+  },
+  {
+    "stage": "plain-rep2-ext",
+    "mode": "llm_only",
+    "project": "tiny-regex-c",
+    "run": "20261021T155102Z-resubmission-heldout-3c071913",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "interface_mismatch",
+      "unit_1": "interface_mismatch",
+      "unit_2": "interface_mismatch",
+      "unit_3": "interface_mismatch",
+      "unit_5": "interface_mismatch",
+      "unit_8": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "plain-rep3-orig",
+    "mode": "llm_only",
+    "project": "src",
+    "run": "20261021T155115Z-resubmission-heldout-88e87af7",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_15": "crate_validation_failed",
+      "unit_20": "interface_mismatch"
+    }
+  },
+  {
+    "stage": "plain-rep3-orig",
+    "mode": "llm_only",
+    "project": "parson",
+    "run": "20261021T155131Z-resubmission-heldout-81ea58a2",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_1": "missing",
+      "unit_6": "missing",
+      "unit_7": "missing",
+      "unit_8": "missing",
+      "unit_80": "missing"
+    }
+  },
+  {
+    "stage": "plain-rep3-orig",
+    "mode": "llm_only",
+    "project": "sds",
+    "run": "20261021T155200Z-resubmission-heldout-fb5c16d2",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "missing",
+      "unit_1": "missing",
+      "unit_15": "interface_mismatch",
+      "unit_16": "interface_mismatch",
+      "unit_25": "interface_mismatch",
+      "unit_34": "missing"
+    }
+  },
+  {
+    "stage": "plain-rep3-orig",
+    "mode": "llm_only",
+    "project": "tinyexpr",
+    "run": "20261021T155209Z-resubmission-heldout-b5d1703d",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "plain-rep3-ext",
+    "mode": "llm_only",
+    "project": "argparse",
+    "run": "20261021T155234Z-resubmission-heldout-9d9b4d34",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "plain-rep3-ext",
+    "mode": "llm_only",
+    "project": "json-parser",
+    "run": "20261021T155247Z-resubmission-heldout-638152b9",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_2": "missing",
+      "unit_6": "missing"
+    }
+  },
+  {
+    "stage": "plain-rep3-ext",
+    "mode": "llm_only",
+    "project": "printf",
+    "run": "20261021T155302Z-resubmission-heldout-b0151549",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {}
+  },
+  {
+    "stage": "plain-rep3-ext",
+    "mode": "llm_only",
+    "project": "semver",
+    "run": "20261021T155329Z-resubmission-heldout-9683e71f",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_0"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "accepted",
+      "unit_1": "interface_mismatch",
+      "unit_3": "interface_mismatch",
+      "unit_7": "missing"
+    }
+  },
+  {
+    "stage": "plain-rep3-ext",
+    "mode": "llm_only",
+    "project": "tiny-AES-c",
+    "run": "20261021T155346Z-resubmission-heldout-f78f6e15",
+    "archived_accepted": 1,
+    "per_unit_clippy_accepted": 1,
+    "accepted_units": [
+      "unit_3"
+    ],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_3": "accepted"
+    }
+  },
+  {
+    "stage": "plain-rep3-ext",
+    "mode": "llm_only",
+    "project": "tiny-regex-c",
+    "run": "20261021T155442Z-resubmission-heldout-3633e14e",
+    "archived_accepted": 0,
+    "per_unit_clippy_accepted": 0,
+    "accepted_units": [],
+    "clippy_rejected_units": [],
+    "outcomes": {
+      "unit_0": "interface_mismatch",
+      "unit_1": "interface_mismatch",
+      "unit_2": "interface_mismatch",
+      "unit_3": "interface_mismatch",
+      "unit_4": "interface_mismatch",
+      "unit_8": "interface_mismatch"
+    }
+  }
+]

@@ -35,6 +35,7 @@ from .translation.unit_synthesis import render_struct_prelude, synthesize_units
 from .validation.unit_harness import validate_units
 from .repair.compiler_repair import repair_function
 from .validation.validator import validate_project
+from .validation.clippy_runner import clippy_error_lines, function_spans
 from .validation.differential_tester import (
     build_and_compare_projects,
     validate_c_oracle_sanitizers,
@@ -455,7 +456,48 @@ UNIT_FAILURE_CATEGORY = {
     "crate_validation_failed": "validation_failed",
     "missing": "missing_from_output",
     "interface_mismatch": "interface_mismatch",
+    "clippy_failed": "clippy_failed",
 }
+
+
+def _clippy_decision(
+    validation,
+    root: Path,
+    config: SafeMapConfig,
+    unit_functions: dict[str, set[str]],
+    dependencies: dict[str, list[str]],
+) -> tuple[bool, set[str]]:
+    """(crate passes Clippy, units rejected by it).
+
+    With per-unit Clippy, an error inside a unit's function rejects that unit
+    and every unit that calls it; an error anywhere else still fails the crate.
+    """
+    if validation.clippy.status in {"passed", "skipped"}:
+        return True, set()
+    if not config.validation.per_unit_clippy:
+        return False, set()
+    locations = clippy_error_lines(validation.clippy)
+    if not locations:
+        return False, set()
+    owner = {name.removeprefix("r#"): unit_id for unit_id, names in unit_functions.items() for name in names}
+    spans: dict[str, list[tuple[str, int, int]]] = {}
+    rejected = set()
+    for file, line in locations:
+        path = root / file
+        if not path.is_file():
+            return False, set()
+        if file not in spans:
+            spans[file] = function_spans(path.read_text(encoding="utf-8", errors="replace"))
+        name = next((name for name, first, last in spans[file] if first <= line <= last), None)
+        if name not in owner:
+            return False, set()
+        rejected.add(owner[name])
+    changed = True
+    while changed:
+        callers = {unit_id for unit_id, deps in dependencies.items() if rejected & set(deps)}
+        changed = not callers <= rejected
+        rejected |= callers
+    return True, rejected
 
 
 def _unit_engine(
@@ -486,6 +528,25 @@ def _unit_engine(
         guided=config.translation.prompt_guidance,
     )
     store.write_json("synthesis/summary.json", [item.to_dict() for item in outcomes])
+    return _score_unit_crate(
+        project, analysis, units, plans, eligibility, store, config,
+        baseline_metrics, final_root, outcomes,
+    )
+
+
+def _score_unit_crate(
+    project: ProjectInfo,
+    analysis: CAnalysis,
+    units: list[TranslationUnit],
+    plans: list[MigrationPlan],
+    eligibility,
+    store: ArtifactStore,
+    config: SafeMapConfig,
+    baseline_metrics,
+    final_root: Path,
+    outcomes,
+) -> RunMetrics:
+    """Validate the synthesized crate and decide acceptance per unit."""
     metrics = RunMetrics(
         project=project.project_name,
         baseline=baseline_metrics,
@@ -525,18 +586,24 @@ def _unit_engine(
     metrics.safemap = analyze_rust_path(final_root)
     metrics.residual_unsafe = classify_residual_unsafe(final_root)
     metrics.safemap_compile = validation.compile.status == "passed"
+    clippy_ok, lint_rejected = _clippy_decision(
+        validation, final_root, config,
+        {unit.unit_id: {unit.rust_function, unit.c_function, *unit.members} for unit in units},
+        {unit.unit_id: unit.dependencies for unit in units},
+    )
     crate_ok = (
         metrics.safemap_compile
-        and validation.clippy.status in {"passed", "skipped"}
+        and clippy_ok
         and metrics.safemap.unsafe_blocks == 0
         and metrics.safemap.unsafe_functions == 0
         and metrics.safemap.extern_c_blocks == 0
     )
     behaviors = {}
-    if crate_ok and compiled and config.validation.run_differential_tests and len(project.c_files) == 1:
+    checkable = [unit_id for unit_id in compiled if unit_id not in lint_rejected]
+    if crate_ok and checkable and config.validation.run_differential_tests and len(project.c_files) == 1:
         behaviors = validate_units(
             Path(project.c_files[0]), final_root, store.path("validation/units"),
-            analysis.functions, plans, analysis.structs, compiled,
+            analysis.functions, plans, analysis.structs, checkable,
             cases=config.validation.differential_test_inputs,
             seed=config.validation.seed,
         )
@@ -547,6 +614,9 @@ def _unit_engine(
         signature = plan_by_unit[unit_id].target_signature
         if not crate_ok or raw_pointer_api.search(signature):
             final[unit_id] = "crate_validation_failed"
+            continue
+        if unit_id in lint_rejected:
+            final[unit_id] = "clippy_failed"
             continue
         metrics.compiled_unit_ids.append(unit_id)
         metrics.policy_safe_unit_ids.append(unit_id)
@@ -606,9 +676,14 @@ def _direct_unit_acceptance(
         re.sub(r"(?m)^fn\s", "pub fn ", written.read_text(encoding="utf-8"))
         if written else ""
     )
+    clippy_ok, lint_rejected = _clippy_decision(
+        validation, final_root, config,
+        {plan.unit_id: {plan.function} for plan in contract},
+        {unit.unit_id: unit.dependencies for unit in units},
+    )
     crate_ok = (
         validation.compile.status == "passed"
-        and validation.clippy.status in {"passed", "skipped"}
+        and clippy_ok
         and metrics.safemap is not None
         and metrics.safemap.unsafe_blocks == 0
         and metrics.safemap.unsafe_functions == 0
@@ -624,6 +699,8 @@ def _direct_unit_acceptance(
             final[plan.unit_id] = "interface_mismatch"
         elif not crate_ok:
             final[plan.unit_id] = "crate_validation_failed"
+        elif plan.unit_id in lint_rejected:
+            final[plan.unit_id] = "clippy_failed"
         else:
             matching.append(plan.unit_id)
     behaviors = {}
