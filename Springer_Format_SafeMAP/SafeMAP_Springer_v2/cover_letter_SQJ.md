@@ -4,18 +4,22 @@ We submit "SafeMAP: Analysis-Guided Planning and Per-Function Validation for
 Safe C-to-Rust Translation" for consideration in the *Software Quality
 Journal*.
 
-Migrating C code to safe Rust removes whole classes of memory errors, but
-automatic translators either keep C's pointer conventions in unsafe Rust or
-rely on large language models (LLMs) whose output is hard to check. The paper
-addresses the quality-assurance side of this problem: when can a translated
-function be trusted? SafeMAP translates a C function only when static analysis
+**Context and importance.** Memory-safety errors such as buffer overflows and
+use-after-free remain a leading cause of security vulnerabilities in C
+software, and migrating C code to safe Rust removes these whole classes of
+errors. Automatic translators, however, either keep C's pointer conventions in
+unsafe Rust or rely on large language models (LLMs) whose output is hard to
+check. A migration team therefore needs to know not only how much code was
+translated, but which translated functions can be trusted.
+
+**The work.** The paper addresses this quality-assurance question. SafeMAP translates a C function only when static analysis
 finds a safe, testable Rust interface for it. It accepts a translation only if
 the code contains no `unsafe` and matches the original C function on generated
 inputs, with the C side run under AddressSanitizer and UndefinedBehaviorSanitizer
 so that inputs with undefined C behavior are excluded rather than used as
 expected outputs. Every other function is refused with a recorded reason.
 
-We evaluated the frozen implementation under a sealed protocol on ten held-out
+**Main results.** We evaluated the frozen implementation under a sealed protocol on ten held-out
 C libraries (9,456 lines, 356 translation units):
 
 - Across three runs, SafeMAP accepted 12-16 units under the sealed protocol.
@@ -35,11 +39,16 @@ C libraries (9,456 lines, 356 translation units):
 
 The results are modest and reported as such. Most of the gain over the plain
 LLM comes from the planned interfaces; SafeMAP's per-function loop adds 6-9
-units over a one-shot LLM given the same interfaces, mostly in one library. We believe the
-paper fits the journal's interest in testing, verification, and tools for
-achieving software quality: it contributes an acceptance procedure whose every
-decision is checked against the original program, and an empirical account of
-its reach and its failure modes.
+units over a one-shot LLM given the same interfaces, mostly in one library.
+
+**Fit with the Software Quality Journal.** The paper is about assuring the
+quality of automatically produced code, which falls within the journal's
+interest in testing, verification, and tools for achieving software quality.
+It contributes (1) an acceptance procedure in which every decision is checked
+against the original program by sanitizer-guarded differential testing, (2) a
+measurement of that check's strength by mutation analysis, and (3) an
+empirical account, under a sealed protocol, of how far such checked migration
+reaches on production C code and what stops it.
 
 All code, protocols, manifests, raw results, and table-generation scripts are
 public (https://doi.org/10.5281/zenodo.23619725). The manuscript is not under
