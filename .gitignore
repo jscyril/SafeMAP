@@ -62,3 +62,8 @@ Thumbs.db
 *.key
 *.sqlite
 *.db
+
+# Manuscript under review (kept local only)
+/paper/
+/Springer_Format_SafeMAP/
+/PAPER_REVIEW.md
