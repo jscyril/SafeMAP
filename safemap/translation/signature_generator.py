@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 
+from ..analysis.pointer_classifier import pointer_to_array_dims
 from ..models import FunctionInfo
 
 C_TO_RUST = {
@@ -204,8 +205,13 @@ def struct_field_rust_type(c_type: str) -> str | None:
             element = "u8"
         return f"[{element}; {array.group(2)}]"
     if "*" in c_type:
-        return None
+        # A `char *` field is an owned string; NULL maps to None.
+        base, depth, _ = split_pointer(c_type)
+        return STRING_FIELD if depth == 1 and base == "char" else None
     return _scalar(c_type)
+
+
+STRING_FIELD = "Option<String>"
 
 
 def _field_is_scalar(c_type: str) -> bool:
@@ -265,6 +271,18 @@ def plan_signature(
     has_boolean_int = any(item.idiom_type == "boolean_int" for item in function.idioms)
     for parameter in function.parameters:
         fact = fact_by_name.get(parameter.name)
+        array = pointer_to_array_dims(parameter.c_type)
+        if array is not None and fact is not None and fact.usage_kind == "array_reference":
+            element = _scalar(array[0])
+            if element is None:
+                issues.append(f"{rust_identifier(parameter.name)}: array element `{array[0]}` has no planned safe type")
+                continue
+            nested = element
+            for size in reversed(array[1]):
+                nested = f"[{nested}; {size}]"
+            mutable = "&" if re.search(r"\bconst\b", parameter.c_type) else "&mut "
+            output.append(f"{rust_identifier(parameter.name)}: {mutable}{nested}")
+            continue
         pointee, depth, _ = split_pointer(parameter.c_type)
         if parameter.array_length is not None:
             depth = max(depth, 1)

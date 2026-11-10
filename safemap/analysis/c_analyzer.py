@@ -8,7 +8,7 @@ from ..models import (
     CAnalysis, FunctionInfo, GlobalInfo, ParameterInfo, ProjectInfo, StructInfo,
 )
 from .idiom_detector import detect_idioms
-from .pointer_classifier import classify_pointers
+from .pointer_classifier import classify_pointers, resolve_passed_pointers
 
 try:
     from clang import cindex
@@ -39,12 +39,15 @@ def _analyze_with_clang(project: ProjectInfo) -> CAnalysis:
         args = arguments.get(str(Path(file_name).resolve()), [])
         unit = index.parse(file_name, args=args)
         analysis.diagnostics.extend(str(item) for item in unit.diagnostics)
-        source = Path(file_name).read_text(encoding="utf-8", errors="replace")
+        # Raw bytes: libclang offsets are byte offsets into the file as stored
+        # (text mode would drop the \r of CRLF files and shift every offset).
+        source = Path(file_name).read_bytes()
         _walk_clang(
             unit.cursor, Path(file_name), source, analysis,
             project_root=Path(project.root),
         )
     _enrich_functions(analysis.functions)
+    mark_written_globals(analysis)
     return analysis
 
 
@@ -70,7 +73,7 @@ def _compile_arguments(project: ProjectInfo) -> dict[str, list[str]]:
 def _walk_clang(
     cursor,
     file_path: Path,
-    source: str,
+    source: bytes,
     analysis: CAnalysis,
     project_root: Path | None = None,
 ) -> None:
@@ -125,13 +128,37 @@ def _walk_clang(
             analysis.structs.append(_clang_struct(child, file_path))
             known_structs.add(child.spelling)
         elif child.kind == kinds.VAR_DECL and child.semantic_parent.kind == kinds.TRANSLATION_UNIT:
+            canonical = child.type.get_canonical()
+            const = canonical.is_const_qualified() or (
+                # `const T table[]`: the array type itself is not const-qualified.
+                canonical.kind in {cindex.TypeKind.CONSTANTARRAY, cindex.TypeKind.INCOMPLETEARRAY}
+                and canonical.element_type.is_const_qualified()
+            )
             analysis.globals.append(GlobalInfo(
                 name=child.spelling,
                 c_type=child.type.spelling,
-                mutable=not child.type.is_const_qualified(),
+                mutable=not const,
                 file=str(file_path),
                 line=location.line,
+                allocator_hook=_allocator_hook(child, canonical),
             ))
+
+
+ALLOCATORS = {"malloc", "calloc", "realloc", "free"}
+
+
+def _allocator_hook(cursor, canonical) -> str | None:
+    """`static Malloc_Fn hook = malloc;` names the allocator it stands for."""
+    if canonical.kind != cindex.TypeKind.POINTER:
+        return None
+    if canonical.get_pointee().kind not in {
+        cindex.TypeKind.FUNCTIONPROTO, cindex.TypeKind.FUNCTIONNOPROTO,
+    }:
+        return None
+    for node in _descendants(cursor):
+        if node.kind == cindex.CursorKind.DECL_REF_EXPR and node.spelling in ALLOCATORS:
+            return node.spelling
+    return None
 
 
 def _clang_struct(cursor, file_path: Path) -> StructInfo:
@@ -165,7 +192,8 @@ def _clang_parameter(argument, function_source: str) -> ParameterInfo:
         c_type = canonical.spelling
         is_const = pointee.is_const_qualified()
     elif is_array:
-        element = original.element_type
+        # The canonical type: a typedef'd array (va_list) has no element type.
+        element = canonical.element_type
         is_const = (
             element.is_const_qualified()
             or _parameter_declared_const(
@@ -190,9 +218,8 @@ def _clang_parameter(argument, function_source: str) -> ParameterInfo:
     )
 
 
-def _source_extent(source: str, start: int, end: int) -> str:
-    raw = source.encode("utf-8")
-    return raw[start:end].decode("utf-8", errors="replace")
+def _source_extent(source: bytes, start: int, end: int) -> str:
+    return source[start:end].decode("utf-8", errors="replace").replace("\r\n", "\n")
 
 
 def _analyze_fallback(project: ProjectInfo) -> CAnalysis:
@@ -332,4 +359,45 @@ def _fallback_structs(path: Path, source: str) -> list[StructInfo]:
 def _enrich_functions(functions: list[FunctionInfo]) -> None:
     for function in functions:
         function.pointer_facts = classify_pointers(function.parameters, function.body)
+    resolve_passed_pointers(functions)
+    for function in functions:
         function.idioms = detect_idioms(function)
+
+
+def mark_written_globals(analysis: CAnalysis) -> None:
+    """Record whether any project function can change each global."""
+    bodies = [_strip_comments_and_strings(item.body) for item in analysis.functions]
+    for item in analysis.globals:
+        pattern = global_write_pattern(item)
+        item.written = any(pattern.search(body) for body in bodies)
+
+
+def writes_global(function: FunctionInfo, item: GlobalInfo) -> bool:
+    return global_write_pattern(item).search(
+        _strip_comments_and_strings(function.body)
+    ) is not None
+
+
+def global_write_pattern(item: GlobalInfo) -> re.Pattern:
+    """Conservative: assignment, ++/--, writes through `name[...]`, `name.f`,
+    `name->f` or `*name`, taking its address, and passing an array or pointer
+    global to a call all count as writes."""
+    name = re.escape(item.name)
+    lvalue = rf"(?<![\w.>]){name}\s*(?:\[[^\]]*\]|\.\w+|->\w+)*"
+    patterns = [
+        rf"{lvalue}\s*(?:[+\-*/%&|^]|<<|>>)?=(?!=)",
+        rf"{lvalue}\s*(?:\+\+|--)",
+        rf"(?:\+\+|--)\s*{lvalue}",
+        rf"&\s*{lvalue}",
+        rf"\*\s*{name}\b[^=;]*=(?!=)",
+    ]
+    if ("[" in item.c_type or "*" in item.c_type) and item.allocator_hook is None:
+        # The callee may write through the array or pointer.
+        patterns.append(rf"[(,]\s*(?:\([^)]*\)\s*)?{name}\s*[,)]")
+    return re.compile("|".join(f"(?:{entry})" for entry in patterns))
+
+
+def _strip_comments_and_strings(source: str) -> str:
+    source = re.sub(r"/\*.*?\*/", " ", source, flags=re.DOTALL)
+    source = re.sub(r"//[^\n]*", " ", source)
+    return re.sub(r'"(?:\\.|[^"\\])*"', '""', source)

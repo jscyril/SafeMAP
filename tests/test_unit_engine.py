@@ -14,7 +14,7 @@ from safemap.validation.unit_harness import validate_units
 
 C_SOURCE = """
 #include <stddef.h>
-struct counter { int count; int step; char *label; };
+struct counter { int count; int step; int *label; };
 
 int clamp_add(int a, int b) {
     int total = a + b;
@@ -167,7 +167,7 @@ def test_pointer_field_access_blocks_projection(tmp_path: Path) -> None:
 
 
 def test_projection_follows_bare_arguments_into_callees() -> None:
-    struct = StructInfo("s", [{"name": "x", "type": "int"}, {"name": "p", "type": "char *"}], "a.c", 1)
+    struct = StructInfo("s", [{"name": "x", "type": "int"}, {"name": "p", "type": "int *"}], "a.c", 1)
     reader = FunctionInfo("read_x", "int", [ParameterInfo("v", "struct s *", True)],
                           "int read_x(struct s *v) { return v->x; }", "a.c", 1, 1)
     leaker = FunctionInfo("read_p", "int", [ParameterInfo("v", "struct s *", True)],
@@ -222,3 +222,150 @@ def test_provider_outage_aborts_instead_of_scoring_failure(tmp_path: Path) -> No
             analysis, units, plans, store.path("final/rust"), store,
             project_name="proj", source_files=project.c_files, client=Down(),
         )
+
+
+STRING_FIELD_SOURCE = """
+#include <stddef.h>
+struct rec { int id; char *name; };
+
+int name_score(const struct rec *r) {
+    if (r->name == NULL) return -r->id;
+    if (r->name[0] == 'a') return r->id + 1;
+    return r->id;
+}
+"""
+
+NAME_SCORE = """pub fn name_score(r: &rec) -> i32 {
+    match r.name.as_deref() {
+        None => -r.id,
+        Some(name) if name.starts_with('a') => r.id + 1,
+        Some(_) => r.id,
+    }
+}"""
+
+# Ignores the NULL case: must be caught by the differential test.
+WRONG_NAME_SCORE = """pub fn name_score(r: &rec) -> i32 {
+    match r.name.as_deref() {
+        Some(name) if name.starts_with('a') => r.id + 1,
+        _ => r.id,
+    }
+}"""
+
+
+def test_string_field_struct_is_planned_and_validated(tmp_path: Path) -> None:
+    _, _, _, plans, _ = _plan(tmp_path / "plan", STRING_FIELD_SOURCE)
+    plan = {item.function: item for item in plans}["name_score"]
+    assert plan.status == "planned", plan.reason
+    assert plan.target_signature == "pub fn name_score(r: &rec) -> i32"
+
+    _, good, _ = _run(tmp_path / "good", {"int name_score": NAME_SCORE}, STRING_FIELD_SOURCE)
+    assert good["name_score"].status == "passed", good["name_score"].reason
+    _, bad, _ = _run(tmp_path / "bad", {"int name_score": WRONG_NAME_SCORE}, STRING_FIELD_SOURCE)
+    assert bad["name_score"].status == "failed"
+
+
+CURSOR_SOURCE = """
+int count_digits(const char *s) {
+    int n = 0;
+    while (*s) {
+        if (*s >= '0' && *s <= '9') n++;
+        s++;
+    }
+    return n;
+}
+"""
+
+COUNT_DIGITS = """pub fn count_digits(s: &str) -> i32 {
+    s.bytes().take_while(|b| *b != 0).filter(|b| b.is_ascii_digit()).count() as i32
+}"""
+
+# Off by one on '9': caught by differential testing.
+WRONG_COUNT_DIGITS = """pub fn count_digits(s: &str) -> i32 {
+    s.bytes().filter(|b| (b'0'..b'9').contains(b)).count() as i32
+}"""
+
+
+def test_scanned_string_is_planned_as_str_and_validated(tmp_path: Path) -> None:
+    _, _, _, plans, _ = _plan(tmp_path / "plan", CURSOR_SOURCE)
+    plan = {item.function: item for item in plans}["count_digits"]
+    assert plan.status == "planned", plan.reason
+    assert plan.target_signature == "pub fn count_digits(s: &str) -> i32"
+    _, good, _ = _run(tmp_path / "good", {"int count_digits": COUNT_DIGITS}, CURSOR_SOURCE)
+    assert good["count_digits"].status == "passed", good["count_digits"].reason
+    _, bad, _ = _run(tmp_path / "bad", {"int count_digits": WRONG_COUNT_DIGITS}, CURSOR_SOURCE)
+    assert bad["count_digits"].status == "failed"
+
+
+GRID_SOURCE = """
+#include <stdint.h>
+typedef uint8_t state_t[4][4];
+
+static void transpose_add(state_t *state, uint8_t k) {
+    uint8_t i, j, t;
+    for (i = 0; i < 4; ++i) {
+        for (j = i + 1; j < 4; ++j) {
+            t = (*state)[i][j];
+            (*state)[i][j] = (*state)[j][i];
+            (*state)[j][i] = t;
+        }
+    }
+    for (i = 0; i < 4; ++i) (*state)[i][i] ^= k;
+}
+"""
+
+TRANSPOSE_ADD = """pub fn transpose_add(state: &mut [[u8; 4]; 4], k: u8) -> () {
+    for i in 0..4 {
+        for j in (i + 1)..4 {
+            let t = state[i][j];
+            state[i][j] = state[j][i];
+            state[j][i] = t;
+        }
+    }
+    for i in 0..4 { state[i][i] ^= k; }
+}"""
+
+# Forgets the diagonal update: the printed state differs.
+WRONG_TRANSPOSE_ADD = """pub fn transpose_add(state: &mut [[u8; 4]; 4], k: u8) -> () {
+    for i in 0..4 {
+        for j in (i + 1)..4 {
+            let t = state[i][j];
+            state[i][j] = state[j][i];
+            state[j][i] = t;
+        }
+    }
+}"""
+
+
+def test_pointer_to_array_is_planned_and_validated(tmp_path: Path) -> None:
+    _, _, _, plans, _ = _plan(tmp_path / "plan", GRID_SOURCE)
+    plan = {item.function: item for item in plans}["transpose_add"]
+    assert plan.status == "planned", plan.reason
+    assert plan.target_signature == "pub fn transpose_add(state: &mut [[u8; 4]; 4], k: u8) -> ()"
+    _, good, _ = _run(tmp_path / "good", {"void transpose_add": TRANSPOSE_ADD}, GRID_SOURCE)
+    assert good["transpose_add"].status == "passed", good["transpose_add"].reason
+    _, bad, _ = _run(tmp_path / "bad", {"void transpose_add": WRONG_TRANSPOSE_ADD}, GRID_SOURCE)
+    assert bad["transpose_add"].status == "failed"
+
+
+def test_mined_constants_parse_c_literals() -> None:
+    from safemap.validation.unit_harness import _mined_constants
+    values = _mined_constants('a = 010; b = 0x10; c = 3; s = "0123456789"; d = 089;')
+    assert {8, 16, 3} <= set(values)
+    assert 123456789 not in values and 89 not in values
+
+
+HOOK_SOURCE = """
+void _putchar(char character);
+static int is_digit(char ch) { return (ch >= '0') && (ch <= '9'); }
+static int emit(int x) { _putchar('a'); return x; }
+"""
+
+
+def test_missing_program_hook_does_not_block_other_units(tmp_path: Path) -> None:
+    _, behavior, _ = _run(tmp_path, {
+        "int is_digit": "pub fn is_digit(ch: i8) -> bool { (b'0' as i8..=b'9' as i8).contains(&ch) }",
+        "int emit": "pub fn emit(x: i32) -> i32 { x }",
+    }, HOOK_SOURCE)
+    assert behavior["is_digit"].status == "passed", behavior["is_digit"].reason
+    # Every call reaches the missing hook: no defined C behavior to compare.
+    assert behavior["emit"].status == "insufficient_defined_inputs"

@@ -179,12 +179,25 @@ def _synthesize_with_rule(
     return None
 
 
+C_CAST = re.compile(
+    r"\(\s*(?:const\s+)?(?:(?:un)?signed\s+)?"
+    r"(?:char|short|int|long|float|double|size_t|u?int\d+_t|bool|_Bool)"
+    r"(?:\s+(?:long|int))*\s*\)"
+)
+
+
+def _cast_free_return(function: FunctionInfo) -> bool:
+    """`_c_expr_to_rust` drops casts, which changes types and arithmetic."""
+    expression = _single_return(function)
+    return expression is not None and not C_CAST.search(expression)
+
+
 def _is_simple_return(function: FunctionInfo) -> bool:
     return (
         function.return_type.strip() != "void"
         and not function.pointer_facts
         and not function.calls
-        and _single_return(function) is not None
+        and _cast_free_return(function)
     )
 
 
@@ -197,7 +210,7 @@ def _is_internal_call_return(
         and not function.pointer_facts
         and bool(function.calls)
         and set(function.calls) == set(plan.internal_calls)
-        and _single_return(function) is not None
+        and _cast_free_return(function)
     )
 
 

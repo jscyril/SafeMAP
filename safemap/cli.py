@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Optional
@@ -258,7 +259,18 @@ def _project(store: ArtifactStore):
     return from_dict(ProjectInfo, store.read_json("project.json"))
 
 
+def load_dotenv(path: Path = Path(".env")) -> None:
+    """Read KEY=value lines from .env; variables already set in the shell win."""
+    if not path.is_file():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        name, sep, value = line.strip().partition("=")
+        if sep and name and not name.startswith("#"):
+            os.environ.setdefault(name.strip(), value.strip().strip("\"'"))
+
+
 def main() -> None:
+    load_dotenv()
     if typer is None:
         _argparse_main()
         return

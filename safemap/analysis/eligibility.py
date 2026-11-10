@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 
 from ..models import CAnalysis, EligibilityResult, FunctionInfo
+from .c_analyzer import writes_global
 
 SAFE_CATEGORIES = {
     "safe_translatable",
@@ -31,14 +32,21 @@ UNSUPPORTED_PATTERNS = (
     ("inline_assembly", re.compile(r"\b(?:asm|__asm__)\b")),
     ("volatile_access", re.compile(r"\bvolatile\b")),
     ("setjmp_longjmp", re.compile(r"\b(?:setjmp|longjmp)\s*\(")),
-    ("pointer_integer_cast", re.compile(r"\(\s*(?:uintptr_t|intptr_t|size_t|long|int)\s*\)\s*[A-Za-z_]\w*")),
 )
 
+INTEGER_CAST = re.compile(
+    r"\(\s*(?:uintptr_t|intptr_t|size_t|long|int)\s*\)\s*([A-Za-z_]\w*)"
+)
+
+# memcpy/memmove/memset are not listed: on planned slices they become
+# copy_from_slice, copy_within, and fill, and validation checks the result.
 UNSAFE_REQUIRED_CALLS = {
-    "memcpy", "memmove", "memset", "fopen", "fclose", "fread", "fwrite",
+    "fopen", "fclose", "fread", "fwrite",
 }
 
 SUPPORTED_POINTER_KINDS = {
+    "array_reference",
+    "c_string_cursor",
     "pointer_length_array",
     "fixed_size_array",
     "output_parameter",
@@ -46,9 +54,14 @@ SUPPORTED_POINTER_KINDS = {
     "owned_allocation",
     "manual_free",
     "input_borrow",
+    "mutable_borrow",
 }
 
 API_CHANGE_IDIOMS = {
+    "array_reference",
+    "c_string_cursor",
+    "input_borrow",
+    "mutable_borrow",
     "pointer_length_array",
     "fixed_size_array",
     "output_parameter",
@@ -62,9 +75,23 @@ API_CHANGE_IDIOMS = {
 
 
 def classify_analysis(analysis: CAnalysis) -> list[EligibilityResult]:
-    mutable_globals = {item.name for item in analysis.globals if item.mutable}
+    mutable_globals = {
+        item.name for item in analysis.globals
+        if item.mutable and item.written and item.allocator_hook is None
+    }
+    # An allocator hook is only reconfigured by a setter; units that just call
+    # it allocate, which safe Rust does natively. The setter itself is state.
+    hooks = [
+        item for item in analysis.globals
+        if item.mutable and item.written and item.allocator_hook is not None
+    ]
     return [
-        classify_function(function, f"unit_{index}", mutable_globals)
+        classify_function(
+            function, f"unit_{index}",
+            mutable_globals | {
+                item.name for item in hooks if writes_global(function, item)
+            },
+        )
         for index, function in enumerate(analysis.functions)
     ]
 
@@ -147,7 +174,26 @@ def _unsupported_features(function: FunctionInfo) -> list[str]:
     ]
     if any(item.usage_kind == "function_pointer" for item in function.pointer_facts):
         features.append("function_pointer")
+    if _casts_pointer_to_integer(function):
+        features.append("pointer_integer_cast")
     return sorted(set(features))
+
+
+def _casts_pointer_to_integer(function: FunctionInfo) -> bool:
+    """`(size_t)len` is an ordinary integer cast; only a cast of a pointer is."""
+    pointers = {item.name for item in function.parameters if item.is_pointer}
+    body = _strip_comments_and_strings(function.body)
+    for match in INTEGER_CAST.finditer(body):
+        name = match.group(1)
+        if name == "sizeof":
+            continue
+        # A local declared as `T *name` (or `T **name`) is a pointer too.
+        declared_pointer = re.search(
+            rf"\b[A-Za-z_]\w*\s*\*+\s*{re.escape(name)}\s*[=;,\[)]", body,
+        )
+        if name in pointers or declared_pointer:
+            return True
+    return False
 
 
 def _requires_unsafe(function: FunctionInfo) -> bool:
@@ -223,4 +269,5 @@ def _normalize_role(kind: str) -> str:
         "mutable_borrow": "inout_pointer",
         "manual_free": "owned_allocation",
         "unknown_raw_pointer": "unknown_pointer",
+        "c_string_cursor": "input_pointer",
     }.get(kind, kind)

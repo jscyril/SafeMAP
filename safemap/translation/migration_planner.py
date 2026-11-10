@@ -10,6 +10,10 @@ from .safe_synthesizer import detect_synthesis_rule
 from .signature_generator import plan_signature
 
 SAFE_PATTERNS = {
+    "array_reference",
+    "c_string_cursor",
+    "input_borrow",
+    "mutable_borrow",
     "pointer_length_array",
     "fixed_size_array",
     "output_parameter",
@@ -86,6 +90,7 @@ def create_migration_plans(
                 "Do not expose raw pointer public APIs",
                 "Do not introduce unapproved external crates",
                 "Compile with #![forbid(unsafe_code)]",
+                *_string_constraints(function),
             ],
             validation_requirements=[
                 "cargo check", "cargo test", "cargo clippy", "differential testing"
@@ -167,6 +172,21 @@ def _enforce_supported_dependency_closure(
                 + ", ".join(sorted(missing))
             )
             changed = True
+
+
+def _string_constraints(function) -> list[str]:
+    """A `&str` has no terminating NUL; C code that reads it must still behave the same."""
+    if not any(
+        fact.usage_kind in {"c_string_cursor", "input_borrow", "nullable_pointer"}
+        and re.search(r"\bchar\s*\*", fact.pointer_type)
+        for fact in function.pointer_facts
+    ):
+        return []
+    return [
+        "A C string parameter becomes &str without its terminating NUL: where the C "
+        "code reads or compares the terminator ('\\0'), treat the end of the &str "
+        "as that NUL character so the result is the same"
+    ]
 
 
 def _eligibility_by_function(analysis: CAnalysis) -> dict[str, EligibilityResult]:

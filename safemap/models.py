@@ -159,6 +159,11 @@ class GlobalInfo(JsonModel):
     mutable: bool
     file: str
     line: int
+    # False when no function in the project writes it: it then acts as a constant.
+    written: bool = True
+    # Set to `malloc`/`free`/... for a function-pointer global initialized to
+    # that allocator (an allocation hook); calling it is treated as calling it.
+    allocator_hook: str | None = None
 
 
 @dataclass

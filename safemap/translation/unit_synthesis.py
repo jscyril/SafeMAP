@@ -42,6 +42,8 @@ class UnitOutcome(JsonModel):
     llm_calls: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
+    # Models that answered for this unit (more than one after a fallback).
+    models: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -147,6 +149,8 @@ def _llm_synthesize(
             outcome.status, outcome.reason = "llm_error", str(error)
             return
         outcome.llm_calls += 1
+        if response.model and response.model not in outcome.models:
+            outcome.models.append(response.model)
         outcome.input_tokens += response.input_tokens
         outcome.output_tokens += response.output_tokens
         outcome.attempts += 1
@@ -257,8 +261,9 @@ def render_struct_prelude(structs: list[StructInfo], plans: list[MigrationPlan])
         ]
         if omitted:
             fields = f"    // scalar-field projection; omitted: {', '.join(omitted)}\n" + fields
+        copy = "" if "Option<String>" in fields else " Copy,"
         rendered.append(
-            "#[derive(Clone, Copy, Debug, PartialEq)]\n"
+            f"#[derive(Clone,{copy} Debug, PartialEq)]\n"
             f"pub struct {item.name} {{\n{fields}\n}}"
         )
     return "\n\n".join(rendered)
@@ -344,7 +349,7 @@ def c_context_for(function: FunctionInfo, context: SynthesisContext) -> str:
         if identifiers & set(re.findall(r"\b[A-Za-z_]\w*\b", enum)):
             lines.append(enum)
     for item in context.analysis.globals:
-        if item.mutable or item.name not in identifiers:
+        if (item.mutable and item.written) or item.name not in identifiers:
             continue
         text = context.sources.get(item.file, "")
         declaration = _declaration_at(text, item.line)

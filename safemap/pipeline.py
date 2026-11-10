@@ -19,7 +19,7 @@ from .analysis.rust_analyzer import analyze_rust_path
 from .artifacts import ArtifactStore
 from .config import LLMConfig, SafeMapConfig
 from .ingestion.project_loader import ingest_project
-from .llm.client import LLMClient, OpenAICompatibleClient, ProviderUnavailable
+from .llm.client import LLMClient, ProviderUnavailable, build_client
 from .metrics.report_generator import comparison_csv, generate_markdown
 from .metrics.residual_unsafe import classify_residual_unsafe
 from .models import (
@@ -128,7 +128,7 @@ def run_pipeline(
             and config.translation.use_llm
             and _project_loc(project) <= config.translation.direct_llm_max_c_loc
         ):
-            llm = client or OpenAICompatibleClient(config.llm)
+            llm = client or build_client(config.llm)
             try:
                 direct_llm_usage = _direct_llm_translation(
                     project,
@@ -180,7 +180,7 @@ def run_pipeline(
             and not used_direct_translation
             and not synthesized_units
         ):
-            llm = client or OpenAICompatibleClient(config.llm)
+            llm = client or build_client(config.llm)
             _rewrite_units(
                 analysis, units, plans, final_root, llm, store, metrics,
                 max_repair_attempts=(
@@ -325,7 +325,7 @@ def rewrite_stage(
     metrics = RunMetrics(project=project.project_name)
     _rewrite_units(
         analysis, units, plans, final_root,
-        client or OpenAICompatibleClient(config.llm), store, metrics,
+        client or build_client(config.llm), store, metrics,
         max_repair_attempts=config.translation.max_repair_attempts,
     )
     store.write_json("reports/rewrite_metrics.json", metrics)
@@ -341,7 +341,7 @@ def repair_stage(
     functions = {item.name: item for item in analysis.functions}
     final_root = store.path("final/rust")
     results = []
-    llm = client or OpenAICompatibleClient(config.llm)
+    llm = client or build_client(config.llm)
     for path in sorted(store.path("plans").glob("*.json")):
         plan = from_dict(MigrationPlan, json.loads(path.read_text(encoding="utf-8")))
         name = plan.target_signature.split("fn ", 1)[-1].split("(", 1)[0].strip()
@@ -515,7 +515,7 @@ def _unit_engine(
     """Per-unit synthesis, compile gating, and per-unit acceptance."""
     llm = None
     if config.translation.use_llm:
-        llm = client or OpenAICompatibleClient(config.llm)
+        llm = client or build_client(config.llm)
     outcomes = synthesize_units(
         analysis, units, plans, final_root, store,
         project_name=project.project_name,
@@ -528,6 +528,8 @@ def _unit_engine(
         guided=config.translation.prompt_guidance,
     )
     store.write_json("synthesis/summary.json", [item.to_dict() for item in outcomes])
+    if getattr(llm, "switches", None):
+        store.write_json("synthesis/provider_switches.json", llm.switches)
     return _score_unit_crate(
         project, analysis, units, plans, eligibility, store, config,
         baseline_metrics, final_root, outcomes,

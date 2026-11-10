@@ -15,6 +15,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from ..analysis.pointer_classifier import pointer_to_array_dims
 from ..models import FunctionInfo, JsonModel, MigrationPlan, StructInfo
 from ..process import run_command
 from ..translation.signature_generator import (
@@ -22,6 +23,7 @@ from ..translation.signature_generator import (
     QUALIFIERS,
     mappable_struct_names,
     projectable_struct_names,
+    STRING_FIELD,
     rust_identifier,
     split_pointer,
     struct_field_rust_type,
@@ -55,7 +57,7 @@ class UnitBehavior(JsonModel):
 class _Slot:
     """One piece of the C/Rust interface and how the harness drives it."""
     name: str
-    kind: str                # scalar | str | slice | array | struct | length | out
+    kind: str                # scalar | str | slice | array | grid | struct | length | out
     rust: str = ""           # element/scalar/struct Rust type
     c_type: str = ""         # C element/scalar type for declarations
     mutable: bool = False
@@ -64,6 +66,7 @@ class _Slot:
     length: int | None = None
     struct: StructInfo | None = None
     in_rust: bool = True
+    dims: list[int] = field(default_factory=list)  # grid: `T (*)[N][M]`
 
 
 @dataclass
@@ -164,7 +167,12 @@ def _spec(plan, function, struct_by_name, mappable) -> tuple[_UnitSpec | None, s
                 c_args.append(_Slot(parameter.name, "length", _c_scalar(base), base, in_rust=False))
                 continue
             return None, f"C parameter `{parameter.name}` has no Rust counterpart"
-        slot = _slot_for(parameter.name, rust, base, struct_by_name, mappable)
+        array = pointer_to_array_dims(parameter.c_type)
+        slot = (
+            _grid_slot(parameter.name, rust, array)
+            if array is not None
+            else _slot_for(parameter.name, rust, base, struct_by_name, mappable)
+        )
         if slot is None:
             return None, f"Parameter type `{rust}` is not harnessable"
         rust_slots[name] = slot
@@ -246,6 +254,25 @@ def _slot_for(name, rust, c_base, struct_by_name, mappable) -> _Slot | None:
     return None
 
 
+def _grid_slot(name, rust, array) -> _Slot | None:
+    """A pointer to a whole fixed-size array, e.g. `&mut [[u8; 4]; 4]`."""
+    match = re.fullmatch(r"&(mut )?\[+(\w+)(?:; \d+\])+", rust)
+    if not match or match.group(2) not in SCALARS:
+        return None
+    return _Slot(name, "grid", match.group(2), array[0],
+                 mutable=bool(match.group(1)), dims=array[1])
+
+
+def _grid_value(dims, rust, rng, constants):
+    if not dims:
+        return _scalar_value(rust, rng, constants)
+    return [_grid_value(dims[1:], rust, rng, constants) for _ in range(dims[0])]
+
+
+def _flat(value):
+    return [leaf for item in value for leaf in _flat(item)] if isinstance(value, list) else [value]
+
+
 def _return_issue(spec: _UnitSpec, struct_by_name, mappable) -> str | None:
     returns = spec.returns
     result = re.fullmatch(r"Result<(.+), i32>", returns)
@@ -309,6 +336,8 @@ def _case_values(spec: _UnitSpec, rng: random.Random) -> dict:
                 values[slot.name] = [rng.choice([0x2a, 0x41, 0x7a, 0x00]) for _ in range(count)]
             else:
                 values[slot.name] = [_scalar_value(slot.rust, rng, spec.constants) for _ in range(count)]
+        elif slot.kind == "grid":
+            values[slot.name] = _grid_value(slot.dims, slot.rust, rng, spec.constants)
         elif slot.kind == "struct":
             values[slot.name] = {
                 item["name"]: _field_value(item["type"], rng, spec.constants)
@@ -328,8 +357,18 @@ def _case_values(spec: _UnitSpec, rng: random.Random) -> dict:
 def _mined_constants(body: str) -> list[int]:
     """Integer literals in the C body and their neighbours (boundary inputs)."""
     found = set()
-    for match in re.finditer(r"(?<![\w.])(0[xX][0-9a-fA-F]+|\d+)(?![\w.])", body):
-        value = int(match.group(1), 0)
+    # Character and string literals hold text, not numbers ("0123456789").
+    code = re.sub(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'', " ", body)
+    for match in re.finditer(r"(?<![\w.])(0[xX][0-9a-fA-F]+|\d+)(?![\w.])", code):
+        text = match.group(1)
+        if text[:2] in {"0x", "0X"}:
+            value = int(text, 16)
+        elif len(text) > 1 and text[0] == "0":
+            if not re.fullmatch(r"[0-7]+", text):
+                continue  # not a valid C literal
+            value = int(text, 8)
+        else:
+            value = int(text)
         if value <= 1 << 20:
             found.update({value - 1, value, value + 1, -value})
     return sorted(found)
@@ -401,6 +440,8 @@ def _string_value(rng: random.Random) -> str:
 
 def _field_value(c_type: str, rng: random.Random, constants: list[int] | None = None):
     rust = struct_field_rust_type(c_type)
+    if rust == STRING_FIELD:
+        return None if rng.random() < 0.2 else _string_value(rng)
     array = re.fullmatch(r"\[(\w+); (\d+)\]", rust or "")
     if array:
         return [_scalar_value(array.group(1), rng, constants) for _ in range(int(array.group(2)))]
@@ -503,6 +544,8 @@ def _c_struct_print(expr: str, struct: StructInfo) -> list[str]:
                 f"for (int sm_j = 0; sm_j < {array.group(2)}; sm_j++) "
                 + _c_print(f"{expr}.{item['name']}[sm_j]", array.group(1))
             )
+        elif rust == STRING_FIELD:
+            lines.append(f"sm_s({expr}.{item['name']});")
         else:
             lines.append(_c_print(f"{expr}.{item['name']}", rust))
     return lines
@@ -516,7 +559,7 @@ def _c_unit(index: int, spec: _UnitSpec) -> str:
         body, args, after = [], [], []
         for slot in spec.c_args:
             value = values.get(slot.name)
-            var = f"sm_{slot.name}"
+            var = f"sm_p_{slot.name}"  # never collides with sm_r, sm_v, sm_e
             if slot.kind == "length":
                 args.append(_c_literal(value, slot.rust))
             elif slot.kind == "out":
@@ -550,13 +593,34 @@ def _c_unit(index: int, spec: _UnitSpec) -> str:
                         + _c_print(f"{var}[sm_j]", slot.rust)
                     )
                 after.append(f"free({var});")
+            elif slot.kind == "grid":
+                def c_literal(item):
+                    if isinstance(item, list):
+                        return "{" + ", ".join(c_literal(entry) for entry in item) + "}"
+                    return _c_literal(item, slot.rust)
+                dims = "".join(f"[{size}]" for size in slot.dims)
+                body.append(f"{slot.c_type} {var}{dims} = {c_literal(value)};")
+                args.append(f"&{var}")
+                if slot.mutable:
+                    count = len(_flat(value))
+                    after.append(
+                        f"for (int sm_j = 0; sm_j < {count}; sm_j++) "
+                        + _c_print(f"(({slot.c_type} *){var})[sm_j]", slot.rust)
+                    )
             elif slot.kind == "struct":
                 body.append(f"struct {slot.rust} {var};")
                 body.append(f"memset(&{var}, 0, sizeof {var});")
                 for item in _scalar_fields(slot.struct):
                     field_value = value[item["name"]]
                     rust = struct_field_rust_type(item["type"])
-                    if isinstance(field_value, list):
+                    if rust == STRING_FIELD:
+                        if field_value is None:
+                            body.append(f"{var}.{item['name']} = NULL;")
+                        else:
+                            # Its own writable array: the unit may write through it.
+                            body.append(f"char {var}_{item['name']}[] = {_c_string(field_value)};")
+                            body.append(f"{var}.{item['name']} = {var}_{item['name']};")
+                    elif isinstance(field_value, list):
                         element = rust.split(";")[0].strip("[ ")
                         for j, entry in enumerate(field_value):
                             body.append(f"{var}.{item['name']}[{j}] = {_c_literal(entry, element)};")
@@ -576,7 +640,7 @@ def _c_unit(index: int, spec: _UnitSpec) -> str:
 def _c_return(spec: _UnitSpec, call: str) -> list[str]:
     returns = spec.returns
     c_return = spec.function.return_type
-    outs = [_c_print(f"sm_{slot.name}", slot.rust) for slot in spec.outs]
+    outs = [_c_print(f"sm_p_{slot.name}", slot.rust) for slot in spec.outs]
     if returns == "()" or (c_return.strip() == "void" and spec.outs):
         return [f"{call};", *outs]
     if returns.startswith("Result<"):
@@ -625,7 +689,25 @@ def _c_main(specs: list[_UnitSpec]) -> str:
     )
 
 
+def _write_stubs(work: Path, names: set[str]) -> Path:
+    path = work / "c_stubs.c"
+    path.write_text(
+        "#include <stdio.h>\n#include <stdlib.h>\n" + "".join(
+            f'void {name}(void) {{ fprintf(stderr, "runtime error: '
+            f'program hook {name} is not defined\\n"); abort(); }}\n'
+            for name in sorted(names)
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
 def _build_c(c_source, work, specs, results, include_dirs, seed):
+    # Libraries such as printf leave a hook (`_putchar`) for the program to
+    # define. Missing symbols get stubs in a separate file that report a
+    # runtime error and abort: inputs that reach one count as undefined
+    # behavior, and units that never call one are tested normally.
+    stubs: set[str] = set()
     while True:
         include = str(c_source.resolve()).replace("\\", "\\\\").replace('"', '\\"')
         parts = [C_PRELUDE, "#define main sm_original_main", f'#include "{include}"', "#undef main"]
@@ -646,10 +728,15 @@ def _build_c(c_source, work, specs, results, include_dirs, seed):
             "-fno-sanitize-recover=all", "-fno-omit-frame-pointer",
             *[f"-I{item}" for item in [str(c_source.parent), *include_dirs]],
             str(harness), "-o", str(binary), "-lm",
+            *([str(_write_stubs(work, stubs))] if stubs else []),
         ]
         built = run_command(command, work, timeout=900)
         if built.status == "passed":
             return binary, specs
+        missing = set(re.findall(r"undefined reference to [`']([A-Za-z_]\w*)'", built.stderr))
+        if missing - stubs and not re.search(r"c_harness\.c:\d+:\d+: error", built.stderr):
+            stubs |= missing
+            continue
         bad = set()
         for match in re.finditer(r"c_harness\.c:(\d+):\d+: error", built.stderr):
             line = int(match.group(1))
@@ -713,6 +800,8 @@ def _rust_struct_print(expr: str, struct: StructInfo) -> list[str]:
         array = re.fullmatch(r"\[(\w+); (\d+)\]", rust)
         if array:
             lines.append(f"for sm_v in {expr}.{name}.iter() {{ {_rust_print('*sm_v', array.group(1))} }}")
+        elif rust == STRING_FIELD:
+            lines.append(f"sm_s(&mut o, {expr}.{name}.as_deref());")
         else:
             lines.append(_rust_print(f"{expr}.{name}", rust))
     return lines
@@ -723,7 +812,9 @@ def _rust_struct_literal(slot: _Slot, value: dict) -> str:
     for item in _scalar_fields(slot.struct):
         rust = struct_field_rust_type(item["type"])
         entry = value[item["name"]]
-        if isinstance(entry, list):
+        if rust == STRING_FIELD:
+            text = "None" if entry is None else f"Some(String::from({_rust_string(entry)}))"
+        elif isinstance(entry, list):
             element = rust.split(";")[0].strip("[ ")
             text = "[" + ", ".join(_rust_literal(x, element) for x in entry) + "]"
         else:
@@ -743,7 +834,7 @@ def _rust_unit(index: int, spec: _UnitSpec, crate: str) -> str:
         body, args, after = [], [], []
         for slot in spec.rust_params:
             value = values.get(slot.name)
-            var = f"sm_{slot.name}"
+            var = f"sm_p_{slot.name}"  # never collides with sm_r, sm_v, sm_e
             if value is None and slot.nullable:
                 args.append("None")
                 if slot.mutable or slot.kind == "struct":
@@ -770,6 +861,16 @@ def _rust_unit(index: int, spec: _UnitSpec, crate: str) -> str:
                 args.append(reference if slot.kind == "array" else reference + "[..]")
                 if slot.mutable:
                     after.append(f"for sm_v in {var}.iter() {{ {_rust_print('*sm_v', slot.rust)} }}")
+            elif slot.kind == "grid":
+                def literal(item):
+                    if isinstance(item, list):
+                        return "[" + ", ".join(literal(entry) for entry in item) + "]"
+                    return _rust_literal(item, slot.rust)
+                body.append(f"let mut {var} = {literal(value)};")
+                args.append(f"&mut {var}" if slot.mutable else f"&{var}")
+                if slot.mutable:
+                    flatten = ".flatten()" * (len(slot.dims) - 1)
+                    after.append(f"for sm_v in {var}.iter(){flatten} {{ {_rust_print('*sm_v', slot.rust)} }}")
             elif slot.kind == "struct":
                 body.append(f"let mut {var} = {crate}::{_rust_struct_literal(slot, value)};")
                 if slot.by_ref:
@@ -927,6 +1028,10 @@ def _compare(index, spec, c_binary, rust_binary, work, seed) -> UnitBehavior:
             return result
         if "Sanitizer" in run.stderr or "runtime error:" in run.stderr:
             undefined.append(last + 1)
+            # Past this point the unit cannot reach MIN_DEFINED_FRACTION: stop
+            # restarting the oracle case by case (same verdict, much sooner).
+            if len(undefined) > total - MIN_DEFINED_FRACTION * total:
+                break
         else:
             # Defined termination (abort, exit, failed assert): Rust must panic.
             c_lines[last + 1] = "PANIC"
@@ -936,8 +1041,10 @@ def _compare(index, spec, c_binary, rust_binary, work, seed) -> UnitBehavior:
     result.defined_cases = len(defined)
     if result.defined_cases < MIN_DEFINED_FRACTION * total:
         result.status = "insufficient_defined_inputs"
+        stopped = start < total and not (run.status == "passed")
         result.reason = (
-            f"C oracle had undefined behavior on {len(undefined)}/{total} inputs"
+            f"C oracle had undefined behavior on {'at least ' if stopped else ''}"
+            f"{len(undefined)}/{total} inputs"
         )
         return result
     rust = run_command([str(rust_binary), str(index)], work, timeout=120)

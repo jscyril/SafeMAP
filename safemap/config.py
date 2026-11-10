@@ -54,6 +54,9 @@ class LLMConfig:
     # output budget, not the per-function limit.
     direct_max_tokens: int = 65536
     direct_timeout_seconds: float = 900.0
+    # Providers to use, in order, once this one is out of quota. Each entry
+    # overrides fields of this section (model, base_url, api_key_env, ...).
+    fallbacks: list = field(default_factory=list)
 
 
 @dataclass

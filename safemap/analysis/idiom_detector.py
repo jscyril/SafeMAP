@@ -15,6 +15,10 @@ PATTERN_RUST = {
     "c_string": "Use CStr/CString at FFI boundaries or str/String internally",
     "struct_pointer": "Use a reference or owned struct",
     "boolean_int": "Use bool",
+    "array_reference": "Use &[[T; M]; N] or &mut [[T; M]; N]",
+    "c_string_cursor": "Use &str and byte indices instead of pointer arithmetic",
+    "input_borrow": "Use &T (shared borrow)",
+    "mutable_borrow": "Use &mut T (exclusive borrow)",
 }
 
 
@@ -105,6 +109,9 @@ def detect_idioms(function: FunctionInfo) -> list[DetectedIdiom]:
             r"(?:==|!=|<=|>=|(?<!<)<(?!<)|(?<!-)(?<!>)>(?!>))",
             expression,
         )
+        # ctype predicates return an unspecified nonzero value for true
+        # (glibc's isalpha gives 1024), so only zero/nonzero is defined.
+        or CTYPE_PREDICATE.fullmatch(expression.strip())
         for expression in returned_expressions
     )
     if (
@@ -119,7 +126,23 @@ def detect_idioms(function: FunctionInfo) -> list[DetectedIdiom]:
     unique: dict[tuple[str, tuple[str, ...]], DetectedIdiom] = {}
     for item in idioms:
         unique[(item.idiom_type, tuple(item.variables))] = item
-    return list(unique.values())
+    # A plain borrow is only worth naming when no richer idiom covers the variable.
+    covered = {
+        variable for item in unique.values()
+        if item.idiom_type not in BORROW_IDIOMS for variable in item.variables
+    }
+    return [
+        item for item in unique.values()
+        if item.idiom_type not in BORROW_IDIOMS or not set(item.variables) <= covered
+    ]
+
+
+BORROW_IDIOMS = {"input_borrow", "mutable_borrow"}
+
+CTYPE_PREDICATE = re.compile(
+    r"!?\s*\(?\s*(?:isalpha|isdigit|isalnum|isspace|isupper|islower|isxdigit|"
+    r"ispunct|iscntrl|isprint|isgraph|isblank)\s*\([^()]*\)\s*\)?"
+)
 
 
 def _idiom(

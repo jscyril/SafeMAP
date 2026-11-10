@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import json
 import os
 import time
@@ -30,6 +31,18 @@ MAX_RETRIES = 10
 
 class ProviderUnavailable(RuntimeError):
     """The provider stayed unavailable after all retries (infrastructure, not method, failure)."""
+
+
+class QuotaExhausted(ProviderUnavailable):
+    """A daily (not per-minute) quota is used up: retrying today cannot succeed."""
+
+
+# Phrases providers use for daily limits (Gemini quota ids, Groq TPD/RPD,
+# OpenRouter free-models-per-day). Per-minute limits are retried instead.
+DAILY_QUOTA_MARKERS = (
+    "perday", "per day", "per-day", "tokens per day", "requests per day",
+    "(tpd)", "(rpd)", "free-models-per-day",
+)
 
 
 def _backoff(attempt: int) -> float:
@@ -63,7 +76,7 @@ class OpenAICompatibleClient(LLMClient):
     ) -> LLMResponse:
         key = os.getenv(self.config.api_key_env)
         if not key:
-            raise RuntimeError(_missing_key_message(self.config))
+            raise MissingAPIKey(_missing_key_message(self.config))
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
@@ -80,6 +93,8 @@ class OpenAICompatibleClient(LLMClient):
             headers={
                 "Authorization": f"Bearer {key}",
                 "Content-Type": "application/json",
+                # Some providers' edge (Groq) rejects the default urllib agent.
+                "User-Agent": "safemap/0.1",
             },
             method="POST",
         )
@@ -93,6 +108,10 @@ class OpenAICompatibleClient(LLMClient):
                 break
             except urllib.error.HTTPError as error:
                 details = error.read().decode("utf-8", errors="replace")
+                if error.code == 429 and _is_daily_quota(details):
+                    raise QuotaExhausted(
+                        _http_error_message(error.code, details, self.config)
+                    ) from error
                 if error.code in RETRYABLE_STATUS and retries < MAX_RETRIES:
                     retries += 1
                     time.sleep(_backoff(retries))
@@ -132,6 +151,64 @@ class OpenAICompatibleClient(LLMClient):
             raw=data,
             retries=retries,
         )
+
+
+class FallbackLLMClient(LLMClient):
+    """Try providers in order; move on for good when one is out of quota.
+
+    Only provider exhaustion or outage moves to the next provider; ordinary
+    errors (bad request, empty reply) are raised as before. `switches` records
+    when each provider was dropped so runs that mix models stay auditable.
+    """
+
+    def __init__(self, clients: list[LLMClient], names: list[str] | None = None):
+        self.clients = clients
+        self.names = names or [getattr(item, "config", None) and item.config.model or str(i)
+                               for i, item in enumerate(clients)]
+        self.index = 0
+        self.switches: list[dict[str, str]] = []
+
+    def generate(self, prompt, system_prompt=None, *, max_tokens=None, timeout=None) -> LLMResponse:
+        while True:
+            client = self.clients[self.index]
+            try:
+                return client.generate(
+                    prompt, system_prompt, max_tokens=max_tokens, timeout=timeout,
+                )
+            except (ProviderUnavailable, MissingAPIKey) as error:
+                if self.index + 1 >= len(self.clients):
+                    raise ProviderUnavailable(
+                        f"All providers exhausted ({', '.join(self.names)}): {error}"
+                    ) from error
+                self.switches.append({
+                    "from": self.names[self.index],
+                    "to": self.names[self.index + 1],
+                    "reason": str(error)[:300],
+                })
+                self.index += 1
+
+
+def build_client(config: LLMConfig) -> LLMClient:
+    """The configured provider, followed by `llm.fallbacks` in order."""
+    primary = OpenAICompatibleClient(config)
+    if not config.fallbacks:
+        return primary
+    configs = [config] + [
+        dataclasses.replace(config, **{**item, "fallbacks": []}) for item in config.fallbacks
+    ]
+    return FallbackLLMClient(
+        [OpenAICompatibleClient(item) for item in configs],
+        [item.model for item in configs],
+    )
+
+
+def _is_daily_quota(details: str) -> bool:
+    normalized = details.lower()
+    return any(marker in normalized for marker in DAILY_QUOTA_MARKERS)
+
+
+class MissingAPIKey(RuntimeError):
+    """The configured key variable is unset."""
 
 
 class StaticLLMClient(LLMClient):
