@@ -143,7 +143,18 @@ from the program-hook stubs, the ctype `bool` rule and the NUL constraint;
 `negate_logical_not` was a translation error in run 1 and is likely model
 variance. `matchmetachar` still fails differential testing. printf's other
 13 units need the callback parameter (`out`), which is not supported yet.
-Two runs so far; v2 reports three.
+
+## Third guided run (development data)
+
+Commit `f49358e`, same configuration; gemini-3.5-flash-lite answered every
+request (84 units), no provider switch. 71 / 353 accepted, with two changes
+from run 2: tiny-regex-c gained `matchmetachar` (9), and tiny-AES-c lost
+`InvMixColumns` (6), whose translation differed from C on all 1000 inputs
+(model variance). Raw outputs:
+`SafeMAP_versions/v3/raw_runs/run3` (runs 1 and 2 were in `/tmp` and were
+lost in a reboot; only the tables above remain).
+
+**v3 on development data, three runs: 65–71 / 353** (v2: 36–37 / 356).
 
 ## Evaluating v3
 
